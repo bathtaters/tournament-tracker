@@ -1,0 +1,73 @@
+/* Load Custom Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,300;0,500;0,700;1,100;1,300;1,500;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,500;0,700;0,900;1,100;1,300;1,500;1,700;1,900&display=swap');
+
+/* Load Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base Styles */
+@layer base {
+    @variants hover, active, group-hover {
+        .link-color       { @apply text-indigo-900 dark:text-indigo-200; }
+        .link-hover-color { @apply text-indigo-700 dark:text-indigo-400; }
+        .base-color       { @apply text-gray-900   dark:text-gray-200; }
+        .base-color-inv   { @apply text-gray-200   dark:text-gray-900; }
+        .head-color       { @apply text-gray-700   dark:text-gray-400; }
+        .base-bgd         { @apply bg-gray-100     dark:bg-gray-800 print:bg-white; }
+        .base-bgd-inv     { @apply bg-gray-800     dark:bg-gray-100; }
+    }
+    body {
+        @apply font-sans base-color base-bgd;
+        @apply relative leading-none;
+        @apply text-xs md:text-sm lg:text-base print:text-xs;
+    }
+    h1, h2, h3, h4, h5, h6 { @apply font-heading head-color; }
+    h1 { @apply font-light  text-6xl md:text-7xl lg:text-8xl print:text-6xl; }
+    h2 { @apply font-medium text-4xl md:text-5xl lg:text-6xl print:text-4xl; }
+    h3 { @apply font-bold   text-2xl md:text-3xl lg:text-4xl print:text-2xl; }
+    h4 { @apply font-medium text-base md:text-lg lg:text-xl  print:text-base; }
+    a, .link {
+        @apply cursor-pointer link-color;
+        @apply hover:link-hover-color group-hover:link-hover-color;
+    }
+    
+    /* Form elements */
+    input, textarea {
+        @apply bg-gray-50 dark:bg-gray-900 bg-opacity-10 focus:bg-opacity-50;
+        @apply border-gray-500 border-2 px-1 rounded-sm print:border-none;
+    }
+    input[type="button"], input[type="submit"] {
+        @apply text-center py-1 px-3 rounded-lg;
+        @apply transform transition-transform duration-300;
+        @apply hover:bg-opacity-90;
+        @apply active:translate-y-0.5 active:bg-opacity-100 active:base-color-inv active:base-bgd-inv;
+        @apply disabled:opacity-50 disabled:bg-opacity-10;
+    }
+}
+
+@layer components {
+    /* Add missing styles */
+    .small-caps { font-variant-caps: small-caps; }
+
+    /* NavLink styling */
+    a.active, a.active-parent,
+    a.active-parent .link { @apply cursor-default; }
+    a.active, a.active-parent .link,
+    a.active-parent.group:hover .link {
+        @apply opacity-50 link-color hover:link-color;
+    }
+
+    /* Specific custom styles */
+}
+
+
+/* Additional Utilities */
+
+@layer utilities {
+    /* Effects */
+    a, .link {
+        @apply transition-all duration-500;
+    }
+}

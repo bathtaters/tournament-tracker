@@ -1,0 +1,27 @@
+{
+  "name": "lol-retreat-api",
+  "version": "0.0.1",
+  "description": "Lords Retreat backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "inspect": "node --inspect server.js"
+  },
+  "config": {
+    "port": "9090"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bathtaters/lol-retreat.git"
+  },
+  "author": "Nick Chirumbolo",
+  "license": "CC-BY-NC-SA-4.0",
+  "bugs": {
+    "url": "https://github.com/bathtaters/lol-retreat/issues"
+  },
+  "homepage": "https://github.com/bathtaters/lol-retreat#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
