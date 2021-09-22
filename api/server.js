@@ -4,7 +4,9 @@ const port = process.env.PORT || 9090;
 
 
 app.get('/test_backend', (req, res) => {
-    return res.send({ result: 'api server is up' });
+    return res.send({
+        result: 'Connected to internal API server.'
+    });
 });
 
 // Error handler
@@ -15,3 +17,6 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
+
+// Testing
+require('./testing/checkDb');
