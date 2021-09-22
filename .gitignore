@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# credentials
+*Cfg.json
+
 # testing
 /client/coverage
 

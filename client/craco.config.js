@@ -12,7 +12,7 @@ module.exports = {
         "plugins": ["react-pug"],
         "extends": [
           "react-app", 
-          // "plugin:react-pug/all"
+          "plugin:react-pug/all"
         ]
       },
     },
