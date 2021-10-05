@@ -18,24 +18,31 @@ const validator = () => [
 ];
 
 // Player Ops
-const list = () => ops.accessDb(cl => cl.query(
-    "SELECT * FROM player@team_idx WHERE isTeam = FALSE ORDER BY name;"
-));
+const list = () => ops.query(
+    "SELECT * FROM player WHERE isTeam IS FALSE;"
+);
 
-const add = name => ops.accessDb(cl => cl.query(
+const add = name => ops.query(
     "INSERT INTO player(name) VALUES($1) RETURNING id;",
     [name]
-)).then(r=>r && r[0].id);
+).then(r=>r && r.id);
 
 const rename = (id, newName) =>
     ops.updateRow('player', id, {name: newName});
 
 // Swap players/teams between matches
-function swap(playerIdL, matchIdL, playerIdR, matchIdR) {
-    return ops.accessDb(async cl =>  await Promise.all([
-        cl.query(matchQueries.swapQuery, [playerIdL, playerIdR, matchIdL]),
-        cl.query(matchQueries.swapQuery, [playerIdR, playerIdL, matchIdR]),
-    ]));
+function swap(playerIdL, matchIdL, playerIdR = null, matchIdR = null) {
+    return playerIdR ?
+        // Swap
+        ops.query(
+            [matchQueries.swapQuery, matchQueries.swapQuery],
+            [[playerIdL, playerIdR, matchIdL],
+             [playerIdR, playerIdL, matchIdR || matchIdL]]
+        ) :
+        // Pop
+        ops.query(
+            matchQueries.popQuery, [playerIdL, matchIdL]
+        );
 }
 
 module.exports = {

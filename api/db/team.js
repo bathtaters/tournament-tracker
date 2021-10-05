@@ -1,5 +1,6 @@
 /* *** TEAM (PLAYER) Sub-Object *** */
 const ops = require('./admin/base');
+const { rename, swap } = require('./player');
 const { teamQueries } = require('./constants');
 
 // Basic settings
@@ -23,63 +24,65 @@ const validator = () => [
 ];
 
 // Team Ops
-const list = () => ops.accessDb(cl => cl.query(
-    "SELECT * FROM player@team_idx WHERE isTeam = TRUE;"
-));
+const list = playerId => playerId ?
+    ops.query("SELECT team.* FROM player "+
+        "JOIN team USING (id) WHERE player.isTeam IS TRUE "+
+        "AND player.members @> ($1)::UUID[];", [[playerId]]) :
+    ops.query("SELECT * FROM team WHERE members IS NOT NULL;");
 
-const add = (members, withName=null) => ops.accessDb(async cl => {
-    const teamId = await cl.query(
-        "INSERT INTO player(isTeam, members, name) VALUES(TRUE, ($1)::UUID[], $2) RETURNING id;",
-        [members, withName]
-    ).then(r => r.rows[0].id);
-    
+const add = (members, withName=null) => ops.operation(async cl => {
+    const memberArr = await cl.query(
+        "SELECT id, isTeam FROM player WHERE id = ANY($1)::UUID[];", [members]
+    ).then(r => (r && r.rows) || []);
+    if (
+        !memberArr || memberArr.length !== members.length ||
+        memberArr.some(mem => mem.isTeam)
+    ) throw new Error("Team members must be players: "+memberArr);
     return cl.query(
-        teamQueries.addTeamList + "ANY($2);",
-        [teamId, members]
+        withName ?
+        "INSERT INTO player(isTeam, members, name) "+
+        "VALUES(TRUE, ($1)::UUID[], $2) RETURNING id;":
+        "INSERT INTO player(isTeam, members) "+
+        "VALUES(TRUE, ($1)::UUID[]) RETURNING id;",
+        withName ? [members, withName] : [members]
     );
-});
+}).then(r => r[0].id);
 
-const rmv = teamId => ops.accessDb(async cl => {
-    const players = await cl.query(
-        "DELETE FROM player WHERE id = $1 RETURNING members;",
-        [teamId]
-    ).then(r => r.rows[0].members);
-    
-    return cl.query(
-        teamQueries.rmvTeamList + "ANY($2);",
-        [teamId, players]
-    );
-});
+const rmv = teamId => ops.query(
+    "DELETE FROM player WHERE isTeam = TRUE AND id = $1 RETURNING members;",
+    [teamId]
+).then(r => r.members);
 
 // Switch in/out members
-const addMember = (teamId, playerId) => ops.accessDb( cl => Promise.all([
-    cl.query(teamQueries.addMember, [playerId, teamId]),
-    cl.query(teamQueries.addTeamList + "$2;", [teamId, playerId]),
-]));
+const addMember = (teamId, playerId) => 
+    // Add checks that members aren't teams
+    ops.query(teamQueries.addMember, [
+        Array.isArray(playerId) ? playerId : [playerId],
+        teamId
+    ]);
 
-const rmvMember = (teamId, playerId) => ops.accessDb( cl => Promise.all([
-    cl.query(teamQueries.rmvMember, [playerId, teamId]),
-    cl.query(teamQueries.rmvTeamList + "$2;", [teamId, playerId]),
-]));
+const replaceMember = (teamId, oldPlayerId, newPlayerId) => ops.query(
+    // Add checks that newPlayer isn't team
+    teamQueries.replMember, [oldPlayerId, newPlayerId, teamId]);
 
-const replace = (teamId, oldPlayerId, newPlayerId) => ops.accessDb( cl => Promise.all([
-    cl.query(teamQueries.replMember, [oldPlayerId, newPlayerId, teamId]),
-    cl.query(teamQueries.rmvTeamList + "$2;", [teamId, oldPlayerId]),
-    cl.query(teamQueries.addTeamList + "$2;", [teamId, newPlayerId]),
-]));
+const rmvMember = (teamId, playerId) => ops.query(
+    teamQueries.rmvMember, [playerId, teamId]);
 
-const swap = (playerIdL, teamIdL, playerIdR, teamIdR) => ops.accessDb( cl => Promise.all([
-    cl.query(teamQueries.replMember, [playerIdL, playerIdR, teamIdL]),
-    cl.query(teamQueries.replMember, [playerIdR, playerIdL, teamIdR]),
-    cl.query(teamQueries.replTeamList + "$3;", [teamIdL, teamIdR, playerIdL]),
-    cl.query(teamQueries.replTeamList + "$3;", [teamIdR, teamIdL, playerIdR]),
-]));
 
-// TO DO: Consolidate teams (remove teams that are no longer tied to games)
+const swapMembers = (playerIdL, teamIdL, playerIdR, teamIdR) => ops.query(
+    teamQueries.replMember + teamQueries.replMember2,
+    [playerIdL, playerIdR, teamIdL, teamIdR || teamIdL]
+);
+
+// Views
+const get = (teamId) => ops.query("SELECT * FROM team WHERE id = $1;",[teamId]);
+
+// TO DO: Consolidate teams (remove teams that are not tied to matches/drafts)
 
 module.exports = {
     list, add, rmv,
+    get, rename, swap, // passthrough to player
     addMember, rmvMember,
-    replace, swap,
+    replaceMember, swapMembers,
     limits, validator
 }

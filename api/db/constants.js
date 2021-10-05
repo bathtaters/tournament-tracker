@@ -1,45 +1,41 @@
 // Clock status
 exports.clockStates = [
-    'ended',    // Has reached 0
-    'running',  // Ticking down
-    'off',      // Turned off
-    'paused',   // Held
+    'Ended',    // Has reached 0
+    'Running',  // Ticking down
+    'Off',      // Turned off
+    'Paused',   // Held
 ];
+
+// Game/Match Points
+exports.points = { win: 3, draw: 1, floor: 0.33 };
+
+// Record fields
+exports.recordFields = [ 'Wins', 'Losses', 'Draws' ];
 
 // Resused match queries
 exports.matchQueries = {
-    matchJoin:
-        "SELECT " +
-            "m.id id, " +
-            "m.round round, " +
-            "d.id draftid, " +
-            "d.title draft, " +
-            "d.roundActive activeround, " +
-            "d.bestOf bestof, " +
-            "array_agg(p.name) players, " +
-            "m.players playerids, " +
-            // "array_agg(p.members) memberids, " +
-            // "array_agg(SELECT player.name FROM player WHERE player.id = ANY (p.members)) members, " +
-            "m.wins playerwins, " +
-            "m.draws draws " +
-        "FROM match m WHERE m.id = $1 " +
-        "LEFT JOIN draft d ON m.draft = d.id " +
-        "LEFT JOIN player p ON p.id = ANY (m.players) " +
-        "GROUP BY m.id;",
     allMatches:
         "SELECT match.*, draft.* " +
         "FROM match LEFT JOIN draft ON match.draft = draft.id;",
     draft: "SELECT players, winner FROM match WHERE draft = $1",
     teamSize: "SELECT teamSize FROM draft WHERE id = $1 LIMIT 1;",
-    swapQuery: "UPDATE match@draft_idx SET players = " +
-        "array_replace(players, ($1)::UUID, ($2)::UUID) WHERE id = $3;",
+    popQuery: "UPDATE match SET players = " +
+        "players - $1 WHERE id = $2;",
+    swapQuery: "UPDATE match SET players = " +
+        "players - $1::STRING || jsonb_build_object($2::STRING, (players->>$1)::SMALLINT) WHERE id = $3;",
+        // "array_replace(players, ($2)::UUID, ($1)::UUID) WHERE id = $4;",
+    currentRound: "SELECT round FROM match@draft_idx WHERE draftId = $1 "+
+        "ORDER BY round DESC LIMIT 1;",
 }
 
 exports.teamQueries = {
-    addTeamList:  "UPDATE player SET teamList = teamList || $1 WHERE id = ",
-    rmvTeamList:  "UPDATE player SET teamList = array_remove(teamList, $1) WHERE id = ",
-    replTeamList: "UPDATE player SET teamList = array_replace(teamList, $1, $2) WHERE id = ",
-    addMember:  "UPDATE player SET members = members || $1 WHERE id = $2;",
-    rmvMember:  "UPDATE player SET members = array_remove(members, $1) WHERE id = $2;",
-    replMember: "UPDATE player SET members = array_replace(members, $1, $2) WHERE id = $3;",
+    addMember:  "UPDATE player SET members = members || $1 WHERE isTeam = TRUE AND id = $2;",
+    rmvMember:  "UPDATE player SET members = array_remove(members, $1) WHERE isTeam = TRUE AND id = $2;",
+    replMember: "UPDATE player SET members = array_replace(members, $1, $2) WHERE isTeam = TRUE AND id = $3;",
+    replMember2: " UPDATE player SET members = array_replace(members, $2, $1) WHERE isTeam = TRUE AND id = $4;",
+}
+
+exports.resultQueries = {
+    breakerBase: "SELECT * FROM breakers",
+    breakerOpps: "SELECT DISTINCT oid FROM breakers, unnest(oppIds) oid",
 }

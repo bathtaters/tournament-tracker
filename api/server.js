@@ -19,4 +19,4 @@ app.use(function(err, req, res, next) {
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 // Testing
-require('./testing/checkDb');
+// require('./testing/checkDb');

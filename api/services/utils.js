@@ -1,5 +1,5 @@
 // Utility functions
-
+const logger = console;
 
 // Throw err from ERR object (Move to UTILS)
 exports.throwErr = (err, msg) => {
@@ -20,6 +20,18 @@ exports.unflat = (array, elemSize) => {
     return newArr;
 }
 
+// Splice command that doesn't modify in place
+exports.splicing = (arr, index, count = 1) => arr.slice(0,index).concat(arr.slice(index + count));
+
+// Check if any elements are common to both arrays
+exports.anyElements = (arrA, arrB) => arrA.some(elem => arrB.includes(elem));
+
+// Concat arrays, ignoring equal values
+exports.concatUnique = (arrA, arrB) => {
+  arrB.forEach(e => arrA.includes(e) || arrA.push(e));
+  return arrA
+}
+
 // Map array of objects into object (key field must be unique)
 exports.mapObjArr = (objArr, keyName, valName=null) => 
   objArr.reduce((res,next) => {
@@ -36,34 +48,16 @@ exports.mapObjArr = (objArr, keyName, valName=null) =>
 // Replace function
 // function(baseString, { replace: with, ... }) => return resultString;
 // Options: { pre: "replacePrefix", suff: "replaceSuffix", notAll: t/f, caseI: t/f }
-exports.replaceFromObj = (str, obj, opts={}) => Object.keys(obj).reduce(
+exports.replaceFromObj = (str, obj, {pre, suff, notAll, caseI, esc}={}) => Object.keys(obj).reduce(
     (curr,next) => curr.replace(
       RegExp(
-        (opts.pre || '') + next + (opts.suff || ''),
-        (opts.notAll ? '' : 'g') + (opts.caseI ? 'i' : '')
+        (pre || '') + next + (suff || ''),
+        (notAll ? '' : 'g') + (caseI ? 'i' : '')
       ),
-      opts.esc ? escape(obj[next]) : obj[next]
+      esc ? escape(obj[next]) : obj[next]
     ),
     str
 );
-
-// Retry block base
-exports.retryBlock = async (func, args, max, n = 0, retryCodes = null, retryCb = null) => {
-    while (true) {
-      if (n++ === max) { throw new Error("Max retries reached."); }
-      try { const res = await func(...args); return res; }
-      catch (err) {
-        if (Array.isArray(retryCodes) && !retryCodes.includes(err.code)) { throw err; }
-        else {
-          // Retry operation
-          logger.log("Attempt failed:", err.message, "Retrying...");
-          if (typeof retryCb === 'function') { await retryCb(err, ...args); }
-          // Pause for increasingly more time between each attempt
-          await new Promise((r) => setTimeout(r, 2 ** n * 1000));
-        }
-      }
-    }
-}
 
 // Custom array validator
 exports.validateArray = (lenLimit, innerCheck) =>
@@ -73,10 +67,10 @@ exports.validateArray = (lenLimit, innerCheck) =>
     (typeof innerCheck !== 'function' || arr.every(e => innerCheck(e, evObj)));
 
 // Custom array sanitizer (Runs innerSanit() then escapes)
-const { escape } = require('validator').default;
+const validatorEscape = require('validator').default.escape;
 exports.sanitizeArray = (innerSanit, escaped = true) =>
   (arr, evObj) => arr.map(entry => 
-    escaped ? escape(
+    escaped ? validatorEscape(
       typeof innerSanit === 'function' ?
       innerSanit(entry, evObj) : entry
     ) : entry

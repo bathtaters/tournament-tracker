@@ -1,45 +1,133 @@
-const db = require('../db/admin/connect');
 const dbOp = require('../db/admin/base');
 const player = require('../db/player');
+const team = require('../db/team');
 const draft = require('../db/draft');
 const match = require('../db/match');
 const clock = require('../db/clock');
+const results = require('../db/results');
+
+const initTestFile = require('path').join(__dirname,'dbtest.sql');
 
 const hold = (ms) => new Promise(r => setTimeout(r, ms));
 
 async function dbCheck() {
     let temp;
     
-    // SETUP
-    console.log('Resetting database...');
-    await db.resetDb();
-    console.log('Initializing test data...');
-    await db.runSqlFile(require('path').join(__dirname,'dbtest.sql'));
+    // CLEAR DB
+    // console.log('Resetting database...'); await require('../db/admin/connect').resetDb();
+    console.log('Initializing test data...'); await dbOp.execFile(initTestFile);
 
-    const playIds = await player.list().then(a => a.map(p => p.id));
+    // Data for testing
+    const playIds = await player.list().then(a => console.log('getPlayIds:',a.map(p=>p.name))||a.map(p => p.id));
+    const useDraft = await draft.list().then(r => r.find(d => d.title == 'KLD'));
+    const altDraft = await draft.list().then(r => r.find(d => d.title == 'CPY'));
     
+    /* VIEW ALL
+    console.log('MATCHES')
+    await dbOp.query("SELECT * FROM match;").then(console.log);
+    console.log('DRAFTS')
+    await dbOp.query("SELECT * FROM draft;").then(console.log);
+    console.log('PLAYERS')
+    await dbOp.query("SELECT * FROM player;").then(console.log);
+    //*/
+    
+    //* TEST VIEWS
+    console.log('Getting player/teamView...');
+    const t = await dbOp.query("SELECT * FROM player WHERE isTeam IS TRUE LIMIT 1;")
+    .then(r => console.log(r) || r);
+    const p = await dbOp.query("SELECT * FROM player WHERE id = $1;",[t.members[0]])
+    .then(r => console.log(r) || r);
+    await dbOp.query("SELECT * FROM team WHERE id = $1;",[t.id])
+    .then(console.log);
+    
+    console.log('Getting draft...');
+    await dbOp.query("SELECT * FROM draft WHERE title = $1;",['KLD'])
+        .then(r => console.log(r) || r);
+    await dbOp.query("SELECT * FROM draftDetails WHERE id = $1;",[useDraft.id]).then(console.log);
+    await dbOp.query("SELECT * FROM draftByes;").then(console.log);
+
+    console.log('Getting match...');
+    const m = await dbOp.query(
+        "SELECT * FROM match WHERE draftId = $1 AND round = 1 AND players ? $2::STRING;",
+        [useDraft.id, p.id]
+        ).then(r => console.log(r) || r);
+        
+        console.log('Getting matchViews...');
+        await dbOp.query("SELECT players FROM allPlayers WHERE id = $1;",[m.draftid])
+        .then(console.log);
+        const w = await dbOp.query("SELECT * FROM matchDetail WHERE id = $1;",[m.id])
+        .then(r => console.log(r) || r);
+        
+        console.log('Getting draftPlayerView...');
+        const res = await dbOp.query(
+            "SELECT * FROM draftPlayer WHERE draftId = $1 AND playerId = $2;",
+            [useDraft.id, p.id]
+    ).then(r => console.log(r) || r);
+
+    console.log('Getting matchPlayerView...');
+    for (const mId of res.matches) {
+        await dbOp.query(
+            "SELECT * FROM matchPlayer JOIN match ON matchId = match.id WHERE matchId = $1 AND playerId = $2;",
+            [mId, p.id]
+        ).then(console.log);
+    }
+    
+    console.log('Getting breakersView...');
+    await dbOp.query(
+            "SELECT * FROM breakers WHERE draftId = $1 AND playerId = $2;",
+            [useDraft.id, p.id]
+    ).then(r => console.log(r) || r);
+    await dbOp.query(
+            "SELECT * FROM breakers WHERE draftId = $1;",
+            [useDraft.id]
+    ).then(r => console.log(r) || r);
+    //*/
+
     //* PLAYERS: TEST SUCCESS!
-    console.log('\nPlayers...');
+    console.log('\nPlayers... *******************************');
     await player.list().then(console.log);
     temp = await player.add('NewPlayer');
-    console.log('NewPlayer',temp);
-    await player.list().then(console.log);
+    console.log('NewPlayerID:',temp);
+    await player.list().then(r=>console.log(r.map(p=>`${p.name}<${p.id}>`).join(', ')));
     await player.rename(temp,'EditPlayer');
-    await player.list().then(console.log);
+    await player.list().then(r=>console.log(r.map(p=>`${p.name}<${p.id}>`).join(', ')));
     await player.get(temp).then(console.log);
     await player.rmv(temp);
-    await player.list().then(console.log);
+    await player.list().then(r=>console.log(r.map(p=>`${p.name}<${p.id}>`).join(', ')));
+    //*/
+
+    //* TEAMS: TEST SUCCESS!
+    console.log('\nTeams... *******************************');
+    await team.list().then(console.log);
+    temp = await team.add(playIds.slice(0,2));
+    console.log('NewTeamID:',temp);
+    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.members).length+']'}<${p.id}>`).join(', ')));
+    await player.get(temp).then(console.log);
+    await team.get(temp).then(console.log);
+    await player.rename(temp,'NewTeam').then(console.log);
+    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.members).length+']'}<${p.id}>`).join(', ')));
+    await player.get(playIds[2]).then(console.log);
+    await team.addMember(temp,playIds[2]);
+    await team.get(temp).then(console.log);
+    await player.get(playIds[3]).then(console.log);
+    await team.replaceMember(temp,playIds[2],playIds[3]);
+    await team.get(temp).then(console.log);
+    await team.rmvMember(temp,playIds[3]);
+    await team.get(temp).then(console.log);
+    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.members).length+']'}<${p.id}>`).join(', ')));
+    await team.rmv(temp);
+    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.members).length+']'}<${p.id}>`).join(', ')));
     //*/
 
     //* DRAFTS: TEST SUCCESS!
-    console.log('\nDrafts...');
+    console.log('\nDrafts... *******************************');
     await draft.dayList().then(console.log);
     await draft.list().then(console.log);
     temp = await draft.add({title: 'TestDraft', day: new Date()});
     console.log('NewDraft.id:',temp);
     await draft.list().then(console.log);
-    await draft.set(temp,{title:'EditDraft', clockLimit: 1800, teamSize: 2});
     await draft.dayList().then(console.log);
+    await draft.set(temp,{title:'EditDraft', clockLimit: '0:0:1800', playerspermatch: 4});
     await draft.list().then(console.log);
     await draft.get(temp).then(console.log);
     await draft.rmv(temp);
@@ -48,22 +136,24 @@ async function dbCheck() {
     temp = await draft.list().then(r=>r[0].id);
     await draft.get(temp).then(console.log);
     await draft.addPlayer(temp,playIds);
+    console.log('added',playIds.length,'players');
     await draft.get(temp).then(console.log);
     await draft.dropPlayer(temp,playIds[1]);
     console.log('Dropped',playIds[1]);
-    await draft.getPlayers(temp).then(console.log);
     await draft.get(temp).then(console.log);
     await draft.addPlayer(temp,playIds[1]);
     console.log('Added',playIds[1]);
-    await draft.getPlayers(temp).then(console.log);
+    await draft.get(temp).then(console.log);
     await draft.dropPlayer(temp,playIds);
-    await draft.getPlayers(temp).then(console.log);
+    console.log('dropped',playIds.length,'players');
     await draft.get(temp).then(console.log);
     //*/
     
     //* CLOCKS: TEST SUCCESS!
-    console.log('\nClocks...');
+    console.log('\nClocks... *******************************');
     temp = await draft.add({title: 'ClockTest', day: new Date(), clockLimit: 10});
+    await draft.get(temp).then(console.log);
+    await clock.getClock(temp).then(console.log);
     await clock.getAll(temp).then(console.log);
     await clock.start(temp).then(() => console.log(' >> START CLOCK >> '));
     await clock.getAll(temp).then(console.log);
@@ -88,60 +178,80 @@ async function dbCheck() {
     //*/
     
     //* MATCHES: TEST SUCCESS!
-    console.log('\nmatches...');
-    const useDraft = await draft.list().then(d => d[0]);
-    const altDraft = await draft.list().then(d => d[1]);
-    console.log('Using Draft:',useDraft.title,2);
-    await match.list(useDraft.id,2).then(console.log);
+    console.log('\nMatches... *******************************');
+    console.log('Using Draft:',useDraft.title);
+    await match.list(useDraft.id).then(console.log);
+    // await match.listDetail(useDraft.id).then(console.log);
+    console.log('\nROUND',2);
+    await match.listDetail(useDraft.id,2).then(console.log);
+    temp = await match.list(useDraft.id,2).then(r=>console.log(r)||Object.keys(r));
+    console.log('DemoMatchID',temp);
+    // ADD ROUND
+    await draft.get(useDraft.id).then(console.log);
+    await match.list(useDraft.id).then(console.log);
     console.log(' --- ADD ROUND --- ');
-    const round = await match.addRound(useDraft.id,[[playIds[0],playIds[1]],[playIds[2],playIds[3]],[playIds[4],playIds[5]],[playIds[6],playIds[7]]]);
-    await match.list(useDraft.id,round).then(console.log);
-    console.log(' --- SWAP --- ');
-    temp = await match.list(useDraft.id, round);
-    await match.swapPlayers(temp[0].players[0], temp[0].id, temp[2].players[0], temp[2].id);
-    await match.list(useDraft.id,round).then(console.log);
-    temp = await match.list(useDraft.id, round);
-    await match.swapPlayers(temp[1].players, temp[1].id, temp[3].players, temp[3].id);
-    await match.list(useDraft.id,round).then(console.log);
+    await match.pushRound(useDraft.id)
+        .then(r=>{if (r.error) console.error(r.error); else if(!r.round) console.log('DRAFT HAS ENDED.'); return r.round;});
+    await match.popRound(useDraft.id);
+    await match.list(useDraft.id).then(console.log);
+    await draft.dropPlayer(useDraft.id,playIds[1]);
+    await draft.get(useDraft.id).then(console.log);
+    const round = await match.pushRound(useDraft.id)
+        .then(r=>{if(r.error) console.error(r.error); else if(!r.round) console.log('DRAFT HAS ENDED.'); return r.round;});
+    await draft.get(useDraft.id).then(console.log);
+    await match.list(useDraft.id).then(console.log);
+    console.log('Added round',round);
+    temp = await match.listDetail(useDraft.id,round)
+        .then(r=>console.log(r)||r);
+    console.log(' --- SWAP --- '); 
+    console.log('SWAP(',Object.keys(temp[0].players)[0], temp[0].id, Object.keys(temp[2].players)[1], temp[2].id,')');
+    await player.swap(Object.keys(temp[0].players)[0], temp[0].id, Object.keys(temp[2].players)[1], temp[2].id);
+    console.log('SWAPPED',0,Object.keys(temp[0].players)[0],2,Object.keys(temp[2].players)[1]);
+    await match.listDetail(useDraft.id,round).then(console.log);
     console.log(' --- GET --- ');
     await match.get(temp[0].id, false).then(console.log);
     await match.get(temp[0].id, true).then(console.log);
-    console.log('Using Draft:',altDraft.title,2);
-    await match.list(altDraft.id,1).then(r => match.get(r[0].id, false)).then(console.log);
+    console.log('Using Draft:',altDraft.title,1);
+    await match.list(altDraft.id,1).then(r=>console.log(r)||match.get(Object.keys(r)[0], false)).then(console.log);
     console.log(' --- REPORT --- ');
     console.log('DRAFT',useDraft.title,'ROUND',round);
-    await match.report(temp[0].id, 1);
+    let fakeResults = temp[0].players;
+    fakeResults.draws = Math.floor(Math.random() * 3);
+    Object.keys(fakeResults).forEach(k => fakeResults[k] = Math.floor(Math.random() * 3))
+    await results.report(temp[0].id, fakeResults);
     await match.get(temp[0].id, true).then(console.log);
-    await match.report(temp[1].id, 0);
+    fakeResults = temp[1].players;
+    Object.keys(fakeResults).forEach(k => fakeResults[k] = Math.floor(Math.random() * 3))
+    fakeResults.draws = Math.floor(Math.random() * 3);
     await match.get(temp[1].id, true).then(console.log);
-    await match.report(temp[2].id, 2);
-    await match.get(temp[2].id, true).then(console.log);
-    await match.report(temp[3].id, 1);
-    await match.get(temp[3].id, true).then(console.log);
-    console.log('DRAFT',altDraft.title,'ROUND',1);
-    await match.list(altDraft.id).then(r => r.map(g => `${g.round}) ${g.players[0]} vs. ${g.players[1]}`)).then(console.log);
-    temp = await match.list(altDraft.id,1);
-    await match.report(temp[0].id, 1);
-    await match.get(temp[0].id, false).then(console.log);
-    await match.report(temp[1].id, 2);
-    await match.get(temp[1].id, false).then(console.log);
-    console.log(' --- GET RECORD --- ');
-    await match.getRecord(true).then(console.log);
-    await match.getRecord(false).then(console.log);
-    console.log('PLAYER',playIds[0]);
-    await match.getRecord(false, { draftId: useDraft.id, playerId: playIds[0] }).then(console.log);
-    await match.getRecord(true, { playerId: playIds[0] }).then(console.log);
-    await match.getRecord(false, { draftId: useDraft.id }).then(console.log);
-    await match.getRecord(false, { draftId: altDraft.id }).then(console.log);
+    await results.report(temp[1].id, fakeResults);
+    await match.get(temp[1].id, true).then(console.log);
+    await results.unreport(temp[1].id);
+    await match.get(temp[1].id, true).then(console.log);
     console.log(' --- DELETE ROUND --- ');
-    await match.list(useDraft.id).then(r => r.map(g => `${g.round}) ${g.players[0]} vs. ${g.players[1]}`)).then(console.log);
-    await match.deleteRound(useDraft.id, round);
-    await match.list(useDraft.id).then(r => r.map(g => `${g.round}) ${g.players[0]} vs. ${g.players[1]}`)).then(console.log);
+    await match.list(useDraft.id).then(console.log);
+    await match.popRound(useDraft.id);
+    await match.list(useDraft.id).then(console.log);
     //*/
     
+    //*console.log('\nRecords... *******************************');
+    try {
+        await results.getRecord().then(console.log);
+    } catch (e) { console.error('ERROR getRecord():',e); }
+    console.log('PLAYER',playIds[0],'DRAFT',useDraft.title);
+    await results.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:1,ofGames:0}).then(console.log);
+    await results.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:0,ofGames:0}).then(console.log);
+    await results.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:1,ofGames:1}).then(console.log);
+    await results.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:0,ofGames:1}).then(console.log);
+    await results.getRecord({playerId: playIds[0]}).then(console.log);
+    await results.getRecord({playerId: playIds[0]},{sortByDraft:1}).then(console.log);
+    await results.getRecord({draftId: useDraft.id}).then(console.log);
+    await results.getBreakers(useDraft.id, playIds.slice(1,4)).then(console.log);
+    await results.getBreakers(useDraft.id).then(console.log);
+    //*/
     
     // Close connection
     await dbOp.deinit(); console.log('Finished');
 }
 
-dbCheck();
+// dbCheck();

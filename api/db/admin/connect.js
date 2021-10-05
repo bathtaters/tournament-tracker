@@ -1,20 +1,12 @@
 const fs = require("fs/promises");
 const join = require("path").join;
-const { Pool, types } = require("pg");
+const { Pool } = require("pg");
 const parse = require("pg-connection-string").parse;
 
 const getConnStr = require('./getConnStr');
-const { retryBlock, throwErr } = require('../../services/utils');
+const { throwErr } = require('../../services/utils');
+const utils = require('../../services/sqlUtils');
 const logger = console; // Setup logger
-
-// Setup returning ints/floats as numbers
-types.setTypeParser(types.builtins.INT2, parseInt);
-types.setTypeParser(types.builtins.INT4, parseInt);
-// types.setTypeParser(types.builtins.INT8, BigInt);
-// types.setTypeParser(types.builtins.FLOAT4, parseFloat);
-// types.setTypeParser(types.builtins.FLOAT8, parseFloat);
-types.setTypeParser(types.builtins.NUMERIC, parseFloat);
-
 
 // Connect to the DB
 let pool;
@@ -37,9 +29,9 @@ async function closeConnection() {
 // Execute commands from a .SQL file
 async function runSqlFile(path, maxAttempts, retryCount = 0) {
   const sqlFile = await fs.readFile(path)
-    .then(f => f.toString().split(';'))
+    .then(f => f.toString().split(';').map(l=>l.replace(/--[^\n]*(?:\n|$)/g,'').replace(/(?:\n|\r\n)+/g,' ').trim()).filter(l=>!!l))
     .catch(er => throwErr(er, "Unable to read SQL file ("+path+")"));
-
+  // logger.debug(sqlFile);
   return runOperation(async client => {
     let resArr = [];
     for (let cmd of sqlFile) {
@@ -52,18 +44,21 @@ async function runSqlFile(path, maxAttempts, retryCount = 0) {
 }
 
 
+
 //--- Wrapper for SQL Operations ---//
 // This gets a client from pool & re-calls operation(client)
 // for up to <maxAttempts> (starting @ <retryCount> w/ delay = 2^<retryCount> secs)
 async function runOperation(operation, maxAttempts, retryCount = 0) {
   if (!pool) throw new Error("Attempting DB access before successfully opening connection.");
-
-  let client = await retryBlock(pool => pool.connect(), [pool], 5);
+  
+  let client = await utils.retryBlock(
+    pool => pool.connect(), [pool], 5
+  );
   if (!client) throw new Error("Unable to connect to DB.");
 
   await client.query("BEGIN;");
   try {
-    const res = await retryBlock(
+    const res = await utils.retryBlock(
       // Operation
       async (client,operation) => {
         const res = await operation(client);
@@ -72,8 +67,9 @@ async function runOperation(operation, maxAttempts, retryCount = 0) {
       },
 
       // Params
-      [client,operation], maxAttempts, retryCount, ["40001"],
-
+      [client,operation], //new Error().stack,
+      maxAttempts, retryCount, ["40001"],
+      
       // On retry
       async (e, client) => {
         await client.query(
@@ -101,3 +97,6 @@ const resetDb = (maxAttempts = 15, retryCount = 0) => runSqlFile(join(__dirname,
 
 // Public functions
 module.exports = { openConnection, closeConnection, runOperation, runSqlFile, resetDb, isConnected: () => !!pool }
+
+// Setup integer parsing
+utils.initNumberParsing();
