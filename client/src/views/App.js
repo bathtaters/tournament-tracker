@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-d
 import Header from "./Header";
 import Schedule from "./Schedule";
 import Draft from "./Draft";
+import Players from "./Players";
 import Profile from "./Profile";
 
 // import callApi from "../controllers/callApi";
@@ -19,7 +20,7 @@ function App() {
   return pug`
     .min-h-screen.relative
       Router
-        Header(userId=state.data.activeUser)
+        Header(title=state.data.settings ? state.data.settings.title || "" : "")
         
         .m-2
           if state.loaded && !state.err && loggedIn
@@ -27,13 +28,16 @@ function App() {
               Redirect(exact=true from="/" to="/home")
 
               Route(path="/home" exact=true)
-                Schedule(data=state.data.schedule drafts=state.data.drafts)
+                Schedule(data=state.data.schedule range=state.data.settings.dateRange drafts=state.data.drafts)
 
-              Route(path="/draft")
-                Draft(data=state.data.drafts players=state.data.players)
+              Route(path="/draft/:id")
+                Draft(draft=state.data.drafts players=state.data.players)
               
-              Route(path="/profile")
-                Profile(data=state.data.players activeUser=state.data.activeUser)
+              Route(path="/players")
+                Players(ranking=state.data.ranking players=state.data.players)
+
+              Route(path="/profile/:id")
+                Profile(data=state.data.players)
               
               Route(path="*")
                 .text-center This is not a page.

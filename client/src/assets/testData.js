@@ -1,9 +1,13 @@
 const testData = {
+  settings: {
+    title: "Lords of Luxury Retreat Demo",
+    dateRange: [ new Date(Date.now() - 1000*60*60*24*2), new Date(Date.now() + 1000*60*60*24*4) ],
+  },
   schedule: [
-    { day: new Date('10/5/21'), drafts: ['d1','d2'] },
-    { day: new Date('10/6/21'), drafts: ['d3','d4','d6'] },
-    { day: new Date('10/7/21'), drafts: ['d5'] },
-    { day: null, drafts: [ 'd8','d9' ] }
+    { day: null, drafts: [ 'd8','d9' ] },
+    { day: new Date(Date.now() - 1000*60*60*24), drafts: ['d1','d2'] },
+    { day: new Date(), drafts: ['d3','d4','d6'] },
+    { day: new Date(Date.now() + 1000*60*60*24), drafts: ['d5'] },
   ],
   drafts: {
     d1: {
@@ -46,15 +50,16 @@ const testData = {
     d8: {title: 'Party Draft', isDone: false}, d9: {title: 'Cube Draft', isDone: false}
   },
   players: {
-    nc1: { name: 'Nick', record: [0,1,0], username: 'bathtaters'},
-    mr1: { name: 'Matt', record: [1,0,0], username: 'mjr2020'},
-    af1: { name: 'Foff', record: [1,0,0], username: 'lafoaf'},
-    td1: { name: 'Taylor', record: [1,0,0], username: 'izzetnow'},
-    cd1: { name: 'Cosme', record: [0,1,0], username: 'quaker2000'},
-    iq1: { name: 'Ian', record: [0,1,0], username: 'seattleboy69'},
-    js1: { name: 'Joe', record: [0,1,0], username: 'monoredjoe'},
-    ad1: { name: 'Al', record: [1,0,0], username: 'mtgdeals'},
+    mr1: { name: 'Matt', record: [1,0,0] },
+    af1: { name: 'Foff', record: [1,0,0] },
+    td1: { name: 'Taylor', record: [1,0,0] },
+    ad1: { name: 'Al', record: [1,0,0] },
+    nc1: { name: 'Nick', record: [0,1,0] },
+    cd1: { name: 'Cosme', record: [0,1,0] },
+    iq1: { name: 'Ian', record: [0,1,0] },
+    js1: { name: 'Joe', record: [0,1,0] },
   },
+  ranking: ['mr1','af1','ad1','td1','nc1','iq1','cd1','js1'],
   activeUser: 'nc1'
 };
 
