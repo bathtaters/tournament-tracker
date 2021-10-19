@@ -28,10 +28,10 @@ function App() {
               Redirect(exact=true from="/" to="/home")
 
               Route(path="/home" exact=true)
-                Schedule(data=state.data.schedule range=state.data.settings.dateRange drafts=state.data.drafts)
+                Schedule(schedule=state.data.schedule range=state.data.settings.dateRange drafts=state.data.drafts)
 
               Route(path="/draft/:id")
-                Draft(draft=state.data.drafts players=state.data.players)
+                Draft(drafts=state.data.drafts players=state.data.players)
               
               Route(path="/players")
                 Players(ranking=state.data.ranking players=state.data.players)
