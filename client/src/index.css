@@ -10,25 +10,36 @@
 /* Base Styles */
 @layer base {
     @variants hover, active, group-hover {
-        .link-color       { @apply text-indigo-900 dark:text-indigo-200; }
-        .link-hover-color { @apply text-indigo-700 dark:text-indigo-400; }
-        .base-color       { @apply text-gray-900   dark:text-gray-200;   }
-        .base-color-inv   { @apply text-gray-200   dark:text-gray-900;   }
-        .dim-color        { @apply text-gray-700   dark:text-gray-400;   }
-        .bright-color     { @apply text-black      dark:text-white;      }
-        .pos-color        { @apply text-green-700  dark:text-green-300;  }
-        .neg-color        { @apply text-red-700    dark:text-red-300;    }
-        .alt-bgd          { @apply bg-gray-300     dark:bg-gray-600;     }
-        .slight-bgd       { @apply bg-gray-50      dark:bg-gray-900;     }
-        .base-bgd         { @apply bg-gray-100     dark:bg-gray-800;     }
-        .base-bgd-inv     { @apply bg-gray-800     dark:bg-gray-100;     }
+        .link-color       { @apply text-indigo-800   dark:text-indigo-200;   }
+        .link-hover-color { @apply text-indigo-600   dark:text-indigo-400;   }
+        .base-color       { @apply text-gray-800     dark:text-gray-200;     }
+        .dim-color        { @apply text-gray-600     dark:text-gray-400;     }
+        .dim-color-inv    { @apply text-gray-400     dark:text-gray-600;     }
+        .base-color-inv   { @apply text-gray-200     dark:text-gray-900;     }
+        .max-color        { @apply text-black        dark:text-white;        }
+        .pos-color        { @apply text-green-700    dark:text-green-300;    }
+        .neg-color        { @apply text-red-700      dark:text-red-300;      }
+        .base-bgd         { @apply bg-gray-200       dark:bg-gray-800;       }
+        .alt-bgd          { @apply bg-gray-400       dark:bg-gray-600;       }
+        .alt-bgd-inv      { @apply bg-gray-600       dark:bg-gray-400;       }
+        .base-bgd-inv     { @apply bg-gray-800       dark:bg-gray-200;       }
+        .max-bgd          { @apply bg-white          dark:bg-black;          }
+        .pos-bgd          { @apply bg-green-700      dark:bg-green-300;      }
+        .neg-bgd          { @apply bg-red-700        dark:bg-red-300;        }
+        .base-border      { @apply border-gray-800   dark:border-gray-200;   }
+        .dim-border       { @apply border-gray-600   dark:border-gray-400;   }
+        .dimmer-border    { @apply border-gray-400   dark:border-gray-600;   }
+        .inv-border       { @apply border-gray-200   dark:border-gray-900;   }
+        .max-border       { @apply border-black      dark:border-white;      }
+        .pos-border       { @apply border-green-700  dark:border-green-300;  }
+        .neg-border       { @apply border-red-700    dark:border-red-300;    }
     }
     body {
         @apply relative  leading-none  font-sans;
         @apply base-color   base-bgd print:bg-white;
         @apply text-xs   sm:text-base  print:text-xs;
     }
-    h1, h2, h3, h4, h5, h6 { @apply    font-heading dim-color; }
+    h1, h2, h3, h4, h5, h6 { @apply    font-heading dim-color pt-1; }
     h1 { @apply font-light   text-6xl  sm:text-8xl  print:text-6xl; }
     h2 { @apply font-medium  text-4xl  sm:text-6xl  print:text-4xl; }
     h3 { @apply font-bold    text-2xl  sm:text-4xl  print:text-2xl; }
@@ -40,16 +51,20 @@
     
     /* Form elements */
     input, textarea {
-        @apply slight-bgd bg-opacity-10 focus:bg-opacity-50;
+        @apply max-bgd bg-opacity-10 focus:bg-opacity-50;
         @apply border-gray-500 border-2 px-1 rounded-sm print:border-none;
     }
     input[type="button"], input[type="submit"] {
-        @apply text-center py-1 px-3 rounded-lg;
+        @apply text-center rounded-lg;
+        @apply py-0 px-1 sm:py-1 sm:px-2;
         @apply transform transition-transform duration-300;
         @apply active:translate-y-0.5;
         @apply hover:bg-opacity-90    active:bg-opacity-90;
         @apply active:base-color-inv  active:base-bgd-inv;
         @apply disabled:opacity-50    disabled:bg-opacity-10;
+    }
+    input[type="button"].p-lg, input[type="submit"].p-lg {
+        @apply py-1 px-3 sm:py-2 sm:px-4;
     }
 }
 
