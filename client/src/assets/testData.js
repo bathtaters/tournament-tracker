@@ -1,3 +1,4 @@
+const playerList = ['mr1','af1','ad1','td1','iq1','cd1','nc1','js1'];
 const testData = {
   settings: {
     title: "Lords of Luxury Retreat Demo",
@@ -43,11 +44,12 @@ const testData = {
           }
         ]
       ],
-      ranking: ['mr1','af1','ad1','td1','iq1','cd1','nc1','js1'],
+      ranking: playerList,
     },
-    d2: {title: 'CPY Draft', isDone: true}, d5: {title: 'CKY Draft', isDone: false},
-    d3: {title: 'MM2 Draft', isDone: true}, d4: {title: 'AKH Draft', isDone: false}, d6: {title: 'GRN Draft', isDone: false},
-    d8: {title: 'Party Draft', isDone: false}, d9: {title: 'Cube Draft', isDone: false}
+    d2: {title: 'CPY Draft',   ranking: playerList, isDone: true }, d5: {title: 'CKY Draft',  ranking: playerList, isDone: false},
+    d3: {title: 'MM2 Draft',   ranking: playerList, isDone: true }, d4: {title: 'AKH Draft',  ranking: playerList, isDone: false},
+    d6: {title: 'GRN Draft',   ranking: playerList, isDone: false},
+    d8: {title: 'Party Draft', ranking: playerList, isDone: false}, d9: {title: 'Cube Draft', ranking: playerList, isDone: false},
   },
   players: {
     mr1: { name: 'Matt', record: [1,0,0] },
@@ -60,7 +62,6 @@ const testData = {
     js1: { name: 'Joe', record: [0,1,0] },
   },
   ranking: ['mr1','af1','ad1','td1','nc1','iq1','cd1','js1'],
-  activeUser: 'nc1'
 };
 
 export default testData;
