@@ -1,17 +1,19 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useRef } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 import dragHandle, { preventDef } from '../../controllers/dragAndDrop';
 import { formatMatchTitle, formatRecord } from '../../assets/strings';
 
+import Modal from "./Modal";
 import Report from "./Report";
 import Counter from "./Counter";
 
 // Highlight on drag class style
-const highlightCss = ['border-double','border-white','bg-opacity-50'];
+const highlightCss = ['border-double','border-max','bg-opacity-50'];
 
 function Match({ data, setData, swapPlayers, players, isEditing }) {
+  const reportModal = useRef(null);
 
   const setVal = (baseKey, innerKey=null) => innerKey ? 
     (val) => {
@@ -25,32 +27,30 @@ function Match({ data, setData, swapPlayers, players, isEditing }) {
     if (window.confirm(`Are you sure you want to delete the records for ${formatMatchTitle(data.players, players)}?`))
       setVal('reported')(false);
   };
-
-  const [isReporting, setReporting] = useState(false);
   
   return pug`
-    .m-1.border.border-gray-600.rounded-md.h-32.flex.flex-col.justify-evenly.relative
+    .m-1.border.dim-border.rounded-md.h-32.flex.flex-col.justify-evenly.relative
       .text-center
         each playerId, index in Object.keys(data.players)
           Fragment(key=playerId+".n")
             if index
-              .inline-block.font-thin.text-sm.dim-color.p-2.align-top vs.
+              .inline-block.font-thin.text-sm.dim-color.p-2.align-middle.pointer-events-none vs.
 
-            .inline-block.border.border-dotted.rounded-2xl.border-gray-500.border-opacity-0.p-2.mx-1.mb-1.slight-bgd.bg-opacity-0(
+            .inline-block.border.border-dotted.rounded-2xl.dimmer-border.border-opacity-0.p-2.mx-1.mb-1.max-bgd.bg-opacity-0(
               className=(isEditing ? "border-opacity-100 hover:bg-opacity-50" : "")
               draggable=isEditing
-              onDragStart=dragHandle.start({ matchId: data.id, id: playerId })
+              onDragStart=dragHandle.start({ id: data.id, playerId })
               onDragEnter=dragHandle.enter(highlightCss)
               onDragOver=preventDef
               onDragLeave=dragHandle.leave(highlightCss)
-              onDrop=dragHandle.drop({ matchId: data.id, id: playerId }, swapPlayers, highlightCss)
+              onDrop=dragHandle.drop({ id: data.id, playerId }, swapPlayers, highlightCss)
             )
               h4.mb-0.pb-0.block.text-xl
                 if isEditing
-                  span.link-color.font-light.pointer-events-none(to="/profile/"+playerId)= players[playerId].name
+                  span.link-color.font-light.pointer-events-none= players[playerId].name
 
                 else
-                  Link.font-light.link(to="/profile/"+playerId)= players[playerId].name
+                  Link.font-light(to="/profile/"+playerId)= players[playerId].name
 
               .text-xs.font-thin.dim-color.mt-0.pt-0.pointer-events-none= formatRecord(players[playerId].record)
       
@@ -82,7 +82,7 @@ function Match({ data, setData, swapPlayers, players, isEditing }) {
           input.block.text-xs.font-light.neg-color.mt-1(
             type="button"
             value="Report"
-            onClick=(()=>setReporting(true))
+            onClick=(()=>reportModal.current.open())
           )
       
         if isEditing
@@ -91,12 +91,12 @@ function Match({ data, setData, swapPlayers, players, isEditing }) {
             onClick=clearReport
           ) ∅
       
-    if isReporting
+    Modal(ref=reportModal, startLocked=true)
       Report(
         title=formatMatchTitle(data.players, players)
         match=data
         players=players
-        hideModal=(()=>setReporting(false))
+        hideModal=(()=>reportModal.current.close(true))
         setData=setData
       )
   `;
