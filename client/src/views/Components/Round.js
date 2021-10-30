@@ -1,18 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
-import Match from "./Match";
-
-// TO UTILS
-// Copy object replacing rmvKey w/ addKey: key's value in fromObj
-// IF addKey = NULL => copy object minus rmvKey
-const replaceProp = (baseObj, rmvKey, fromObj = null, addKey = null) => {
-  let newObj = {};
-  Object.keys(baseObj).forEach(key => {
-    if (key !== rmvKey) newObj[key] = baseObj[key];
-    else if (addKey) newObj[addKey] = fromObj[addKey];
-  });
-  return newObj;
-}
+import Match from './Match';
+import { swapData } from '../../controllers/swapData';
 
 function Round({ roundNum, matches, players }) {
   const [isEditing, setEditing] = useState(false);
@@ -29,15 +18,8 @@ function Round({ roundNum, matches, players }) {
   };
 
   const swapPlayers = (playerA, playerB) => {
-    if (playerA.matchId === playerB.matchId) return;
-
-    let newData = [...matchData];
-    const idxA = newData.findIndex(m => m.id === playerA.matchId);
-    const idxB = newData.findIndex(m => m.id === playerB.matchId);
-    const newA = replaceProp(newData[idxA].players, playerA.id, newData[idxB].players, playerB.id);
-    const newB = replaceProp(newData[idxB].players, playerB.id, newData[idxA].players, playerA.id);
-    newData[idxA] = { ...newData[idxA], players: newA };
-    newData[idxB] = { ...newData[idxB], players: newB };
+    if (playerA.id === playerB.id) return;
+    const newData = swapData(matchData, 'players', 'id', playerA, playerB, 'playerId');
     setMatches(newData);
   };
 
