@@ -1,4 +1,16 @@
 // Drag & Drop actions
+const isoDateRe = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?\w/;
+
+const parseDates = obj => {
+  if (typeof obj === 'object') {
+    if (Array.isArray(obj)) return obj.map(parseDates);
+    if (!obj) return obj;
+    Object.keys(obj).forEach(k => obj[k] = parseDates(obj[k]));
+  } else if (typeof obj === 'string' && isoDateRe.test(obj)) {
+    return new Date(obj);
+  }
+  return obj;
+}
 
 // Start Drag
 const start = itemData =>
@@ -13,7 +25,8 @@ const leave = highlightCls =>
 // End Drag (Highlight Class clears any highlight classes still remaining)
 const drop = (itemData,action,highlightCls=null) => ev => {
   preventDef(ev);
-  const itemFrom = JSON.parse(ev.dataTransfer.getData("text"));
+  ev.stopPropagation();
+  const itemFrom = parseDates(JSON.parse(ev.dataTransfer.getData("text")));
   action(itemFrom, itemData);
   if (highlightCls) leave(highlightCls)(ev);
   return false;
