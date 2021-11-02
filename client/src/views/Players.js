@@ -55,7 +55,7 @@ function Players({ranking, players}) {
           players=data.players
           onPlayerClick=handlePlayerClick
           className=(!canDelete && "border-opacity-0")
-          highlightClass=(canDelete && "neg-bgd")
+          highlightClass=(canDelete ? "neg-bgd" : null)
         )
 
       h4.text-center
