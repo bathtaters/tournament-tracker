@@ -5,7 +5,7 @@ import Modal from "./Modal";
 import Stats from "./Stats";
 import { formatRecord } from '../../assets/strings';
 
-function DraftStats({ title, ranking, players }) {
+function DraftStats({ title, ranking, players, active }) {
   const modal = useRef(null);
   return pug`
     .m-4
@@ -16,7 +16,7 @@ function DraftStats({ title, ranking, players }) {
       .grid.grid-flow-row.grid-cols-5.gap-x-2.gap-y-1.items-center.dim-color
         each pid, idx in ranking
           Fragment(key=pid)
-            span.font-light.text-right= (idx + 1)+'.'
+            span.font-light.text-right= (active.includes(pid) ? idx + 1 : 'D')+'.'
 
             Link.col-span-2.text-lg.font-normal.text-left(to="/profile/"+pid)= players[pid].name
 
@@ -33,6 +33,7 @@ DraftStats.propTypes = {
   title: PropTypes.string.isRequired,
   ranking: PropTypes.arrayOf(PropTypes.string),
   players: PropTypes.object,
+  active: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default DraftStats;
