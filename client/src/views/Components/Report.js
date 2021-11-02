@@ -2,24 +2,25 @@ import React, { Fragment } from "react";
 import { useForm } from "react-hook-form";
 import PropTypes from 'prop-types';
 
+
 function Report({ title, match, players, hideModal, setData }) {
   const { register, handleSubmit } = useForm();
 
   const submitReport = reportData => {
-    Object.keys(reportData).forEach(k => reportData[k] = +(reportData[k] || 0))
-    const draws = reportData.draws;
-    delete reportData.draws;
-    setData({...match, players: reportData, draws, reported: true});
+    Object.keys(reportData.players).forEach(k => reportData.players[k] = +(reportData.players[k] || 0));
+    reportData.draws = +(reportData.draws || 0);
+    reportData.drops = Object.keys(reportData.drops).reduce((d,p) => reportData.drops[p] ? d.concat(p) : d, []);
+    setData({...match, ...reportData, reported: true});
     hideModal();
   };
 
   const playerRows = Object.keys(match.players).map(pid => (
     <Fragment key={pid+"R"}>
       <label htmlFor={pid} className="text-right">{players[pid].name}</label>
-      <input type="number" id={pid} min="0" max="2" defaultValue={match.players[pid] || 0} {...register(pid)} />
+      <input type="number" id={pid} min="0" max="2" defaultValue={match.players[pid] || 0} {...register('players.'+pid)} />
       <div>
-        <input type="checkbox" id={'DROP:'+pid} {...register('DROP:'+pid)} />
-        <label htmlFor={'DROP:'+pid} className="font-thin dim-color ml-1">Drop</label>
+        <input type="checkbox" id={'drops.'+pid} {...register('drops.'+pid)} />
+        <label htmlFor={'drops.'+pid} className="font-thin dim-color ml-1">Drop</label>
       </div>
     </Fragment>
   ));

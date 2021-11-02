@@ -3,23 +3,26 @@ import PropTypes from 'prop-types';
 import Match from './Match';
 import { swapData } from '../../controllers/swapData';
 
-function Round({ roundNum, matches, players }) {
+function Round({ roundNum, matches, setMatches, deleteRound, changeActive, players, }) {
   const [isEditing, setEditing] = useState(false);
 
-  const [matchData, setMatches] = useState(JSON.parse(JSON.stringify(matches)));
+  const resetState = () => {
+    matches.forEach(m => m.drops && m.drops.length && changeActive(m.drops, false));
+    setMatches();
+    setEditing(false);
+  }
 
-  const resetState = () => { setMatches(JSON.parse(JSON.stringify(matches))); setEditing(false); }
-
-  const setMatch = matchId => data => {
-    let newData = [...matchData];
-    const idx = newData.findIndex(m => m.id === matchId);
+  const setMatch = (matchId, idx) => data => {
+    let newData = [...matches];
+    if (matchId !== newData[idx].id) idx = newData.findIndex(m => m.id === matchId);
+    if (data.drops && data.drops.length) changeActive(data.drops, true);
     newData[idx] = data;
     setMatches(newData);
   };
 
   const swapPlayers = (playerA, playerB) => {
     if (playerA.id === playerB.id) return;
-    const newData = swapData(matchData, 'players', 'id', playerA, playerB, 'playerId');
+    const newData = swapData(matches, 'players', 'id', playerA, playerB, 'playerId');
     setMatches(newData);
   };
 
@@ -27,14 +30,15 @@ function Round({ roundNum, matches, players }) {
     .m-4.relative(className=(isEditing ? "z-40" : ""))
       h3.font-light.text-center= 'Round '+roundNum
       .flex.flex-col
-        each match in matchData
+        each match, idx in matches
           Match(
             key=match.id
             data=match
             players=players
             isEditing=isEditing
-            setData=setMatch(match.id)
+            setData=setMatch(match.id, idx)
             swapPlayers=swapPlayers
+            changeActive=changeActive
           )
 
         .font-thin.text-sm.italic.text-center.mt-1
@@ -48,6 +52,13 @@ function Round({ roundNum, matches, players }) {
             a(
               onClick=resetState
             ) Revert
+            
+            if deleteRound
+              span.mx-1 /
+
+              a(
+                onClick=deleteRound
+              ) Delete
 
           else
             a(
@@ -62,7 +73,10 @@ function Round({ roundNum, matches, players }) {
 Round.propTypes = {
   roundNum: PropTypes.number.isRequired,
   matches: PropTypes.arrayOf(PropTypes.object),
+  setMatches: PropTypes.func,
   players: PropTypes.object,
+  deleteRound: PropTypes.func,
+  changeActive: PropTypes.func,
 };
 
 export default Round;

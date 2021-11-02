@@ -12,7 +12,7 @@ import Counter from "./Counter";
 // Highlight on drag class style
 const highlightCss = ['border-double','border-max','bg-opacity-50'];
 
-function Match({ data, setData, swapPlayers, players, isEditing }) {
+function Match({ data, setData, swapPlayers, players, isEditing, changeActive }) {
   const reportModal = useRef(null);
 
   const setVal = (baseKey, innerKey=null) => innerKey ? 
@@ -23,9 +23,11 @@ function Match({ data, setData, swapPlayers, players, isEditing }) {
     } :
     val => setData({...data, [baseKey]: val});
 
-  const clearReport = ev => {
-    if (window.confirm(`Are you sure you want to delete the records for ${formatMatchTitle(data.players, players)}?`))
-      setVal('reported')(false);
+  const clearReport = () => {
+    if (window.confirm(`Are you sure you want to delete the records for ${formatMatchTitle(data.players, players)}?`)) {
+      if (data.drops && data.drops.length) changeActive(data.drops, false);
+      setData({ ...data, reported: false, drops: null });
+    }
   };
   
   return pug`
@@ -52,7 +54,14 @@ function Match({ data, setData, swapPlayers, players, isEditing }) {
                 else
                   Link.font-light(to="/profile/"+playerId)= players[playerId].name
 
-              .text-xs.font-thin.dim-color.mt-0.pt-0.pointer-events-none= formatRecord(players[playerId].record)
+              if data.drops && data.drops.includes(playerId)
+                .text-xs.font-thin.neg-color.mt-0.pt-0.pointer-events-none Dropped
+              
+              else if Object.keys(data.players).length === 1
+                .text-xs.font-thin.dim-color.mt-0.pt-0.pointer-events-none Bye
+
+              else
+                .text-xs.font-thin.dim-color.mt-0.pt-0.pointer-events-none= formatRecord(players[playerId].record)
       
       if data.reported
         .text-center.w-full.font-light.text-xs.pos-color.-mt-1(
@@ -77,6 +86,12 @@ function Match({ data, setData, swapPlayers, players, isEditing }) {
                 setVal=setVal('players', playerId),
                 maxVal=2, isEditing=isEditing
               )
+
+          if isEditing
+            .text-red-500.absolute.bottom-0.right-1.text-xs.font-thin.cursor-pointer(
+              className="hover:neg-color"
+              onClick=clearReport
+            ) ∅
             
         else
           input.block.text-xs.font-light.neg-color.mt-1(
@@ -84,12 +99,6 @@ function Match({ data, setData, swapPlayers, players, isEditing }) {
             value="Report"
             onClick=(()=>reportModal.current.open())
           )
-      
-        if isEditing
-          .text-red-500.absolute.bottom-0.right-1.text-xs.font-thin.cursor-pointer(
-            className="hover:neg-color"
-            onClick=clearReport
-          ) ∅
       
     Modal(ref=reportModal, startLocked=true)
       Report(
@@ -108,6 +117,7 @@ Match.propTypes = {
   setData: PropTypes.func,
   swapPlayers: PropTypes.func,
   isEditing: PropTypes.bool.isRequired,
+  changeActive: PropTypes.func,
 };
 
 export default Match;
