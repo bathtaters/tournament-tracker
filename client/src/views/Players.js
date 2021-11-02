@@ -1,20 +1,13 @@
 import React, { useState, useRef, useCallback } from "react";
 import PropTypes from 'prop-types';
+
 import Modal from "./Components/Modal";
 import Stats from "./Components/Stats";
 import AddPlayer from "./Components/AddPlayer";
 
-const deletePlayerMsg = name => "Are you sure you want to delete "+name+"? All of their info will be lost.";
+import { deletePlayerMsg } from "../assets/strings";
 
-const newId = (prefix, existing = null) => {
-  if (!existing) existing = [];
-  if (!Array.isArray(existing)) existing = Object.keys(existing);
-  for (let i = 1; i < 100; i++) {
-    if (!existing.includes(prefix+i))
-      return prefix+i;
-  }
-  return null;
-};
+import { newId } from "../controllers/testing/testDataAPI";
 
 function Players({ranking, players}) {
   const modal = useRef(null);

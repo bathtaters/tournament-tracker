@@ -1,31 +1,14 @@
 import React, { useState, useRef, useCallback } from "react";
 import PropTypes from 'prop-types';
+
 import Modal from "./Components/Modal";
-import Day from './Components/Day';
-import EditDraft from './Components/EditDraft';
+import Day from "./Components/Day";
+import EditDraft from "./Components/EditDraft";
 
 import getDays, { sameDay } from '../controllers/getDays';
 import { swapData } from '../controllers/swapData';
 
-const newId = (prefix, existing = null) => {
-  if (!existing) existing = [];
-  if (!Array.isArray(existing)) existing = Object.keys(existing);
-  for (let i = 1; i < 100; i++) {
-    if (!existing.includes(prefix+i))
-      return prefix+i;
-  }
-  return null;
-}
-
-const getPlayer = (playerInfo,existingPlayers) => {
-  const playerId = newId(
-    (playerInfo.name ? playerInfo.name.trim().charAt(0).toLowerCase() : 'x') + 'x',
-    existingPlayers
-  );
-  if (!playerInfo.record) playerInfo.record = [0,0,0];
-  return [playerId, playerInfo];
-};
-
+import { newId, getPlayer } from "../controllers/testing/testDataAPI";
 
 function Schedule({ schedule, range, drafts, players }) {
   const modal = useRef(null);

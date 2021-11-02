@@ -4,15 +4,13 @@ import PropTypes from 'prop-types';
 import { useForm } from "react-hook-form";
 import SuggestText from "./SuggestText";
 
-const defaultDraftTitle = "New Draft";
-const createPlayerMsg = name => name + " does not exist. Would you like to create a profile?";
-const duplicatePlayerMsg = name => name + " is already in this draft.";
-const unsavedPlayerMsg = name => name + " has not been added to the draft. Would you like to add now?";
-
-const findObj = (obj, value, key) => {
-  value = value.toLowerCase();
-  return Object.keys(obj).find(k => obj[k][key].toLowerCase() === value);
-}
+import { findObj } from "../../controllers/misc";
+import {
+  defaultDraftTitle,
+  createPlayerMsg,
+  duplicatePlayerMsg,
+  unsavedPlayerMsg
+} from "../../assets/strings";
 
 const emptyNewPlayer = { visible: false, name: "", id: null };
 

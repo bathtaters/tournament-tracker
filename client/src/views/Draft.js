@@ -1,22 +1,11 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import PropTypes from 'prop-types';
+
 import DraftStats from "./Components/DraftStats";
 import Round from "./Components/Round";
 
-const newDraft = (id, players) => ({
-  id, draws: 0, reported: false,
-  players: players.reduce((p,pid)=>({...p, [pid]: 0}),{}),
-});
-
-const newRound = (playerIds, draftId, roundNum) => {
-  let round = [];
-  const e = Math.ceil(playerIds.length / 2);
-  for (let i = 0; i < e; i++) {
-    round.push(newDraft(draftId+'m'+roundNum+(i+1), playerIds.slice(i * 2, i * 2 + 2)));
-  }
-  return round;
-};
+import { newRound } from "../controllers/testing/testDataAPI";
 
 function Draft({ drafts, players }) {
   let { id } = useParams();
