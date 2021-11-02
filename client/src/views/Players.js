@@ -6,6 +6,16 @@ import AddPlayer from "./Components/AddPlayer";
 
 const deletePlayerMsg = name => "Are you sure you want to delete "+name+"? All of their info will be lost.";
 
+const newId = (prefix, existing = null) => {
+  if (!existing) existing = [];
+  if (!Array.isArray(existing)) existing = Object.keys(existing);
+  for (let i = 1; i < 100; i++) {
+    if (!existing.includes(prefix+i))
+      return prefix+i;
+  }
+  return null;
+};
+
 function Players({ranking, players}) {
   const modal = useRef(null);
   const [data, setData] = useState(JSON.parse(JSON.stringify({ranking, players})));
@@ -73,14 +83,3 @@ Players.propTypes = {
 };
 
 export default Players;
-
-
-const newId = (prefix, existing = null) => {
-  if (!existing) existing = [];
-  if (!Array.isArray(existing)) existing = Object.keys(existing);
-  for (let i = 1; i < 100; i++) {
-    if (!existing.includes(prefix+i))
-      return prefix+i;
-  }
-  return null;
-};

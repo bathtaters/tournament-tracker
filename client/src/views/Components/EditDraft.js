@@ -5,29 +5,51 @@ import { useForm } from "react-hook-form";
 import SuggestText from "./SuggestText";
 
 const defaultDraftTitle = "New Draft";
+const createPlayerMsg = name => name + " does not exist. Would you like to create a profile?";
+const duplicatePlayerMsg = name => name + " is already in this draft.";
+const unsavedPlayerMsg = name => name + " has not been added to the draft. Would you like to add now?";
 
-function EditDraft({ draft, players, editDraft, hideModal }) {
+const findObj = (obj, value, key) => {
+  value = value.toLowerCase();
+  return Object.keys(obj).find(k => obj[k][key].toLowerCase() === value);
+}
+
+const emptyNewPlayer = { visible: false, name: "", id: null };
+
+function EditDraft({ draft, players, editDraft, createPlayer, hideModal }) {
   const { register, handleSubmit } = useForm();
-  const [newPlayer, setNewPlayer] = useState({ visible: false, name: "", id: null });
-  const [playerList, setPlayerList] = useState({ ids: draft ? [...(draft.ranking || [])] : [], new: [] });
+  const [newPlayer, setNewPlayer] = useState(emptyNewPlayer);
+  const [playerList, setPlayerList] = useState(draft && draft.ranking ? [...draft.ranking] : []);
 
-  const getPlayerId = name => Object.keys(players).find(id => players[id].name === name);
+  const newPlayerChange = e => e.target.value !== undefined ? 
+    setNewPlayer({ ...newPlayer, name: e.target.value, id: e.target.id }):
+    setNewPlayer({ ...newPlayer, id: e.target.id });
 
-  const newPlayerChange = e => setNewPlayer({ ...newPlayer, name: e.target.value, id: e.target.id });
-
-  const addPlayer = () => {
+  const addPlayer = (e,withChange) => {
     if (!newPlayer.visible) return setNewPlayer({ ...newPlayer, visible: true });
-    
-    const name = newPlayer.name.trim();
+
+    const name = (withChange && withChange.name ? withChange.name : newPlayer.name).trim();
     if (!name) return setNewPlayer({ ...newPlayer, visible: false });
 
-    const pid = newPlayer.id || getPlayerId(name);
-    setPlayerList(pid ?
-      { ...playerList, ids: playerList.ids.concat(pid) } :
-      { ...playerList, new: playerList.new.concat(name) }
-    );
-    setNewPlayer({ visible: false, name: "" });
+    const pid = (withChange ? withChange.id : newPlayer.id) || findObj(players, name, 'name');
+    if (!pid) return addNewPlayer(e, name);
+
+    if (playerList.includes(pid)) {
+      window.alert(duplicatePlayerMsg(name));
+      setNewPlayer(emptyNewPlayer);
+      return;
+    }
+    
+    setPlayerList(playerList.concat(pid));
+    setNewPlayer(emptyNewPlayer);
   }
+
+  const addNewPlayer = (e, name) => {
+    if (!window.confirm(createPlayerMsg(name))) return true;
+    const id = createPlayer({ name });
+    addPlayer(null, {id, name});
+    return false;
+  };
 
   const rmvPlayer = (pid, isNew) => () => {
     const newList = playerList[isNew ? 'new' : 'ids'].slice();
@@ -39,28 +61,28 @@ function EditDraft({ draft, players, editDraft, hideModal }) {
   };
 
   const submitDraft = draftData => {
-    const newPlayers = newPlayer.visible && !newPlayer.id && newPlayer.name.trim() ?
-      playerList.new.concat(newPlayer.name.trim()) : playerList.new;
-    draftData.ranking = playerList.ids.concat(newPlayers);
-    if (newPlayer.visible && newPlayer.id) draftData.ranking = draftData.ranking.concat(newPlayer.id);
+    if(newPlayer.visible && newPlayer.name.trim() && window.confirm(unsavedPlayerMsg(newPlayer.name)))
+      return addPlayer();
+
+    setNewPlayer(emptyNewPlayer);
+    
+    draftData.ranking = playerList;
     if (!draftData.title.trim() && !draftData.ranking.length) return hideModal(true);
     if (!draftData.title.trim()) draftData.title = (draft && draft.title) || defaultDraftTitle;
-    editDraft({...draft, ...draftData}, newPlayers);
+    editDraft({...draft, ...draftData});
   };
 
-  const playerRow = (name, pid, idx) => (
-    <div key={pid || name+idx}>
+  const playerRow = (name, pid) => (
+    <div key={pid}>
       <input
         className="my-1 mx-2 text-xs font-light px-0"
         type="button"
         value="–"
-        onClick={rmvPlayer(pid || name, !pid)}
+        onClick={rmvPlayer(pid)}
       />
       <span className="align-middle">{name}</span>
     </div>
   );
-  const oldPlayerRows = playerList.ids.map(pid => playerRow(players[pid] ? players[pid].name || pid : pid, pid));
-  const newPlayerRows = playerList.new.map((name,idx) => playerRow(name,null,idx));
 
   return (
     <div>
@@ -69,23 +91,25 @@ function EditDraft({ draft, players, editDraft, hideModal }) {
         <div className="flex flex-wrap-reverse">
           <div className="m-4">
             <h4>Active Players</h4>
-            {oldPlayerRows}
-            {newPlayerRows}
+            {playerList.map(pid => playerRow(players[pid] && players[pid].name ? players[pid].name : pid, pid))}
             <div>
-            <input
-              className="my-1 mx-2 text-xs font-light px-0"
-              type="button"
-              value="+"
-              onClick={addPlayer}
-            />
-            <SuggestText
-              className={"align-middle" + (newPlayer.visible ? "" : " hidden")}
-              suggestClass={newPlayer.visible ? "" : " hidden"}
-              value={newPlayer.name}
-              onChange={newPlayerChange}
-              suggestionList={Object.keys(players).map(id=>({id, value: players[id].name}))}
-            />
-            <span className="align-middle"></span>
+              <input
+                className="my-1 mx-2 text-xs font-light px-0"
+                type="button"
+                value="+"
+                onClick={addPlayer}
+              />
+              <SuggestText
+                className="align-middle"
+                isHidden={!newPlayer.visible}
+                value={newPlayer.name}
+                onChange={newPlayerChange}
+                onEnter={addPlayer}
+                onStaticSelect={addNewPlayer}
+                suggestionList={Object.keys(players).map(id=>({id, name: players[id].name}))}
+                staticList={["Add Player"]}
+              />
+              <span className="align-middle"></span>
             </div>
           </div>
           <div className="m-4 text-center">
@@ -121,6 +145,7 @@ function EditDraft({ draft, players, editDraft, hideModal }) {
 EditDraft.propTypes = {
   draft: PropTypes.object,
   players: PropTypes.object,
+  createPlayer: PropTypes.func,
   editDraft: PropTypes.func,
   hideModal: PropTypes.func,
 };

@@ -7,6 +7,26 @@ import EditDraft from './Components/EditDraft';
 import getDays, { sameDay } from '../controllers/getDays';
 import { swapData } from '../controllers/swapData';
 
+const newId = (prefix, existing = null) => {
+  if (!existing) existing = [];
+  if (!Array.isArray(existing)) existing = Object.keys(existing);
+  for (let i = 1; i < 100; i++) {
+    if (!existing.includes(prefix+i))
+      return prefix+i;
+  }
+  return null;
+}
+
+const getPlayer = (playerInfo,existingPlayers) => {
+  const playerId = newId(
+    (playerInfo.name ? playerInfo.name.trim().charAt(0).toLowerCase() : 'x') + 'x',
+    existingPlayers
+  );
+  if (!playerInfo.record) playerInfo.record = [0,0,0];
+  return [playerId, playerInfo];
+};
+
+
 function Schedule({ schedule, range, drafts, players }) {
   const modal = useRef(null);
   const [draftData, setDrafts] = useState(JSON.parse(JSON.stringify(drafts)));
@@ -28,13 +48,13 @@ function Schedule({ schedule, range, drafts, players }) {
     ));
   }, [scheduleData]);
 
-  const editDraft = draftId => (draftSettings, newPlayers=null) => {
-    // Update new player names to playerIds
-    if (newPlayers && newPlayers.length) {
-      const newPlayerData = getPlayers(newPlayers, playerData);
-      draftSettings.ranking = updateArray(draftSettings.ranking, flipObject(newPlayers, newPlayerData, 'name'));
-      setPlayers(newPlayerData);
-    }
+  const createPlayer = playerInfo => {
+    const [playerId, newPlayer] = getPlayer(playerInfo, playerData);
+    setPlayers({ ...playerData, [playerId]: newPlayer });
+    return playerId;
+  }
+
+  const editDraft = draftId => draftSettings => {
     // Create new draft & add to "Unscheduled"
     let updateSched;
     if (!draftId) {
@@ -42,7 +62,7 @@ function Schedule({ schedule, range, drafts, players }) {
       updateSched = [
         scheduleData[0].day ?
           { day: null, drafts: [draftId] } :
-          { ...scheduleData[0], drafts: scheduleData[0].drafts.concat(draftId)},
+          { ...scheduleData[0], drafts: scheduleData[0].drafts.concat(draftId) },
         ...scheduleData.slice(scheduleData[0].day ? 0 : 1)
       ];
     }
@@ -82,11 +102,14 @@ function Schedule({ schedule, range, drafts, players }) {
             key=(dayBlock.day ? dayBlock.day.toISOString() : 'NULL')
           )
       
+      .mt-8 To add -- tiny edit button to edit main Title/Date Range (Changes require reload)
+      
       Modal(ref=modal, startLocked=true)
         EditDraft(
           draft=draftData[currentDraft]
           players=playerData
           editDraft=editDraft(currentDraft)
+          createPlayer=createPlayer
           hideModal=(force=>modal.current.close(force))
         )
   `;
@@ -100,35 +123,3 @@ Schedule.propTypes = {
 };
 
 export default Schedule;
-
-const flipObject = (keyArray, obj, matchOn=null) => keyArray.reduce((res,key) => {
-  res[key] = Object.keys(obj).find(k => (matchOn ? obj[k][matchOn] : obj[k]) === key);
-  return res;
-}, {});
-const updateArray = (arr,dict) => arr.map(entry => dict[entry] || entry);
-
-const newId = (prefix, existing = null) => {
-  if (!existing) existing = [];
-  if (!Array.isArray(existing)) existing = Object.keys(existing);
-  for (let i = 1; i < 100; i++) {
-    if (!existing.includes(prefix+i))
-      return prefix+i;
-  }
-  return null;
-}
-
-const getPlayer = (playerInfo,existingPlayers) => {
-  const playerId = newId(
-    (playerInfo.name ? playerInfo.name.trim().charAt(0).toLowerCase() : 'x') + 'x',
-    existingPlayers
-  );
-  if (!playerInfo.record) playerInfo.record = [0,0,0];
-  return [playerId, playerInfo];
-};
-
-const getPlayers = (newPlayerList, existing) =>
-  newPlayerList.reduce((obj, name) => {
-      const [id,val] = getPlayer({name}, obj);
-      obj[id] = val; return obj;
-    }, {...existing}
-  );
