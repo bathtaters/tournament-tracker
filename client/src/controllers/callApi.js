@@ -14,13 +14,13 @@ export async function callApi (apiPage, postData=null, isForm=true) {
     const resBody = await getBody(res);
     if (res.status >= 400 && res.status < 500) {
         console.error('Client error.',resBody)
-        throw Error('Problem communicating with server ('+(res.statusText||res.status)+').');
+        throw new Error('Problem communicating with server ('+(res.statusText||res.status)+').');
     }
     else if (res.status >= 500 && res.status < 600) {
         console.error('Database server error.',resBody)
-        throw Error('Could not reach server ('+(res.statusText||res.status)+').');
+        throw new Error('Could not reach server ('+(res.statusText||res.status)+').');
     }
-    else if (res.status < 200 || res.status >= 300) throw Error(resBody.message || resBody);
+    else if (res.status < 200 || res.status >= 300) throw new Error(resBody.message || resBody);
     return resBody;
 }
 
