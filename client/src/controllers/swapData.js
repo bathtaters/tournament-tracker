@@ -64,3 +64,22 @@ export const swapData = (
   }
   return newData;
 };
+
+
+const moveDrops = (matchList, playerId, fromId, toId) => {
+  const fromIdx = matchList.findIndex(m => m.id === fromId);
+  if (fromIdx < 0) return console.error("Swap match not found",fromId);
+  if (!matchList[fromIdx].drops) return;
+  if (!matchList[fromIdx].drops.includes(playerId)) return;
+
+  const toIdx   = matchList.findIndex(m => m.id === toId);
+  if (toIdx < 0) return console.error("Swap match not found",toId);
+
+  matchList[fromIdx].drops = matchList[fromIdx].drops.filter(p => p === playerId);
+  matchList[toIdx].drops = (matchList[toIdx].drops || []).concat(playerId);
+};
+
+export const swapDrops = (matchList, playerA, playerB) => {
+  moveDrops(matchList, playerA.playerId, playerA.id, playerB.id);
+  moveDrops(matchList, playerB.playerId, playerB.id, playerA.id);
+};
