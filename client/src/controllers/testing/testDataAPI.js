@@ -33,3 +33,5 @@ export const newRound = (playerIds, draftId, roundNum) => {
   return round;
 };
 
+
+export const draftStatus = draft => !draft ? 0 : draft.isDone ? 3 : draft.matches && draft.matches.length ? 2 : 1;
