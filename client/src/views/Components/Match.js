@@ -1,67 +1,70 @@
-import React, { Fragment, useRef } from "react";
+import React, { Fragment, useRef, useCallback } from "react";
+import { useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-import dragHandle, { preventDef } from '../../controllers/dragAndDrop';
 import { formatMatchTitle, formatRecord } from '../../assets/strings';
 
 import Modal from "./Modal";
+import DragBlock from "./DragBlock";
 import Report from "./Report";
 import Counter from "./Counter";
 
-// Highlight on drag class style
-const highlightCss = ['border-double','border-max','bg-opacity-50'];
-
-function Match({ data, setData, swapPlayers, players, isEditing, changeActive }) {
+function Match({ data, setData, swapPlayers, changeActive, isEditing }) {
   const reportModal = useRef(null);
 
+  const players = useSelector(state => state.players);
+
+  const title = data.players ? formatMatchTitle(data.players, players) : console.log(data) || JSON.stringify(data);
+
   const setVal = (baseKey, innerKey=null) => innerKey ? 
-    (val) => {
-      const newVal = { ...data };
-      newVal[baseKey][innerKey] = val;
-      setData(newVal);
-    } :
-    val => setData({...data, [baseKey]: val});
+    val => setData({ ...data, [baseKey]: { ...data[baseKey], [innerKey]: val } }, true) :
+    val => setData({ ...data, [baseKey]: val}, true);
 
   const clearReport = () => {
-    if (window.confirm(`Are you sure you want to delete the records for ${formatMatchTitle(data.players, players)}?`)) {
+    if (window.confirm(`Are you sure you want to delete the records for ${title}?`)) {
       if (data.drops && data.drops.length) changeActive(data.drops, false);
       setData({ ...data, reported: false, drops: null });
     }
   };
+
+  const canSwap = useCallback((types, a, b) => a !== b && types.includes("json/matchplayer"),[]);
   
   return pug`
     .m-1.border.dim-border.rounded-md.h-32.flex.flex-col.justify-evenly.relative
-      .text-center
+      .flex.justify-evenly.items-center.text-center
         each playerId, index in Object.keys(data.players)
           Fragment(key=playerId+".n")
             if index
-              .inline-block.font-thin.text-sm.dim-color.p-2.align-middle.pointer-events-none vs.
-
-            .inline-block.border.border-dotted.rounded-2xl.dimmer-border.border-opacity-0.p-2.mx-1.mb-1.max-bgd.bg-opacity-0(
-              className=(isEditing ? "border-opacity-100 hover:bg-opacity-50" : "")
-              draggable=isEditing
-              onDragStart=dragHandle.start({ id: data.id, playerId })
-              onDragEnter=dragHandle.enter(highlightCss)
-              onDragOver=preventDef
-              onDragLeave=dragHandle.leave(highlightCss)
-              onDrop=dragHandle.drop({ id: data.id, playerId }, swapPlayers, highlightCss)
+              .inline-block.flex-shrink.font-thin.text-sm.dim-color.p-2.align-middle.pointer-events-none vs.
+            
+            DragBlock.inline-block.flex-grow.rounded-2xl.p-2.mx-1.mb-1(
+              storeData=({ id: data.id, playerId })
+              storeTestData=data.id
+              onDrop=swapPlayers
+              canDrop=canSwap
+              isAvailable=isEditing
+              dataType="json/matchplayer"
             )
-              h4.mb-0.pb-0.block.text-xl
+              h4.mb-0.pb-0.block.text-xl(className=(isEditing ? "pointer-events-none" : ""))
                 if isEditing
-                  span.link-color.font-light.pointer-events-none= players[playerId].name
+                  span.link-color.font-light= players[playerId] && players[playerId].name || '?'
+
+                else if players[playerId]
+                  Link.font-light(to="/profile/"+playerId)= players[playerId].name || '?'
+                
+                else
+                  .font-light.link-color(playerId=playerId) ?
+
+              .text-xs.font-thin.mt-0.pt-0.pointer-events-none.mb-1
+                if data.drops && data.drops.includes(playerId)
+                  .neg-color Dropped
+                
+                else if Object.keys(data.players).length === 1
+                  .dim-color.italic Bye
 
                 else
-                  Link.font-light(to="/profile/"+playerId)= players[playerId].name
-
-              if data.drops && data.drops.includes(playerId)
-                .text-xs.font-thin.neg-color.mt-0.pt-0.pointer-events-none Dropped
-              
-              else if Object.keys(data.players).length === 1
-                .text-xs.font-thin.dim-color.mt-0.pt-0.pointer-events-none Bye
-
-              else
-                .text-xs.font-thin.dim-color.mt-0.pt-0.pointer-events-none= formatRecord(players[playerId].record)
+                  .dim-color= formatRecord(players[playerId] && players[playerId].record)
       
       if data.reported
         .text-center.w-full.font-light.text-xs.pos-color.-mt-1(
@@ -74,7 +77,7 @@ function Match({ data, setData, swapPlayers, players, isEditing, changeActive })
             maxVal=3, isEditing=isEditing
           )
 
-      .flex.justify-evenly.text-center.pos-color
+      .flex.justify-evenly.text-center.pos-color.mb-2
         if data.reported
           each playerId, index in Object.keys(data.players)
             Fragment(key=playerId+".w")
@@ -98,24 +101,23 @@ function Match({ data, setData, swapPlayers, players, isEditing, changeActive })
             type="button"
             value="Report"
             onClick=(()=>reportModal.current.open())
+            disabled=isEditing
           )
       
-    Modal(ref=reportModal, startLocked=true)
-      Report(
-        title=formatMatchTitle(data.players, players)
-        match=data
-        players=players
-        hideModal=(()=>reportModal.current.close(true))
-        setData=setData
-      )
+      Modal(ref=reportModal, startLocked=true)
+        Report(
+          title=title
+          match=data
+          hideModal=(()=>reportModal.current.close(true))
+          setData=setData
+        )
   `;
 }
 
 Match.propTypes = {
   data: PropTypes.object,
-  players: PropTypes.object,
-  setData: PropTypes.func,
-  swapPlayers: PropTypes.func,
+  setData: PropTypes.func.isRequired,
+  swapPlayers: PropTypes.func.isRequired,
   isEditing: PropTypes.bool.isRequired,
   changeActive: PropTypes.func,
 };
