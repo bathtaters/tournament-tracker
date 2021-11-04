@@ -1,33 +1,47 @@
 import React, { Fragment, useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from "react-router-dom";
-import {ReactComponent as ProfilePic} from "../assets/blank-user.svg";
-import PropTypes from 'prop-types';
 
+import { updatePlayer } from "../models/players";
+
+// Default Picture
+import {ReactComponent as ProfilePic} from "../assets/blank-user.svg";
+
+// Component settings
 const profileRows = [
-  { title: 'Name', key: 'name', editable: true, toString: r=>r },
-  { title: 'Record', key: 'record', toString: r=>r.join(' - ') },
+  { title: 'Name', key: 'name', editable: true },
+  { title: 'Record', key: 'record', formatString: r=>r.join(' - ') },
 ]
 
-function Profile({ data }) {
+// Main component
+function Profile() {
+  // Init values
   const { id } = useParams();
-  const [playerData, setPlayerData] = useState(JSON.parse(JSON.stringify(data[id])));
-  const [editing, setEditing] = useState(false);
-  const [editData, setEditData] = useState(JSON.parse(JSON.stringify(data[id])));
+  const dispatch = useDispatch();
 
+  // Global state
+  const playerData = useSelector(state => state.players[id]);
+
+  // Local state
+  const [editing, setEditing] = useState(false);
+  const [editData, setEditData] = useState(JSON.parse(JSON.stringify(playerData)));
+  const changeData = key => e => setEditData({...editData, [key]: e.target.value});
+  
+  // Actions
   const updateData = key => {
-    setPlayerData({ ...playerData, [key]: editData[key].trim() || playerData[key] });
-    setEditing(null);
+    if (editData[key].trim()) dispatch(updatePlayer({ [key]: editData[key].trim(), id }));
+    setEditing(false);
   };
 
-  const changeData = key => e => setEditData({...editData, [key]: e.target.value});
-
   const handleClick = key => () => {
+    // Begin edit
     if (editing !== key) {
       setEditData({...editData, [key]: playerData[key] });
       setEditing(key);
+
+    // Save edit
     } else {
       updateData(key);
-      setEditing(false);
     }
   }
 
@@ -50,10 +64,15 @@ function Profile({ data }) {
                     input(type="text" value=editData[row.key] onChange=changeData(row.key))
               
                   else
-                    div= row.toString ? row.toString(playerData[row.key]) : playerData[row.key]
+                    div= row.formatString ? row.formatString(playerData[row.key]) : playerData[row.key]
             
                 if row.editable
-                  a.text-left.font-light.text-xs(onClick=handleClick(row.key))= editing === row.key ? 'save' : 'edit'
+                  .text-left.font-light.text-xs
+                    a(onClick=handleClick(row.key))= editing === row.key ? 'save' : 'edit'
+
+                    if editing === row.key
+                      span= ' / '
+                      a(onClick=(()=>setEditing(false)))= 'revert'
                 
                 else
                   div
@@ -61,9 +80,5 @@ function Profile({ data }) {
       .mt-6 To add -- Player's past / current / future games
   `;
 }
-
-Profile.propTypes = {
-  data: PropTypes.object,
-};
 
 export default Profile;

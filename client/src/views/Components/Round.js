@@ -1,82 +1,93 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+
 import Match from './Match';
-import { swapData } from '../../controllers/swapData';
+import { setRound, setMatch } from '../../models/drafts';
 
-function Round({ roundNum, matches, setMatches, deleteRound, changeActive, players, }) {
+import { swapData, swapDrops } from '../../controllers/swapData';
+
+
+function Round({ draftId, round, changeActive, deleteRound }) {
+  // Global
+  const dispatch = useDispatch();
+  const matches = useSelector(state => state.drafts[draftId].matches[round]);
+
+  // Local
+  const [matchTemp, setMatchTemp] = useState(matches);
   const [isEditing, setEditing] = useState(false);
+  
+  // Local actions
+  const toggleEditing = () => { if (!isEditing) setMatchTemp(matches); setEditing(!isEditing); };
+  const handleRevert = () => { setMatchTemp(matches); toggleEditing(); }
 
-  const resetState = () => {
-    matches.forEach(m => m.drops && m.drops.length && changeActive(m.drops, false));
-    setMatches();
-    setEditing(false);
-  }
-
-  const setMatch = (matchId, idx) => data => {
-    let newData = [...matches];
-    if (matchId !== newData[idx].id) idx = newData.findIndex(m => m.id === matchId);
-    if (data.drops && data.drops.length) changeActive(data.drops, true);
+  const updateMatchTemp = (id, idx, data) => {
+    let newData = [...matchTemp];
+    if (id !== newData[idx].id) idx = newData.findIndex(m => m.id === id);
     newData[idx] = data;
-    setMatches(newData);
+    setMatchTemp(newData);
   };
 
   const swapPlayers = (playerA, playerB) => {
     if (playerA.id === playerB.id) return;
-    const newData = swapData(matches, 'players', 'id', playerA, playerB, 'playerId');
-    setMatches(newData);
+    const newData = swapData(matchTemp, 'players', 'id', playerA, playerB, 'playerId');
+    swapDrops(newData,playerA,playerB);
+    setMatchTemp(newData);
   };
+
+  // Global actions
+  const handleSave = () => { 
+    dispatch(setRound({ draftId, round, data: matchTemp }));
+    toggleEditing();
+  }
+
+  const updateMatch = (id, idx) => (data, isTemp = false) => {
+    updateMatchTemp(id, idx, data);
+    if (!isTemp) {
+      dispatch(setMatch({ draftId, id, idx: [round,idx], data }));
+      if (data.drops && data.drops.length) changeActive(data.drops, true);
+    }
+  }
 
   return pug`
     .m-4.relative(className=(isEditing ? "z-40" : ""))
-      h3.font-light.text-center= 'Round '+roundNum
+      h3.font-light.text-center= 'Round '+(round+1)
       .flex.flex-col
-        each match, idx in matches
+        each match, idx in matchTemp
           Match(
             key=match.id
             data=match
-            players=players
-            isEditing=isEditing
-            setData=setMatch(match.id, idx)
+            setData=updateMatch(match.id, idx)
             swapPlayers=swapPlayers
             changeActive=changeActive
+            isEditing=isEditing
           )
 
         .font-thin.text-sm.italic.text-center.mt-1
           if isEditing
-            a(
-              onClick=(() => setEditing(false))
-            ) Save
+            a(onClick=handleSave) Save
 
             span.mx-1 /
 
-            a(
-              onClick=resetState
-            ) Revert
+            a(onClick=handleRevert) Revert
             
             if deleteRound
               span.mx-1 /
-
-              a(
-                onClick=deleteRound
-              ) Delete
+              a(onClick=deleteRound) Delete
 
           else
-            a(
-              onClick=(() => setEditing(true))
-            )= 'Edit Round '+roundNum
-
+            a(onClick=toggleEditing)= 'Edit Round '+(round+1)
+              
     if isEditing
       .fixed.top-0.left-0.w-screen.h-screen.z-30.base-bgd.bg-opacity-50
   `;
 }
 
 Round.propTypes = {
-  roundNum: PropTypes.number.isRequired,
-  matches: PropTypes.arrayOf(PropTypes.object),
-  setMatches: PropTypes.func,
-  players: PropTypes.object,
+  draftId: PropTypes.string.isRequired,
+  round: PropTypes.number.isRequired,
+  changeActive: PropTypes.func.isRequired,
   deleteRound: PropTypes.func,
-  changeActive: PropTypes.func,
 };
 
 export default Round;

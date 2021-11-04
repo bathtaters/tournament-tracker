@@ -1,59 +1,37 @@
 import React, { useState, useRef, useCallback } from "react";
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Modal from "./Components/Modal";
 import Day from "./Components/Day";
 import EditDraft from "./Components/EditDraft";
 
-import getDays, { sameDay } from '../controllers/getDays';
-import { swapData } from '../controllers/swapData';
+import { setSchedule } from "../models/schedule";
 
-import { newId, getPlayer } from "../controllers/testing/testDataAPI";
+function Schedule() {
+  const dispatch = useDispatch();
 
-function Schedule({ schedule, range, drafts, players }) {
+  // Local state
   const modal = useRef(null);
-  const [draftData, setDrafts] = useState(JSON.parse(JSON.stringify(drafts)));
-  const [playerData, setPlayers] = useState(JSON.parse(JSON.stringify(players)));
-  const [scheduleData, setSchedule] = useState(getDays(range, schedule));
   const [isEditing, setEdit] = useState(false);
   const [currentDraft, setCurrentDraft] = useState(null);
-
+  const [undoData, storeUndo] = useState(null);
   const openDraftModal = useCallback(draftId => { setCurrentDraft(draftId); modal.current.open(); }, [modal]);
 
-  const resetSchedule = useCallback(() => { setSchedule(getDays(range, schedule)); setEdit(false); }, [range,schedule]);
+  // Global state (TO DO)
+  const scheduleData = useSelector(state => state.schedule);
 
-  const swapDrafts = useCallback((draftA, draftB) => {
-    if (draftA.id === draftB.id ||
-      (!draftB.id && sameDay(draftA.day, draftB.day))) return;
-    setSchedule(swapData(
-      scheduleData, 'drafts', 'day', draftA, draftB, 'id',
-      (a,b) => a ? sameDay(a,b) : a===b
-    ));
-  }, [scheduleData]);
-
-  const createPlayer = playerInfo => {
-    const [playerId, newPlayer] = getPlayer(playerInfo, playerData);
-    setPlayers({ ...playerData, [playerId]: newPlayer });
-    return playerId;
+  // Actions
+  const resetSchedule = () => {
+    if (undoData) dispatch(setSchedule(JSON.parse(undoData)));
+    else alert('No data to revert to.');
+    storeUndo(null);
+    setEdit(false);
   }
 
-  const editDraft = draftId => draftSettings => {
-    // Create new draft & add to "Unscheduled"
-    let updateSched;
-    if (!draftId) {
-      draftId = newId('d', draftData);
-      updateSched = [
-        scheduleData[0].day ?
-          { day: null, drafts: [draftId] } :
-          { ...scheduleData[0], drafts: scheduleData[0].drafts.concat(draftId) },
-        ...scheduleData.slice(scheduleData[0].day ? 0 : 1)
-      ];
-    }
-    // Add draft & close modal
-    setDrafts({ ...draftData, [draftId]: draftSettings });
-    if (updateSched) setSchedule(updateSched);
-    modal.current.close(true);
-  };
+  const handleEditClick = () => {
+    storeUndo(isEditing ? null : JSON.stringify(scheduleData));
+    setEdit(!isEditing);
+  }
 
   return pug`
     div
@@ -71,38 +49,27 @@ function Schedule({ schedule, range, drafts, players }) {
           className="sm:w-20 sm:h-11"
           type="button"
           value=(isEditing ? "Save" : "Edit")
-          onClick=(()=>setEdit(!isEditing))
+          onClick=handleEditClick
         )
 
       .flex.flex-wrap.justify-center.mt-4
         each dayBlock in scheduleData
           Day(
             data=dayBlock
-            drafts=draftData
             isEditing=isEditing
-            swapDrafts=swapDrafts
             setDraftModal=openDraftModal
-            key=(dayBlock.day ? dayBlock.day.toISOString() : 'NULL')
+            key=(dayBlock.day ? dayBlock.day : -1)
           )
       
-      .mt-8 To add -- tiny edit button to edit main Title/Date Range (Changes require reload)
+      .mt-8.text-xs.dim-color.font-light
+        p To add -- tiny edit button to edit main Title/Date Range (Changes require reload)
       
       Modal(ref=modal, startLocked=true)
         EditDraft(
-          draft=draftData[currentDraft]
-          players=playerData
-          editDraft=editDraft(currentDraft)
-          createPlayer=createPlayer
+          draftId=currentDraft
           hideModal=(force=>modal.current.close(force))
         )
   `;
 }
-
-Schedule.propTypes = {
-  schedule: PropTypes.arrayOf(PropTypes.object),
-  range: PropTypes.arrayOf(PropTypes.object),
-  drafts: PropTypes.object,
-  players: PropTypes.object,
-};
 
 export default Schedule;

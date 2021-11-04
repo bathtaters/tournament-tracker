@@ -1,52 +1,30 @@
 import React, { useState, useRef, useCallback } from "react";
-import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 
 import Modal from "./Components/Modal";
 import Stats from "./Components/Stats";
-import AddPlayer from "./Components/AddPlayer";
+import NewPlayer from "./Components/NewPlayer";
 
 import { deletePlayerMsg } from "../assets/strings";
+import { rmvPlayer } from "../models/players";
 
-import { newId } from "../controllers/testing/testDataAPI";
-
-function Players({ranking, players}) {
+function Players() {
+  // Init view
   const modal = useRef(null);
-  const [data, setData] = useState(JSON.parse(JSON.stringify({ranking, players})));
+  const dispatch = useDispatch();
+
+  // Local state
   const [canDelete, setDeleteMode] = useState(false);
-
   const toggleDelete = () => setDeleteMode(!canDelete);
-
-  const addPlayer = useCallback(playerInfo => {
-    const playerId = newId(
-      (playerInfo.name ? playerInfo.name.trim().charAt(0).toLowerCase() : 'x') + 'x',
-      data.players
-    );
-    playerInfo.record = playerInfo.record || [0,0,0];
-    setData({
-      ranking: data.ranking.concat(playerId),
-      players: { ...data.players, [playerId]: playerInfo },
-    });
-  }, [data]);
-
-  const rmvPlayer = useCallback(playerId => {
-    const rank = data.ranking.indexOf(playerId);
-    if (rank < 0) return console.error('Could not find player '+playerId+' to remove.');
-
-    const newRanking = data.ranking.slice(0,rank).concat(data.ranking.slice(rank+1))
-    let newPlayers = {}; 
-    Object.keys(data.players).forEach(pid => {
-      if(pid !== playerId) newPlayers[pid] = data.players[pid];
-    });
-    setData({ ranking: newRanking, players: newPlayers });
-  }, [data]);
-
-  const handlePlayerClick = (playerId, e) => {
-    if (!canDelete) return true;
+  
+  // Actions
+  const handlePlayerClick = useCallback((playerId, e, playerData) => {
+    if (!canDelete) return; // Pass click
     e.preventDefault();
-    if (!window.confirm(deletePlayerMsg(data.players[playerId].name))) return false;
-    rmvPlayer(playerId);
-    return false;
-  };
+    // Delete player
+    if (!window.confirm(deletePlayerMsg(playerData.name))) return;
+    dispatch(rmvPlayer(playerId));
+  }, [canDelete, dispatch]);
 
   return pug`
     div
@@ -54,11 +32,9 @@ function Players({ranking, players}) {
 
       .px-6.flex.justify-center.mb-6
         Stats.border.neg-border.border-8(
-          ranking=data.ranking
-          players=data.players
           onPlayerClick=handlePlayerClick
           className=(!canDelete && "border-opacity-0")
-          highlightClass=(canDelete ? "neg-bgd" : null)
+          highlightClass=(canDelete ? "neg-bgd" : "")
         )
 
       h4.text-center
@@ -66,13 +42,8 @@ function Players({ranking, players}) {
         input.m-2.p-lg(type="button" value=(canDelete ? "x" : "–") onClick=toggleDelete)
       
       Modal(ref=modal startLocked=true)
-        AddPlayer(add=addPlayer hideModal=(force=>modal.current.close(force)))
+        NewPlayer(hideModal=(force=>modal.current.close(force)))
   `;
 }
-
-Players.propTypes = {
-  ranking: PropTypes.arrayOf(PropTypes.string),
-  players: PropTypes.object,
-};
 
 export default Players;

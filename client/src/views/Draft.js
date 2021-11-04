@@ -1,45 +1,50 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from "react-router-dom";
-import PropTypes from 'prop-types';
 
 import DraftStats from "./Components/DraftStats";
 import Round from "./Components/Round";
 
-import { newRound } from "../controllers/testing/testDataAPI";
+import { pushRound, popRound } from "../models/drafts";
 
-function Draft({ drafts, players }) {
+
+function Draft() {
   let { id } = useParams();
-  const [matches, setMatches] = useState(drafts[id] && drafts[id].matches ? JSON.parse(JSON.stringify(drafts[id].matches)) : []);
-  const [activePlayers, setPlayers] = useState(drafts[id] && drafts[id].ranking ? JSON.parse(JSON.stringify(drafts[id].ranking)): []);
-  const ranking = drafts[id].ranking;
+  const dispatch = useDispatch();
 
-  const popRound = () => setMatches(matches.slice(0,-1));
+  // Global
+  const draft = useSelector(state => state.drafts[id]);
+  const matches = (draft && draft.matches) || [];
 
-  const pushRound = () => setMatches(matches.concat([newRound(activePlayers, id, matches.length + 1)]));
+  // Local
+  const [activePlayers, setPlayers] = useState(draft && draft.ranking ? draft.ranking.slice() : []);
+  const changeActive = (playerIds, drop) => {
+    if (playerIds.length) {
+      if (drop) setPlayers(activePlayers.filter(p => !playerIds.includes(p)));
+      else setPlayers(activePlayers.concat(playerIds.filter(p => !activePlayers.includes(p))));
+    }
+  };
 
-  const setRound = roundNum => roundData => setMatches(
-    roundData ?
-    Object.assign([], matches, {[roundNum]: roundData}) :
-    drafts[id] ? JSON.parse(JSON.stringify(drafts[id].matches)) : []
-  );
-  
-  const changeActive = (playerIds, drop) => drop ? 
-    setPlayers(activePlayers.filter(p => !playerIds.includes(p))) :
-    setPlayers(activePlayers.concat(playerIds.filter(p => !activePlayers.includes(p))));
+  // Actions
+  const nextRound = () => dispatch(pushRound({ id, activePlayers }));
+  const prevRound = () => {
+    matches[matches.length - 1].forEach(m => m.drops && m.drops.length && changeActive(m.drops, false));
+    dispatch(popRound(id));
+  }
 
   const isDone = roundNum => !matches.length || (matches[--roundNum] && matches[roundNum].every(m => m.reported));
   
   return pug`
     div
-      if drafts[id]
-        h2.text-center.font-thin= drafts[id].title
+      if draft
+        h2.text-center.font-thin= draft.title
 
         form.text-center.mt-6.mb-4
-          input(type="button" value="Next Round" disabled=!isDone(matches.length) onClick=pushRound)
+          input(type="button" value="Next Round" disabled=!isDone(matches.length) onClick=nextRound)
 
         .flex.flex-row.flex-wrap.justify-evenly
-          if ranking && ranking.length
-            DraftStats(title=drafts[id].title ranking=ranking players=players active=activePlayers)
+          if draft.ranking && draft.ranking.length
+            DraftStats(title=draft.title ranking=draft.ranking active=activePlayers)
 
           - var roundCount = matches.length - 1
 
@@ -47,12 +52,10 @@ function Draft({ drafts, players }) {
 
           while roundNum-- > 0
             Round(
-              roundNum=(roundNum + 1)
-              matches=matches[roundNum]
-              setMatches=setRound(roundNum)
+              draftId=id
+              round=roundNum
               changeActive=changeActive
-              deleteRound=(roundNum === roundCount ? popRound : null)
-              players=players
+              deleteRound=(roundNum === roundCount ? prevRound : null)
               key=(id+"."+roundNum)
             )
       
@@ -60,10 +63,5 @@ function Draft({ drafts, players }) {
         h3.italic.text-center.font-thin Draft not found
   `;
 }
-
-Draft.propTypes = {
-  drafts: PropTypes.object,
-  players: PropTypes.object,
-};
 
 export default Draft;

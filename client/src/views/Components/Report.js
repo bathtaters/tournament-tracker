@@ -1,11 +1,16 @@
 import React, { Fragment } from "react";
+import { useSelector } from 'react-redux';
 import { useForm } from "react-hook-form";
 import PropTypes from 'prop-types';
 
-
-function Report({ title, match, players, hideModal, setData }) {
+function Report({ title, match, hideModal, setData }) {
+  // Global
+  const players = useSelector(state => state.players);
+  
+  // Local
   const { register, handleSubmit } = useForm();
 
+  // Action
   const submitReport = reportData => {
     Object.keys(reportData.players).forEach(k => reportData.players[k] = +(reportData.players[k] || 0));
     reportData.draws = +(reportData.draws || 0);
@@ -14,6 +19,7 @@ function Report({ title, match, players, hideModal, setData }) {
     hideModal();
   };
 
+  // Render
   const playerRows = Object.keys(match.players).map(pid => (
     <Fragment key={pid+"R"}>
       <label htmlFor={pid} className="text-right">{players[pid].name}</label>
@@ -44,9 +50,8 @@ function Report({ title, match, players, hideModal, setData }) {
 
 
 Report.propTypes = {
-  title: PropTypes.string,
   match: PropTypes.object,
-  players: PropTypes.object,
+  title: PropTypes.string,
   hideModal: PropTypes.func,
   setData: PropTypes.func,
 };

@@ -20,7 +20,7 @@ function App() {
   return pug`
     .min-h-screen.relative
       Router
-        Header(title=state.data.settings ? state.data.settings.title || "" : "")
+        Header(title=((state.data.settings && state.data.settings.title) || "Tournament Tracker"))
         
         .m-2
           if state.loaded && !state.err && loggedIn
@@ -28,27 +28,16 @@ function App() {
               Redirect(exact=true from="/" to="/home")
 
               Route(path="/home" exact=true)
-                Schedule(
-                  schedule=state.data.schedule
-                  range=state.data.settings.dateRange
-                  drafts=state.data.drafts
-                  players=state.data.players
-                )
+                Schedule
 
               Route(path="/draft/:id")
-                Draft(
-                  drafts=state.data.drafts
-                  players=state.data.players
-                )
+                Draft
               
               Route(path="/players")
-                Players(
-                  ranking=state.data.ranking
-                  players=state.data.players
-                )
+                Players
 
               Route(path="/profile/:id")
-                Profile(data=state.data.players)
+                Profile
               
               Route(path="*")
                 .text-center This is not a page.

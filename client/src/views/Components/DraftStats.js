@@ -1,12 +1,17 @@
 import React, { useRef, Fragment } from "react";
+import { useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
+
 import Modal from "./Modal";
 import Stats from "./Stats";
+
 import { formatRecord } from '../../assets/strings';
 
-function DraftStats({ title, ranking, players, active }) {
+function DraftStats({ title, ranking, active }) {
   const modal = useRef(null);
+  const players = useSelector(state => state.players);
+  
   return pug`
     .m-4
       h3.font-light.text-center Standings
@@ -18,9 +23,13 @@ function DraftStats({ title, ranking, players, active }) {
           Fragment(key=pid)
             span.font-light.text-right= (active.includes(pid) ? idx + 1 : 'D')+'.'
 
-            Link.col-span-2.text-lg.font-normal.text-left(to="/profile/"+pid)= players[pid].name
-
-            span.col-span-2.font-light.text-xs.align-middle= formatRecord(players[pid].record,0)
+            if players[pid]
+              Link.col-span-2.text-lg.font-normal.text-left(to="/profile/"+pid)= players[pid].name
+              span.col-span-2.text-xs.font-light.align-middle= formatRecord(players[pid].record,0)
+            
+            else
+              span.col-span-4.text-md.font-thin.align-middle.text-center.dim-color.italic – Missing –
+              // span.col-span-2.text-xs.font-light.align-middle
       
     Modal(ref=modal)
       h3.font-light.max-color.text-center.mb-4= title+' Stats'
@@ -32,7 +41,6 @@ function DraftStats({ title, ranking, players, active }) {
 DraftStats.propTypes = {
   title: PropTypes.string.isRequired,
   ranking: PropTypes.arrayOf(PropTypes.string),
-  players: PropTypes.object,
   active: PropTypes.arrayOf(PropTypes.string),
 };
 
