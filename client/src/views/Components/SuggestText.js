@@ -60,7 +60,7 @@ function SuggestText({
   const choose = select => {
     if (!select) select = getCurrent() || isSolo;
     if (typeof select === 'string' && onStaticSelect) {
-      if (onStaticSelect(select, value)) return;
+      if (onStaticSelect(value, select)) return;
     } else onChange(
       {target: { value: select[suggestionKey] || select, id: select[uniqueKey] }}
     );
@@ -101,8 +101,8 @@ function SuggestText({
         className=(className+(isHidden ? " invisible" : ""))
       )
       if listIsVisible && !isSolo && listCount
-        .absolute.top-auto.left-0.z-50.w-full
-          .fixed.border.dim-border.shadow-lg
+        .absolute.left-0.z-50.right-0.top-auto.max-h-screen.bg-red-500.transform
+          .fixed.border.dim-border.shadow-lg.overflow-auto.max-h-24.w-full
             ul
               each suggest, idx in suggestions
                 li(
