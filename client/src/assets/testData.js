@@ -2,13 +2,13 @@ const playerList = ['mr1','af1','ad1','td1','iq1','cd1','nc1','js1'];
 const testData = {
   settings: {
     title: "Lords of Luxury Retreat Demo",
-    dateRange: [ new Date(Date.now() - 1000*60*60*24*2), new Date(Date.now() + 1000*60*60*24*4) ],
+    dateRange: [ (new Date(Date.now() - 1000*60*60*24*2)).getTime(), (new Date(Date.now() + 1000*60*60*24*4)).getTime() ],
   },
   schedule: [
     { day: null, drafts: [ 'd8','d9' ] },
-    { day: new Date(Date.now() - 1000*60*60*24), drafts: ['d1','d2'] },
-    { day: new Date(), drafts: ['d3','d4','d6'] },
-    { day: new Date(Date.now() + 1000*60*60*24), drafts: ['d5'] },
+    { day: (new Date(Date.now() - 1000*60*60*24)).getTime(), drafts: ['d1','d2'] },
+    { day: (new Date()).getTime(), drafts: ['d3','d4','d6'] },
+    { day: (new Date(Date.now() + 1000*60*60*24)).getTime(), drafts: ['d5'] },
   ],
   drafts: {
     d1: {
