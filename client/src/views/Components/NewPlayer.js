@@ -1,15 +1,22 @@
 import React, { Fragment } from "react";
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useForm } from "react-hook-form";
 
+import { addPlayer } from "../../models/players";
+
+// Compenent settings
 const settingsRows = [
   { title: 'Name', key: 'name', def: "New Player" },
 ];
 
-function AddPlayer({ add, hideModal }) {
+// Component
+function AddPlayer({ hideModal }) {
+  const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
 
   const submitPlayer = playerData => {
+    // Apply defaults
     settingsRows.forEach(r => {
       if (
         r.key in playerData &&
@@ -17,7 +24,8 @@ function AddPlayer({ add, hideModal }) {
         r.def
       ) playerData[r.key] = r.def;
     });
-    add(playerData);
+    // Add player
+    dispatch(addPlayer(playerData));
     hideModal(true);
   };
 
@@ -62,7 +70,6 @@ function AddPlayer({ add, hideModal }) {
 }
 
 AddPlayer.propTypes = {
-  add: PropTypes.func,
   hideModal: PropTypes.func,
 };
 
