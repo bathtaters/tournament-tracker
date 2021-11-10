@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import PropTypes from 'prop-types';
 
+// Constants
 const defStyle = "base-bgd dim-color py-0.5 px-2 w-full ";
 const selectStyle = " base-bgd-inv base-color-inv";
-
 const suggestionKey = 'name', uniqueKey = 'id';
 
+// Suggestion logic
 const getSuggestions = (list,value) => {
   const len = value.length;
   // if (!len) return [[],false]; // Hide all when text box is empty 
@@ -21,6 +22,7 @@ const getSuggestions = (list,value) => {
   return [matches, !matches.length && exact];
 }
 
+// Main component
 function SuggestText({
   value,
   suggestionList = [],
