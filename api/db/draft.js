@@ -34,34 +34,40 @@ const dayList = () => ops.query(
     "SELECT DISTINCT day FROM draft@date_idx;"
 ).then(r=>r.map(d=>d.day));
 
-function list(date) {
-    if (!date)
-        return ops.query(
-            "SELECT * FROM draft ORDER BY INDEX draft@date_idx;"
-        );
-    return ops.query(
+function getByDay(date) {
+    return ops.query(date ?
         // id, day, title, roundActive, roundCount
-        "SELECT * FROM draft@date_idx WHERE day = $1;",
-        [date]
+        "SELECT array_agg(id) drafts FROM draft@date_idx WHERE day = $1 GROUP BY day;" :
+        "SELECT day, array_agg(id) drafts FROM draft@date_idx GROUP BY day ORDER BY day;",
+        date ? [date] : []
+    );
+}
+
+function list(date) {
+    return ops.query(date ?
+        // id, day, title, roundActive, roundCount
+        "SELECT * FROM draft@date_idx WHERE day = $1;" :
+        "SELECT * FROM draft ORDER BY INDEX draft@date_idx;",
+        date ? [date] : []
     );
 }
 
 const add = ({ 
-    title, day, roundCount, bestOf,
-    playersPerMatch, clockLimit, players
+    title = defVal.title,
+    day = defVal.day,
+    roundCount = defVal.roundCount,
+    bestOf = defVal.bestOf,
+    playersPerMatch = defVal.playersPerMatch,
+    clockLimit = defVal.clockLimit,
+    players = defVal.players,
 }) => ops.query(
     "INSERT INTO draft("+
         "title, day, roundCount, bestOf, "+
         "playersPerMatch, clockLimit, players"+
     ") VALUES($1, $2, $3, $4, $5, $6, ($7)::UUID[]) RETURNING id;",
     [
-        title || defVal.title,
-        day || defVal.day,
-        roundCount || defVal.roundCount,
-        bestOf || defVal.bestOf,
-        playersPerMatch || defVal.playersPerMatch,
-        clockLimit || defVal.clockLimit,
-        players || defVal.players
+        title, day, roundCount, bestOf,
+        playersPerMatch, clockLimit, players,
     ]
 ).then(r=>r && r.id);
 
@@ -98,8 +104,8 @@ function swapPlayer(draftId, oldPlayerId, newPlayerId) {
 
 // Exports
 module.exports = {
-    dayList, list, add,
-    addPlayer, dropPlayer, swapPlayer,
+    dayList, list, getByDay,
+    add, addPlayer, dropPlayer, swapPlayer,
     get: id => ops.getRow('draft', id),
     rmv:  id => ops.rmvRow('draft', id),
     set: (id, newParams) => ops.updateRow('draft', id, newParams),

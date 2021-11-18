@@ -47,41 +47,41 @@ function get(matchId, detail = true) {
 
 function list(draftId, round = null) {
     return round
+        ? ops.query(
+            "SELECT json_object_agg(id::STRING, reported::STRING) m "+
+            "FROM match WHERE draftId = $1 AND round = $2 GROUP BY round;",
+            [draftId, round]
+        ).then(r => r && r.m || r[0].m)
+        // ).then(r => r && r.map(m => ({ [m.id]: m.reported })))
 
-    ? ops.query(
-        "SELECT json_object_agg(id::STRING, reported::STRING) m "+
-        "FROM match WHERE draftId = $1 AND round = $2 GROUP BY round;",
-        [draftId, round]
-    ).then(r => r && r.m || r[0].m)
-    // ).then(r => r && r.map(m => ({ [m.id]: m.reported })))
-
-    : ops.query(
-        "SELECT round, json_object_agg(id::STRING, reported::STRING) m "+
-        "FROM match WHERE draftId = $1 GROUP BY round;",
-        [draftId]
-    ).then(r => r && r.reduce((res,next) => {
-        res[next.round - 1] = next.m;
-        return res;
-    }, []));
-    // ).then(r => r && r.reduce((res,m) => {
-    //     if (!res[m.round||0]) res[m.round||0] = [];
-    //     res[m.round||0].push(({ [m.id]: m.reported }));
-    //     return res;
-    // }, []));
+        : ops.query(
+            "SELECT round, json_object_agg(id::STRING, reported::STRING) m "+
+            "FROM match WHERE draftId = $1 GROUP BY round;",
+            [draftId]
+        ).then(r => r && r.reduce((res,next) => {
+            res[next.round - 1] = next.m;
+            return res;
+        }, []));
+        // ).then(r => r && r.reduce((res,m) => {
+        //     if (!res[m.round||0]) res[m.round||0] = [];
+        //     res[m.round||0].push(({ [m.id]: m.reported }));
+        //     return res;
+        // }, []));
 }
 
 function listDetail(draftId, round = null) {
-    return round 
-    ? ops.query(
-        "SELECT * FROM match JOIN matchDetail USING (id) "+
-        "WHERE draftId = $1 AND round = $2;",
-        [draftId, round]
-    )
-    : ops.query(
-        "SELECT * FROM match JOIN matchDetail USING (id) "+
-        "WHERE draftId = $1 ORDER BY round;",
-        [draftId]
-    );
+    return !draftId ? ops.query(
+            "SELECT * FROM match JOIN matchDetail USING (id) "+
+            "ORDER BY INDEX match@draft_idx;",
+        ) : round ? ops.query(
+            "SELECT * FROM match JOIN matchDetail USING (id) "+
+            "WHERE draftId = $1 AND round = $2;",
+            [draftId, round]
+        ) : ops.query(
+            "SELECT * FROM match JOIN matchDetail USING (id) "+
+            "WHERE draftId = $1 ORDER BY round;",
+            [draftId]
+        );
 }
 
 
