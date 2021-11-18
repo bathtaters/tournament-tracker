@@ -27,13 +27,15 @@ export const scheduleSlice = createSlice({
   name: 'schedule',
   initialState: getDays(testData.settings.dateRange, testData.schedule),
   reducers: {
+    setSchedule: (state, action) => action.payload,
     addToDay: (state, action) => {
       let idx = state.findIndex(d => !d.day);
       if (idx < 0) {
         state.push({ day: null, drafts: [] });
         idx = state.length - 1;
       }
-      state[idx].drafts.push(action.payload);
+      if (state[idx].drafts) state[idx].drafts.push(action.payload);
+      else state[idx].drafts = [action.payload];
 
     }, rmvFromDay: (state, action) => {
       const idx = getIndexes(state, action.payload.id);
@@ -75,11 +77,10 @@ export const scheduleSlice = createSlice({
       }
 
     },
-    setSchedule: (state, action) => action.payload,
 
   }
 })
 
-export const { addToDay, rmvDraft, swapDrafts, setSchedule } = scheduleSlice.actions;
+export const { setSchedule, addToDay, rmvDraft, swapDrafts } = scheduleSlice.actions;
 export default scheduleSlice.reducer;
 

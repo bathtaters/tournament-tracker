@@ -1,7 +1,7 @@
 // Draft data
-// addDraft({ id?, title, ranking, etc })
+// addDraft({ id?, title, players, etc })
 // rmvDraft(draftId)
-// updateDraft({ id, title, ranking, etc })
+// updateDraft({ id, title, players, etc })
 // pushRound({ id (draft), activePlayers })
 // popRound(id (draft))
 // setRound({ draftId, round, data: {...} })
@@ -15,7 +15,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // Constants
 import { defaultDraftTitle } from '../assets/strings';
-const draftDefaults = { title: defaultDraftTitle, ranking: [], isDone: false, matches: [] };
+const draftDefaults = { title: defaultDraftTitle, players: [], isDone: false, matches: [] };
 
 // Helper function
 const find2dByKey = (matchArray, key, value, idx = []) => {
@@ -33,6 +33,7 @@ export const draftsSlice = createSlice({
   name: 'drafts',
   initialState: testData.drafts,
   reducers: {
+    setDrafts: (state, action) => action.payload,
     addDraft: (state, action) => {
       // Generate ID
       const draftId = action.payload.id || newId('d', state);
@@ -104,5 +105,5 @@ export const draftsSlice = createSlice({
   }
 })
 
-export const { addDraft, rmvDraft, updateDraft, pushRound, popRound, setRound, setMatch } = draftsSlice.actions;
+export const { setDrafts, addDraft, rmvDraft, updateDraft, pushRound, popRound, setRound, setMatch, fetchDraft } = draftsSlice.actions;
 export default draftsSlice.reducer;

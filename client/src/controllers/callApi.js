@@ -1,14 +1,14 @@
 // Call API
 // import { apiKey } from '../data/clientAuth.json';
 const apiKey = null;
-const apiPrefix = '/';
+const apiPrefix = '/api/v1/';
 
-export async function callApi (apiPage, postData=null, isForm=true) {
+export async function callApi (apiPage, postData=null, isForm=true, reqType='') {
     // Convert form data
     if (postData && isForm) { postData = form2obj(postData.current); }
 
     // Call API
-    const res = await fetch(apiPrefix + apiPage, request(postData));
+    const res = await fetch(apiPrefix + apiPage, request(postData, reqType));
     
     // Pass back result
     const resBody = await getBody(res);
@@ -25,14 +25,13 @@ export async function callApi (apiPage, postData=null, isForm=true) {
 }
 
 // Basic useEffect
-export default function apiDataObj(apiPage, postData=null, isForm=true) {
-    return callApi(apiPage, postData, isForm)
-        .then(data => ({
-            data, loaded: true,
-            err: !data || !Object.keys(data) ? 'Fetch returned empty' : false,
-        }))
-        .catch(err => ({
-            data: {}, loaded: true,
+export default function apiDataObj(apiPage, postData=null, isForm=true, reqType='') {
+    return callApi(apiPage, postData, isForm, reqType)
+        .then(data => {
+            const err = data.err || data.error || (!data || !Object.keys(data).length ? 'Fetch returned empty' : null);
+            if (err) data.err = err;
+            return data
+        }).catch(err => ({
             err: err.message || err || 'Error fetching data',
         }));
 }
@@ -45,8 +44,8 @@ const contentTypes = {
 };
 
 // Construct request
-const request = data => ({
-    method: data ? 'POST' : 'GET',
+const request = (data, reqType) => ({
+    method: reqType || (data ? 'POST' : 'GET'),
     headers: {
         'Content-Type': data ? contentTypes[typeof data] : undefined,
         'X-API-KEY': apiKey

@@ -13,7 +13,7 @@ export const playersSlice = createSlice({
   name: 'players',
   initialState: testData.players,
   reducers: {
-    
+    setPlayers: (state, action) => action.payload,
     addPlayer: (state, action) => {
       // Generate ID
       const playerId = action.payload.id || newId(
@@ -45,11 +45,10 @@ export const playersSlice = createSlice({
       }
 
     }
-
   }
 })
 
-export const { addPlayer, rmvPlayer, updatePlayer } = playersSlice.actions;
+export const { setPlayers, addPlayer, rmvPlayer, updatePlayer, fetchPlayer } = playersSlice.actions;
 export default playersSlice.reducer;
 
 
