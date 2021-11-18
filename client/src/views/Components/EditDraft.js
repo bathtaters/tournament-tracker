@@ -36,7 +36,7 @@ function EditDraft({ draftId, hideModal }) {
 
   // Local state
   const [newPlayer, setNewPlayer] = useState(emptyNewPlayer);
-  const [playerList, setPlayerList] = useState(draft && draft.ranking ? [...draft.ranking] : []);
+  const [playerList, setPlayerList] = useState(draft && draft.players ? [...draft.players] : []);
   const newPlayerChange = e => e.target.value !== undefined ? 
     setNewPlayer({ ...newPlayer, name: e.target.value, id: e.target.id }):
     setNewPlayer({ ...newPlayer, id: e.target.id });
@@ -63,8 +63,8 @@ function EditDraft({ draftId, hideModal }) {
 
     setNewPlayer(emptyNewPlayer);
     
-    draftData.ranking = playerList;
-    if (!draftData.title.trim() && !draftData.ranking.length) return hideModal(true);
+    draftData.players = playerList;
+    if (!draftData.title.trim() && !draftData.players.length) return hideModal(true);
     if (!draftData.title.trim()) draftData.title = (draft && draft.title) || defaultDraftTitle;
     draftData.id = draftId || newId('d', drafts);
 

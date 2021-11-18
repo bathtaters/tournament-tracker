@@ -17,7 +17,7 @@ function Draft() {
   const matches = (draft && draft.matches) || [];
 
   // Local
-  const [activePlayers, setPlayers] = useState(draft && draft.ranking ? draft.ranking.slice() : []);
+  const [activePlayers, setPlayers] = useState(draft && draft.players ? draft.players.slice() : []);
   const changeActive = (playerIds, drop) => {
     if (playerIds.length) {
       if (drop) setPlayers(activePlayers.filter(p => !playerIds.includes(p)));
@@ -43,8 +43,8 @@ function Draft() {
           input(type="button" value="Next Round" disabled=!isDone(matches.length) onClick=nextRound)
 
         .flex.flex-row.flex-wrap.justify-evenly
-          if draft.ranking && draft.ranking.length
-            DraftStats(title=draft.title ranking=draft.ranking active=activePlayers)
+          if draft.players && draft.players.length
+            DraftStats(title=draft.title ranking=draft.players active=activePlayers)
 
           - var roundCount = matches.length - 1
 

@@ -54,7 +54,7 @@ function Match({ data, setData, swapPlayers, changeActive, isEditing }) {
                   Link.font-light(to="/profile/"+playerId)= players[playerId].name || '?'
                 
                 else
-                  .font-light.link-color(playerId=playerId) ?
+                  .font-light.link-color(playerid=playerId) ?
 
               .text-xs.font-thin.mt-0.pt-0.pointer-events-none.mb-1
                 if data.drops && data.drops.includes(playerId)
@@ -71,7 +71,7 @@ function Match({ data, setData, swapPlayers, changeActive, isEditing }) {
           className=(isEditing || data.draws ? "" : "invisible")
         )
           Counter(
-            val=data.draws,
+            val=isNaN(data.draws) ? data.draws : +data.draws,
             setVal=setVal('draws'),
             suff=(d=>" draw"+(d===1?"":"s")),
             maxVal=3, isEditing=isEditing
@@ -85,7 +85,7 @@ function Match({ data, setData, swapPlayers, changeActive, isEditing }) {
                 span.inline-block= ' – '
               
               Counter.text-base(
-                val=data.players[playerId],
+                val=isNaN(data.players[playerId]) ? data.players[playerId] : +data.players[playerId],
                 setVal=setVal('players', playerId),
                 maxVal=2, isEditing=isEditing
               )

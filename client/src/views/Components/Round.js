@@ -11,15 +11,15 @@ import { swapData, swapDrops } from '../../controllers/swapData';
 function Round({ draftId, round, changeActive, deleteRound }) {
   // Global
   const dispatch = useDispatch();
-  const matches = useSelector(state => state.drafts[draftId].matches[round]);
+  const matches = useSelector(state => (state.drafts[draftId].matches || [])[round]);
 
   // Local
-  const [matchTemp, setMatchTemp] = useState(matches);
+  const [matchTemp, setMatchTemp] = useState(matches || []);
   const [isEditing, setEditing] = useState(false);
   
   // Local actions
-  const toggleEditing = () => { if (!isEditing) setMatchTemp(matches); setEditing(!isEditing); };
-  const handleRevert = () => { setMatchTemp(matches); toggleEditing(); }
+  const toggleEditing = () => { if (!isEditing) setMatchTemp(matches || []); setEditing(!isEditing); };
+  const handleRevert = () => { setMatchTemp(matches || []); toggleEditing(); }
 
   const updateMatchTemp = (id, idx, data) => {
     let newData = [...matchTemp];

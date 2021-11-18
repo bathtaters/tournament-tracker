@@ -10,7 +10,7 @@ import {ReactComponent as ProfilePic} from "../assets/blank-user.svg";
 // Component settings
 const profileRows = [
   { title: 'Name', key: 'name', editable: true },
-  { title: 'Record', key: 'record', formatString: r=>r.join(' - ') },
+  { title: 'Record', key: 'record', formatString: r=>(r || []).join(' - ') },
 ]
 
 // Main component
@@ -77,7 +77,9 @@ function Profile() {
                 else
                   div
 
-      .mt-6 To add -- Player's past / current / future games
+      .mt-6
+        p.font-light.dim-color.italic To add -- Player's past / current / future games
+        p.font-thin.dim-color= JSON.stringify(playerData)
   `;
 }
 

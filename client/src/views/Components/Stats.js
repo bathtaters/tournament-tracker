@@ -34,7 +34,7 @@ function Stats({ onPlayerClick, className, highlightClass }) {
             Link.text-lg.font-normal.text-left(to="/profile/"+pid onClick=clickHandler(pid))= players[pid].name
 
             each _, i in statsHeader.slice(1)
-              span.text-sm.font-thin.text-center(key=pid+"C"+i)= players[pid].record[i] == null ? '-' : players[pid].record[i]
+              span.text-sm.font-thin.text-center(key=pid+"C"+i)= !players[pid].record || players[pid].record[i] == null ? '-' : players[pid].record[i]
 
       .grid.grid-flow-row.grid-cols-1.gap-x-2.gap-y-1.py-2.items-center.absolute.top-0.left-0.right-0.bottom-0.z-0
         .w-full.h-full.opacity-75.mb-2.bg-none
