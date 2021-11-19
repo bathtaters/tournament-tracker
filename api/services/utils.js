@@ -44,6 +44,15 @@ exports.mapObjArr = (objArr, keyName, valName=null) =>
     return res;
   },{});
 
+
+exports.arrToObj = key => obj => obj && obj.reduce((o,e) => {
+  if (e[key] && !o[e[key]]) o[e[key]] = e;
+  else if (e[key]) logger.error('Entry has duplicate key:',key,e[key],e);
+  else logger.error('Entry is missing key:',key,e);
+  delete e[key];
+  return o;
+}, {});
+
   
 // Replace function
 // function(baseString, { replace: with, ... }) => return resultString;
