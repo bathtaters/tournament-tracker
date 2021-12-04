@@ -7,7 +7,7 @@ import SuggestText from "./SuggestText";
 import { 
   useGetDraftQuery, useGetPlayerQuery, useCreatePlayerMutation,
   useCreateDraftMutation, useDeleteDraftMutation, useUpdateDraftMutation,
-} from "../../controllers/dbApi";
+} from "../../models/dbApi";
 
 import {
   defaultDraftTitle,

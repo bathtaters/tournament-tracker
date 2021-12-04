@@ -5,7 +5,7 @@ import Modal from "./Components/Modal";
 import Day from "./Components/Day";
 import EditDraft from "./Components/EditDraft";
 
-import { useGetScheduleQuery } from "../controllers/dbApi";
+import { useGetScheduleQuery } from "../models/dbApi";
 
 function Schedule({ range }) {
   // Global state (TO DO)

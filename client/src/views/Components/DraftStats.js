@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Modal from "./Modal";
 import Stats from "./Stats";
 
-import { useGetPlayerQuery } from "../../controllers/dbApi";
+import { useGetPlayerQuery } from "../../models/dbApi";
 
 import { formatRecord } from '../../assets/strings';
 

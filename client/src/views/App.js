@@ -7,7 +7,7 @@ import Draft from "./Draft";
 import Players from "./Players";
 import Profile from "./Profile";
 
-import { useGetSettingsQuery, useResetDbMutation } from "../controllers/dbApi";
+import { useGetSettingsQuery, useResetDbMutation } from "../models/dbApi";
 
 function App() {
   const { data, isLoading, error } = useGetSettingsQuery();

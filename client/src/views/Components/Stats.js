@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { sortByRecord } from '../../controllers/records';
 import { statsHeader } from '../../assets/strings';
 
-import { useGetPlayerQuery } from "../../controllers/dbApi";
+import { useGetPlayerQuery } from "../../models/dbApi";
 
 
 function Stats({ onPlayerClick, className, highlightClass }) {

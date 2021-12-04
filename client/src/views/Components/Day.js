@@ -7,7 +7,7 @@ import DragBlock from './DragBlock';
 import { toDate } from '../../controllers/getDays';
 import { weekdays, statusInfo } from '../../assets/strings';
 
-import { useGetDraftQuery, useUpdateDraftMutation, } from "../../controllers/dbApi";
+import { useGetDraftQuery, useUpdateDraftMutation, } from "../../models/dbApi";
 
 // Component class styles
 const dayClasses = day => {

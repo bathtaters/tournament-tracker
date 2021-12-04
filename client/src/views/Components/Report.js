@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import {
   useGetPlayerQuery, useDropPlayerMutation, useReportMutation,
-} from "../../controllers/dbApi";
+} from "../../models/dbApi";
 
 function Report({ title, match, hideModal, setData, draftId }) {
   // Global

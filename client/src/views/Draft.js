@@ -7,7 +7,7 @@ import Round from "./Components/Round";
 import {
   useGetDraftQuery,
   useNextRoundMutation, useClearRoundMutation, useDropPlayerMutation
-} from "../controllers/dbApi";
+} from "../models/dbApi";
 
 const getMatchDrops = (matchData, remainingPlayers) =>
   Object.keys(matchData.players).filter(p => !remainingPlayers.includes(p));

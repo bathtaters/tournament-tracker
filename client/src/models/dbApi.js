@@ -1,7 +1,7 @@
 // React-specific createApi from RTK Query
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import getDays from './getDays';
+import getDays from '../controllers/getDays';
 
 // Re-used code
 const LIST_ID = 'LIST';

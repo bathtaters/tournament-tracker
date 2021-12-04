@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { useGetPlayerQuery, useUpdatePlayerMutation } from "../controllers/dbApi";
+import { useGetPlayerQuery, useUpdatePlayerMutation } from "../models/dbApi";
 
 // Default Picture
 import {ReactComponent as ProfilePic} from "../assets/blank-user.svg";

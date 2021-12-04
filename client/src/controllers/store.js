@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { dbApi } from './dbApi'
+import { dbApi } from '../models/dbApi'
 
 export default configureStore({
   reducer: {

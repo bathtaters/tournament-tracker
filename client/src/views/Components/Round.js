@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Match from './Match';
 
-import { useGetDraftQuery, } from "../../controllers/dbApi";
+import { useGetDraftQuery, } from "../../models/dbApi";
 
 
 function Round({ draftId, round, deleteRound }) {
