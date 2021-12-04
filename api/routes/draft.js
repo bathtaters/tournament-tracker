@@ -23,7 +23,7 @@ Returns: Delete draft
 PATCH: ./draft/<draftId> { ...draftData }
 Returns: Update draft data
 
-PUT: ./draft/<draftId>/round
+POST: ./draft/<draftId>/round
 Returns: Create a new round
 
 DELETE: ./draft/<draftId>/round
@@ -45,13 +45,12 @@ Returns: Undrop player from draft
 // Init
 const router = require('express').Router();
 const logger = console;
-const { arrToObj } = require('../services/utils');
+const { arrToObj, sortById } = require('../services/utils');
 
 // DB
 const draft = require('../db/draft');
 const match = require('../db/match');
 const results = require('../db/results');
-
 
 /* GET draft database. */
 
@@ -73,18 +72,28 @@ router.get('/all', async function(req, res) {
 
 // Specific draft
 router.get('/:id', async function(req, res) {
-  const draftData = await draft.get(req.params.id);
+  const [draftData, allPlayers, matches] = await Promise.all([
+    draft.get(req.params.id),
+    draft.getPlayers(req.params.id),
+    match.listDetail(req.params.id),
+  ]);
+
   if (!draftData) return res.sendAndLog({ err: 'Draft does not exist: '+ req.params.id});
-  const matches = await match.listDetail(req.params.id);
-  matches.forEach(m => {
-    if (!m.draftid || !m.round) return logger.error('Match is missing ID/round',m);
-    if (draftData.id !== m.draftid) return logger.error('Match does not match draftId', draftData.id, m);
-    if (!draftData.matches) draftData.matches = [];
-    if (draftData.matches[m.round - 1]) draftData.matches[m.round - 1].push(m);
-    else draftData.matches[m.round - 1] = [m];
-    delete m.draftid;
-    delete m.round;
-  });
+  
+  draftData.matches = [];
+  if (allPlayers) draftData.allPlayers = allPlayers.players;
+  if (matches && matches.length) {
+    matches.sort(sortById);
+    matches.forEach(m => {
+      if (!m.draftid || !m.round) return logger.error('Match is missing ID/round',m);
+      if (draftData.id !== m.draftid) return logger.error('Match does not match draftId', draftData.id, m);
+      if (draftData.matches[m.round - 1]) draftData.matches[m.round - 1].push(m);
+      else draftData.matches[m.round - 1] = [m];
+      delete m.draftid;
+      delete m.round;
+    });
+  }
+  else if (!draftData.allPlayers || !draftData.allPlayers.length) draftData.allPlayers = draftData.players
 
   res.sendAndLog(draftData);
 });
@@ -102,19 +111,15 @@ router.get('/:id/breakers', async function(req, res) {
 router.post('/', (req, res) => draft.add(req.body).then(res.sendAndLog));
 router.delete('/:id', (req, res) => draft.rmv(req.params.id).then(res.sendAndLog));
 
-// Next round
-router.put('/:id/round', (req, res) => match.pushRound(req.params.id).then(res.sendAndLog));
-router.delete('/:id/round', (req, res) => match.popRound(req.params.id).then(res.sendAndLog));
-
-// Report match
-router.patch('/:match/report', (req, res) => results.report(req.params.match, req.body).then(res.sendAndLog));
-router.patch('/:match/unreport', (req, res) => results.unreport(req.params.match).then(res.sendAndLog));
-
-// Drop player
-router.delete('/:id/player/:player', (req, res) => draft.dropPlayer(req.params.id, req.params.player).then(res.sendAndLog));
-router.put('/:id/player/:player', (req, res) => draft.addPlayer(req.params.id, req.params.player).then(res.sendAndLog));
-
 // Manually set draft data
 router.patch('/:id', (req, res) => draft.set(req.params.id, req.body).then(res.sendAndLog));
+
+// Generate round
+router.post('/:id/round', (req, res) => match.pushRound(req.params.id).then(res.sendAndLog));
+router.delete('/:id/round', (req, res) => match.popRound(req.params.id).then(res.sendAndLog));
+
+// Drop player
+router.post('/:id/drop/:player', (req, res) => draft.dropPlayer(req.params.id, req.params.player).then(res.sendAndLog));
+router.post('/:id/undrop/:player', (req, res) => draft.addPlayer(req.params.id, req.params.player).then(res.sendAndLog));
 
 module.exports = router;

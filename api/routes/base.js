@@ -22,8 +22,7 @@ const draft = require('../db/draft');
 const match = require('../db/match');
 const player = require('../db/player');
 let settings = require('../settings.json');
-settings.dateRange = settings.dateRange.map(d => (new Date(d)).getTime());
-
+settings.dateRange = settings.dateRange.map(d => (new Date(d.replace('-','/'))).getTime());
 
 /* GET page data. */
 
@@ -48,12 +47,12 @@ router.get('/all', async function(req, res) {
   res.sendAndLog({ settings, schedule, drafts, players });
 });
 
+// Base settings
+router.get('/settings', (req,res) => res.sendAndLog(settings));
+
 // Schedule data
 router.get('/schedule', async function(req, res) {
-  const schedule = await draft.getByDay().then(days => days && days.map(d => {
-    d.day = d.day && d.day.getTime();
-    return d;
-  }));
+  const schedule = await draft.getByDay();
   res.sendAndLog(schedule);
 });
 
@@ -63,8 +62,10 @@ router.get('/schedule', async function(req, res) {
 router.get('/test_backend', (req, res) => res.sendAndLog({result: 'Connected to internal API server.'}));
 
 const dbOp = require('../db/admin/base');
+const dbResetFile = require('path').join(__dirname,'..','db','admin','resetDb.sql');
 const dbTestFile = require('path').join(__dirname,'..','testing','dbtest.sql');
 router.get('/reset', async function(req, res) {
+    // await dbOp.execFile(dbResetFile); // FULL RESET
     await dbOp.execFile(dbTestFile);
     res.sendAndLog({reset: true});
 })
