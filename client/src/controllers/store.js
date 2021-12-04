@@ -1,13 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
-
-import playersReducer from '../models/players';
-import draftsReducer from '../models/drafts';
-import scheduleReducer from '../models/schedule';
+import { dbApi } from './dbApi'
 
 export default configureStore({
   reducer: {
-    players: playersReducer,
-    drafts: draftsReducer,
-    schedule: scheduleReducer,
+    [dbApi.reducerPath]: dbApi.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(dbApi.middleware),
 })
