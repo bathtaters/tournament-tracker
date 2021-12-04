@@ -1,17 +1,14 @@
-// TEST DATA
-import { newId, draftStatus } from "../../controllers/testing/testDataAPI";
-
 import React, { useState } from "react";
-import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useForm } from "react-hook-form";
 
 import SuggestText from "./SuggestText";
-import { addToDay } from '../../models/schedule';
-import { addPlayer } from '../../models/players';
-import { addDraft, rmvDraft, updateDraft } from '../../models/drafts';
 
-import { findObj } from "../../controllers/misc";
+import { 
+  useGetDraftQuery, useGetPlayerQuery, useCreatePlayerMutation,
+  useCreateDraftMutation, useDeleteDraftMutation, useUpdateDraftMutation,
+} from "../../controllers/dbApi";
+
 import {
   defaultDraftTitle,
   statusInfo,
@@ -25,57 +22,58 @@ const emptyNewPlayer = { visible: false, name: "", id: null };
 
 
 function EditDraft({ draftId, hideModal }) {
-  const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
   
   // Global state
-  const players = useSelector(state => state.players);
-  const drafts = useSelector(state => state.drafts); // for newId only
-  const draft = draftId ? drafts[draftId] : null;
-  const status = draftStatus(draft);
+  const { data: players, isLoading: playersLoading, error: playersError } = useGetPlayerQuery();
+  const [ createPlayer, { isLoading: playersUpdating } ] = useCreatePlayerMutation();
+  const { data, isLoading, error } = useGetDraftQuery(draftId, { skip: !draftId });
+  const [ createDraft ] = useCreateDraftMutation();
+  const [ updateDraft ] = useUpdateDraftMutation();
+  const [ deleteDraft ] = useDeleteDraftMutation();
+
+  const status = (!isLoading && data && data.status) || 0;
 
   // Local state
   const [newPlayer, setNewPlayer] = useState(emptyNewPlayer);
-  const [playerList, setPlayerList] = useState(draft && draft.players ? [...draft.players] : []);
+  const [playerList, setPlayerList] = useState(data && data.players ? [...data.players] : []);
   const newPlayerChange = e => e.target.value !== undefined ? 
     setNewPlayer({ ...newPlayer, name: e.target.value, id: e.target.id }):
     setNewPlayer({ ...newPlayer, id: e.target.id });
 
   // Global actions
-  const createPlayer = playerInfo => {
+  const addNewPlayer = async playerInfo => {
     if (!window.confirm(createPlayerMsg(playerInfo.name))) return true;
-    const id = newId(playerInfo.name.trim().charAt(0).toLowerCase()+'x', players);
-    if (!id)  throw new Error("Error adding player. ID was not returned upon creation: "+JSON.stringify(playerInfo));
-
-    dispatch(addPlayer({ ...playerInfo, id }));
-    pushPlayer({ ...playerInfo, id });
+    const id = await createPlayer(playerInfo).then(r => r.data.id);
+    if (!id) throw new Error("Error adding player. ID was not returned upon creation: "+JSON.stringify(playerInfo));
+    pushPlayer(id);
   };
 
-  const deleteDraft = () => {
-    if (!window.confirm(deleteDraftMsg(draft && draft.title))) return;
-    dispatch(rmvDraft(draftId));
+  const clickDelete = () => {
+    if (!window.confirm(deleteDraftMsg(data && data.title))) return;
+    if (draftId) deleteDraft(draftId);
     hideModal(true);
   };
   
   const submitDraft = draftData => {
+    // Add player if player has text
     if(newPlayer.visible && newPlayer.name.trim() && window.confirm(unsavedPlayerMsg(newPlayer.name)))
       return clickAdd();
 
+    // Clear player box
     setNewPlayer(emptyNewPlayer);
     
+    // Build draft object
+    if (draftId) draftData.id = draftId;
     draftData.players = playerList;
-    if (!draftData.title.trim() && !draftData.players.length) return hideModal(true);
-    if (!draftData.title.trim()) draftData.title = (draft && draft.title) || defaultDraftTitle;
-    draftData.id = draftId || newId('d', drafts);
-
-    if (!draftId) {
-      // Create new draft & add to "Unscheduled"
-      dispatch(addToDay(draftData.id));
-      dispatch(addDraft(draftData));
-    } else {
-      // Update existing draft
-      dispatch(updateDraft(draftData));
+    if (!draftData.title.trim()) {
+      if (draftData.players.length) draftData.title = (data && data.title) || defaultDraftTitle;
+      else return hideModal(true);
     }
+
+    // Add to DB
+    if (!draftId) createDraft(draftData);
+    else updateDraft(draftData);
     hideModal(true);
   };
 
@@ -88,20 +86,19 @@ function EditDraft({ draftId, hideModal }) {
     if (!playerInfo.name) return setNewPlayer({ ...newPlayer, visible: false });
 
     if (!override) playerInfo.id = newPlayer.id;
-    pushPlayer(playerInfo);
+    pushPlayer(playerInfo.id);
   }
 
-  const pushPlayer = playerInfo => {
-    if (!playerInfo.id) playerInfo.id = findObj(players, playerInfo.name, 'name');
-    if (!playerInfo.id) return createPlayer(playerInfo);
+  const pushPlayer = playerId => {
+    if (!playerId) throw new Error("Add player is missing playerId!");
 
-    if (playerList.includes(playerInfo.id)) {
-      window.alert(duplicatePlayerMsg(playerInfo.name));
+    if (playerList.includes(playerId)) {
+      window.alert(duplicatePlayerMsg(players[playerId] && players[playerId].name));
       setNewPlayer(emptyNewPlayer);
       return;
     }
     
-    setPlayerList(playerList.concat(playerInfo.id));
+    setPlayerList(playerList.concat(playerId));
     setNewPlayer(emptyNewPlayer);
   }
   
@@ -115,6 +112,14 @@ function EditDraft({ draftId, hideModal }) {
 
   // Render
 
+  if (isLoading || playersLoading)
+    return (<div><h3 className="font-light max-color text-center">Loading...</h3></div>);
+  
+  else if (error || playersError)
+    return (<div>
+      <h3 className="font-light max-color text-center">Error: {JSON.stringify(error || playersError)}</h3>
+    </div>);
+
   const playerRow = (name, pid, idx) => (
     <div key={pid} className="min-w-40">
       {status < 2 ? <input
@@ -125,13 +130,15 @@ function EditDraft({ draftId, hideModal }) {
       /> :
       <span className="mx-1">•</span>
       }
-      <span className={"align-middle"+(!name ? " italic dim-color" : "")}>{name || "Missing"}</span>
+      <span className={"align-middle"+(!name ? " italic dim-color" : "")}>
+        {name || (playersUpdating ? "..." : "Missing")}
+      </span>
     </div>
   );
 
   return (
     <div>
-      <h3 className="font-light max-color text-center mb-2">{draft ? 'Edit Draft' : 'New Draft'}</h3>
+      <h3 className="font-light max-color text-center mb-2">{data ? 'Edit Draft' : 'New Draft'}</h3>
       { status ?
         <h5 className="text-center mb-2">
           <span className="mr-1">Status:</span>
@@ -157,7 +164,7 @@ function EditDraft({ draftId, hideModal }) {
                   value={newPlayer.name}
                   onChange={newPlayerChange}
                   onEnter={clickAdd}
-                  onStaticSelect={name => createPlayer({ name })}
+                  onStaticSelect={name => addNewPlayer({ name })}
                   suggestionList={Object.keys(players).map(id=>({id, name: players[id].name}))}
                   staticList={["Add Player"]}
                 />
@@ -171,7 +178,7 @@ function EditDraft({ draftId, hideModal }) {
               <input
                 className="max-color pt-1 px-2"
                 type="text"
-                defaultValue={(draft && draft.title) || ""}
+                defaultValue={(data && data.title) || ""}
                 {...register("title")}
               />
             </h4>
@@ -188,7 +195,7 @@ function EditDraft({ draftId, hideModal }) {
               className="font-normal base-color-inv neg-bgd w-14 h-8 mx-1 sm:w-20 sm:h-11 sm:mx-4 opacity-80"
               type="button"
               value="Delete"
-              onClick={deleteDraft}
+              onClick={clickDelete}
             />)
           : null}
           <input

@@ -1,9 +1,8 @@
 import React, { Fragment } from "react";
-import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useForm } from "react-hook-form";
 
-import { addPlayer } from "../../models/players";
+import { useCreatePlayerMutation } from "../../controllers/dbApi";
 
 // Compenent settings
 const settingsRows = [
@@ -12,8 +11,8 @@ const settingsRows = [
 
 // Component
 function AddPlayer({ hideModal }) {
-  const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
+  const [ createPlayer ] = useCreatePlayerMutation();
 
   const submitPlayer = playerData => {
     // Apply defaults
@@ -25,7 +24,7 @@ function AddPlayer({ hideModal }) {
       ) playerData[r.key] = r.def;
     });
     // Add player
-    dispatch(addPlayer(playerData));
+    createPlayer(playerData);
     hideModal(true);
   };
 

@@ -1,17 +1,17 @@
 import React, { useState, useRef, useCallback } from "react";
-import { useDispatch } from 'react-redux';
 
 import Modal from "./Components/Modal";
 import Stats from "./Components/Stats";
 import NewPlayer from "./Components/NewPlayer";
 
 import { deletePlayerMsg } from "../assets/strings";
-import { rmvPlayer } from "../models/players";
+
+import { useDeletePlayerMutation } from "../controllers/dbApi";
 
 function Players() {
   // Init view
   const modal = useRef(null);
-  const dispatch = useDispatch();
+  const [ deletePlayer ] = useDeletePlayerMutation();
 
   // Local state
   const [canDelete, setDeleteMode] = useState(false);
@@ -23,8 +23,8 @@ function Players() {
     e.preventDefault();
     // Delete player
     if (!window.confirm(deletePlayerMsg(playerData.name))) return;
-    dispatch(rmvPlayer(playerId));
-  }, [canDelete, dispatch]);
+    deletePlayer(playerId);
+  }, [canDelete, deletePlayer]);
 
   return pug`
     div

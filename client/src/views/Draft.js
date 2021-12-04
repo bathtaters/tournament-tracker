@@ -1,50 +1,65 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from 'react-redux';
+import React from "react";
 import { useParams } from "react-router-dom";
 
 import DraftStats from "./Components/DraftStats";
 import Round from "./Components/Round";
 
-import { pushRound, popRound } from "../models/drafts";
+import {
+  useGetDraftQuery,
+  useNextRoundMutation, useClearRoundMutation, useDropPlayerMutation
+} from "../controllers/dbApi";
 
+const getMatchDrops = (matchData, remainingPlayers) =>
+  Object.keys(matchData.players).filter(p => !remainingPlayers.includes(p));
+const getRoundDrops = (roundMatches, remainingPlayers) => roundMatches.reduce(
+  (d,m) => d.concat(getMatchDrops(m, remainingPlayers)),
+[]);
 
 function Draft() {
   let { id } = useParams();
-  const dispatch = useDispatch();
 
   // Global
-  const draft = useSelector(state => state.drafts[id]);
-  const matches = (draft && draft.matches) || [];
-
-  // Local
-  const [activePlayers, setPlayers] = useState(draft && draft.players ? draft.players.slice() : []);
-  const changeActive = (playerIds, drop) => {
-    if (playerIds.length) {
-      if (drop) setPlayers(activePlayers.filter(p => !playerIds.includes(p)));
-      else setPlayers(activePlayers.concat(playerIds.filter(p => !activePlayers.includes(p))));
-    }
-  };
-
+  const { data, isLoading, error } = useGetDraftQuery(id);
+  const matches = (data && data.matches) || [];
+  const [ nextRound, { isLoading: loadingRound} ] = useNextRoundMutation();
+  const [ clearRound ] = useClearRoundMutation();
+  const [ dropPlayer, { isLoading: loadingPlayers } ] = useDropPlayerMutation();
+  
   // Actions
-  const nextRound = () => dispatch(pushRound({ id, activePlayers }));
+  const changeActive = (playerIds, undrop) => playerIds.forEach(player => dropPlayer({ draft: id, player, undrop }));
   const prevRound = () => {
-    matches[matches.length - 1].forEach(m => m.drops && m.drops.length && changeActive(m.drops, false));
-    dispatch(popRound(id));
+    // undrop players that dropped this round
+    changeActive(getRoundDrops(matches[matches.length - 1], data.players), true);
+    clearRound(id);
   }
 
   const isDone = roundNum => !matches.length || (matches[--roundNum] && matches[roundNum].every(m => m.reported));
   
   return pug`
     div
-      if draft
-        h2.text-center.font-thin= draft.title
+      if isLoading
+        h3.italic.text-center.font-thin Loading...
+
+      else if error
+        h3.italic.text-center.font-thin= 'Error: '+JSON.stringify(error)
+
+      else if !data
+        h3.italic.text-center.font-thin Draft not found
+
+      else
+        h2.text-center.font-thin= data.title
 
         form.text-center.mt-6.mb-4
-          input(type="button" value="Next Round" disabled=!isDone(matches.length) onClick=nextRound)
+          input(
+            type="button"
+            value="Next Round"
+            disabled=!isDone(matches.length)
+            onClick=()=>nextRound(id)
+          )
 
-        .flex.flex-row.flex-wrap.justify-evenly
-          if draft.players && draft.players.length
-            DraftStats(title=draft.title ranking=draft.players active=activePlayers)
+        .flex.flex-row.flex-wrap.justify-evenly  
+          if data.players && data.players.length
+            DraftStats(title=data.title ranking=(loadingPlayers ? [] : data.allPlayers) active=data.players)
 
           - var roundCount = matches.length - 1
 
@@ -58,9 +73,12 @@ function Draft() {
               deleteRound=(roundNum === roundCount ? prevRound : null)
               key=(id+"."+roundNum)
             )
-      
-      else
-        h3.italic.text-center.font-thin Draft not found
+
+          if loadingRound
+            .m-4.relative
+              h3.font-light.text-center= 'Loading...'
+        
+        .text-center.font-thin.m-2= JSON.stringify(data)
   `;
 }
 
