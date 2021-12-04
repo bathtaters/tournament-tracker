@@ -20,6 +20,9 @@ exports.unflat = (array, elemSize) => {
     return newArr;
 }
 
+// Sort array by 'ID' field (For ordering unordered data)
+exports.sortById = (a,b) => a.id < b.id ? -1 : (a.id > b.id ? 1 : 0);
+
 // Splice command that doesn't modify in place
 exports.splicing = (arr, index, count = 1) => arr.slice(0,index).concat(arr.slice(index + count));
 
