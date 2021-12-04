@@ -6,12 +6,11 @@
 // setSchedule([{days},...])
 
 // TEST METHODS
-import testData from '../assets/testData';
+// import testData from '../assets/testData';
 
 import { createSlice } from '@reduxjs/toolkit';
 
 import { sameDay } from '../controllers/getDays';
-import getDays from '../controllers/getDays';
 
 // Schedule-specific helpers
 const matchesDay = day => day ? d => sameDay(d.day, day) : d => d.day === day;
@@ -25,7 +24,7 @@ const getIndexes = (schedule, id) => {
 
 export const scheduleSlice = createSlice({
   name: 'schedule',
-  initialState: getDays(testData.settings.dateRange, testData.schedule),
+  initialState: [],
   reducers: {
     setSchedule: (state, action) => action.payload,
     addToDay: (state, action) => {
