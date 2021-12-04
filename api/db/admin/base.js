@@ -47,7 +47,7 @@ const addRow = (table, colObj) => {
 const rmvRow = (table, rowId) => 
     // strTest(table) ||
     query(
-        `DELETE FROM ${table} WHERE id = $1;`,
+        `DELETE FROM ${table} WHERE id = $1 RETURNING id;`,
         [rowId]
     );
 
@@ -58,7 +58,7 @@ const updateRow = (table, rowId, updateObj) => {
     return query(
         `UPDATE ${table} SET (${
             keys.join(',')
-        }) = (${queryVars(keys,2)}) WHERE id = $1;`,
+        }) = (${queryVars(keys,2)}) WHERE id = $1 RETURNING id;`,
         [rowId, ...Object.values(updateObj)]
     ).then(()=>({id: rowId, ...updateObj}));
 };

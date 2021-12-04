@@ -22,13 +22,10 @@ const list = () => ops.query(
     "SELECT * FROM player WHERE isTeam IS FALSE;"
 );
 
-const add = name => ops.query(
+const add = ({ name }) => ops.query(
     "INSERT INTO player(name) VALUES($1) RETURNING id;",
     [name]
-).then(r=>r && r.id);
-
-const rename = (id, newName) =>
-    ops.updateRow('player', id, {name: newName});
+);
 
 // Swap players/teams between matches
 function swap(playerIdL, matchIdL, playerIdR = null, matchIdR = null) {
@@ -46,9 +43,9 @@ function swap(playerIdL, matchIdL, playerIdR = null, matchIdR = null) {
 }
 
 module.exports = {
-    list, add,
-    rename, swap,
+    list, add, swap,
     get: id => ops.getRow('player', id),
     rmv: id => ops.rmvRow('player', id),
+    set: (id, newParams) => ops.updateRow('player', id, newParams),
     limits, validator,
 }

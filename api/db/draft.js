@@ -38,9 +38,9 @@ function getByDay(date) {
     return ops.query(date ?
         // id, day, title, roundActive, roundCount
         "SELECT array_agg(id) drafts FROM draft@date_idx WHERE day = $1 GROUP BY day;" :
-        "SELECT day, array_agg(id) drafts FROM draft@date_idx GROUP BY day ORDER BY day;",
+        "SELECT json_object_agg(k,v) FROM (SELECT COALESCE(to_char(day), 'none') as k, array_agg(id) as v FROM draft@date_idx GROUP BY day);",
         date ? [date] : []
-    );
+    ).then(r => !r || date ? r : r.json_object_agg);
 }
 
 function list(date) {
@@ -76,7 +76,7 @@ const add = ({
 function addPlayer(draftId, playerId) {
     // Check that player is not already in draft
     return ops.operation(cl => cl.query(
-        "UPDATE draft SET players = players || $1 WHERE id = $2;",
+        "UPDATE draft SET players = players || $1 WHERE id = $2 RETURNING id;",
         [Array.isArray(playerId) ? playerId : [playerId], draftId]
     ));
 }
@@ -89,7 +89,7 @@ function dropPlayer(draftId, playerId) {
             "SELECT player "+
             "FROM draft, unnest(players) player "+
             "WHERE id = $2 AND player != ALL($1)) "+
-        "WHERE id = $2;",
+        "WHERE id = $2 RETURNING id;",
         [Array.isArray(playerId) ? playerId : [playerId], draftId]
     ));
 }
@@ -97,7 +97,7 @@ function dropPlayer(draftId, playerId) {
 function swapPlayer(draftId, oldPlayerId, newPlayerId) {
     // Check that newplayer is not already in draft && oldplayer is in draft
     return ops.operation(cl => cl.query(
-        "UPDATE draft SET players = array_replace(players, $1, $2) WHERE id = $3;",
+        "UPDATE draft SET players = array_replace(players, $1, $2) WHERE id = $3 RETURNING id;",
         [oldPlayerId, newPlayerId, draftId]
     ));
 }
@@ -107,6 +107,7 @@ module.exports = {
     dayList, list, getByDay,
     add, addPlayer, dropPlayer, swapPlayer,
     get: id => ops.getRow('draft', id),
+    getPlayers: id => ops.getRow('allPlayers', id),
     rmv:  id => ops.rmvRow('draft', id),
     set: (id, newParams) => ops.updateRow('draft', id, newParams),
     limits, validator,

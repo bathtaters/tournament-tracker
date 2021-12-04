@@ -20,10 +20,11 @@ exports.matchQueries = {
     draft: "SELECT players, winner FROM match WHERE draft = $1",
     teamSize: "SELECT teamSize FROM draft WHERE id = $1 LIMIT 1;",
     popQuery: "UPDATE match SET players = " +
-        "players - $1 WHERE id = $2;",
+        "players - $1 WHERE id = $2 RETURNING draftId;",
     swapQuery: "UPDATE match SET players = " +
-        "players - $1::STRING || jsonb_build_object($2::STRING, (players->>$1)::SMALLINT) WHERE id = $3;",
-        // "array_replace(players, ($2)::UUID, ($1)::UUID) WHERE id = $4;",
+        "players - $1::STRING || jsonb_build_object($2::STRING, (players->>$1)::SMALLINT) "+
+        "WHERE id = $3 RETURNING draftId;",
+        // "array_replace(players, ($2)::UUID, ($1)::UUID) WHERE id = $4 RETURNING draftId;",
     currentRound: "SELECT round FROM match@draft_idx WHERE draftId = $1 "+
         "ORDER BY round DESC LIMIT 1;",
 }

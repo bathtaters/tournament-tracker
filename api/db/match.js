@@ -152,14 +152,15 @@ function pushRound(draftId) {
             "AND (SELECT COUNT(*) FROM jsonb_object_keys(players)) = 1;",
             [draftId, nextRound, wins]
         );
-
+        
+        // Log new match data
         await cl.query(
             "SELECT * FROM match JOIN matchDetail USING (id) "+
             "WHERE draftId = $1 AND round = $2;",
             [draftId, nextRound]
         ).then(r => console.log(r.rows));
 
-        return {success: true, round: draftData.roundactive + 1};
+        return { id: draftId };
     });
 }
 
@@ -185,20 +186,40 @@ function popRound(draftId, round = null) {
             .then(r => r && r.rows[0] ? r.rows[0].round : null);
         if (round === null) return new Error("No rounds in this draft to delete.");
         await cl.query(
-            "DELETE FROM match WHERE draftId = $1 AND round = $2 RETURNING id;",
+            "DELETE FROM match WHERE draftId = $1 AND round = $2;",
             [draftId, round]
         );
         return cl.query(
-            "UPDATE draft SET roundActive = $1 WHERE id = $2;",
+            "UPDATE draft SET roundActive = $1 WHERE id = $2 RETURNING id;",
             [round - 1, draftId]
         );
+    });
+}
+
+// Update report data
+async function update(id, { draws, players = {} }) {
+    return ops.operation(async cl => {
+        let ret;
+        if (draws != null) {
+            ret = await cl.query(
+                "UPDATE match SET draws = $1 WHERE id = $2 RETURNING draftId;",
+                [draws, id]
+            );
+        }
+        for (const playerId in players) {
+            ret = await cl.query(
+                "UPDATE match SET players = jsonb_set(players, $1, $2) WHERE id = $3 RETURNING draftId;",
+                [[playerId], players[playerId], id]
+            );
+        }
+        return ret;
     });
 }
 
 // Exports
 module.exports = {
     list, listDetail, get, 
-    pushRound, popRound,
+    pushRound, popRound, update,
     limits, validator,
 
     // Direct access

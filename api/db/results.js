@@ -1,65 +1,3 @@
-// To CONSTANTS
-// Get Win/Loss/Draw record for draft and/or player(s)
-// draft ONLY: GET MATCH(player/team Ids/Names, record, group by ROUND) in DRAFT
-// player ONLY: GET MATCH(player/team Ids (JOIN Names), record/points) +join+ DRAFT(title, roundActive, roundCount, bestOf) with PLAYER
-// draft+player: GET MATCH(player/team Ids (JOIN Names), record/points) with PLAYER in DRAFT
-
-
-
-// const DRAFTBO = "SELECT bestof FROM draft WHERE id = $1;";
-// const DRAFTD = "SELECT id draftid, title draft, roundActive, bestof FROM draft WHERE id = $1;";
-// const DRAFTM = "SELECT " +
-//         "m.id id, " +
-//         "m.round round, " +
-//         "array_agg(p.id, p.name) playermap, " + 
-//         "m.players playerids, " +
-//         // "array_agg(p.members) memberids, " +
-//         // "array(SELECT player.name FROM player WHERE player.id = ANY (p.members)) members, " +
-//         "m.wins playerwins, " +
-//         "m.draws draws " +
-//     "FROM match@draft_idx m WHERE m.draft = $1 " +
-//     "LEFT JOIN player p ON p.id IN (m.players) " +
-//     "GROUP BY m.id;";
-// const TEAM = "SELECT id FROM player@member_idx WHERE members @> $1;";
-// const PLAY = "SELECT " +
-//         "m.id id, " +
-//         "m.round round, " +
-//         "d.id draftid, " +
-//         "d.title draft, " +
-//         "d.roundActive roundActive, " +
-//         "d.bestOf bestof, " +
-//         "array_agg(p.id, p.name) playermap, " + 
-//         "m.players playerids, " +
-//         // "array_agg(p.members) memberids, " +
-//         // "array_agg(SELECT player.name FROM player WHERE player.id = ANY (p.members)) members, " +
-//         "m.wins playerwins, " +
-//         "m.draws draws " +
-//     "FROM match m WHERE m.id = ANY " + 
-//     "(SELECT unnest(matchList) FROM player WHERE id = ANY ($1)) " + 
-//     "LEFT JOIN draft d ON m.draft = d.id " +
-//     "LEFT JOIN player p ON p.id = ANY (m.players) " +
-//     "GROUP BY m.id;";
-// const DRAFTP = "SELECT " +
-//         "m.id id, " +
-//         "m.round round, " +
-//         "d.id draftid, " +
-//         "d.title draft, " +
-//         "d.roundActive roundActive, " +
-//         "d.bestOf bestof, " +
-//         "array_agg(p.name) players, " +
-//         "m.players playerids, " +
-//         // "array_agg(p.members) memberids, " +
-//         // "array_agg(SELECT player.name FROM player WHERE player.id = ANY (p.members)) members, " +
-//         "m.wins playerwins, " +
-//         "m.draws draws " +
-//     "FROM match@draft_idx m WHERE m.draft = $1 AND m.id = ANY " + 
-//     "(SELECT unnest(matchList) FROM player WHERE id = ANY ($2)) " + 
-//     "LEFT JOIN draft d ON m.draft = d.id " +
-//     "LEFT JOIN player p ON p.id = ANY (m.players) " +
-//     "GROUP BY m.id;";
-
-/* *** MATCH RESULTS Sub-Object *** */
-
 // Imports
 const ops = require('./admin/base');
 const { toMatchResults, toGameResults, toBreakers } = require('../services/dbResults');
@@ -67,6 +5,7 @@ const { breakerBase, breakerOpps } = require('./constants').resultQueries;
 
 // Basic Settings
 const drawKey = 'draws';
+const resultsKey = 'players';
 const draftLims = require('./draft').limits;
 const limits = {
     results: {min: 0, max: draftLims.bestOf },
@@ -193,15 +132,13 @@ async function getBreakers(draftId = null, playerIds = null) {
 
 
 // Report win/loss/draw for a given match
-//  Report as { playerId: winCount, ... , draws: drawCount }
+//  Report as { players: {playerId: winCount, ...} , draws: drawCount }
 function report(matchId, results) {
-    const draws = results[drawKey] || 0;
-    delete results[drawKey];
     return ops.query(
         "UPDATE match SET (draws, players, reported) = "+
-            "($1, ($2), TRUE) WHERE id = $3;",
-        [draws, results, matchId]
-    );
+            "($1, ($2), TRUE) WHERE id = $3 RETURNING draftId;",
+        [results[drawKey] || 0, results[resultsKey] || {}, matchId]
+    ).then(r => r && r.draftid && {id: r.draftid});
 }
 
 // Clear reporting for match (Reset wins/draws and mark as NOT DONE)
@@ -211,9 +148,9 @@ function unreport(matchId) {
             "FROM (SELECT jsonb_object_agg(pl::STRING, 0) w "+
                 "FROM match, jsonb_object_keys(players) pl "+
                 "WHERE id = $1 GROUP BY id) p "+
-        "WHERE id = $1;",
+        "WHERE id = $1 RETURNING draftId;",
         [matchId]
-    );
+    ).then(r => r && r.draftid && {id: r.draftid});
 }
 
 // Exports
