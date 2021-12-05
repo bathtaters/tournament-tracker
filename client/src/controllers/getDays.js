@@ -5,7 +5,8 @@
 export const oneDay = 24*60*60*1000;
 
 // Get Date string
-export const toDate = dt => dt && dt.toISOString().slice(0,10);
+export const toDate = dt => dt ? dt.toISOString().slice(0,10) : 'none';
+export const toDateObj = dt => dt === 'none' ? null : new Date(dt.replace('-','/'));
 
 // Compare dates (ignoring time)
 export const sameDay = (dateA, dateB = (new Date()).getTime()) => {
