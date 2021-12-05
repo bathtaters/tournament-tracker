@@ -3,20 +3,19 @@ import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 import { formatMatchTitle, formatRecord } from '../../assets/strings';
+import { getMatchDrops } from '../../controllers/draft';
 
 import Modal from "./Modal";
 import DragBlock from "./DragBlock";
 import Report from "./Report";
 import Counter from "./Counter";
 
-import {
-  useGetPlayerQuery,
-  useDropPlayerMutation, useSwapPlayersMutation,
-  useReportMutation, useUpdateMatchMutation,
-} from "../../models/dbApi";
+import { usePlayerQuery } from "../../models/playerApi";
+import { 
+  useReportMutation, useUpdateMatchMutation, 
+  useSwapPlayersMutation, useDropPlayerMutation,
+} from "../../models/matchApi";
 
-const getMatchDrops = (matchData, remainingPlayers) =>
-  Object.keys(matchData.players).filter(p => !remainingPlayers.includes(p));
 
 function Match({ data, draftId, activePlayers, isEditing }) {
   // Init
@@ -24,19 +23,21 @@ function Match({ data, draftId, activePlayers, isEditing }) {
   const canSwap = useCallback((types, a, b) => a !== b && types.includes("json/matchplayer"),[]);
   
   // Global State
-  const { data: players, isLoading, error } = useGetPlayerQuery();
+  const { data: players, isLoading, error } = usePlayerQuery();
   const title = isLoading ? 'Loading' : data.players ? formatMatchTitle(data.players, players) : console.log(data) || JSON.stringify(data);
 
-  // Actions
+  // Drop players
   const [ dropPlayer ] = useDropPlayerMutation();
   const changeActive = (playerIds, undrop = false) => playerIds.forEach(player =>
     dropPlayer({ draft: draftId, player, undrop })
   );
-
+  
+  // Change reported values
   const [ update ] = useUpdateMatchMutation();
   const setVal = (baseKey, innerKey=null) => val =>
     update({ id: data.id, [baseKey]: innerKey ? {[innerKey]: val} : val });
   
+  // Report match
   const [ report, { isLoading: isReporting } ] = useReportMutation();
   const clearReport = () => {
     if (window.confirm(`Are you sure you want to delete the records for ${title}?`)) {
@@ -46,6 +47,7 @@ function Match({ data, draftId, activePlayers, isEditing }) {
     }
   };
 
+  // Swap players
   const [ swapPlayers ] = useSwapPlayersMutation();
   const handleSwap = (playerA, playerB) => {
     if (playerA.id === playerB.id) return;

@@ -2,15 +2,15 @@ import React, { Fragment, useCallback } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-import { sortByRecord } from '../../controllers/records';
+import { sortByRecord } from '../../controllers/draft';
 import { statsHeader } from '../../assets/strings';
 
-import { useGetPlayerQuery } from "../../models/dbApi";
+import { usePlayerQuery } from "../../models/playerApi";
 
 
 function Stats({ onPlayerClick, className, highlightClass }) {
   // Global state
-  const { data: players, isLoading, error } = useGetPlayerQuery();
+  const { data: players, isLoading, error } = usePlayerQuery();
   const ranking = useCallback(() => sortByRecord(players), [players]); // is this right way to memoize?
 
   // Pass clicks to onPlayerClick

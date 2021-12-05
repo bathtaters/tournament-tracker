@@ -4,36 +4,33 @@ import { useParams } from "react-router-dom";
 import DraftStats from "./Components/DraftStats";
 import Round from "./Components/Round";
 
+import { useDropPlayerMutation } from "../models/matchApi";
 import {
-  useGetDraftQuery,
-  useNextRoundMutation, useClearRoundMutation, useDropPlayerMutation
-} from "../models/dbApi";
+  useDraftQuery, useNextRoundMutation, useClearRoundMutation, 
+} from "../models/draftApi";
 
-const getMatchDrops = (matchData, remainingPlayers) =>
-  Object.keys(matchData.players).filter(p => !remainingPlayers.includes(p));
-const getRoundDrops = (roundMatches, remainingPlayers) => roundMatches.reduce(
-  (d,m) => d.concat(getMatchDrops(m, remainingPlayers)),
-[]);
+import { getRoundDrops, roundIsDone } from "../controllers/draft";
+
 
 function Draft() {
   let { id } = useParams();
 
   // Global
-  const { data, isLoading, error } = useGetDraftQuery(id);
+  const { data, isLoading, error } = useDraftQuery(id);
   const matches = (data && data.matches) || [];
-  const [ nextRound, { isLoading: loadingRound} ] = useNextRoundMutation();
-  const [ clearRound ] = useClearRoundMutation();
-  const [ dropPlayer, { isLoading: loadingPlayers } ] = useDropPlayerMutation();
+  const isDone = roundIsDone(matches);
   
   // Actions
+  const [ dropPlayer ] = useDropPlayerMutation();
   const changeActive = (playerIds, undrop) => playerIds.forEach(player => dropPlayer({ draft: id, player, undrop }));
+  
+  const [ nextRound ] = useNextRoundMutation();
+  const [ clearRound ] = useClearRoundMutation();
   const prevRound = () => {
     // undrop players that dropped this round
     changeActive(getRoundDrops(matches[matches.length - 1], data.players), true);
     clearRound(id);
   }
-
-  const isDone = roundNum => !matches.length || (matches[--roundNum] && matches[roundNum].every(m => m.reported));
   
   return pug`
     div
@@ -53,13 +50,13 @@ function Draft() {
           input(
             type="button"
             value="Next Round"
-            disabled=!isDone(matches.length)
+            disabled=!isDone
             onClick=()=>nextRound(id)
           )
 
         .flex.flex-row.flex-wrap.justify-evenly  
           if data.players && data.players.length
-            DraftStats(title=data.title ranking=(loadingPlayers ? [] : data.allPlayers) active=data.players)
+            DraftStats(title=data.title ranking=data.allPlayers active=data.players)
 
           - var roundCount = matches.length - 1
 
@@ -73,10 +70,6 @@ function Draft() {
               deleteRound=(roundNum === roundCount ? prevRound : null)
               key=(id+"."+roundNum)
             )
-
-          if loadingRound
-            .m-4.relative
-              h3.font-light.text-center= 'Loading...'
         
         .text-center.font-thin.m-2= JSON.stringify(data)
   `;

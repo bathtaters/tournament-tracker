@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 
 import Match from './Match';
 
-import { useGetDraftQuery, } from "../../models/dbApi";
+import { useDraftQuery, } from "../../models/draftApi";
 
 
 function Round({ draftId, round, deleteRound }) {
   // Global
-  const { data, isLoading, error } = useGetDraftQuery(draftId);
+  const { data, isLoading, error } = useDraftQuery(draftId);
 
   // Local
   const [isEditing, setEditing] = useState(false);

@@ -2,9 +2,8 @@ import React, { Fragment } from "react";
 import { useForm } from "react-hook-form";
 import PropTypes from 'prop-types';
 
-import {
-  useGetPlayerQuery, useDropPlayerMutation, useReportMutation,
-} from "../../models/dbApi";
+import { usePlayerQuery } from "../../models/playerApi";
+import { useDropPlayerMutation, useReportMutation } from "../../models/matchApi";
 
 function Report({ title, match, hideModal, setData, draftId }) {
   // Global

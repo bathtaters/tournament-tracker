@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { useGetPlayerQuery, useUpdatePlayerMutation } from "../models/dbApi";
+import { usePlayerQuery, useUpdatePlayerMutation } from "../models/playerApi";
 
 // Default Picture
 import {ReactComponent as ProfilePic} from "../assets/blank-user.svg";
@@ -18,7 +18,7 @@ function Profile() {
   const { id } = useParams();
 
   // Global state
-  const { data, isLoading, error } = useGetPlayerQuery(id);
+  const { data, isLoading, error } = usePlayerQuery(id);
 
   // Local state
   const [editing, setEditing] = useState(false);

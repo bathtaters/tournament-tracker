@@ -6,7 +6,7 @@ import NewPlayer from "./Components/NewPlayer";
 
 import { deletePlayerMsg } from "../assets/strings";
 
-import { useDeletePlayerMutation } from "../models/dbApi";
+import { useDeletePlayerMutation } from "../models/playerApi";
 
 function Players() {
   // Init view

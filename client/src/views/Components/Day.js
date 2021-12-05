@@ -4,36 +4,34 @@ import PropTypes from 'prop-types';
 
 import DragBlock from './DragBlock';
 
-import { toDate } from '../../controllers/getDays';
+import { toDate, toDateObj } from '../../controllers/getDays';
 import { weekdays, statusInfo } from '../../assets/strings';
 
-import { useGetDraftQuery, useUpdateDraftMutation, } from "../../models/dbApi";
+import { useDraftQuery, useUpdateDraftMutation, } from "../../models/draftApi";
 
 // Component class styles
 const dayClasses = day => {
   const today = new Date();
-  const isToday = day === toDate(today);
-  const isOld = !isToday && (day === 'none' || new Date(day) < today);
-  return {
-    titleCls:  isToday ? "max-color"  : isOld ? "dim-color-inv" : "base-color",
-    borderCls: isToday ? "pos-border" : isOld ? "dimmer-border" : "base-border",
-  };
+  if (day === toDate(today)) return { titleCls: "max-color", borderCls: "pos-border" };
+  return (day === 'none' || new Date(day) < today) ?
+    { titleCls: "dim-color-inv", borderCls: "base-color" } :
+    { titleCls: "dimmer-border", borderCls: "base-border" };
 }
 
 // Component
 function Day({ drafts, isEditing, setDraftModal, day }) {
   // Definitions (memoize?)
   const { titleCls, borderCls } = dayClasses(day);
-  const date = day === 'none' ? null : new Date(day.replace('-','/'));
+  const date = toDateObj(day);
   const canDrop = useCallback(types => types.includes("json/draftday"), []);
 
   // Global state
-  const { data, isLoading, error } = useGetDraftQuery();
+  const { data, isLoading, error } = useDraftQuery();
   const [ updateDraft ] = useUpdateDraftMutation();
   
   // Actions
   const dropHandler = (a,b) => {
-    [a.day, b.day] = [ new Date(b.day.replace('-','/')), new Date(a.day.replace('-','/')) ]
+    [a.day, b.day] = [toDateObj(b.day), toDateObj(a.day)];
     updateDraft(a);
     if (b.id) updateDraft(b);
   }

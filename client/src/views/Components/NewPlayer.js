@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import PropTypes from 'prop-types';
 import { useForm } from "react-hook-form";
 
-import { useCreatePlayerMutation } from "../../models/dbApi";
+import { useCreatePlayerMutation } from "../../models/playerApi";
 
 // Compenent settings
 const settingsRows = [

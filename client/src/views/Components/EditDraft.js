@@ -5,9 +5,10 @@ import { useForm } from "react-hook-form";
 import SuggestText from "./SuggestText";
 
 import { 
-  useGetDraftQuery, useGetPlayerQuery, useCreatePlayerMutation,
-  useCreateDraftMutation, useDeleteDraftMutation, useUpdateDraftMutation,
-} from "../../models/dbApi";
+  useDraftQuery, useCreateDraftMutation,
+  useDeleteDraftMutation, useUpdateDraftMutation,
+} from "../../models/draftApi";
+import { usePlayerQuery, useCreatePlayerMutation, } from "../../models/playerApi";
 
 import {
   defaultDraftTitle,
@@ -25,23 +26,16 @@ function EditDraft({ draftId, hideModal }) {
   const { register, handleSubmit } = useForm();
   
   // Global state
-  const { data: players, isLoading: playersLoading, error: playersError } = useGetPlayerQuery();
-  const [ createPlayer, { isLoading: playersUpdating } ] = useCreatePlayerMutation();
-  const { data, isLoading, error } = useGetDraftQuery(draftId, { skip: !draftId });
-  const [ createDraft ] = useCreateDraftMutation();
-  const [ updateDraft ] = useUpdateDraftMutation();
-  const [ deleteDraft ] = useDeleteDraftMutation();
-
+  const { data: players, isLoading: playersLoading, error: playersError } = usePlayerQuery();
+  const { data, isLoading, error } = useDraftQuery(draftId, { skip: !draftId });
   const status = (!isLoading && data && data.status) || 0;
 
   // Local state
   const [newPlayer, setNewPlayer] = useState(emptyNewPlayer);
   const [playerList, setPlayerList] = useState(data && data.players ? [...data.players] : []);
-  const newPlayerChange = e => e.target.value !== undefined ? 
-    setNewPlayer({ ...newPlayer, name: e.target.value, id: e.target.id }):
-    setNewPlayer({ ...newPlayer, id: e.target.id });
 
   // Global actions
+  const [ createPlayer, { isLoading: playersUpdating } ] = useCreatePlayerMutation();
   const addNewPlayer = async playerInfo => {
     if (!window.confirm(createPlayerMsg(playerInfo.name))) return true;
     const id = await createPlayer(playerInfo).then(r => r.data.id);
@@ -49,12 +43,15 @@ function EditDraft({ draftId, hideModal }) {
     pushPlayer(id);
   };
 
+  const [ deleteDraft ] = useDeleteDraftMutation();
   const clickDelete = () => {
     if (!window.confirm(deleteDraftMsg(data && data.title))) return;
     if (draftId) deleteDraft(draftId);
     hideModal(true);
   };
   
+  const [ createDraft ] = useCreateDraftMutation();
+  const [ updateDraft ] = useUpdateDraftMutation();
   const submitDraft = draftData => {
     // Add player if player has text
     if(newPlayer.visible && newPlayer.name.trim() && window.confirm(unsavedPlayerMsg(newPlayer.name)))
@@ -78,6 +75,10 @@ function EditDraft({ draftId, hideModal }) {
   };
 
   // Local actions
+  const newPlayerChange = e => e.target.value !== undefined ? 
+    setNewPlayer({ ...newPlayer, name: e.target.value, id: e.target.id }):
+    setNewPlayer({ ...newPlayer, id: e.target.id });
+    
   const clickAdd = (e, override) => {
     if (!newPlayer.visible) return setNewPlayer({ ...newPlayer, visible: true });
 

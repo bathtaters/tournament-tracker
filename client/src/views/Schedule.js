@@ -5,11 +5,11 @@ import Modal from "./Components/Modal";
 import Day from "./Components/Day";
 import EditDraft from "./Components/EditDraft";
 
-import { useGetScheduleQuery } from "../models/dbApi";
+import { useScheduleQuery } from "../models/baseApi";
 
 function Schedule({ range }) {
   // Global state (TO DO)
-  const { data, isLoading, error } = useGetScheduleQuery();
+  const { data, isLoading, error } = useScheduleQuery();
 
   // Local state
   const modal = useRef(null);

@@ -5,13 +5,13 @@ import PropTypes from 'prop-types';
 import Modal from "./Modal";
 import Stats from "./Stats";
 
-import { useGetPlayerQuery } from "../../models/dbApi";
+import { usePlayerQuery } from "../../models/playerApi";
 
 import { formatRecord } from '../../assets/strings';
 
 function DraftStats({ title, ranking, active }) {
   const modal = useRef(null);
-  const { data: players, isLoading, error } = useGetPlayerQuery();
+  const { data: players, isLoading, error } = usePlayerQuery();
   
   return pug`
     .m-4

@@ -7,10 +7,10 @@ import Draft from "./Draft";
 import Players from "./Players";
 import Profile from "./Profile";
 
-import { useGetSettingsQuery, useResetDbMutation } from "../models/dbApi";
+import { useSettingsQuery, useResetDbMutation } from "../models/baseApi";
 
 function App() {
-  const { data, isLoading, error } = useGetSettingsQuery();
+  const { data, isLoading, error } = useSettingsQuery();
   const [ resetDb ] = useResetDbMutation();
 
   return pug`
