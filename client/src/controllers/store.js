@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { dbApi } from '../models/dbApi'
+import { baseApi } from '../models/baseApi'
 
 export default configureStore({
   reducer: {
-    [dbApi.reducerPath]: dbApi.reducer,
+    [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(dbApi.middleware),
+    getDefaultMiddleware().concat(baseApi.middleware),
 })
