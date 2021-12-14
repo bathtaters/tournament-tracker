@@ -25,12 +25,13 @@ function revReplaceIndex(arr2d, startInd, isReplace) {
 // 
 // RETURN:
 // => (matchups) [[(match1) playerids, ...], [(match2) ...], ...]
-function generateMatchups(draft, priorOpps = null, rankings = null) {
+function generateMatchups(draft, drops = null, priorOpps = null, rankings = null) {
     // Generate simple matchups
     let matches = rankings ?
         rankings.filter(p => draft.players.includes(p))
             .concat(draft.players.filter(p => !rankings.includes(p))) :
         shuffled(draft.players);
+    if (drops) matches = matches.filter(p => !drops.includes(p));
     matches = unflat(matches, draft.playerspermatch || defPlaysPerMatch);
     
     // Don't allow multiple byes
