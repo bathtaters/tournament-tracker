@@ -7,6 +7,8 @@ import EditDraft from "./Components/EditDraft";
 
 import { useScheduleQuery } from "../models/baseApi";
 
+import { formatQueryError, showRawJson } from "../assets/strings";
+
 function Schedule({ range }) {
   // Global state (TO DO)
   const { data, isLoading, error } = useScheduleQuery();
@@ -17,15 +19,7 @@ function Schedule({ range }) {
   const [currentDraft, setCurrentDraft] = useState(null);
   const openDraftModal = useCallback(draftId => { setCurrentDraft(draftId); modal.current.open(); }, [modal]);
 
-  // Actions
-  const handleEditClick = () => {
-    // storeUndo(isEditing ? null : JSON.stringify(scheduleData));
-    setEdit(!isEditing);
-  }
-
   return pug`
-    // div= JSON.stringify(data)
-    // div= JSON.stringify(range)
     div
       .flex.justify-evenly.items-center
         input.font-light.dim-color.w-14.h-8(
@@ -42,13 +36,13 @@ function Schedule({ range }) {
           className="sm:w-20 sm:h-11"
           type="button"
           value=(isEditing ? "Back" : "Edit")
-          onClick=handleEditClick
+          onClick=()=>setEdit(!isEditing)
           disabled=isLoading
         )
 
       .flex.flex-wrap.justify-center.mt-4
         if isLoading || error
-          h4.text-center= !error ? 'Loading...' : 'ERROR: '+JSON.stringify(error)
+          h4.text-center= !error ? 'Loading...' : formatQueryError(error)
         
         else
           each day in range
@@ -59,6 +53,10 @@ function Schedule({ range }) {
               day=day
               key=day
             )
+      
+      if showRawJson
+        .text-center.font-thin.m-2= 'range: '+JSON.stringify(range)
+        .text-center.font-thin.m-2= JSON.stringify(data)
       
       .mt-8.text-xs.dim-color.font-light
         p To add -- tiny edit button to edit main Title/Date Range (Changes require reload)

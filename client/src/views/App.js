@@ -8,6 +8,7 @@ import Players from "./Players";
 import Profile from "./Profile";
 
 import { useSettingsQuery, useResetDbMutation } from "../models/baseApi";
+import { formatQueryError } from "../assets/strings";
 
 function App() {
   const { data, isLoading, error } = useSettingsQuery();
@@ -19,7 +20,7 @@ function App() {
         h4.m-2.text-center Loading your data...
       
       else if error
-        h4.m-2.text-center= 'Error: '+JSON.stringify(error)
+        h4.m-2.text-center= formatQueryError(error)
 
       else
         Router
@@ -31,6 +32,8 @@ function App() {
 
               Route(path="/home" exact=true)
                 Schedule(range=data.dateRange)
+                .block.text-center.m-6
+                  input(type="button" value="Reset Data" onClick=resetDb)
 
               Route(path="/draft/:id")
                 Draft
@@ -42,9 +45,6 @@ function App() {
                 Profile
               
               Redirect(from="*" to="/home")
-
-            .block.text-center.m-6
-              input(type="button" value="Reset Data" onClick=resetDb)
   `;
 }
 

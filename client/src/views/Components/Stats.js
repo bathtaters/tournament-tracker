@@ -2,8 +2,8 @@ import React, { Fragment, useCallback } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-import { sortByRecord } from '../../controllers/draft';
-import { statsHeader } from '../../assets/strings';
+import { orderPlayers } from '../../controllers/draftHelpers';
+import { formatQueryError, statsHeader } from '../../assets/strings';
 
 import { usePlayerQuery } from "../../models/playerApi";
 
@@ -11,7 +11,7 @@ import { usePlayerQuery } from "../../models/playerApi";
 function Stats({ onPlayerClick, className, highlightClass }) {
   // Global state
   const { data: players, isLoading, error } = usePlayerQuery();
-  const ranking = useCallback(() => sortByRecord(players), [players]); // is this right way to memoize?
+  const ranking = useCallback(() => orderPlayers(players), [players]); // is this right way to memoize?
 
   // Pass clicks to onPlayerClick
   const clickHandler = pid => event => {
@@ -32,7 +32,7 @@ function Stats({ onPlayerClick, className, highlightClass }) {
           .col-span-8.text-center.font-light.dim-color Loading...
         
         else if error
-          .col-span-8.text-center.font-thin.italic.dim-color= 'Error: '+JSON.stringify(error)
+          .col-span-8.text-center.font-thin.italic.dim-color= formatQueryError(error)
 
         else
           each pid, idx in ranking()

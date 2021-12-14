@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import DragBlock from './DragBlock';
 
 import { toDate, toDateObj } from '../../controllers/getDays';
-import { weekdays, statusInfo } from '../../assets/strings';
+import { formatQueryError, weekdays, statusInfo } from '../../assets/strings';
 
 import { useDraftQuery, useUpdateDraftMutation, } from "../../models/draftApi";
 
@@ -14,8 +14,8 @@ const dayClasses = day => {
   const today = new Date();
   if (day === toDate(today)) return { titleCls: "max-color", borderCls: "pos-border" };
   return (day === 'none' || new Date(day) < today) ?
-    { titleCls: "dim-color-inv", borderCls: "base-color" } :
-    { titleCls: "dimmer-border", borderCls: "base-border" };
+    { titleCls: "dim-color-inv", borderCls: "dimmer-border" } :
+    { titleCls: "base-color",    borderCls: "base-border" };
 }
 
 // Component
@@ -31,7 +31,7 @@ function Day({ drafts, isEditing, setDraftModal, day }) {
   
   // Actions
   const dropHandler = (a,b) => {
-    [a.day, b.day] = [toDateObj(b.day), toDateObj(a.day)];
+    [a.day, b.day] = [b.day, a.day].map(d => d === 'none' ? null : d);
     updateDraft(a);
     if (b.id) updateDraft(b);
   }
@@ -57,7 +57,7 @@ function Day({ drafts, isEditing, setDraftModal, day }) {
         .text-center.text-sm.font-light.dim-color.italic.pointer-events-none.opacity-60 ...
       
       else if error
-        .text-center.text-sm.font-light.dim-color.italic.pointer-events-none.opacity-60= 'Error: '+JSON.stringify(error)
+        .text-center.text-sm.font-light.dim-color.italic.pointer-events-none.opacity-60= formatQueryError(error)
 
       else if drafts && drafts.length
         each draftId in drafts

@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 
 import { usePlayerQuery, useUpdatePlayerMutation } from "../models/playerApi";
 
+import { formatQueryError, showRawJson } from "../assets/strings";
+
 // Default Picture
 import {ReactComponent as ProfilePic} from "../assets/blank-user.svg";
 
@@ -26,7 +28,7 @@ function Profile() {
   const changeData = key => e => setEditData({...editData, [key]: e.target.value});
   
   // Actions
-  const [ updatePlayer, { isLoading: isUpdating }] = useUpdatePlayerMutation();
+  const [ updatePlayer ] = useUpdatePlayerMutation();
   const updateData = key => {
     if (editData[key].trim()) updatePlayer({ [key]: editData[key].trim(), id });
     setEditing(false);
@@ -47,11 +49,11 @@ function Profile() {
   return pug`
     div
       h3.font-thin User Profile
-      if isLoading || isUpdating
+      if isLoading
         h4.base-color.font-thin Loading...
 
       else if error
-        h4.base-color.font-thin.italic= 'Error: '+JSON.stringify(error)
+        h4.base-color.font-thin.italic= formatQueryError(error)
 
       else
         .flex.flex-wrap
@@ -78,14 +80,15 @@ function Profile() {
 
                       if editing === row.key
                         span= ' / '
-                        a(onClick=(()=>setEditing(false)))= 'revert'
+                        a(onClick=(()=>setEditing(false)))= 'cancel'
                   
                   else
                     div
 
       .mt-6
         p.font-light.dim-color.italic To add -- Player's past / current / future games
-        p.font-thin.dim-color= JSON.stringify(data)
+        if showRawJson
+          p.font-thin.dim-color= JSON.stringify(data)
   `;
 }
 
