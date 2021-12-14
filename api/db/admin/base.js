@@ -51,16 +51,16 @@ const rmvRow = (table, rowId) =>
         [rowId]
     );
 
-const updateRow = (table, rowId, updateObj) => {
+const updateRow = (table, rowId, updateObj, returning = 'id') => {
     // strTest(table) || 
     const keys = Object.keys(updateObj);
     keys.forEach(strTest);
     return query(
         `UPDATE ${table} SET (${
             keys.join(',')
-        }) = (${queryVars(keys,2)}) WHERE id = $1 RETURNING id;`,
+        }) = (${queryVars(keys,2)}) WHERE id = $1 RETURNING ${returning};`,
         [rowId, ...Object.values(updateObj)]
-    ).then(()=>({id: rowId, ...updateObj}));
+    ).then(()=>({[returning]: rowId, ...updateObj}));
 };
 
 module.exports = {
