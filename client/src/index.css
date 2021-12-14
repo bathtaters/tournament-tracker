@@ -53,6 +53,7 @@
     input, textarea {
         @apply max-bgd bg-opacity-10 focus:bg-opacity-50;
         @apply border-gray-500 border-2 px-1 rounded-sm print:border-none;
+        @apply disabled:bg-opacity-0 disabled:border-0;
     }
     input[type="button"], input[type="submit"] {
         @apply text-center rounded-lg;
