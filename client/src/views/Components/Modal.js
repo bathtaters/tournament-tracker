@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef, useCallback } from "react";
 import { createPortal } from "react-dom";
+import FocusTrap from "focus-trap-react";
 
 // Where to render
 const modalElement = document.getElementById('modal-root');
@@ -50,10 +51,12 @@ export function Modal({ children, className = '', bgdClose = true, startOpen = f
   return createPortal(
     isOpen ? (<div className={containerClasses}>
       <div className={overlayClasses}  onClick={bgdClose ? () => close() : null} />
-      <div className={`${modalClasses} ${className}`}>
-        <input type="button" className="absolute top-0 right-0" aria-label="Close" value="x" onClick={closeWithMsg} />
-        {children}
-      </div>
+      <FocusTrap active={isOpen}>
+        <div className={`${modalClasses} ${className}`}>
+          <input type="button" className="absolute top-0 right-0" aria-label="Close" value="x" onClick={closeWithMsg} />
+          {children}
+        </div>
+      </FocusTrap>
     </div>) : null,
     modalElement
   )
