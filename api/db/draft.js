@@ -1,5 +1,11 @@
 /* *** DRAFT Object *** */
 
+// Imports
+const { matchQueries } = require('./constants');
+const roundMatchups = require('../services/matchups');
+const { toBreakers } = require('../services/dbResults');
+const { mapObjArr } = require('../services/utils');
+
 // Basic settings
 const defVal = {
     title: null, day: null,
@@ -29,10 +35,6 @@ const validator = () => [
 
 // Draft Ops
 const ops = require('./admin/base');
-
-const dayList = () => ops.query(
-    "SELECT DISTINCT day FROM draft@date_idx;"
-).then(r=>r.map(d=>d.day));
 
 function getByDay(date) {
     return ops.query(date ?
@@ -72,42 +74,160 @@ const add = ({
 ).then(r=>r && r.id);
 
 
-// Player Ops
-function addPlayer(draftId, playerId) {
-    // Check that player is not already in draft
-    return ops.operation(cl => cl.query(
-        "UPDATE draft SET players = players || $1 WHERE id = $2 RETURNING id;",
-        [Array.isArray(playerId) ? playerId : [playerId], draftId]
-    ));
-}
-    
-function dropPlayer(draftId, playerId) {
-    // Check that player is in draft
-    return ops.operation(cl => cl.query(
-        // "UPDATE draft SET players = array_remove(players, $1) WHERE id = $2;",
-        "UPDATE draft SET players = ARRAY("+
-            "SELECT player "+
-            "FROM draft, unnest(players) player "+
-            "WHERE id = $2 AND player != ALL($1)) "+
-        "WHERE id = $2 RETURNING id;",
-        [Array.isArray(playerId) ? playerId : [playerId], draftId]
-    ));
+// Append a new round to a draft
+function pushRound(draftId) {
+    return ops.operation(async cl => {
+        const draftData = await cl.query(
+            "SELECT * FROM draftReport WHERE id = $1;", [draftId]
+        ).then(r => r && r.rows && r.rows[0]);
+
+        const drops = await cl.query(
+            "SELECT drops FROM draftDrops WHERE id = $1;", [draftId]
+        ).then(r => r && r.rows && r.rows[0] && r.rows[0].drops);
+
+        // Error check
+        if (!draftData) throw Error("Invalid draft Id or error connecting.");
+        if (!draftData.players || !draftData.players.length || (drops && drops.length >= draftData.players.length))
+            return {error: "No active players are registered."};
+        if (draftData.roundactive > draftData.roundcount)
+            return {error: "Draft is over."};
+        if (draftData.roundactive && !draftData.canadvance)
+            return {error: "All matches have not been reported."};
+
+        const nextRound = draftData.roundactive + 1;
+        if (draftData.roundactive === draftData.roundcount && draftData.canadvance) {
+            // draft is finished
+            await cl.query(
+                "UPDATE draft SET roundActive = $1 WHERE id = $2;",
+                [nextRound, draftId]
+            );
+            return {success: true};
+        }
+
+        // Append ranking info
+        let oppData, rankings;
+        if (draftData.roundactive) {
+            const breakers = await cl.query(
+                "SELECT * FROM breakers WHERE draftId = $1;", [draftId]
+            ).then(r => r && r.rows);
+            rankings = toBreakers([breakers]).ranking;
+            oppData = mapObjArr(breakers,'playerid','oppids');
+        }
+
+        // Build match table
+        const matchTable = roundMatchups(draftData, drops, oppData, rankings);
+        
+        // Create matches
+        let qry = "INSERT INTO match(draftId, round, players) VALUES";
+        let args = [draftId, nextRound];
+        for (const match of matchTable) {
+            args.push(Object.fromEntries(match.map(id=>[id,0])));
+            qry += ` ($1, $2, ($${args.length})),`;
+        }
+        await cl.query(qry.replace(/,$/,';'), args);
+
+        // Increment round number
+        await cl.query(
+            "UPDATE draft SET roundActive = $1 WHERE id = $2;",
+            [nextRound, draftId]
+        );
+
+        // Auto-report byes
+        const wins = Math.ceil(((draftData.bestof||defVal.bestOf) + 1) / 2);
+        await cl.query(
+            "UPDATE match SET (draws, players, reported) = (0, p.w, TRUE) "+
+                "FROM (SELECT jsonb_object_agg(pl::STRING, $3::SMALLINT) w "+
+                    "FROM match m, jsonb_object_keys(m.players) pl "+
+                    "WHERE draftId = $1 "+
+                    "AND (SELECT COUNT(*) FROM jsonb_object_keys(players)) = 1 "+
+                    "GROUP BY m.id) p "+
+            "WHERE draftId = $1 AND round = $2 "+
+            "AND (SELECT COUNT(*) FROM jsonb_object_keys(players)) = 1;",
+            [draftId, nextRound, wins]
+        );
+        
+        // // Log new match data
+        // await cl.query(
+        //     "SELECT * FROM match JOIN matchDetail USING (id) "+
+        //     "WHERE draftId = $1 AND round = $2;",
+        //     [draftId, nextRound]
+        // ).then(r => console.log(r.rows));
+
+        return { id: draftId };
+    });
 }
 
-function swapPlayer(draftId, oldPlayerId, newPlayerId) {
-    // Check that newplayer is not already in draft && oldplayer is in draft
-    return ops.operation(cl => cl.query(
-        "UPDATE draft SET players = array_replace(players, $1, $2) WHERE id = $3 RETURNING id;",
-        [oldPlayerId, newPlayerId, draftId]
-    ));
+// function autoReportByes(draftId, round) {
+//     return ops.operation(async cl => {
+//         const wins = cl.query("SELECT bestOf FROM draft WHERE id = $1;",[draftId])
+//             .then(r => Math.ceil((r.bestof+1)/2));
+//         return cl.query(
+//             "UPDATE match SET (draws, players, reported) = (0, p.w, TRUE) "+
+//                 "FROM (SELECT jsonb_object_agg(pl::STRING, $3) w "+
+//                     "FROM match, jsonb_object_keys(players) pl "+
+//                     "WHERE draftId = $1 GROUP BY match.id) p "+
+//             "WHERE draftId = $1 AND round = $2 AND reported = FALSE;",
+//             [draftId, round, wins]
+//         );
+//     })
+// }
+
+// Remove the last round from a draft
+function popRound(draftId, round = null) {
+    return ops.operation(async cl => {
+        if (!round) round = await cl.query(matchQueries.currentRound,[draftId])
+            .then(r => r && r.rows[0] ? r.rows[0].round : null);
+        if (round === null) return new Error("No rounds in this draft to delete.");
+        await cl.query(
+            "DELETE FROM match WHERE draftId = $1 AND round = $2;",
+            [draftId, round]
+        );
+        return cl.query(
+            "UPDATE draft SET roundActive = $1 WHERE id = $2 RETURNING id;",
+            [round - 1, draftId]
+        );
+    });
 }
+
+
+// Player Ops
+// function addPlayer(draftId, playerId) {
+//     // Check that player is not already in draft
+//     return ops.operation(cl => cl.query(
+//         "UPDATE draft SET players = players || $1 WHERE id = $2 RETURNING id;",
+//         [Array.isArray(playerId) ? playerId : [playerId], draftId]
+//     ));
+// }
+    
+// function rmvPlayer(draftId, playerId) {
+//     // Check that player is in draft
+//     return ops.operation(cl => cl.query(
+//         // "UPDATE draft SET players = array_remove(players, $1) WHERE id = $2;",
+//         "UPDATE draft SET players = ARRAY("+
+//             "SELECT player "+
+//             "FROM draft, unnest(players) player "+
+//             "WHERE id = $2 AND player != ALL($1)) "+
+//         "WHERE id = $2 RETURNING id;",
+//         [Array.isArray(playerId) ? playerId : [playerId], draftId]
+//     ));
+// }
+
+// function swapPlayer(draftId, oldPlayerId, newPlayerId) {
+//     // Check that newplayer is not already in draft && oldplayer is in draft
+//     return ops.operation(cl => cl.query(
+//         "UPDATE draft SET players = array_replace(players, $1, $2) WHERE id = $3 RETURNING id;",
+//         [oldPlayerId, newPlayerId, draftId]
+//     ));
+// }
 
 // Exports
 module.exports = {
-    dayList, list, getByDay,
-    add, addPlayer, dropPlayer, swapPlayer,
+    list, getByDay, add,
+    pushRound, popRound, 
+    // addPlayer, rmvPlayer, swapPlayer,
     get: id => ops.getRow('draft', id),
-    getPlayers: id => ops.getRow('allPlayers', id),
+    getDetail: id => ops.getRow('draftDetail', id),
+    getDrops: id => ops.getRow('draftDrops', id).then(r => (r && r.drops) || []),
     rmv:  id => ops.rmvRow('draft', id),
     set: (id, newParams) => ops.updateRow('draft', id, newParams),
     limits, validator,

@@ -2,11 +2,7 @@
 
 // Imports
 const ops = require('./admin/base');
-// const { playerArr, matchResult, toRecord } = require('../services/dbTranslate');
-const { matchQueries } = require('./constants');
-const roundMatchups = require('../services/matchups');
-const { toBreakers } = require('../services/dbResults');
-const { mapObjArr } = require('../services/utils');
+const { arrToObj } = require('../services/utils');
 
 // Basic settings
 const maxRounds = require('./draft').limits.roundCount;
@@ -15,7 +11,9 @@ const limits = {
     winsDrawsMin: 0,
     roundMin: 1,
 };
-const defBestOf = 3;
+const drawKey = 'draws';
+const resultsKey = 'players';
+const dropsKey = 'drops';
 
 // Advanced validation
 const { body, param } = require('express-validator');
@@ -45,181 +43,96 @@ function get(matchId, detail = true) {
     );
 }
 
-function list(draftId, round = null) {
-    return round
-        ? ops.query(
-            "SELECT json_object_agg(id::STRING, reported::STRING) m "+
-            "FROM match WHERE draftId = $1 AND round = $2 GROUP BY round;",
+function list(draftId = null, round = null) {
+    return !draftId ? ops.query(
+            "SELECT draftId, round, array_agg(id) matches "+
+            "FROM match@draft_idx GROUP BY draftId, round;"
+        ).then(r => r && r.reduce((res,next) => {
+            if (!res[next.draftid]) res[next.draftid] = [];
+            res[next.draftid][next.round - 1] = next.matches;
+            return res;
+        }, {}))
+        
+        : round ? ops.query(
+            "SELECT array_agg(id) matches "+
+            "FROM match@draft_idx WHERE draftId = $1 AND round = $2 "+
+            "GROUP BY round;",
             [draftId, round]
-        ).then(r => r && r.m || r[0].m)
-        // ).then(r => r && r.map(m => ({ [m.id]: m.reported })))
+        ).then(r => r && r.matches || r[0].matches)
 
         : ops.query(
-            "SELECT round, json_object_agg(id::STRING, reported::STRING) m "+
-            "FROM match WHERE draftId = $1 GROUP BY round;",
+            "SELECT round, array_agg(id) matches "+
+            "FROM match@draft_idx WHERE draftId = $1 "+
+            "GROUP BY round;",
             [draftId]
-        ).then(r => r && r.reduce((res,next) => {
-            res[next.round - 1] = next.m;
+        ).then(r => r && (r.matches ? [r] : r).reduce((res,next) => {
+            res[next.round - 1] = next.matches;
             return res;
         }, []));
-        // ).then(r => r && r.reduce((res,m) => {
-        //     if (!res[m.round||0]) res[m.round||0] = [];
-        //     res[m.round||0].push(({ [m.id]: m.reported }));
-        //     return res;
-        // }, []));
 }
 
 function listDetail(draftId, round = null) {
-    return !draftId ? ops.query(
-            "SELECT * FROM match JOIN matchDetail USING (id) "+
-            "ORDER BY INDEX match@draft_idx;",
+    return (!draftId ? ops.query(
+            "SELECT * FROM match JOIN matchDetail USING (id);",
         ) : round ? ops.query(
             "SELECT * FROM match JOIN matchDetail USING (id) "+
             "WHERE draftId = $1 AND round = $2;",
             [draftId, round]
         ) : ops.query(
             "SELECT * FROM match JOIN matchDetail USING (id) "+
-            "WHERE draftId = $1 ORDER BY round;",
+            "WHERE draftId = $1;",
             [draftId]
-        );
+        )
+    ).then(arrToObj('id', false));
 }
 
 
-// Append a new round to a draft
-function pushRound(draftId) {
-    return ops.operation(async cl => {
-        const draftData = await cl.query(
-            "SELECT * FROM draftDetails WHERE id = $1;", [draftId]
-        ).then(r => r && r.rows && r.rows[0]);
-
-        // Error check
-        if (!draftData) throw Error("Invalid draft Id or error connecting.");
-        if (!draftData.players || !draftData.players.length)
-            return {error: "No active players are registered."};
-        if (draftData.roundactive > draftData.roundcount)
-            return {error: "Draft is over."};
-        if (draftData.roundactive && !draftData.canadvance)
-            return {error: "All matches have not been reported."};
-
-        const nextRound = draftData.roundactive + 1;
-        if (draftData.roundactive === draftData.roundcount && draftData.canadvance) {
-            // draft is finished
-            await cl.query(
-                "UPDATE draft SET roundActive = $1 WHERE id = $2;",
-                [nextRound, draftId]
-            );
-            return {success: true};
-        }
-
-        // Append ranking info
-        let oppData, rankings;
-        if (draftData.roundactive) {
-            const breakers = await cl.query(
-                "SELECT * FROM breakers WHERE draftId = $1;", [draftId]
-            ).then(r => r && r.rows);
-            rankings = toBreakers([breakers]).ranking;
-            oppData = mapObjArr(breakers,'playerid','oppids');
-        }
-
-        // Build match table
-        const matchTable = roundMatchups(draftData, oppData, rankings);
-        
-        // Create matches
-        let qry = "INSERT INTO match(draftId, round, players) VALUES";
-        let args = [draftId, nextRound];
-        for (const match of matchTable) {
-            args.push(Object.fromEntries(match.map(id=>[id,0])));
-            qry += ` ($1, $2, ($${args.length})),`;
-        }
-        await cl.query(qry.replace(/,$/,';'), args);
-
-        // Increment round number
-        await cl.query(
-            "UPDATE draft SET roundActive = $1 WHERE id = $2;",
-            [nextRound, draftId]
-        );
-
-        // Auto-report byes
-        const wins = Math.ceil(((draftData.bestof||defBestOf) + 1) / 2);
-        await cl.query(
-            "UPDATE match SET (draws, players, reported) = (0, p.w, TRUE) "+
-                "FROM (SELECT jsonb_object_agg(pl::STRING, $3::SMALLINT) w "+
-                    "FROM match m, jsonb_object_keys(m.players) pl "+
-                    "WHERE draftId = $1 "+
-                    "AND (SELECT COUNT(*) FROM jsonb_object_keys(players)) = 1 "+
-                    "GROUP BY m.id) p "+
-            "WHERE draftId = $1 AND round = $2 "+
-            "AND (SELECT COUNT(*) FROM jsonb_object_keys(players)) = 1;",
-            [draftId, nextRound, wins]
-        );
-        
-        // Log new match data
-        await cl.query(
-            "SELECT * FROM match JOIN matchDetail USING (id) "+
-            "WHERE draftId = $1 AND round = $2;",
-            [draftId, nextRound]
-        ).then(r => console.log(r.rows));
-
-        return { id: draftId };
-    });
+// Report win/loss/draw for a given match
+//  Report as { players: {playerId: winCount, ...} , draws: drawCount }
+function report(matchId, results) {
+    return ops.query(
+        "UPDATE match SET (draws, players, drops, reported) = "+
+            "($1, ($2), ($3), TRUE) WHERE id = $4 RETURNING draftId;",
+        [results[drawKey] || 0, results[resultsKey] || {}, results[dropsKey] || [], matchId]
+    ).then(r => ({ draftId: r && r.draftid, id: matchId }));
 }
 
-function autoReportByes(draftId, round) {
-    return ops.operation(async cl => {
-        const wins = cl.query("SELECT bestOf FROM draft WHERE id = $1;",[draftId])
-            .then(r => Math.ceil((r.bestof+1)/2));
-        return cl.query(
-            "UPDATE match SET (draws, players, reported) = (0, p.w, TRUE) "+
-                "FROM (SELECT jsonb_object_agg(pl::STRING, $3) w "+
-                    "FROM match, jsonb_object_keys(players) pl "+
-                    "WHERE draftId = $1 GROUP BY match.id) p "+
-            "WHERE draftId = $1 AND round = $2 AND reported = FALSE;",
-            [draftId, round, wins]
-        );
-    })
-}
-
-// Remove the last round from a draft
-function popRound(draftId, round = null) {
-    return ops.operation(async cl => {
-        if (!round) round = await cl.query(matchQueries.currentRound,[draftId])
-            .then(r => r && r.rows[0] ? r.rows[0].round : null);
-        if (round === null) return new Error("No rounds in this draft to delete.");
-        await cl.query(
-            "DELETE FROM match WHERE draftId = $1 AND round = $2;",
-            [draftId, round]
-        );
-        return cl.query(
-            "UPDATE draft SET roundActive = $1 WHERE id = $2 RETURNING id;",
-            [round - 1, draftId]
-        );
-    });
+// Clear reporting for match (Reset wins/draws and mark as NOT DONE)
+function unreport(matchId) {
+    return ops.query(
+        "UPDATE match SET (draws, players, drops, reported) = (0, p.w, '{}', FALSE) "+
+            "FROM (SELECT jsonb_object_agg(pl::STRING, 0) w "+
+                "FROM match, jsonb_object_keys(players) pl "+
+                "WHERE id = $1 GROUP BY id) p "+
+        "WHERE id = $1 RETURNING draftId;",
+        [matchId]
+    ).then(r => ({ draftId: r && r.draftid, id: matchId }));
 }
 
 // Update report data
-async function update(id, { draws, players = {} }) {
-    return ops.operation(async cl => {
-        let ret;
-        if (draws != null) {
-            ret = await cl.query(
-                "UPDATE match SET draws = $1 WHERE id = $2 RETURNING draftId;",
-                [draws, id]
-            );
-        }
-        for (const playerId in players) {
-            ret = await cl.query(
-                "UPDATE match SET players = jsonb_set(players, $1, $2) WHERE id = $3 RETURNING draftId;",
-                [[playerId], players[playerId], id]
-            );
-        }
-        return ret;
-    });
+async function update(id, { players = {}, ...other }) {
+    let ret;
+    if (other   && Object.keys(other).length)
+        ret = await ops.updateRow('match',id,other,'draftId');
+    if (players && Object.keys(players).length) {
+        ret = await ops.operation(async cl => {
+            let draft;
+            for (const playerId in players) {
+                draft = await cl.query(
+                    "UPDATE match SET players = jsonb_set(players, $1, $2) WHERE id = $3 RETURNING draftId;",
+                    [[playerId], players[playerId], id]
+                );
+            }
+            return draft;
+        });
+    }
+    return { draftId: ret && ret[0] && ret[0].draftid, id };
 }
 
 // Exports
 module.exports = {
     list, listDetail, get, 
-    pushRound, popRound, update,
+    report, unreport, update,
     limits, validator,
 
     // Direct access

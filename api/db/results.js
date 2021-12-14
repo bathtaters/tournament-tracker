@@ -4,8 +4,6 @@ const { toMatchResults, toGameResults, toBreakers } = require('../services/dbRes
 const { breakerBase, breakerOpps } = require('./constants').resultQueries;
 
 // Basic Settings
-const drawKey = 'draws';
-const resultsKey = 'players';
 const draftLims = require('./draft').limits;
 const limits = {
     results: {min: 0, max: draftLims.bestOf },
@@ -126,96 +124,16 @@ async function getBreakers(draftId = null, playerIds = null) {
     
     // Convert to breakers
     // console.debug('RAW BREAKERS:',data[0]);
-    return toBreakers(data);
+    return data && data[0] && toBreakers(data);
 }
 
 
 
-// Report win/loss/draw for a given match
-//  Report as { players: {playerId: winCount, ...} , draws: drawCount }
-function report(matchId, results) {
-    return ops.query(
-        "UPDATE match SET (draws, players, reported) = "+
-            "($1, ($2), TRUE) WHERE id = $3 RETURNING draftId;",
-        [results[drawKey] || 0, results[resultsKey] || {}, matchId]
-    ).then(r => r && r.draftid && {id: r.draftid});
-}
 
-// Clear reporting for match (Reset wins/draws and mark as NOT DONE)
-function unreport(matchId) {
-    return ops.query(
-        "UPDATE match SET (draws, players, reported) = (0, p.w, FALSE) "+
-            "FROM (SELECT jsonb_object_agg(pl::STRING, 0) w "+
-                "FROM match, jsonb_object_keys(players) pl "+
-                "WHERE id = $1 GROUP BY id) p "+
-        "WHERE id = $1 RETURNING draftId;",
-        [matchId]
-    ).then(r => r && r.draftid && {id: r.draftid});
-}
 
 // Exports
 module.exports = {
-    report, unreport,
     getRecord, getBreakers,
     limits, validator,
 }
 
-
-// OLD METHODS
-
-// function getRecord(
-//     { draftId, playerId } = {},
-//     { asScore = false, ofGames = false, sortByDraft = true }
-// ) {
-//     let qry;
-//     if (!draftId && !playerId)
-//         qry = "SELECT * FROM draftPlayerFull;"
-
-//     // Get recordFunction (of Games or Matches)
-//     const recordFunc = ofGames ? toGameResults : toMatchResults;
-
-//     // All records: { playerId: Points || [wins, losses, draws], ... }
-//     if (!draftId && !playerId) {
-//         return new Error("Cannot retrieve all records, choose draft and/or player")
-//         // return ops.operation(cl => cl.query(matchQueries.allMatches))
-//         //     .then(res => recordFunc(res));
-    
-//     // All records from a draft: { playerId: Points || [wins, losses, draws], ... }
-//     } else if (!playerId) {
-//         return ops.operation(async cl => {
-//             const draft = await cl.query(DRAFTD, [draftId])
-//                 .then(r => r.rows[0]);
-//             const matches = await cl.query(DRAFTM, [draftId])
-//                 .then(r => r.rows);
-//             return {matches, draft};
-//         }).then(res => recordFunc(res, asScore, byDraft));
-
-//     // All records for a player: Points || [wins, losses, draws]
-//     } else if (!draftId) {
-//         return ops.operation(async cl => {
-//             const playerIds = await cl.query(TEAM, [playerId])
-//                 .then(r => r.rows[0].teamlist.concat(playerId));
-//             const matches = cl.query(PLAY, [playerIds]).then(r=>r.rows);
-//             return {matches, playerIds};
-//         }).then(res => recordFunc(res.matches, asScore, byDraft, res.playerIds));
-//     }
-    
-//     // Get draft record for one player: Points || [wins, losses, draws]
-//     return ops.operation(async cl => {
-//         const playerIds = await cl.query(TEAM, [playerId])
-//         .then(r => r.rows[0].teamlist.concat(playerId));
-//         const matches = cl.query(DRAFTP, [draftId, playerIds]).then(r=>r.rows);
-//         return {matches, playerIds};
-//     }).then(res => recordFunc(res.matches, asScore, byDraft, res.playerIds));
-// }
-// 
-// function getBreakers(draftId, playerIds) {
-//     // All records from a draft: { playerId: Points || [wins, losses, draws], ... }
-//     return ops.operation(async cl => {
-//         const bestOf = await cl.query(DRAFTBO, [draftId])
-//             .then(r => r.rows[0].bestof);
-//         const matches = await cl.query(DRAFTM, [draftId])
-//             .then(r => r.rows);
-//         return {matches, bestOf};
-//     }).then(({matches, bestOf}) => toBreakers(matches, bestOf, playerIds));
-// }
