@@ -4,33 +4,23 @@ import { useParams } from "react-router-dom";
 import DraftStats from "./Components/DraftStats";
 import Round from "./Components/Round";
 
-import { useDropPlayerMutation } from "../models/matchApi";
 import {
   useDraftQuery, useNextRoundMutation, useClearRoundMutation, 
 } from "../models/draftApi";
 
-import { getRoundDrops, roundIsDone } from "../controllers/draft";
+import { formatQueryError, showRawJson } from "../assets/strings";
 
 
 function Draft() {
   let { id } = useParams();
 
   // Global
-  const { data, isLoading, error } = useDraftQuery(id);
+  const { data, isLoading, error, isFetching } = useDraftQuery(id);
   const matches = (data && data.matches) || [];
-  const isDone = roundIsDone(matches);
   
   // Actions
-  const [ dropPlayer ] = useDropPlayerMutation();
-  const changeActive = (playerIds, undrop) => playerIds.forEach(player => dropPlayer({ draft: id, player, undrop }));
-  
   const [ nextRound ] = useNextRoundMutation();
-  const [ clearRound ] = useClearRoundMutation();
-  const prevRound = () => {
-    // undrop players that dropped this round
-    changeActive(getRoundDrops(matches[matches.length - 1], data.players), true);
-    clearRound(id);
-  }
+  const [ prevRound ] = useClearRoundMutation();
   
   return pug`
     div
@@ -38,7 +28,7 @@ function Draft() {
         h3.italic.text-center.font-thin Loading...
 
       else if error
-        h3.italic.text-center.font-thin= 'Error: '+JSON.stringify(error)
+        h3.italic.text-center.font-thin= formatQueryError(error)
 
       else if !data
         h3.italic.text-center.font-thin Draft not found
@@ -49,14 +39,14 @@ function Draft() {
         form.text-center.mt-6.mb-4
           input(
             type="button"
-            value="Next Round"
-            disabled=!isDone
+            value=(data.roundactive === 0 ? "Start Draft" : "Next Round")
+            disabled=(isFetching || data.canadvance === false)
             onClick=()=>nextRound(id)
           )
 
         .flex.flex-row.flex-wrap.justify-evenly  
           if data.players && data.players.length
-            DraftStats(title=data.title ranking=data.allPlayers active=data.players)
+            DraftStats(draftId=id)
 
           - var roundCount = matches.length - 1
 
@@ -66,12 +56,12 @@ function Draft() {
             Round(
               draftId=id
               round=roundNum
-              changeActive=changeActive
-              deleteRound=(roundNum === roundCount ? prevRound : null)
+              deleteRound=(roundNum === roundCount ? ()=>prevRound(id) : null)
               key=(id+"."+roundNum)
             )
         
-        .text-center.font-thin.m-2= JSON.stringify(data)
+        if showRawJson
+          .text-center.font-thin.m-2= JSON.stringify(data)
   `;
 }
 

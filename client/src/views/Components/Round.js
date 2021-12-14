@@ -5,6 +5,7 @@ import Match from './Match';
 
 import { useDraftQuery, } from "../../models/draftApi";
 
+import { formatQueryError } from "../../assets/strings";
 
 function Round({ draftId, round, deleteRound }) {
   // Global
@@ -18,16 +19,15 @@ function Round({ draftId, round, deleteRound }) {
       h3.font-light.text-center= 'Round '+(round+1)
       .flex.flex-col
         if isLoading || error || !data.matches[round]
-          .dim-color.text-center.font-thin.italic= isLoading ? '...' : error ? JSON.stringify(error) : 'Missing'
+          .dim-color.text-center.font-thin.italic= isLoading ? '...' : error ? formatQueryError(error) : 'Missing'
 
         else
-          each match, idx in data.matches[round]
+          each matchId, idx in data.matches[round]
             Match(
-              key=match.id
-              data=match
+              key=matchId
               draftId=draftId
+              matchId=matchId
               isEditing=isEditing
-              activePlayers=data.players
             )
 
           .font-thin.text-sm.italic.text-center.mt-1
@@ -39,7 +39,7 @@ function Round({ draftId, round, deleteRound }) {
 
             else
               a(onClick=(()=>setEditing(true)))= 'Edit Round '+(round+1)
-              
+    
     if isEditing
       .fixed.top-0.left-0.w-screen.h-screen.z-30.base-bgd.bg-opacity-50
   `;
