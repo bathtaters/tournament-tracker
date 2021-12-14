@@ -48,11 +48,11 @@ exports.mapObjArr = (objArr, keyName, valName=null) =>
   },{});
 
 
-exports.arrToObj = key => obj => obj && obj.reduce((o,e) => {
+exports.arrToObj = (key, rmvKey = true) => obj => obj && obj.reduce((o,e) => {
   if (e[key] && !o[e[key]]) o[e[key]] = e;
   else if (e[key]) logger.error('Entry has duplicate key:',key,e[key],e);
   else logger.error('Entry is missing key:',key,e);
-  delete e[key];
+  if (rmvKey) delete e[key];
   return o;
 }, {});
 
