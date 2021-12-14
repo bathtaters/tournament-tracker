@@ -1,48 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, } from "react";
 import PropTypes from 'prop-types';
 import { useForm } from "react-hook-form";
 
-import SuggestText from "./SuggestText";
+import PlayerEditor from "./PlayerEditor";
 
 import { 
   useDraftQuery, useCreateDraftMutation,
   useDeleteDraftMutation, useUpdateDraftMutation,
 } from "../../models/draftApi";
-import { usePlayerQuery, useCreatePlayerMutation, } from "../../models/playerApi";
 
 import {
-  defaultDraftTitle,
+  formatQueryError,
+  showRawJson,
   statusInfo,
-  createPlayerMsg,
   duplicatePlayerMsg,
   unsavedPlayerMsg,
+  unaddedPlayerMsg,
   deleteDraftMsg
 } from "../../assets/strings";
 
-const emptyNewPlayer = { visible: false, name: "", id: null };
+import { emptyNewPlayer, getStatus, limits, defVal } from "../../controllers/draftHelpers";
+
+const settingsRows = [
+  { title: 'Title', key: 'title', type: 'title', lockAt: 5,
+    calcVal: (title,data) => title.trim() ? title.trim() : (data && data.title) || defVal.title
+  },
+  { title: 'Total Rounds', key: 'roundCount', type: 'number', lockAt: 5, calcMin: data => data.roundactive },
+  { title: 'Best Of', key: 'bestOf', type: 'number' },
+  { title: 'Players per Game', key: 'playersPerMatch', type: 'number' },
+];
+
+
+
 
 
 function EditDraft({ draftId, hideModal }) {
-  const { register, handleSubmit } = useForm();
-  
   // Global state
-  const { data: players, isLoading: playersLoading, error: playersError } = usePlayerQuery();
   const { data, isLoading, error } = useDraftQuery(draftId, { skip: !draftId });
-  const status = (!isLoading && data && data.status) || 0;
+  const status = !isLoading && getStatus(data);
 
   // Local state
+  const { register, handleSubmit } = useForm();
   const [newPlayer, setNewPlayer] = useState(emptyNewPlayer);
-  const [playerList, setPlayerList] = useState(data && data.players ? [...data.players] : []);
-
+  const [playerList, setPlayerList] = useState([]);
+  
   // Global actions
-  const [ createPlayer, { isLoading: playersUpdating } ] = useCreatePlayerMutation();
-  const addNewPlayer = async playerInfo => {
-    if (!window.confirm(createPlayerMsg(playerInfo.name))) return true;
-    const id = await createPlayer(playerInfo).then(r => r.data.id);
-    if (!id) throw new Error("Error adding player. ID was not returned upon creation: "+JSON.stringify(playerInfo));
-    pushPlayer(id);
-  };
-
   const [ deleteDraft ] = useDeleteDraftMutation();
   const clickDelete = () => {
     if (!window.confirm(deleteDraftMsg(data && data.title))) return;
@@ -53,20 +55,30 @@ function EditDraft({ draftId, hideModal }) {
   const [ createDraft ] = useCreateDraftMutation();
   const [ updateDraft ] = useUpdateDraftMutation();
   const submitDraft = draftData => {
-    // Add player if player has text
-    if(newPlayer.visible && newPlayer.name.trim() && window.confirm(unsavedPlayerMsg(newPlayer.name)))
-      return clickAdd();
-
-    // Clear player box
+    // Deal with leftover player text
+    let savedPlayers = [...playerList];
+    if (newPlayer.visible && newPlayer.name.trim()) {
+      if (newPlayer.id) {
+        if (window.confirm(unsavedPlayerMsg(newPlayer.name))) {
+          if (playerList.includes(newPlayer.id)) {
+            window.alert(duplicatePlayerMsg(newPlayer.name || newPlayer.id || 'New Player'));
+            return setNewPlayer(emptyNewPlayer);
+          }
+          savedPlayers.push(newPlayer.id)
+          setPlayerList(savedPlayers);
+        }
+      } else if (!window.confirm(unaddedPlayerMsg(newPlayer.name))) return;
+    }
     setNewPlayer(emptyNewPlayer);
     
     // Build draft object
+    if (!draftData.title.trim() && !savedPlayers.length) return hideModal(true);
     if (draftId) draftData.id = draftId;
-    draftData.players = playerList;
-    if (!draftData.title.trim()) {
-      if (draftData.players.length) draftData.title = (data && data.title) || defaultDraftTitle;
-      else return hideModal(true);
-    }
+    draftData.players = savedPlayers;
+    settingsRows.forEach(row => {
+      if (row.calcVal)
+        draftData[row.key.toLowerCase()] = row.calcVal(draftData[row.key.toLowerCase()], data);
+    });
 
     // Add to DB
     if (!draftId) createDraft(draftData);
@@ -74,66 +86,38 @@ function EditDraft({ draftId, hideModal }) {
     hideModal(true);
   };
 
-  // Local actions
-  const newPlayerChange = e => e.target.value !== undefined ? 
-    setNewPlayer({ ...newPlayer, name: e.target.value, id: e.target.id }):
-    setNewPlayer({ ...newPlayer, id: e.target.id });
-    
-  const clickAdd = (e, override) => {
-    if (!newPlayer.visible) return setNewPlayer({ ...newPlayer, visible: true });
-
-    let playerInfo = override || {};
-    playerInfo.name = (playerInfo.name || newPlayer.name).trim();
-    if (!playerInfo.name) return setNewPlayer({ ...newPlayer, visible: false });
-
-    if (!override) playerInfo.id = newPlayer.id;
-    pushPlayer(playerInfo.id);
-  }
-
-  const pushPlayer = playerId => {
-    if (!playerId) throw new Error("Add player is missing playerId!");
-
-    if (playerList.includes(playerId)) {
-      window.alert(duplicatePlayerMsg(players[playerId] && players[playerId].name));
-      setNewPlayer(emptyNewPlayer);
-      return;
-    }
-    
-    setPlayerList(playerList.concat(playerId));
-    setNewPlayer(emptyNewPlayer);
-  }
-  
-  const popPlayer = (pid, idx) => () => {
-    const newList = playerList.slice();
-    const rmvIdx = newList[idx] === pid ? idx : newList.lastIndexOf(pid);
-    if (rmvIdx in newList) newList.splice(rmvIdx,1);
-    setPlayerList(newList);
-  };
-
 
   // Render
 
-  if (isLoading || playersLoading)
+  if (isLoading)
     return (<div><h3 className="font-light max-color text-center">Loading...</h3></div>);
   
-  else if (error || playersError)
+  else if (error)
     return (<div>
-      <h3 className="font-light max-color text-center">Error: {JSON.stringify(error || playersError)}</h3>
+      <h3 className="font-light max-color text-center">{formatQueryError(error)}</h3>
     </div>);
 
-  const playerRow = (name, pid, idx) => (
-    <div key={pid} className="min-w-40">
-      {status < 2 ? <input
-        className="my-1 mx-2 text-xs font-light px-0"
-        type="button"
-        value="–"
-        onClick={popPlayer(pid, idx)}
-      /> :
-      <span className="mx-1">•</span>
-      }
-      <span className={"align-middle"+(!name ? " italic dim-color" : "")}>
-        {name || (playersUpdating ? "..." : "Missing")}
-      </span>
+  const settingsToRow = (row, data = {}) => (
+    <div key={row.key} className="m-4 text-left">
+      <h4 className={row.type === 'title' ? "" : "text-sm sm:text-lg font-light"}>
+        <label className="mr-2 w-max">{row.title}</label>
+        <input
+          className="max-color pt-1 px-2"
+          type={!row.type || row.type === 'title' ? "text" : row.type}
+          min={
+            row.calcMin ? row.calcMin(data) :
+            limits[row.key] ? limits[row.key].min : undefined }
+          max={
+            row.calcMax ? row.calcMax(data) :
+            limits[row.key] ? limits[row.key].max : undefined }
+          defaultValue={
+            row.key.toLowerCase() in data ? (
+              row.calcVal ? row.calcVal(data[row.key.toLowerCase()], data) : data[row.key.toLowerCase()]
+            ) : row.calcVal ? row.calcVal(defVal[row.key], data) : defVal[row.key] }
+          disabled={status >= (row.calcLock ? row.calcLock(status,data) : 'lockAt' in row ? row.lockAt : defVal.lockAt)}
+          {...register(row.key.toLowerCase())}
+        />
+      </h4>
     </div>
   );
 
@@ -148,41 +132,13 @@ function EditDraft({ draftId, hideModal }) {
       : null }
       <form onSubmit={handleSubmit(submitDraft)}>
         <div className="flex flex-wrap-reverse">
-          <div className="m-4">
-            <h4>{`Players (${playerList.length})`}</h4>
-            {playerList.map((pid,idx) => playerRow(players[pid] && players[pid].name, pid, idx))}
-            {status < 2 ? 
-              <div>
-                <input
-                  className="my-1 mx-2 text-xs font-light px-0"
-                  type="button"
-                  value="+"
-                  onClick={clickAdd}
-                />
-                <SuggestText
-                  className="align-middle"
-                  isHidden={!newPlayer.visible}
-                  value={newPlayer.name}
-                  onChange={newPlayerChange}
-                  onEnter={clickAdd}
-                  onStaticSelect={name => addNewPlayer({ name })}
-                  suggestionList={Object.keys(players).map(id=>({id, name: players[id].name}))}
-                  staticList={["Add Player"]}
-                />
-                <span className="align-middle"></span>
-              </div>
-            : null}
-          </div>
-          <div className="m-4 text-center">
-            <h4>
-              <label className="mr-2 w-max">Title</label>
-              <input
-                className="max-color pt-1 px-2"
-                type="text"
-                defaultValue={(data && data.title) || ""}
-                {...register("title")}
-              />
-            </h4>
+          <PlayerEditor 
+            players={data.players} status={status}
+            newPlayer={newPlayer} setNewPlayer={setNewPlayer}
+            playerList={playerList} setPlayerList={setPlayerList}
+          />
+          <div>
+            {settingsRows.map(row => settingsToRow(row, data || {}))}
           </div>
         </div>
         <div className="text-center mt-4">
@@ -207,6 +163,7 @@ function EditDraft({ draftId, hideModal }) {
           />
         </div>
       </form>
+      {showRawJson ? <p className="font-thin text-sm dim-color mt-4">{JSON.stringify(data)}</p> : null}
     </div>
   );
 }
