@@ -3,24 +3,24 @@ import { useForm } from "react-hook-form";
 import PropTypes from 'prop-types';
 
 import { usePlayerQuery } from "../../models/playerApi";
-import { useDropPlayerMutation, useReportMutation } from "../../models/matchApi";
+import { useReportMutation } from "../../models/matchApi";
+
+import { formatQueryError } from "../../assets/strings";
 
 function Report({ title, match, hideModal, setData, draftId }) {
   // Global
-  const { data: players, isLoading, error } = useGetPlayerQuery();
+  const { data: players, isLoading, error } = usePlayerQuery();
   
   // Local
   const { register, handleSubmit } = useForm();
 
   // Action
-  const [ dropPlayer ] = useDropPlayerMutation();
   const [ report ] = useReportMutation();
   const submitReport = reportData => {
     Object.keys(reportData.players).forEach(k => reportData.players[k] = +(reportData.players[k] || 0));
     reportData.draws = +(reportData.draws || 0);
-
-    Object.keys(reportData.drops).forEach(p => reportData.drops[p] && dropPlayer({ draft: draftId, player: p }));
-    report({ ...reportData, id: match.id });
+    reportData.drops = Object.keys(reportData.drops).reduce((d,p) => reportData.drops[p] ?  d.concat(p) : d,[]);
+    report({ ...reportData, draftId, id: match.id });
     hideModal();
   };
 
@@ -30,7 +30,7 @@ function Report({ title, match, hideModal, setData, draftId }) {
 
   else if (error)
     return (<div>
-      <h4 className="font-light dim-color text-center">Error: {JSON.stringify(error)}</h4>
+      <h4 className="font-light dim-color text-center">{formatQueryError(error)}</h4>
     </div>);
 
   const playerRows = Object.keys(match.players).map(pid => (
