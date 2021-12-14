@@ -11,18 +11,26 @@ const playerApi = baseApi.injectEndpoints({
     // Mutations
     createPlayer: build.mutation({
       query: ({ name }) => ({ url: `player`, method: 'POST', body: { name }, }),
-      transformResponse: res => console.log(res) || res,
       invalidatesTags: ['Player'],
     }),
     deletePlayer: build.mutation({
       query: id => ({ url: `player/${id}`, method: 'DELETE' }),
-      transformResponse: res => console.log(res) || [res],
       invalidatesTags: ['Player'],
+      onQueryStarted(id, { dispatch }) {
+        dispatch(playerApi.util.updateQueryData('player', undefined, draft => { delete draft[id]; }));
+      },
     }),
     updatePlayer: build.mutation({
       query: ({ id, ...body }) => ({ url: `player/${id}`, method: 'PATCH', body }),
-      transformResponse: res => console.log(res) || res,
       invalidatesTags: ['Player'],
+      onQueryStarted({ id, ...body }, { dispatch }) {
+        dispatch(playerApi.util.updateQueryData('player', undefined, draft => { 
+          Object.assign(draft[id], body); 
+        }));
+        dispatch(playerApi.util.updateQueryData('player', id, draft => { 
+          Object.assign(draft, body); 
+        }));
+      },
     }),
   }),
 });
