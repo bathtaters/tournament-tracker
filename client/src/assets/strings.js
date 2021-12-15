@@ -27,7 +27,10 @@ export const statusInfo = [
   {label: 'Complete', class: "max-color"},
 ];
 export const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-
+export const roundButtonText = [
+  "Loading", "Start Draft", "Awaiting Report",
+  "Next Round", "End Draft", "Draft Complete"
+];
 
 // --- Formatting --- \\
 

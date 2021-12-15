@@ -1,6 +1,6 @@
 // Import
 import { useRef, useEffect } from "react";
-import { defaultDraftTitle } from "../assets/strings";
+import { defaultDraftTitle, roundButtonText } from "../assets/strings";
 import { equalArrays } from "./misc";
 
 // Base settings
@@ -29,6 +29,14 @@ export const getStatus = draft =>
   !draft ? 0 : !draft.roundactive ? 1 : 
   draft.roundactive > draft.roundcount ? 3 : 2;
 
+// Round Button label
+// [0: N/A, 1: Start, 2: Not Reported, 3: Next, 4: End, 5: Complete]
+export const getRoundButton = draft => roundButtonText[
+  !draft ? 0 : draft.roundactive === 0 ? 1 :
+  draft.roundactive > draft.roundcount ? 5 :
+  draft.canadvance === false ? 2 :
+  draft.roundactive === draft.roundcount ? 4 : 3
+];
 
 
 // Player records
