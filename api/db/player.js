@@ -18,6 +18,15 @@ const validator = () => [
 ];
 
 // Player Ops
+const getDrafts = playerId => ops.query(
+    "SELECT "+
+        "id, matches, day, isDrop, "+
+        "wins, draws, count, "+
+        "title, day, roundActive, roundCount "+
+    "FROM draftPlayer JOIN draft ON draftId = id "+
+    "WHERE playerId = $1 ORDER BY day DESC;",
+[playerId]);
+
 const list = () => ops.query(
     "SELECT * FROM player WHERE isTeam IS FALSE;"
 );
@@ -44,6 +53,7 @@ function swap(playerIdL, matchIdL, playerIdR = null, matchIdR = null) {
 
 module.exports = {
     list, add, swap,
+    getDrafts,
     get: id => ops.getRow('player', id),
     rmv: id => ops.rmvRow('player', id),
     set: (id, newParams) => ops.updateRow('player', id, newParams),

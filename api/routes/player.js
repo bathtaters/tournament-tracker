@@ -42,6 +42,11 @@ router.get('/:id', async function(req, res) {
   res.sendAndLog(playerData);
 });
 
+router.get('/:id/drafts', async function(req, res) {
+  const playerDrafts = await players.getDrafts(req.params.id);
+  res.sendAndLog(playerDrafts);
+});
+
 
 /* SET player database. */
 
