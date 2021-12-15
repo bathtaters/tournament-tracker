@@ -27,15 +27,19 @@ export const statusInfo = [
   {label: 'Complete', class: "max-color"},
 ];
 export const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-export const statsHeader = ['Name','W','L','D','%','OMW','OGW'];
+
 
 // --- Formatting --- \\
 
-export const showRawJson = true;
+export const showRawJson = false;
 
-export const formatQueryError = err => formatQueryError(err);
+export const formatQueryError = err => 'ERROR: '+JSON.stringify(err);
 
 export const formatMatchTitle = (matchPlayers, playerData) =>
   Object.keys(matchPlayers).map(id => (playerData[id] && playerData[id].name) || '?').join(' vs. ');
 
 export const formatRecord = (record, braces=true) => (braces?'[ ':'')+(record || ['','']).join(' - ')+(braces?' ]':'');
+
+export const formatNum = num => num == null ? '-' : num;
+
+export const formatPercent = decimal => decimal == null ? '- %' : (Math.round(decimal * 1000) / 10) + '%';
