@@ -3,29 +3,30 @@ import { baseApi, tagIds } from './baseApi';
 import { fakeRound, swapToDay } from '../controllers/draftHelpers';
 
 
-const draftApi = baseApi.injectEndpoints({
+export const draftApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     // Queries
     draft:   build.query({
       query: (id=null) => `draft/${id || 'all'}`,
+      transformResponse: res => console.log('DRAFT',res) || res,
       providesTags: tagIds('Draft'),
     }),
     breakers: build.query({
-      query: (draftId) => `draft/${draftId}/breakers`,
-      transformResponse: res => console.log(res) || res,
+      query: (draftId) => `draft/${draftId || 'all'}/breakers`,
+      transformResponse: res => console.log('BRKRS',res) || res,
       providesTags: tagIds('Breakers'),
     }),
 
     // Mutations
     createDraft: build.mutation({
       query: body => ({ url: `draft`, method: 'POST', body }),
-      transformResponse: res => console.log(res) || res,
-      invalidatesTags: tagIds('Draft',{addBase:['Schedule']}),
+      transformResponse: res => console.log('NEW_DRAFT',res) || res,
+      invalidatesTags: tagIds('Draft',{addBase:['Schedule','PlayerDetail']}),
     }),
     deleteDraft: build.mutation({
       query: id => ({ url: `draft/${id}`, method: 'DELETE' }),
-      transformResponse: res => console.log(res) || res,
-      invalidatesTags: tagIds('Draft',{addBase:['Schedule']}),
+      transformResponse: res => console.log('DEL_DRAFT',res) || res,
+      invalidatesTags: tagIds('Draft',{addBase:['Schedule','PlayerDetail']}),
       onQueryStarted(id, { dispatch }) {
         dispatch(draftApi.util.updateQueryData('draft', undefined, draft => { 
           delete draft[id]; 
@@ -34,8 +35,8 @@ const draftApi = baseApi.injectEndpoints({
     }),
     updateDraft: build.mutation({
       query: ({ id, ...body }) => ({ url: `draft/${id}`, method: 'PATCH', body }),
-      transformResponse: res => console.log(res) || res,
-      invalidatesTags: tagIds('Draft',{addBase:['Schedule'], all:0}),
+      transformResponse: res => console.log('UPD_DRAFT',res) || res,
+      invalidatesTags: tagIds('Draft',{addBase:['Schedule','PlayerDetail'], all:0}),
       onQueryStarted({ id, ...body }, { dispatch }) {
         dispatch(draftApi.util.updateQueryData('draft', undefined, draft => { 
           Object.assign(draft[id], body);
@@ -53,7 +54,7 @@ const draftApi = baseApi.injectEndpoints({
 
     nextRound: build.mutation({
       query: id => ({ url: `draft/${id}/round`, method: 'POST' }),
-      transformResponse: res => console.log(res) || res,
+      transformResponse: res => console.log('ROUND+',res) || res,
       invalidatesTags: tagIds(['Draft','Match'], {all:0}),
       onQueryStarted(id, { dispatch }) {
         dispatch(draftApi.util.updateQueryData('draft', id, draft => { 
@@ -65,7 +66,7 @@ const draftApi = baseApi.injectEndpoints({
     }),
     clearRound: build.mutation({
       query: id => ({ url: `draft/${id}/round`, method: 'DELETE' }),
-      transformResponse: res => console.log(res) || res,
+      transformResponse: res => console.log('ROUND-',res) || res,
       invalidatesTags: tagIds(['Draft','Match'], {all:0}),
       onQueryStarted(id, { dispatch }) {
         dispatch(draftApi.util.updateQueryData('draft', id, draft => { 

@@ -3,7 +3,56 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 import getDays from '../controllers/getDays';
 
-// Tag builder code
+const tagTypes = ['Settings', 'Schedule', 'Draft', 'Match', 'Player', 'PlayerDetail', 'Breakers'];
+
+// Base queries for api server
+export const baseApi = createApi({
+  reducerPath: 'dbApi',
+  baseQuery: fetchBaseQuery({ baseUrl: '/api/v1/' }),
+  tagTypes,
+  endpoints: (build) => ({
+    // Fetches
+    settings: build.query({
+      query: () => 'settings',
+      transformResponse: data => {
+        console.log('SETTINGS',data)
+        if (data.dateRange) data.dateRange = getDays(...data.dateRange);
+        return data;
+      },
+      providesTags: ['Settings'],
+    }),
+    schedule: build.query({
+      query: () => 'schedule',
+      transformResponse: res => console.log('SCHEDULE',res) || res,
+      providesTags: ['Schedule'],
+    }),
+    
+    // TEST
+    testApi:     build.query({ query: () => 'test_backend', }),
+    resetDb:     build.mutation({
+      query: () => ({ url: 'reset', method: 'GET' }),
+      onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        dispatch(baseApi.util.updateQueryData('schedule', undefined, () => ({})));
+        queryFulfilled.then(() => dispatch(baseApi.util.invalidateTags(tagTypes)));
+      },
+    }),
+
+  }),
+})
+
+// Output generated functions
+export const {
+  useSettingsQuery, useScheduleQuery,
+  useTestApiQuery, useResetDbMutation
+ } = baseApi;
+
+
+
+
+ 
+
+
+ // Tag builder code
 const ALL_ID = 'LIST', DEF_KEY = 'id';
 export function tagIds(types, { key=null, all=true, addBase=[], addAll=[], limit=0 } = {}) {
   // Normalize 'types' input
@@ -53,44 +102,3 @@ export function tagIds(types, { key=null, all=true, addBase=[], addAll=[], limit
     return tags;
   };
 }
-
-const tagTypes = ['Settings', 'Schedule', 'Draft', 'Match', 'Player', 'Breakers'];
-
-// Base queries for api server
-export const baseApi = createApi({
-  reducerPath: 'dbApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/v1/' }),
-  tagTypes,
-  endpoints: (build) => ({
-    // Fetches
-    settings: build.query({
-      query: () => 'settings',
-      transformResponse: data => {
-        if (data.dateRange) data.dateRange = getDays(...data.dateRange);
-        return data;
-      },
-      providesTags: ['Settings'],
-    }),
-    schedule: build.query({
-      query: () => 'schedule',
-      providesTags: ['Schedule'],
-    }),
-    
-    // TEST
-    testApi:     build.query({ query: () => 'test_backend', }),
-    resetDb:     build.mutation({
-      query: () => ({ url: 'reset', method: 'GET' }),
-      onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        dispatch(baseApi.util.updateQueryData('schedule', undefined, () => ({})));
-        queryFulfilled.then(() => dispatch(baseApi.util.invalidateTags(tagTypes)));
-      },
-    }),
-
-  }),
-})
-
-// Output generated functions
-export const {
-  useSettingsQuery, useScheduleQuery,
-  useTestApiQuery, useResetDbMutation
- } = baseApi;
