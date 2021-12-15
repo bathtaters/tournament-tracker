@@ -43,7 +43,7 @@ async function dbCheck() {
     console.log('Getting draft...');
     await dbOp.query("SELECT * FROM draft WHERE title = $1;",['KLD'])
         .then(r => console.log(r) || r);
-    await dbOp.query("SELECT * FROM draftDetails WHERE id = $1;",[useDraft.id]).then(console.log);
+    await dbOp.query("SELECT * FROM draftReport WHERE id = $1;",[useDraft.id]).then(console.log);
     await dbOp.query("SELECT * FROM draftByes;").then(console.log);
 
     console.log('Getting match...');
