@@ -16,12 +16,13 @@ function AddPlayer({ hideModal }) {
 
   const submitPlayer = playerData => {
     // Apply defaults
-    settingsRows.forEach(r => {
-      if (
-        r.key in playerData &&
-        !(playerData[r.key].trim ? playerData[r.key].trim() : playerData[r.key]) &&
-        r.def
-      ) playerData[r.key] = r.def;
+    settingsRows.forEach(row => {
+      if (row.key in playerData) {
+        if (row.calcVal)
+          playerData[row.key] = row.calcVal(playerData[row.key]);
+        if (row.def != null && playerData[row.key] == null)
+          playerData[row.key] = row.def;
+      }
     });
     // Add player
     createPlayer(playerData);
