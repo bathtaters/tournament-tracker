@@ -1,5 +1,6 @@
 import React, { useState, } from "react";
 import PropTypes from 'prop-types';
+import { useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 import PlayerEditor from "./PlayerEditor";
@@ -45,11 +46,13 @@ function EditDraft({ draftId, hideModal }) {
   const [playerList, setPlayerList] = useState([]);
   
   // Global actions
+  let history = useHistory();
   const [ deleteDraft ] = useDeleteDraftMutation();
   const clickDelete = () => {
     if (!window.confirm(deleteDraftMsg(data && data.title))) return;
     if (draftId) deleteDraft(draftId);
     hideModal(true);
+    history.push("/home");
   };
   
   const [ createDraft ] = useCreateDraftMutation();
@@ -133,7 +136,7 @@ function EditDraft({ draftId, hideModal }) {
       <form onSubmit={handleSubmit(submitDraft)}>
         <div className="flex flex-wrap-reverse">
           <PlayerEditor 
-            players={data.players} status={status}
+            players={data && data.players} status={status}
             newPlayer={newPlayer} setNewPlayer={setNewPlayer}
             playerList={playerList} setPlayerList={setPlayerList}
           />
