@@ -1,6 +1,8 @@
 import React, { Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import PlayerDrafts from "./Components/PlayerDrafts";
+
 import { usePlayerQuery, useUpdatePlayerMutation } from "../models/playerApi";
 
 import { formatQueryError, showRawJson } from "../assets/strings";
@@ -11,7 +13,7 @@ import {ReactComponent as ProfilePic} from "../assets/blank-user.svg";
 // Component layout
 const profileRows = [
   { title: 'Name', key: 'name', editable: true },
-  { title: 'Record', key: 'record', formatString: r=>(r || []).join(' - ') },
+  // { title: 'Record', key: 'record', formatString: r=>(r || []).join(' - ') },
 ]
 
 // Main component
@@ -84,11 +86,11 @@ function Profile() {
                   
                   else
                     div
+      
+      if showRawJson
+        .mt-6.font-thin.dim-color= JSON.stringify(data)
 
-      .mt-6
-        p.font-light.dim-color.italic To add -- Player's past / current / future games
-        if showRawJson
-          p.font-thin.dim-color= JSON.stringify(data)
+      PlayerDrafts(id=id)
   `;
 }
 
