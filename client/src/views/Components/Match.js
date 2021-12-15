@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 import { formatQueryError, formatMatchTitle, formatRecord, swapPlayerMsg } from '../../assets/strings';
+import { getWinsMax } from "../../controllers/draftHelpers";
 
 import Modal from "./Modal";
 import DragBlock from "./DragBlock";
@@ -18,7 +19,8 @@ import {
 import { useBreakersQuery } from "../../models/draftApi";
 
 
-function Match({ draftId, matchId, isEditing }) {
+
+function Match({ draftId, matchId, bestOf, isEditing }) {
   // Init
   const reportModal = useRef(null);
   const canSwap = useCallback((types, a, b) => a !== b && types.includes("json/matchplayer"),[]);
@@ -28,8 +30,10 @@ function Match({ draftId, matchId, isEditing }) {
   const { data: rankings, isLoading: loadingRank, error: rankError } = useBreakersQuery(draftId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
   const matchData = data && data[matchId];
-  const title = isLoading || !matchData ? 'Loading' : matchData.players ?
-    formatMatchTitle(matchData.players, players) : console.error('Title error:',matchData) || 'Untitled';
+  const maxWins = getWinsMax(bestOf);
+  const title = isLoading || loadingPlayers || !matchData || !players ? 'Loading' :
+    matchData.players ? formatMatchTitle(matchData.players, players) :
+    console.error('Title error:',matchData) || 'Untitled';
   
   // Change reported values
   const [ update ] = useUpdateMatchMutation();
@@ -101,7 +105,7 @@ function Match({ draftId, matchId, isEditing }) {
               val=isNaN(matchData.draws) ? matchData.draws : +matchData.draws,
               setVal=setVal('draws'),
               suff=(d=>" draw"+(d===1?"":"s")),
-              maxVal=3, isEditing=isEditing
+              maxVal=bestOf, isEditing=isEditing
             )
 
         .flex.justify-evenly.text-center.base-color.mb-2 
@@ -121,7 +125,7 @@ function Match({ draftId, matchId, isEditing }) {
                     className=(isEditing || !matchData.isbye ? "" : "invisible ")+(isWinner ? "pos-color" : "")
                     val=isNaN(matchData.players[playerId]) ? matchData.players[playerId] : +matchData.players[playerId],
                     setVal=setVal('players', playerId),
-                    maxVal=2, isEditing=isEditing
+                    maxVal=maxWins, isEditing=isEditing
                   )
 
             if isEditing
@@ -143,7 +147,8 @@ function Match({ draftId, matchId, isEditing }) {
             title=title
             match=matchData
             hideModal=(()=>reportModal.current.close(true))
-            setData=null
+            bestOf=bestOf
+            maxWins=maxWins
             draftId=draftId
           )
   `;
@@ -152,6 +157,7 @@ function Match({ draftId, matchId, isEditing }) {
 Match.propTypes = {
   matchId: PropTypes.string,
   draftId: PropTypes.string,
+  bestOf: PropTypes.number,
   isEditing: PropTypes.bool.isRequired,
 };
 

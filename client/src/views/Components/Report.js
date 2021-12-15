@@ -7,7 +7,7 @@ import { useReportMutation } from "../../models/matchApi";
 
 import { formatQueryError } from "../../assets/strings";
 
-function Report({ title, match, hideModal, setData, draftId }) {
+function Report({ title, match, hideModal, bestOf, maxWins, draftId }) {
   // Global
   const { data: players, isLoading, error } = usePlayerQuery();
   
@@ -36,7 +36,7 @@ function Report({ title, match, hideModal, setData, draftId }) {
   const playerRows = Object.keys(match.players).map(pid => (
     <Fragment key={pid+"R"}>
       <label htmlFor={pid} className="text-right">{players[pid].name}</label>
-      <input type="number" id={pid} min="0" max="2" defaultValue={match.players[pid] || 0} {...register('players.'+pid)} />
+      <input type="number" id={pid} min="0" max={maxWins} defaultValue={match.players[pid] || 0} {...register('players.'+pid)} />
       <div>
         <input type="checkbox" id={'drops.'+pid} {...register('drops.'+pid)} />
         <label htmlFor={'drops.'+pid} className="font-thin dim-color ml-1">Drop</label>
@@ -51,7 +51,7 @@ function Report({ title, match, hideModal, setData, draftId }) {
         <div className="grid grid-cols-3 grid-flow-row gap-2 items-center">
           {playerRows}
           <label htmlFor="Rdraws" className="text-right">Draws</label>
-          <input type="number" id="Rdraws" min="0" max="3" defaultValue={match.draws || 0} {...register('draws')} />
+          <input type="number" id="Rdraws" min="0" max={bestOf} defaultValue={match.draws || 0} {...register('draws')} />
           <div />
         </div>
         
@@ -65,8 +65,9 @@ function Report({ title, match, hideModal, setData, draftId }) {
 Report.propTypes = {
   match: PropTypes.object,
   title: PropTypes.string,
+  bestOf: PropTypes.number,
+  maxWins: PropTypes.number,
   hideModal: PropTypes.func,
-  setData: PropTypes.func,
   draftId: PropTypes.string,
 };
 

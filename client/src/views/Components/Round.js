@@ -27,6 +27,7 @@ function Round({ draftId, round, deleteRound }) {
               key=matchId
               draftId=draftId
               matchId=matchId
+              bestOf=data.bestof
               isEditing=isEditing
             )
 
