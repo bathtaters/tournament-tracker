@@ -50,7 +50,7 @@ function DraftStats({ draftId }) {
     Modal(ref=modal)
       h3.font-light.max-color.text-center.mb-4= draft.title+' Stats'
       
-      Stats(playerList=(data && data.ranking) players=players)
+      Stats(draftId=draftId playerList=(data && data.ranking) players=players)
   `;
 }
 
