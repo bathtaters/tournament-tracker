@@ -4,19 +4,10 @@ import PropTypes from 'prop-types';
 
 import DragBlock from './DragBlock';
 
-import { toDate, toDateObj } from '../../controllers/getDays';
+import { toDateObj, dayClasses } from '../../controllers/getDays';
 import { formatQueryError, weekdays, statusInfo } from '../../assets/strings';
 
 import { useDraftQuery, useUpdateDraftMutation, } from "../../models/draftApi";
-
-// Component class styles
-const dayClasses = day => {
-  const today = new Date();
-  if (day === toDate(today)) return { titleCls: "max-color", borderCls: "pos-border" };
-  return (day === 'none' || new Date(day) < today) ?
-    { titleCls: "dim-color-inv", borderCls: "dimmer-border" } :
-    { titleCls: "base-color",    borderCls: "base-border" };
-}
 
 // Component
 function Day({ drafts, isEditing, setDraftModal, day }) {
