@@ -1,22 +1,26 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useParams } from "react-router-dom";
 
-import DraftStats from "./Components/DraftStats";
 import Round from "./Components/Round";
+import DraftStats from "./Components/DraftStats";
+import EditDraft from "./Components/EditDraft";
+import Modal from "./Components/Modal";
 
 import {
   useDraftQuery, useNextRoundMutation, useClearRoundMutation, 
 } from "../models/draftApi";
 
 import { formatQueryError, showRawJson } from "../assets/strings";
-
+import { getRoundButton } from "../controllers/draftHelpers";
 
 function Draft() {
+  // Local
   let { id } = useParams();
+  const modal = useRef(null);
 
   // Global
   const { data, isLoading, error, isFetching } = useDraftQuery(id);
-  const matches = (data && data.matches) || [];
+  const matches = (data && data.matches) || [];  
   
   // Actions
   const [ nextRound ] = useNextRoundMutation();
@@ -34,15 +38,23 @@ function Draft() {
         h3.italic.text-center.font-thin Draft not found
 
       else
-        h2.text-center.font-thin= data.title
+        .flex.flex-row.justify-evenly.items-center
+          form.text-center.mt-6.mb-4
+            input(
+              type="button"
+              value=getRoundButton(data)
+              disabled=(isFetching || data.canadvance === false)
+              onClick=()=>nextRound(id)
+            )
 
-        form.text-center.mt-6.mb-4
-          input(
-            type="button"
-            value=(data.roundactive === 0 ? "Start Draft" : "Next Round")
-            disabled=(isFetching || data.canadvance === false)
-            onClick=()=>nextRound(id)
-          )
+          h2.text-center.font-thin= data.title
+
+          form.text-center.mt-6.mb-4
+            input(
+              type="button"
+              value="Settings"
+              onClick=()=>modal.current.open()
+            )
 
         .flex.flex-row.flex-wrap.justify-evenly  
           if data.players && data.players.length
@@ -62,6 +74,12 @@ function Draft() {
         
         if showRawJson
           .text-center.font-thin.m-2= JSON.stringify(data)
+      
+        Modal(ref=modal, startLocked=true)
+          EditDraft(
+            draftId=id
+            hideModal=(force=>modal.current.close(force))
+          )
   `;
 }
 
