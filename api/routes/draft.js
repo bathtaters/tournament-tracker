@@ -81,6 +81,10 @@ router.get('/:id', async function(req, res) {
 });
 
 // Breakers from draft
+router.get('/all/breakers', async function(req, res) {
+  const breakers = await results.getBreakers();
+  res.sendAndLog(breakers);
+});
 router.get('/:id/breakers', async function(req, res) {
   const breakers = await results.getBreakers(req.params.id);
   res.sendAndLog(breakers);
