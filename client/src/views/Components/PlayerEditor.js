@@ -33,8 +33,8 @@ function PlayerEditor({ players, status, newPlayer, setNewPlayer, playerList, se
   const prevPlayers = usePreviousArray(players);
   useEffect(() => {
     if (!equalArrays(prevPlayers, players))
-      setPlayerList(updateArrayWithChanges(prevPlayers, players || [], playerList));
-  }, [prevPlayers, players, playerList, setPlayerList]);
+      setPlayerList(p => updateArrayWithChanges(prevPlayers, players || [], p));
+  }, [prevPlayers, players, setPlayerList]);
   
   // Local handlers
   const clickAdd = (e, override) => {
