@@ -108,7 +108,7 @@ function Match({ draftId, matchId, bestOf, isEditing }) {
               val=isNaN(matchData.draws) ? matchData.draws : +matchData.draws,
               setVal=setVal('draws'),
               suff=(d=>" draw"+(d===1?"":"s")),
-              maxVal=bestOf, isEditing=isEditing
+              maxVal=bestOf || 0, isEditing=isEditing
             )
 
         .flex.justify-evenly.text-center.base-color.mb-2 
