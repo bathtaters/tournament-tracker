@@ -145,32 +145,10 @@ function pushRound(draftId) {
             "AND (SELECT COUNT(*) FROM jsonb_object_keys(players)) = 1;",
             [draftId, nextRound, wins]
         );
-        
-        // // Log new match data
-        // await cl.query(
-        //     "SELECT * FROM match JOIN matchDetail USING (id) "+
-        //     "WHERE draftId = $1 AND round = $2;",
-        //     [draftId, nextRound]
-        // ).then(r => console.log(r.rows));
 
         return { id: draftId };
     });
 }
-
-// function autoReportByes(draftId, round) {
-//     return ops.operation(async cl => {
-//         const wins = cl.query("SELECT bestOf FROM draft WHERE id = $1;",[draftId])
-//             .then(r => Math.ceil((r.bestof+1)/2));
-//         return cl.query(
-//             "UPDATE match SET (draws, players, reported) = (0, p.w, TRUE) "+
-//                 "FROM (SELECT jsonb_object_agg(pl::STRING, $3) w "+
-//                     "FROM match, jsonb_object_keys(players) pl "+
-//                     "WHERE draftId = $1 GROUP BY match.id) p "+
-//             "WHERE draftId = $1 AND round = $2 AND reported = FALSE;",
-//             [draftId, round, wins]
-//         );
-//     })
-// }
 
 // Remove the last round from a draft
 function popRound(draftId, round = null) {
@@ -189,36 +167,6 @@ function popRound(draftId, round = null) {
     });
 }
 
-
-// Player Ops
-// function addPlayer(draftId, playerId) {
-//     // Check that player is not already in draft
-//     return ops.operation(cl => cl.query(
-//         "UPDATE draft SET players = players || $1 WHERE id = $2 RETURNING id;",
-//         [Array.isArray(playerId) ? playerId : [playerId], draftId]
-//     ));
-// }
-    
-// function rmvPlayer(draftId, playerId) {
-//     // Check that player is in draft
-//     return ops.operation(cl => cl.query(
-//         // "UPDATE draft SET players = array_remove(players, $1) WHERE id = $2;",
-//         "UPDATE draft SET players = ARRAY("+
-//             "SELECT player "+
-//             "FROM draft, unnest(players) player "+
-//             "WHERE id = $2 AND player != ALL($1)) "+
-//         "WHERE id = $2 RETURNING id;",
-//         [Array.isArray(playerId) ? playerId : [playerId], draftId]
-//     ));
-// }
-
-// function swapPlayer(draftId, oldPlayerId, newPlayerId) {
-//     // Check that newplayer is not already in draft && oldplayer is in draft
-//     return ops.operation(cl => cl.query(
-//         "UPDATE draft SET players = array_replace(players, $1, $2) WHERE id = $3 RETURNING id;",
-//         [oldPlayerId, newPlayerId, draftId]
-//     ));
-// }
 
 // Exports
 module.exports = {
