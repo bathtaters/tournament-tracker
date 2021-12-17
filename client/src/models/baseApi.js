@@ -30,7 +30,7 @@ export const baseApi = createApi({
     // TEST
     testApi:     build.query({ query: () => 'test_backend', }),
     resetDb:     build.mutation({
-      query: () => ({ url: 'reset', method: 'GET' }),
+      query: (full=false) => ({ url: 'reset'+(full?'/full':''), method: 'GET' }),
       onQueryStarted(arg, { dispatch, queryFulfilled }) {
         dispatch(baseApi.util.updateQueryData('schedule', undefined, () => ({})));
         queryFulfilled.then(() => dispatch(baseApi.util.invalidateTags(tagTypes)));
