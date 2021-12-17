@@ -2,7 +2,10 @@ import React, { Fragment, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-import { formatQueryError, formatMatchTitle, formatRecord, swapPlayerMsg } from '../../assets/strings';
+import {
+  formatQueryError, formatMatchTitle, formatRecord,
+  swapPlayerMsg, showRawJson
+} from '../../assets/strings';
 import { getWinsMax } from "../../controllers/draftHelpers";
 
 import Modal from "./Modal";
@@ -58,7 +61,7 @@ function Match({ draftId, matchId, bestOf, isEditing }) {
   
   // Render
   return pug`
-    .m-1.border.dim-border.rounded-md.h-32.flex.flex-col.justify-evenly.relative
+    .m-1.border.dim-border.rounded-md.flex.flex-col.justify-evenly.relative(className=(showRawJson?"h-64":"h-32"))
       if isLoading || loadingRank || loadingPlayers || !matchData
         .m-auto ...
       
@@ -141,6 +144,9 @@ function Match({ draftId, matchId, bestOf, isEditing }) {
               onClick=(()=>reportModal.current.open())
               disabled=(isEditing || isReporting)
             )
+          
+        if showRawJson
+          .text-center.font-thin.text-xs.w-80.m-auto= JSON.stringify(matchData)
         
         Modal(ref=reportModal, startLocked=true)
           Report(
