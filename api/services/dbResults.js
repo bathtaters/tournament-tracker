@@ -107,10 +107,10 @@ function toBreakers(data, sameTournament = true) {
     let result = {};
     data[0].forEach(d => {
         // Get opponent stats
-        const opps = d.oppids.map(o => {
+        const opps = d.oppids ? d.oppids.map(o => {
             const idx = dataMap[o];
             return data[idx[0]][idx[1]] || {};
-        });
+        }) : [];
         // Create or add to entry
         result[d.playerid] = result[d.playerid]
             ? resultCalc.combine(
