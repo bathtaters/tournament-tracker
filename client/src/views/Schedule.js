@@ -8,10 +8,12 @@ import EditDraft from "./Components/EditDraft";
 import { useScheduleQuery } from "../models/baseApi";
 
 import { formatQueryError, showRawJson } from "../assets/strings";
+import { getMissingDrafts } from "../controllers/getDays";
 
 function Schedule({ range }) {
   // Global state (TO DO)
   const { data, isLoading, error } = useScheduleQuery();
+  const otherDrafts = getMissingDrafts(data,range);
 
   // Local state
   const modal = useRef(null);
@@ -47,7 +49,7 @@ function Schedule({ range }) {
         else
           each day in range
             Day(
-              drafts=data[day]
+              drafts=(day === "none" ? otherDrafts : data[day])
               isEditing=isEditing
               setDraftModal=openDraftModal
               day=day

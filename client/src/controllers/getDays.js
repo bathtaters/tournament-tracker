@@ -33,3 +33,9 @@ export const dayClasses = day => {
     { titleCls: "dim-color-inv", borderCls: "dimmer-border" } :
     { titleCls: "base-color",    borderCls: "base-border" };
 }
+
+// Get drafts w/o date or w/ date outside range
+export const getMissingDrafts = (sched, range) => !sched || !range ? [] :
+  Object.keys(sched)
+    .filter(d => d === 'none' || !range.includes(d))
+    .reduce((list,d)=>list.concat(sched[d] || []),[]);
