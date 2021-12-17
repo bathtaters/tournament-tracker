@@ -58,9 +58,10 @@ export const draftApi = baseApi.injectEndpoints({
       invalidatesTags: tagIds(['Draft','Match'], {all:0}),
       onQueryStarted(id, { dispatch }) {
         dispatch(draftApi.util.updateQueryData('draft', id, draft => { 
+          if (draft.roundactive > draft.roundcount) return;
           if (!draft.matches) draft.matches = [];
-          draft.matches.push(fakeRound(draft));
-          draft.roundactive++;
+          if (draft.roundactive++ < draft.roundcount)
+            draft.matches.push(fakeRound(draft));
         }));
       },
     }),
@@ -70,8 +71,9 @@ export const draftApi = baseApi.injectEndpoints({
       invalidatesTags: tagIds(['Draft','Match'], {all:0}),
       onQueryStarted(id, { dispatch }) {
         dispatch(draftApi.util.updateQueryData('draft', id, draft => { 
-          draft.roundactive--;
+          if (draft.roundactive < 1) return;
           draft.matches.pop();
+          draft.roundactive--;
         }));
       },
     }),
