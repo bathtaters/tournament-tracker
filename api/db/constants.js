@@ -37,6 +37,6 @@ exports.teamQueries = {
 }
 
 exports.resultQueries = {
-    breakerBase: "SELECT * FROM breakers",
-    breakerOpps: "SELECT DISTINCT oid FROM breakers, unnest(oppIds) oid",
+    breakerBase: "SELECT breakers.*, oppIds FROM breakers LEFT JOIN draftOpps USING(draftId, playerId)",
+    breakerOpps: "SELECT DISTINCT oid FROM draftOpps, unnest(oppIds) oid",
 }
