@@ -57,10 +57,10 @@ function list(date) {
 const add = ({ 
     title = defVal.title,
     day = defVal.day,
-    roundCount = defVal.roundCount,
-    bestOf = defVal.bestOf,
-    playersPerMatch = defVal.playersPerMatch,
-    clockLimit = defVal.clockLimit,
+    roundcount = defVal.roundCount,
+    bestof = defVal.bestOf,
+    playerspermatch = defVal.playersPerMatch,
+    clocklimit = defVal.clockLimit,
     players = defVal.players,
 }) => ops.query(
     "INSERT INTO draft("+
@@ -68,10 +68,10 @@ const add = ({
         "playersPerMatch, clockLimit, players"+
     ") VALUES($1, $2, $3, $4, $5, $6, ($7)::UUID[]) RETURNING id;",
     [
-        title, day, roundCount, bestOf,
-        playersPerMatch, clockLimit, players,
+        title, day, roundcount, bestof,
+        playerspermatch, clocklimit, players,
     ]
-).then(r=>r && r.id);
+);
 
 
 // Append a new round to a draft
