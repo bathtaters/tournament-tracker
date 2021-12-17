@@ -26,7 +26,7 @@ const settingsRows = [
   { title: 'Title', key: 'title', type: 'title', lockAt: 5,
     calcVal: (title,data) => title.trim() ? title.trim() : (data && data.title) || defVal.title
   },
-  { title: 'Total Rounds', key: 'roundCount', type: 'number', lockAt: 5, calcMin: data => data.roundactive },
+  { title: 'Total Rounds', key: 'roundCount', type: 'number', lockAt: 3, calcMin: data => data.roundactive },
   { title: 'Best Of', key: 'bestOf', type: 'number' },
   { title: 'Players per Game', key: 'playersPerMatch', type: 'number' },
 ];
