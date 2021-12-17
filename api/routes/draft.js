@@ -70,7 +70,7 @@ router.get('/all', async function(req, res) {
 router.get('/:id', async function(req, res) {
   const draftData = await draft.getDetail(req.params.id);
 
-  if (!draftData) return res.sendAndLog({ err: 'Draft does not exist: '+ req.params.id});
+  if (!draftData) return res.sendAndLog({ error: 'Draft does not exist: '+ req.params.id});
 
   const [drops, matches] = await Promise.all([
     draft.getDrops(req.params.id),
