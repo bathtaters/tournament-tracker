@@ -79,6 +79,10 @@ function EditDraft({ draftId, hideModal }) {
     if (draftId) draftData.id = draftId;
     draftData.players = savedPlayers;
     settingsRows.forEach(row => {
+      if (draftData[row.key.toLowerCase()]) {
+        if (row.type === 'number')
+          draftData[row.key.toLowerCase()] = +draftData[row.key.toLowerCase()];
+      }
       if (row.calcVal)
         draftData[row.key.toLowerCase()] = row.calcVal(draftData[row.key.toLowerCase()], data);
     });
