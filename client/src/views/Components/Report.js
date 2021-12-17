@@ -35,7 +35,7 @@ function Report({ title, match, hideModal, bestOf, maxWins, draftId }) {
 
   const playerRows = Object.keys(match.players).map(pid => (
     <Fragment key={pid+"R"}>
-      <label htmlFor={pid} className="text-right">{players[pid].name}</label>
+      <label htmlFor={pid} className="text-right">{(players[pid] && players[pid].name) || pid}</label>
       <input type="number" id={pid} min="0" max={maxWins} defaultValue={match.players[pid] || 0} {...register('players.'+pid)} />
       <div>
         <input type="checkbox" id={'drops.'+pid} {...register('drops.'+pid)} />
