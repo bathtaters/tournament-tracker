@@ -17,6 +17,7 @@ export const unaddedPlayerMsg = name => (name || defPlayer) + " has not been add
 export const deletePlayerMsg = name => "Are you sure you want to delete "+(name || defPlayer.toLowerCase())+"? All of their info will be lost.";
 export const deleteDraftMsg = name => "Are you sure you want to delete "+(name || 'this draft')+"? It will be lost for good.";
 export const swapPlayerMsg = (nameA,nameB) => "Are you sure you want to swap "+(nameA ? nameA + ' w/ ' + nameB : 'these players')+"? Their match(es) have already been reported.";
+export const deleteRoundMsg = "Are you sure you want to delete this round? Reported matches will be lost for good.";
 
 
 // --- Lists --- \\
