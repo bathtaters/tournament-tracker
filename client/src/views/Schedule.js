@@ -55,7 +55,6 @@ function Schedule({ range }) {
             )
       
       if showRawJson
-        .text-center.font-thin.m-2= 'range: '+JSON.stringify(range)
         .text-center.font-thin.m-2= JSON.stringify(data)
       
       .mt-8.text-xs.dim-color.font-light
