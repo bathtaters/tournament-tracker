@@ -1,6 +1,7 @@
 import { baseApi, tagIds } from './baseApi';
 
 import { fakeRound, swapToDay } from '../controllers/draftHelpers';
+import { nextTempId } from '../controllers/misc';
 
 
 export const draftApi = baseApi.injectEndpoints({
@@ -22,12 +23,25 @@ export const draftApi = baseApi.injectEndpoints({
       query: body => ({ url: `draft`, method: 'POST', body }),
       transformResponse: res => console.log('NEW_DRAFT',res) || res,
       invalidatesTags: tagIds('Draft',{addBase:['Schedule','PlayerDetail']}),
+      onQueryStarted(body, { dispatch, getState }) {
+        const drafts = getState().dbApi.queries['draft(undefined)'];
+        const id = nextTempId('DRAFT', drafts && Object.keys(drafts));
+        dispatch(draftApi.util.updateQueryData('draft', undefined, draft => { draft[id] = body; }));
+        dispatch(baseApi.util.updateQueryData('schedule', undefined, draft => { 
+          if (!draft.none) draft.none = []; draft.none.push(id);
+        }));
+      },
     }),
     deleteDraft: build.mutation({
       query: id => ({ url: `draft/${id}`, method: 'DELETE' }),
       transformResponse: res => console.log('DEL_DRAFT',res) || res,
       invalidatesTags: tagIds('Draft',{addBase:['Schedule','PlayerDetail']}),
       onQueryStarted(id, { dispatch }) {
+        dispatch(baseApi.util.updateQueryData('schedule', undefined, draft => { 
+          Object.keys(draft).forEach(day => 
+            draft[day] && draft[day].includes(id) && draft[day].splice(draft[day].indexOf(id),1)
+          );
+        }));
         dispatch(draftApi.util.updateQueryData('draft', undefined, draft => { 
           delete draft[id]; 
         }));
