@@ -10,8 +10,8 @@ import {
   useDraftQuery, useNextRoundMutation, useClearRoundMutation, 
 } from "../models/draftApi";
 
-import { formatQueryError, showRawJson } from "../assets/strings";
-import { getRoundButton } from "../controllers/draftHelpers";
+import { deleteRoundMsg, formatQueryError, showRawJson } from "../assets/strings";
+import { getRoundButton, getStatus } from "../controllers/draftHelpers";
 
 function Draft() {
   // Local
@@ -20,45 +20,68 @@ function Draft() {
 
   // Global
   const { data, isLoading, error, isFetching } = useDraftQuery(id);
-  const matches = (data && data.matches) || [];  
+  const matches = (data && data.matches) || [];
+  const status = !isLoading && getStatus(data);
   
   // Actions
   const [ nextRound ] = useNextRoundMutation();
   const [ prevRound ] = useClearRoundMutation();
+  const handleDelete = (allow) => () => {
+    if (!allow || !window.confirm(deleteRoundMsg)) return;
+    prevRound(id)
+  }
   
   return pug`
     div
       if isLoading
         h3.italic.text-center.font-thin Loading...
 
-      else if error
-        h3.italic.text-center.font-thin= formatQueryError(error)
+      else if error || data.error
+        h3.italic.text-center.font-thin= formatQueryError(error || data.error)
 
       else if !data
         h3.italic.text-center.font-thin Draft not found
 
       else
-        .flex.flex-row.justify-evenly.items-center
-          form.text-center.mt-6.mb-4
-            input(
-              type="button"
-              value=getRoundButton(data)
-              disabled=(isFetching || data.canadvance === false)
-              onClick=()=>nextRound(id)
-            )
+        // .flex.flex-row.justify-evenly.items-center
+        
+        h2.text-center.font-thin= data.title
 
-          h2.text-center.font-thin= data.title
+        form.text-center.my-4
+          input(
+            type="button"
+            value=getRoundButton(data)
+            disabled=(isFetching || data.canadvance === false || status > 2)
+            onClick=()=>nextRound(id)
+          )
 
-          form.text-center.mt-6.mb-4
-            input(
-              type="button"
-              value="Settings"
-              onClick=()=>modal.current.open()
-            )
+        .flex.flex-row.flex-wrap.justify-evenly
+          .text-center.font-light
+            h4.font-thin.max-color
+              if status === 2
+                span.mr-2 Round
+                
+                span.mr-2.text-lg.font-light(className="sm:text-2xl")= data.roundactive
+                
+                span.mr-2 of
 
-        .flex.flex-row.flex-wrap.justify-evenly  
-          if data.players && data.players.length
-            DraftStats(draftId=id)
+                span.text-lg.font-light(className="sm:text-2xl")= data.roundcount
+
+              else if status
+                span= status === 1 ? 'Not started' : 'Complete'
+            
+            if data.playerspermatch && data.bestof
+              h5.pt-0.italic.dim-color #{data.playerspermatch}-player, best of #{data.bestof}
+            
+            form.text-center.my-6
+              input.dim-color.font-light(
+                type="button"
+                value="Edit Settings"
+                onClick=()=>modal.current.open()
+              )
+
+            if data.players && data.players.length
+              DraftStats(draftId=id)
 
           - var roundCount = matches.length - 1
 
@@ -68,7 +91,7 @@ function Draft() {
             Round(
               draftId=id
               round=roundNum
-              deleteRound=(roundNum === roundCount ? ()=>prevRound(id) : null)
+              deleteRound=handleDelete(roundNum === roundCount)
               key=(id+"."+roundNum)
             )
         
