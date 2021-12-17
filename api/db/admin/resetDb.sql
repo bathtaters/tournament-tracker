@@ -129,7 +129,7 @@ CREATE VIEW draftDetail (
     bool_and(reported)
 FROM draft
 LEFT JOIN match ON draft.id = match.draftId
-WHERE match.round = roundActive OR roundActive = 0
+AND match.round = roundActive
 GROUP BY draft.id;
 
 CREATE VIEW draftByes (draftId, players)
@@ -153,8 +153,8 @@ CREATE VIEW draftReport (
     bool_and(reported), draftByes.players
 FROM draft
 LEFT JOIN match ON draft.id = match.draftId
+    AND match.round = roundActive
 LEFT JOIN draftByes ON draft.id = draftByes.draftId
-WHERE match.round = roundActive OR roundActive = 0
 GROUP BY draft.id, draftByes.players;
 
 
@@ -240,6 +240,18 @@ GROUP BY match.draftId, playerId
 ORDER BY match.draftId, playerId;
 
 
+CREATE VIEW draftOpps (
+    playerId, draftId, oppIds
+) AS SELECT
+    playerId, draft.id, array_agg(oppId)
+FROM draft
+JOIN match ON draftId = draft.id,
+    json_object_keys(match.players) playerId,
+    json_object_keys(match.players) oppId
+    WHERE oppId != playerId
+GROUP BY draft.id, playerId;
+
+
 CREATE VIEW breakers (
     playerId, draftId, 
     isDrop,
@@ -248,8 +260,7 @@ CREATE VIEW breakers (
     matchCount,
     gameWins,
     gameDraws,
-    gameCount,
-    oppIds
+    gameCount
 ) AS SELECT
     playerId, draft.id,
     BOOL_OR(playerId::UUID = ANY(match.drops)),
@@ -272,9 +283,7 @@ CREATE VIEW breakers (
     -- gameDraws
     SUM(draws),
     -- gameCount
-    SUM(count),
-    -- oppIds
-    array_agg(oppId)
+    SUM(count)
 
 FROM draft
 JOIN (
@@ -285,8 +294,6 @@ JOIN (
         draws, count, drops
     FROM match JOIN matchDetail USING (id)
 ) match ON draftId = draft.id,
-    json_object_keys(match.players) playerId,
-    json_object_keys(match.players) oppId
-    WHERE oppId != playerId
+    json_object_keys(match.players) playerId
 GROUP BY draft.id, playerId;
 
