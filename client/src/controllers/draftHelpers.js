@@ -49,7 +49,7 @@ export const orderPlayers = breakersData => (a,b) => {
   }
   return a > b ? 1 : -1;
 }
-export const getWinsMax = bestOf => Math.floor(bestOf/2) + 1;
+export const getWinsMax = bestOf => bestOf == null ? 0 : Math.floor(bestOf/2) + 1;
 
 
 // Generate temp round
