@@ -8,7 +8,7 @@ import Players from "./Players";
 import Profile from "./Profile";
 
 import { useSettingsQuery, useResetDbMutation } from "../models/baseApi";
-import { formatQueryError } from "../assets/strings";
+import { formatQueryError, showRawJson } from "../assets/strings";
 
 function App() {
   const { data, isLoading, error } = useSettingsQuery();
@@ -33,7 +33,8 @@ function App() {
               Route(path="/home" exact=true)
                 Schedule(range=data.dateRange)
                 .block.text-center.m-6
-                  input(type="button" value="Reset Data" onClick=resetDb)
+                  input.m-2(type="button" value="Reset Data" onClick=()=>resetDb(0))
+                  input.m-2(type="button" value="Full Reset" onClick=()=>resetDb(1))
 
               Route(path="/draft/:id")
                 Draft
@@ -45,6 +46,9 @@ function App() {
                 Profile
               
               Redirect(from="*" to="/home")
+              
+            if showRawJson
+              .text-center.font-thin.m-2.text-xs.dim-color= JSON.stringify(data)
   `;
 }
 

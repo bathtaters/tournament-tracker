@@ -64,10 +64,14 @@ router.get('/test_backend', (req, res) => res.sendAndLog({result: 'Connected to 
 const dbOp = require('../db/admin/base');
 const dbResetFile = require('path').join(__dirname,'..','db','admin','resetDb.sql');
 const dbTestFile = require('path').join(__dirname,'..','testing','dbtest.sql');
-router.get('/reset', async function(req, res) {
-    // await dbOp.execFile(dbResetFile); // FULL RESET
+router.get('/reset/full', async function(req, res) {
+    await dbOp.execFile(dbResetFile);
     await dbOp.execFile(dbTestFile);
     res.sendAndLog({reset: true});
-})
+});
+router.get('/reset', async function(req, res) {
+  await dbOp.execFile(dbTestFile);
+  res.sendAndLog({reset: true});
+});
 
 module.exports = router;
