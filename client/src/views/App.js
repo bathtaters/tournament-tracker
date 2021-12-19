@@ -7,12 +7,11 @@ import Draft from "./Draft";
 import Players from "./Players";
 import Profile from "./Profile";
 
-import { useSettingsQuery, useResetDbMutation } from "../models/baseApi";
-import { formatQueryError, showRawJson } from "../assets/strings";
+import { useSettingsQuery } from "../models/baseApi";
+import { formatQueryError } from "../assets/strings";
 
 function App() {
   const { data, isLoading, error } = useSettingsQuery();
-  const [ resetDb ] = useResetDbMutation();
 
   return pug`
     .min-h-screen.relative
@@ -31,10 +30,7 @@ function App() {
               Redirect(exact=true from="/" to="/home")
 
               Route(path="/home" exact=true)
-                Schedule(range=data.dateRange)
-                .block.text-center.m-6
-                  input.m-2(type="button" value="Reset Data" onClick=()=>resetDb(0))
-                  input.m-2(type="button" value="Full Reset" onClick=()=>resetDb(1))
+                Schedule
 
               Route(path="/draft/:id")
                 Draft
@@ -47,7 +43,7 @@ function App() {
               
               Redirect(from="*" to="/home")
               
-            if showRawJson
+            if data.showrawjson
               .text-center.font-thin.m-2.text-xs.dim-color= JSON.stringify(data)
   `;
 }
