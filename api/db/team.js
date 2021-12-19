@@ -46,7 +46,7 @@ const add = (members, withName=null) => ops.operation(async cl => {
         "VALUES(TRUE, ($1)::UUID[]) RETURNING id;",
         withName ? [members, withName] : [members]
     );
-}).then(r => r[0].id);
+}).then(r => r[0]);
 
 const rmv = teamId => ops.query(
     "DELETE FROM player WHERE isTeam = TRUE AND id = $1 RETURNING members;",
