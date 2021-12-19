@@ -38,8 +38,8 @@ function get(matchId, detail = true) {
     return ops.query(
         "SELECT * FROM match "+
         (detail ? "JOIN matchDetail USING (id) " : "")+
-        "WHERE id = $1;",
-        [matchId]
+        (matchId ? "WHERE id = $1;" : ";"),
+        matchId ? [matchId] : []
     );
 }
 

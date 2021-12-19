@@ -28,8 +28,8 @@ function query(text, args, maxAttempts = 15, retryCount = 0) {
 const getRow = (table, rowId, cols) => 
     // strTest(table);
     query(
-        `SELECT ${cols || '*'} FROM ${table} WHERE id = $1;`,
-        [rowId]
+        `SELECT ${cols || '*'} FROM ${table}${rowId ? ' WHERE id = $1' : ''};`,
+        rowId ? [rowId] : []
     );
 
 const addRow = (table, colObj) => {
