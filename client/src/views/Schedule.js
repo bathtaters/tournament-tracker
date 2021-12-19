@@ -1,19 +1,20 @@
 import React, { useState, useRef, useCallback } from "react";
-import PropTypes from "prop-types";
 
 import Modal from "./Components/Modal";
 import Day from "./Components/Day";
 import EditDraft from "./Components/EditDraft";
 
 import { useScheduleQuery } from "../models/baseApi";
+import { useSettingsQuery } from "../models/baseApi";
 
-import { formatQueryError, showRawJson } from "../assets/strings";
+import { formatQueryError } from "../assets/strings";
 import { getMissingDrafts } from "../controllers/getDays";
 
-function Schedule({ range }) {
-  // Global state (TO DO)
+function Schedule() {
+  // Global state
+  const { data: settings } = useSettingsQuery();
   const { data, isLoading, error } = useScheduleQuery();
-  const otherDrafts = getMissingDrafts(data,range);
+  const otherDrafts = getMissingDrafts(data,settings.dateRange);
 
   // Local state
   const modal = useRef(null);
@@ -47,7 +48,7 @@ function Schedule({ range }) {
           h4.text-center= !error ? 'Loading...' : formatQueryError(error)
         
         else
-          each day in range
+          each day in settings.dateRange
             Day(
               drafts=(day === "none" ? otherDrafts : data[day])
               isEditing=isEditing
@@ -56,11 +57,8 @@ function Schedule({ range }) {
               key=day
             )
       
-      if showRawJson
+      if settings && settings.showrawjson
         .text-center.font-thin.m-2= JSON.stringify(data)
-      
-      .mt-8.text-xs.dim-color.font-light
-        p To add -- tiny edit button to edit main Title/Date Range (Changes require reload)
       
       Modal(ref=modal, startLocked=true)
         EditDraft(
@@ -69,7 +67,5 @@ function Schedule({ range }) {
         )
   `;
 }
-
-Schedule.propTypes = { range: PropTypes.arrayOf(PropTypes.string) }
 
 export default Schedule;

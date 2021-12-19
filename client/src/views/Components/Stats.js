@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 import { 
-  formatQueryError, formatNum, formatPercent, showRawJson
+  formatQueryError, formatNum, formatPercent
 } from '../../assets/strings';
 import { getPlayerList } from "../../controllers/misc";
 
+import { useSettingsQuery } from "../../models/baseApi";
 import { useBreakersQuery } from "../../models/draftApi";
 import { usePlayerQuery } from "../../models/playerApi";
 
@@ -26,13 +27,15 @@ const statsHeader = [
 // Main Component
 function Stats({ draftId, onPlayerClick, className, highlightClass }) {
   // Global state
+  const { data: settings } = useSettingsQuery();
   const { data, isLoading, error } = useBreakersQuery(draftId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
   const playerList = getPlayerList(data && data.ranking, players, !draftId);
 
   // Pass clicks to onPlayerClick
   const clickHandler = pid => event => {
-    if (typeof onPlayerClick === 'function') onPlayerClick(pid, event, players[pid]);
+    if (typeof onPlayerClick === 'function')
+      onPlayerClick(pid, event, {...players[pid], ...data[pid]});
   };
   
   return pug`
@@ -69,8 +72,8 @@ function Stats({ draftId, onPlayerClick, className, highlightClass }) {
             each pid, idx in playerList
               Link.w-full.h-full.px-2.opacity-0.base-bgd-inv(to="/profile/"+pid onClick=clickHandler(pid) className=highlightClass+" hover:opacity-25" key=pid+"_L")
   
-      if showRawJson
-        .text-center.font-thin.m-2= JSON.stringify(data)
+      if settings && settings.showrawjson
+        .text-center.font-thin.m-2.text-sm= JSON.stringify(data)
   `;
 }
 

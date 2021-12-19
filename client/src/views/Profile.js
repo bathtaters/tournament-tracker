@@ -3,9 +3,10 @@ import { useParams } from "react-router-dom";
 
 import PlayerDrafts from "./Components/PlayerDrafts";
 
+import { useSettingsQuery } from "../models/baseApi";
 import { usePlayerQuery, useUpdatePlayerMutation } from "../models/playerApi";
 
-import { formatQueryError, showRawJson } from "../assets/strings";
+import { formatQueryError } from "../assets/strings";
 
 // Default Picture
 import {ReactComponent as ProfilePic} from "../assets/blank-user.svg";
@@ -25,6 +26,7 @@ function Profile() {
   const { data, isLoading, error } = usePlayerQuery(id);
 
   // Local state
+  const { data: settings } = useSettingsQuery();
   const [editing, setEditing] = useState(false);
   const [editData, setEditData] = useState({});
   const changeData = key => e => setEditData({...editData, [key]: e.target.value});
@@ -61,7 +63,8 @@ function Profile() {
         .flex.flex-wrap
           div
             ProfilePic.w-36.h-40.alt-bgd.m-2.inline-block()
-            .text-center.text-xs.italic.dim-color.font-light= 'id: ' + id
+            if settings && settings.showrawjson
+              .text-center.text-xs.italic.dim-color.font-light= 'id: ' + id
 
           div.flex-grow.flex-shrink.max-w-lg
             .grid.grid-flow-row.gap-x-2.gap-y-1.grid-cols-4.items-baseline.w-full
@@ -87,7 +90,7 @@ function Profile() {
                   else
                     div
       
-      if showRawJson
+      if settings && settings.showrawjson
         .mt-6.font-thin.dim-color= JSON.stringify(data)
 
       PlayerDrafts(id=id)

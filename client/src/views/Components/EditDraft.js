@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 
 import PlayerEditor from "./PlayerEditor";
 
+import { useSettingsQuery } from "../../models/baseApi";
 import { 
   useDraftQuery, useCreateDraftMutation,
   useDeleteDraftMutation, useUpdateDraftMutation,
@@ -12,7 +13,6 @@ import {
 
 import {
   formatQueryError,
-  showRawJson,
   statusInfo,
   duplicatePlayerMsg,
   unsavedPlayerMsg,
@@ -37,6 +37,7 @@ const settingsRows = [
 
 function EditDraft({ draftId, hideModal }) {
   // Global state
+  const { data: settings } = useSettingsQuery();
   const { data, isLoading, error } = useDraftQuery(draftId, { skip: !draftId });
   const status = !isLoading && getStatus(data);
 
@@ -170,7 +171,8 @@ function EditDraft({ draftId, hideModal }) {
           />
         </div>
       </form>
-      {showRawJson ? <p className="font-thin text-sm dim-color mt-4">{JSON.stringify(data)}</p> : null}
+      {settings && settings.showrawjson ? 
+      <p className="font-thin text-sm dim-color mt-4">{JSON.stringify(data)}</p> : null}
     </div>
   );
 }

@@ -6,11 +6,12 @@ import DraftStats from "./Components/DraftStats";
 import EditDraft from "./Components/EditDraft";
 import Modal from "./Components/Modal";
 
+import { useSettingsQuery } from "../models/baseApi";
 import {
   useDraftQuery, useNextRoundMutation, useClearRoundMutation, 
 } from "../models/draftApi";
 
-import { deleteRoundMsg, formatQueryError, showRawJson } from "../assets/strings";
+import { deleteRoundMsg, formatQueryError } from "../assets/strings";
 import { getRoundButton, getStatus } from "../controllers/draftHelpers";
 
 function Draft() {
@@ -19,6 +20,7 @@ function Draft() {
   const modal = useRef(null);
 
   // Global
+  const { data: settings } = useSettingsQuery();
   const { data, isLoading, error, isFetching } = useDraftQuery(id);
   const matches = (data && data.matches) || [];
   const status = !isLoading && getStatus(data);
@@ -95,7 +97,7 @@ function Draft() {
               key=(id+"."+roundNum)
             )
         
-        if showRawJson
+        if settings && settings.showrawjson
           .text-center.font-thin.m-2= JSON.stringify(data)
       
         Modal(ref=modal, startLocked=true)

@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 import {
-  formatQueryError, formatMatchTitle, formatRecord,
-  swapPlayerMsg, showRawJson
+  formatQueryError, formatMatchTitle, formatRecord, swapPlayerMsg
 } from '../../assets/strings';
 import { getWinsMax } from "../../controllers/draftHelpers";
 
@@ -13,6 +12,7 @@ import DragBlock from "./DragBlock";
 import Report from "./Report";
 import Counter from "./Counter";
 
+import { useSettingsQuery } from "../../models/baseApi";
 import { usePlayerQuery } from "../../models/playerApi";
 import { 
   useMatchQuery, useReportMutation,
@@ -29,6 +29,7 @@ function Match({ draftId, matchId, bestOf, isEditing }) {
   const canSwap = useCallback((types, a, b) => a !== b && types.includes("json/matchplayer"),[]);
   
   // Global State
+  const { data: settings } = useSettingsQuery(); const showRawJson = settings && settings.showrawjson;
   const { data, isLoading, error } = useMatchQuery(draftId);
   const { data: rankings, isLoading: loadingRank, error: rankError } = useBreakersQuery(draftId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
