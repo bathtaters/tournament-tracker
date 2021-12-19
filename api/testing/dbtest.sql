@@ -9,6 +9,15 @@ DELETE FROM player *;
 SET sql_safe_updates = TRUE;
 
 
+-- Setup Settings
+INSERT INTO settings (id, value, type) VALUES
+    ('title','Lords of Luxury Retreat Demo','string'),
+    ('datestart','2020-10-03','string'),
+    ('dateend','2020-10-12','string'),
+    ('showadvanced','true','boolean'),
+    ('showrawjson','false','boolean');
+
+
 -- Setup Players
 INSERT INTO player (name) VALUES
     ('Nick'), ('Matt'), ('Cosme'), ('Taylor'),

@@ -10,6 +10,12 @@ CREATE DATABASE IF NOT EXISTS lolretreat;
 
 USE lolretreat;
 
+CREATE TABLE settings (
+    id STRING PRIMARY KEY NOT NULL,
+    value STRING,
+    type STRING NOT NULL DEFAULT 'string'
+);
+
 CREATE TABLE player (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),

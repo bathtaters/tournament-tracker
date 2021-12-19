@@ -1,5 +1,6 @@
 const dbOp = require('../db/admin/base');
 const player = require('../db/player');
+const settings = require('../db/settings');
 const team = require('../db/team');
 const draft = require('../db/draft');
 const match = require('../db/match');
@@ -22,6 +23,16 @@ async function dbCheck() {
     const useDraft = await draft.list().then(r => r.find(d => d.title == 'KLD'));
     const altDraft = await draft.list().then(r => r.find(d => d.title == 'CPY'));
     
+    /* TEST SETTINGS
+    await settings.getAll().then(console.log);
+    await settings.batchSet({ test1: 'A', test2: 2, test3: {a:1,b:2,c:3} }).then(console.log);
+    await settings.getAll().then(console.log);
+    await settings.rmv('test1').then(console.log);
+    await settings.rmv('test2').then(console.log);
+    await settings.rmv('test3').then(console.log);
+    await settings.getAll().then(console.log);
+    //*/
+
     /* VIEW ALL
     console.log('MATCHES')
     await dbOp.query("SELECT * FROM match;").then(console.log);
@@ -31,7 +42,7 @@ async function dbCheck() {
     await dbOp.query("SELECT * FROM player;").then(console.log);
     //*/
     
-    //* TEST VIEWS
+    /* TEST VIEWS
     console.log('Getting player/teamView...');
     const t = await dbOp.query("SELECT * FROM player WHERE isTeam IS TRUE LIMIT 1;")
     .then(r => console.log(r) || r);
@@ -83,7 +94,7 @@ async function dbCheck() {
     ).then(r => console.log(r) || r);
     //*/
 
-    //* PLAYERS: TEST SUCCESS!
+    /* PLAYERS: TEST SUCCESS!
     console.log('\nPlayers... *******************************');
     await player.list().then(console.log);
     temp = await player.add('NewPlayer');
@@ -96,7 +107,7 @@ async function dbCheck() {
     await player.list().then(r=>console.log(r.map(p=>`${p.name}<${p.id}>`).join(', ')));
     //*/
 
-    //* TEAMS: TEST SUCCESS!
+    /* TEAMS: TEST SUCCESS!
     console.log('\nTeams... *******************************');
     await team.list().then(console.log);
     temp = await team.add(playIds.slice(0,2));
@@ -119,7 +130,7 @@ async function dbCheck() {
     await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.members).length+']'}<${p.id}>`).join(', ')));
     //*/
 
-    //* DRAFTS: TEST SUCCESS!
+    /* DRAFTS: TEST SUCCESS!
     console.log('\nDrafts... *******************************');
     await draft.dayList().then(console.log);
     await draft.list().then(console.log);
@@ -149,7 +160,7 @@ async function dbCheck() {
     await draft.get(temp).then(console.log);
     //*/
     
-    //* CLOCKS: TEST SUCCESS!
+    /* CLOCKS: TEST SUCCESS!
     console.log('\nClocks... *******************************');
     temp = await draft.add({title: 'ClockTest', day: new Date(), clockLimit: 10});
     await draft.get(temp).then(console.log);
@@ -177,7 +188,7 @@ async function dbCheck() {
     await clock.getAll(temp).then(console.log);
     //*/
     
-    //* MATCHES: TEST SUCCESS!
+    /* MATCHES: TEST SUCCESS!
     console.log('\nMatches... *******************************');
     console.log('Using Draft:',useDraft.title);
     await match.list(useDraft.id).then(console.log);
@@ -234,7 +245,7 @@ async function dbCheck() {
     await match.list(useDraft.id).then(console.log);
     //*/
     
-    //*console.log('\nRecords... *******************************');
+    /*console.log('\nRecords... *******************************');
     try {
         await results.getRecord().then(console.log);
     } catch (e) { console.error('ERROR getRecord():',e); }
@@ -254,4 +265,4 @@ async function dbCheck() {
     await dbOp.deinit(); console.log('Finished');
 }
 
-// dbCheck();
+dbCheck();
