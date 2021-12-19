@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 import getDays from '../controllers/getDays';
 
-const tagTypes = ['Settings', 'Schedule', 'Draft', 'Match', 'Player', 'PlayerDetail', 'Breakers'];
+export const tagTypes = ['Settings', 'Schedule', 'Draft', 'Match', 'Player', 'PlayerDetail', 'Breakers'];
 
 // Base queries for api server
 export const baseApi = createApi({
@@ -15,8 +15,8 @@ export const baseApi = createApi({
     settings: build.query({
       query: () => 'settings',
       transformResponse: data => {
+        data.dateRange = getDays(data.datestart, data.dateend);
         console.log('SETTINGS',data)
-        if (data.dateRange) data.dateRange = getDays(...data.dateRange);
         return data;
       },
       providesTags: ['Settings'],
@@ -26,11 +26,22 @@ export const baseApi = createApi({
       transformResponse: res => console.log('SCHEDULE',res) || res,
       providesTags: ['Schedule'],
     }),
+
+    // Updates
+    updateSettings: build.mutation({
+      query: (body) => ({ url: 'settings', method: 'PATCH', body }),
+      invalidatesTags: ['Settings'],
+      onQueryStarted(body, { dispatch }) {
+        dispatch(baseApi.util.updateQueryData(
+          'settings', undefined, draft => Object.assign(draft,body)
+        ));
+      }
+    }),
     
     // TEST
     testApi:     build.query({ query: () => 'test_backend', }),
     resetDb:     build.mutation({
-      query: (full=false) => ({ url: 'reset'+(full?'/full':''), method: 'GET' }),
+      query: (full=false) => ({ url: 'reset'+(full?'/full':''), method: 'POST' }),
       onQueryStarted(arg, { dispatch, queryFulfilled }) {
         dispatch(baseApi.util.updateQueryData('schedule', undefined, () => ({})));
         queryFulfilled.then(() => dispatch(baseApi.util.invalidateTags(tagTypes)));
@@ -42,7 +53,8 @@ export const baseApi = createApi({
 
 // Output generated functions
 export const {
-  useSettingsQuery, useScheduleQuery,
+  useSettingsQuery, useUpdateSettingsMutation,
+  useScheduleQuery,
   useTestApiQuery, useResetDbMutation
  } = baseApi;
 
