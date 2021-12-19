@@ -25,7 +25,7 @@ const getDrafts = playerId => ops.query(
         "title, day, roundActive, roundCount "+
     "FROM draftPlayer JOIN draft ON draftId = id "+
     "WHERE playerId = $1 ORDER BY day DESC;",
-[playerId]);
+[playerId]).then(r => r && !Array.isArray(r) ? [r] : r);
 
 const list = () => ops.query(
     "SELECT * FROM player WHERE isTeam IS FALSE;"
