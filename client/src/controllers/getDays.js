@@ -18,6 +18,7 @@ export const sameDay = (dateA, dateB = (new Date()).getTime()) => {
 // Build array of days from start/end dates
 export default function getDays(start, end) {
   let arr = ['none'];
+  [start,end] = [start,end].map(d => (new Date(d.replace('-','/'))).getTime());
   if (end < start) return arr;
   for (let d = start; d <= end; d += oneDay) {
     arr.push(toDate(new Date(d)));
