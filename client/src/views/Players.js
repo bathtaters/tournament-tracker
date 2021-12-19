@@ -4,13 +4,15 @@ import Modal from "./Components/Modal";
 import Stats from "./Components/Stats";
 import NewPlayer from "./Components/NewPlayer";
 
-import { deletePlayerMsg } from "../assets/strings";
+import { deletePlayerMsg, cantDeletePlayerMsg } from "../assets/strings";
 
+import { useSettingsQuery } from "../models/baseApi";
 import { useDeletePlayerMutation } from "../models/playerApi";
 
 function Players() {
   // Init view
   const modal = useRef(null);
+  const { data: settings } = useSettingsQuery();
   const [ deletePlayer ] = useDeletePlayerMutation();
 
   // Local state
@@ -21,6 +23,9 @@ function Players() {
   const handlePlayerClick = useCallback((playerId, e, playerData) => {
     if (!canDelete) return; // Pass click
     e.preventDefault();
+    // Check player can be deleted
+    if (playerData.draftIds && playerData.draftIds.length)
+      return window.alert(cantDeletePlayerMsg(playerData.name));
     // Delete player
     if (!window.confirm(deletePlayerMsg(playerData.name))) return;
     deletePlayer(playerId);
@@ -39,7 +44,8 @@ function Players() {
 
       h4.text-center
         input.m-2.p-lg(type="button" value="+" onClick=(()=>modal.current.open()) disabled=canDelete)
-        input.m-2.p-lg(type="button" value=(canDelete ? "x" : "–") onClick=toggleDelete)
+        if settings && settings.showadvanced
+          input.m-2.p-lg(type="button" value=(canDelete ? "x" : "–") onClick=toggleDelete)
       
       Modal(ref=modal startLocked=true)
         NewPlayer(hideModal=(force=>modal.current.close(force)))
