@@ -1,10 +1,10 @@
 import { baseApi, tagIds } from './baseApi';
 
-const matchApi = baseApi.injectEndpoints({
+export const matchApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     // Queries
     match:   build.query({
-      query: draftId => `match/all/draft/${draftId}`,
+      query: draftId => draftId ? `match/all/draft/${draftId}` : 'match/all',
       transformResponse: res => console.log('MATCH',res) || res,
       providesTags: tagIds({Match: (r,i,a)=> (r && r.draftid) || a},{limit:1}),
     }),
