@@ -15,7 +15,7 @@
         .base-color       { @apply text-gray-800     dark:text-gray-200;     }
         .dim-color        { @apply text-gray-600     dark:text-gray-400;     }
         .dim-color-inv    { @apply text-gray-400     dark:text-gray-600;     }
-        .base-color-inv   { @apply text-gray-200     dark:text-gray-900;     }
+        .base-color-inv   { @apply text-gray-200     dark:text-gray-800;     }
         .max-color        { @apply text-black        dark:text-white;        }
         .pos-color        { @apply text-green-700    dark:text-green-300;    }
         .neg-color        { @apply text-red-700      dark:text-red-300;      }
@@ -29,7 +29,7 @@
         .base-border      { @apply border-gray-800   dark:border-gray-200;   }
         .dim-border       { @apply border-gray-600   dark:border-gray-400;   }
         .dimmer-border    { @apply border-gray-400   dark:border-gray-600;   }
-        .inv-border       { @apply border-gray-200   dark:border-gray-900;   }
+        .inv-border       { @apply border-gray-200   dark:border-gray-800;   }
         .max-border       { @apply border-black      dark:border-white;      }
         .pos-border       { @apply border-green-700  dark:border-green-300;  }
         .neg-border       { @apply border-red-700    dark:border-red-300;    }
@@ -95,5 +95,28 @@
     /* Effects */
     a, .link {
         @apply transition-all duration-500;
+    }
+
+    /* Loading Spinner - top-color = spinner color */
+    .loader {
+        border-top-color: #3498db;
+        -webkit-animation: spinner 1.5s linear infinite;
+        animation: spinner 1.5s linear infinite;
+    }
+    @-webkit-keyframes spinner {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }    
+    @keyframes spinner {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
 }
