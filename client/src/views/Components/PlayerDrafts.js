@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import { useSettingsQuery } from "../../models/baseApi";
 import { usePlayerDraftsQuery } from "../../models/playerApi";
 
-import { formatQueryError, showRawJson, statusInfo } from "../../assets/strings";
+import { formatQueryError, statusInfo } from "../../assets/strings";
 import { dayClasses } from "../../controllers/getDays";
 import { getStatus } from "../../controllers/draftHelpers";
 
@@ -12,7 +13,7 @@ const scheduleRows = [
   { 
     title: 'Day', 
     value: d => d.day ? d.day.slice(5,10).replace('-','/') : 'None', 
-    class: d => dayClasses(d.day).titleCls 
+    class: d => dayClasses(d.day.slice(0,10)).titleCls 
   },
   { title: 'Draft', value: d => d.title, span: 3, link: d => `/draft/${d.id}` },
   {
@@ -28,19 +29,20 @@ const scheduleGridClass = `grid-cols-${scheduleRows.reduce((c,r) => c + (r.span 
 
 // Main component
 function PlayerDrafts({ id }) {
+  const { data: settings } = useSettingsQuery();
   const { data, isLoading, error } = usePlayerDraftsQuery(id);
 
   return pug`
-    .m-4
-      h3.dim-color.text-center.m-4.font-thin Schedule
+    .my-4
+      h3.dim-color.mt-4.font-thin Schedule
       if isLoading
         h4.base-color.font-thin Loading...
 
-      else if error || !data
-        h4.base-color.font-thin.italic= error ? formatQueryError(error) : 'Empty'
+      else if error || !Array.isArray(data)
+        h4.base-color.font-thin.italic= error ? formatQueryError(error) : 'Invalid data: '+JSON.stringify(data)
 
       else
-        .grid.grid-flow-row.gap-x-2.gap-y-1(className=scheduleGridClass)
+        .grid.grid-flow-row.gap-x-2.gap-y-1.mx-4(className=scheduleGridClass)
           each row in scheduleRows
             h4(
               key="HDR_"+row.title
@@ -67,7 +69,7 @@ function PlayerDrafts({ id }) {
               else
                 div(key=draft.id+"_"+row.title className=(row.span ? "col-span-"+row.span : ""))
 
-      if showRawJson
+      if settings && settings.showrawjson
         p.mt-8.font-thin.dim-color= JSON.stringify(data)
   `;
 }
