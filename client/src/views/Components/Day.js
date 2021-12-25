@@ -7,6 +7,7 @@ import DragBlock from './DragBlock';
 import { toDateObj, dayClasses } from '../../controllers/getDays';
 import { formatQueryError, weekdays, statusInfo } from '../../assets/strings';
 
+import { usePrefetch, } from "../../models/baseApi";
 import { useDraftQuery, useUpdateDraftMutation, } from "../../models/draftApi";
 
 // Component
@@ -19,6 +20,10 @@ function Day({ drafts, isEditing, setDraftModal, day }) {
   // Global state
   const { data, isLoading, error } = useDraftQuery();
   const [ updateDraft ] = useUpdateDraftMutation();
+  const prefetchDraft = usePrefetch('draft');
+  const prefetchMatch = usePrefetch('match');
+  const prefetchStats = usePrefetch('breakers');
+  const loadDraft = id => { prefetchDraft(id); prefetchMatch(id); prefetchStats(id); };
   
   // Actions
   const dropHandler = (a,b) => {
@@ -60,6 +65,7 @@ function Day({ drafts, isEditing, setDraftModal, day }) {
               dataType="json/draftday"
               canDrop=canDrop
               key=draftId
+              onHover=(()=>loadDraft(draftId))
             )
               - var status = data[draftId].status || 0
 
