@@ -29,7 +29,10 @@ function Header({ title }) {
 
     .h-28
       Modal(ref=modal)
-        Settings(hideModal=(()=>modal.current.close()))
+        Settings(
+          hideModal=(()=>modal.current.close())
+          lockModal=(()=>modal.current.lock())
+        )
   `;
 }
 

@@ -32,8 +32,8 @@ export function Modal({ children, className = '', bgdClose = true, startOpen = f
     open:  () => setOpen(true),
     close,
     unlock:  () => disableClose(false),
-    lock: () => console.log('window', closeDisabled ? 'unlocked' : 'locked') || disableClose(!closeDisabled),
-  }), [setOpen, close, disableClose, closeDisabled]);
+    lock: () => disableClose(true),
+  }), [setOpen, close, disableClose]);
 
   // Capture keystrokes
   const keystrokeHandler = useCallback(e => {
@@ -53,7 +53,7 @@ export function Modal({ children, className = '', bgdClose = true, startOpen = f
       <div className={overlayClasses}  onClick={bgdClose ? () => close() : null} />
       <FocusTrap active={isOpen}>
         <div className={`${modalClasses} ${className}`}>
-          <input type="button" className="absolute top-0 right-0" aria-label="Close" value="x" onClick={closeWithMsg} />
+          <input type="button" className="absolute top-0 right-0 m-1" aria-label="Close" value="x" onClick={closeWithMsg} />
           {children}
         </div>
       </FocusTrap>

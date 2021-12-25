@@ -149,11 +149,12 @@ function Match({ draftId, matchId, bestOf, isEditing }) {
         if showRawJson
           .text-center.font-thin.text-xs.w-80.m-auto= JSON.stringify(matchData)
         
-        Modal(ref=reportModal, startLocked=true)
+        Modal(ref=reportModal)
           Report(
             title=title
             match=matchData
             hideModal=(()=>reportModal.current.close(true))
+            lockModal=(()=>reportModal.current.lock())
             bestOf=bestOf
             maxWins=maxWins
             draftId=draftId

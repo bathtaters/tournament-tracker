@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import PropTypes from 'prop-types';
 import { useForm } from "react-hook-form";
 
@@ -21,12 +21,16 @@ const settingsRows = [
 ];
 
 
-function Settings({ hideModal }) {
+function Settings({ hideModal, lockModal }) {
   // Global state
   const { data, isLoading, error } = useSettingsQuery();
 
   // Local state
   const { register, handleSubmit } = useForm();
+  const [isChanged, setChanged] = useState(false);
+  const handleChange = useCallback(() => { 
+    if (!isChanged) { lockModal(); setChanged(true); }
+  }, [isChanged, setChanged, lockModal]);
   
   // Global actions
   const [ resetDb ] = useResetDbMutation();
@@ -71,7 +75,7 @@ function Settings({ hideModal }) {
             row.key.toLowerCase() in data ? (
               row.calcVal ? row.calcVal(data[row.key.toLowerCase()], data) : data[row.key.toLowerCase()]
             ) : row.calcVal ? row.calcVal(row.defaultValue, data) : row.defaultValue }}
-          {...register(row.key.toLowerCase())}
+          {...register(row.key.toLowerCase(),{onChange:handleChange})}
         />
       </h4>
     </div>
@@ -119,6 +123,7 @@ function Settings({ hideModal }) {
 
 Settings.propTypes = {
   hideModal: PropTypes.func,
+  lockModal: PropTypes.func,
 };
 
 export default Settings;

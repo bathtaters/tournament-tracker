@@ -1,4 +1,4 @@
-import React, { useState, } from "react";
+import React, { useState, useCallback } from "react";
 import PropTypes from 'prop-types';
 import { useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -35,7 +35,7 @@ const settingsRows = [
 
 
 
-function EditDraft({ draftId, hideModal }) {
+function EditDraft({ draftId, hideModal, lockModal }) {
   // Global state
   const { data: settings } = useSettingsQuery();
   const { data, isLoading, error } = useDraftQuery(draftId, { skip: !draftId });
@@ -45,6 +45,10 @@ function EditDraft({ draftId, hideModal }) {
   const { register, handleSubmit } = useForm();
   const [newPlayer, setNewPlayer] = useState(emptyNewPlayer);
   const [playerList, setPlayerList] = useState([]);
+  const [isChanged, setChanged] = useState(false);
+  const handleChange = useCallback(() => { 
+    if (!isChanged) { lockModal(); setChanged(true); }
+  }, [isChanged, setChanged, lockModal]);
   
   // Global actions
   let history = useHistory();
@@ -123,7 +127,7 @@ function EditDraft({ draftId, hideModal }) {
               row.calcVal ? row.calcVal(data[row.key.toLowerCase()], data) : data[row.key.toLowerCase()]
             ) : row.calcVal ? row.calcVal(defVal[row.key], data) : defVal[row.key] }
           disabled={status >= (row.calcLock ? row.calcLock(status,data) : 'lockAt' in row ? row.lockAt : defVal.lockAt)}
-          {...register(row.key.toLowerCase())}
+          {...register(row.key.toLowerCase(),{onChange:handleChange})}
         />
       </h4>
     </div>
@@ -144,6 +148,7 @@ function EditDraft({ draftId, hideModal }) {
             players={data && data.players} status={status}
             newPlayer={newPlayer} setNewPlayer={setNewPlayer}
             playerList={playerList} setPlayerList={setPlayerList}
+            handleChange={handleChange}
           />
           <div>
             {settingsRows.map(row => settingsToRow(row, data || {}))}
@@ -180,6 +185,7 @@ function EditDraft({ draftId, hideModal }) {
 EditDraft.propTypes = {
   draftId: PropTypes.string,
   hideModal: PropTypes.func,
+  lockModal: PropTypes.func,
 };
 
 export default EditDraft;

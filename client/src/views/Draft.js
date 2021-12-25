@@ -100,10 +100,11 @@ function Draft() {
         if settings && settings.showrawjson
           .text-center.font-thin.m-2= JSON.stringify(data)
       
-        Modal(ref=modal, startLocked=true)
+        Modal(ref=modal)
           EditDraft(
             draftId=id
             hideModal=(force=>modal.current.close(force))
+            lockModal=(()=>modal.current.lock())
           )
   `;
 }

@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from "react";
 
 import Modal from "./Components/Modal";
 import Stats from "./Components/Stats";
-import NewPlayer from "./Components/NewPlayer";
+import NewPlayer from "./Components/AddPlayer";
 
 import { deletePlayerMsg, cantDeletePlayerMsg } from "../assets/strings";
 
@@ -47,8 +47,11 @@ function Players() {
         if settings && settings.showadvanced
           input.m-2.p-lg(type="button" value=(canDelete ? "x" : "–") onClick=toggleDelete)
       
-      Modal(ref=modal startLocked=true)
-        NewPlayer(hideModal=(force=>modal.current.close(force)))
+      Modal(ref=modal)
+        NewPlayer(
+          hideModal=(force=>modal.current.close(force))
+          lockModal=(()=>modal.current.lock())
+        )
   `;
 }
 

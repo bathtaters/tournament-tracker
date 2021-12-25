@@ -10,7 +10,7 @@ import { equalArrays } from "../../controllers/misc";
 import { emptyNewPlayer, usePreviousArray, updateArrayWithChanges } from "../../controllers/draftHelpers";
 
 
-function PlayerEditor({ players, status, newPlayer, setNewPlayer, playerList, setPlayerList }) {
+function PlayerEditor({ players, status, newPlayer, setNewPlayer, playerList, setPlayerList, handleChange }) {
   // Global State
   const { data, isLoading, error } = usePlayerQuery();
   const remainingPlayers = data ? Object.keys(data).filter(p=>!playerList.includes(p)) : [];
@@ -44,6 +44,7 @@ function PlayerEditor({ players, status, newPlayer, setNewPlayer, playerList, se
     playerInfo.name = playerInfo.name.trim();
     if (!playerInfo.name) return setNewPlayer(emptyNewPlayer);
 
+    handleChange();
     pushPlayer(playerInfo.id);
   }
 
@@ -127,6 +128,7 @@ PlayerEditor.propTypes = {
   setPlayerList: PropTypes.func,
   newPlayer: PropTypes.object,
   setNewPlayer: PropTypes.func,
+  handleChange: PropTypes.func,
 };
 
 export default PlayerEditor;
