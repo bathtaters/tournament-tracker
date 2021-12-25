@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useCallback } from "react";
 import PropTypes from 'prop-types';
 import { useForm } from "react-hook-form";
 
@@ -10,9 +10,14 @@ const settingsRows = [
 ];
 
 // Component
-function AddPlayer({ hideModal }) {
+function AddPlayer({ hideModal, lockModal }) {
   const { register, handleSubmit } = useForm();
   const [ createPlayer ] = useCreatePlayerMutation();
+  
+  const [isChanged, setChanged] = useState(false);
+  const handleChange = useCallback(() => { 
+    if (!isChanged) { lockModal(); setChanged(true); }
+  }, [isChanged, setChanged, lockModal]);
 
   const submitPlayer = playerData => {
     // Apply defaults
@@ -37,7 +42,7 @@ function AddPlayer({ hideModal }) {
           <input
             className="max-color pt-1 px-2"
             type="text"
-            {...register(row.key)}
+            {...register(row.key,{onChange:handleChange})}
           />
         </h4>
       </div>
@@ -71,6 +76,7 @@ function AddPlayer({ hideModal }) {
 
 AddPlayer.propTypes = {
   hideModal: PropTypes.func,
+  lockModal: PropTypes.func,
 };
 
 export default AddPlayer;
