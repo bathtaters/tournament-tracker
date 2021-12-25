@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 
 import Header from "./Header";
@@ -7,11 +7,20 @@ import Draft from "./Draft";
 import Players from "./Players";
 import Profile from "./Profile";
 
-import { useSettingsQuery } from "../models/baseApi";
+import { useSettingsQuery, usePrefetch } from "../models/baseApi";
 import { formatQueryError } from "../assets/strings";
 
 function App() {
   const { data, isLoading, error } = useSettingsQuery();
+
+  // Preload base data
+  const loadSched  = usePrefetch('schedule');
+  const loadDraft  = usePrefetch('draft');
+  const loadPlayer = usePrefetch('player');
+  const loadStats  = usePrefetch('breakers');
+  useEffect(() => {
+    loadSched(); loadDraft(); loadPlayer(); loadStats();
+  }, [loadSched,loadDraft,loadPlayer,loadStats]);
 
   return pug`
     .min-h-screen.relative

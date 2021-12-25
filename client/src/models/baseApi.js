@@ -54,7 +54,7 @@ export const baseApi = createApi({
 // Output generated functions
 export const {
   useSettingsQuery, useUpdateSettingsMutation,
-  useScheduleQuery,
+  useScheduleQuery, usePrefetch,
   useTestApiQuery, useResetDbMutation
  } = baseApi;
 
