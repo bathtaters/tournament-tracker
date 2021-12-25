@@ -48,7 +48,7 @@ function Settings({ hideModal, lockModal }) {
 
     // Add to DB
     updateSettings(formData);
-    if (hideModal) hideModal(true);
+    hideModal(true);
   };
 
 
@@ -64,7 +64,7 @@ function Settings({ hideModal, lockModal }) {
   const settingsToRow = (row, data = {}) => (
     <div key={row.key} className="m-4 text-left">
       <h4 className={row.type === 'title' ? "" : "text-sm sm:text-lg font-light"}>
-        <label for={row.key} className="mr-2 w-max">{row.title}</label>
+        <label htmlFor={row.key} className="mr-2 w-max">{row.title}</label>
         <input
           id={row.key}
           className="max-color pt-1 px-2"

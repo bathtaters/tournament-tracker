@@ -30,7 +30,7 @@ function Header({ title }) {
     .h-28
       Modal(ref=modal)
         Settings(
-          hideModal=(()=>modal.current.close())
+          hideModal=(force=>modal.current.close(force))
           lockModal=(()=>modal.current.lock())
         )
   `;
