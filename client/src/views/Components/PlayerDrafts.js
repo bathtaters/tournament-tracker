@@ -12,7 +12,7 @@ import { getStatus } from "../../controllers/draftHelpers";
 const scheduleRows = [
   { 
     title: 'Day', 
-    value: d => d.day ? d.day.slice(5,10).replace('-','/') : 'None', 
+    value: d => d.day ? d.day.slice(5,10).replace(/-/g,'/') : 'None', 
     class: d => dayClasses(d.day.slice(0,10)).titleCls 
   },
   { title: 'Draft', value: d => d.title, span: 3, link: d => `/draft/${d.id}` },

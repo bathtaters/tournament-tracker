@@ -6,7 +6,7 @@ export const oneDay = 24*60*60*1000;
 
 // Get Date string
 export const toDate = dt => dt ? dt.toISOString().slice(0,10) : 'none';
-export const toDateObj = dt => dt === 'none' ? null : new Date(dt.replace('-','/'));
+export const toDateObj = dt => dt === 'none' ? null : new Date(dt+'T00:00');
 
 // Compare dates (ignoring time)
 export const sameDay = (dateA, dateB = (new Date()).getTime()) => {
@@ -18,8 +18,8 @@ export const sameDay = (dateA, dateB = (new Date()).getTime()) => {
 // Build array of days from start/end dates
 export default function getDays(start, end) {
   let arr = ['none'];
-  [start,end] = [start,end].map(d => (new Date(d.replace('-','/'))).getTime());
-  if (end < start) return arr;
+  start = toDateObj(start).getTime();
+  end = toDateObj(end).getTime();
   for (let d = start; d <= end; d += oneDay) {
     arr.push(toDate(new Date(d)));
   }
