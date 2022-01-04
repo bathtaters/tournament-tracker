@@ -39,7 +39,7 @@ function PlayerDrafts({ id }) {
         h4.base-color.font-thin Loading...
 
       else if error || !Array.isArray(data)
-        h4.base-color.font-thin.italic= error ? formatQueryError(error) : 'Invalid data: '+JSON.stringify(data)
+        h4.base-color.font-thin.italic= error ? formatQueryError(error) : 'Not found'
 
       else
         .grid.grid-flow-row.gap-x-2.gap-y-1.mx-4(className=scheduleGridClass)
