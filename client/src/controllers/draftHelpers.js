@@ -6,17 +6,17 @@ import { equalArrays } from "./misc";
 // Base settings
 export const limits = {
   title: {min: 0, max: 50},
-  bestOf: {min: 1, max: 7},
-  playersPerMatch: {min: 2, max: 8},
-  roundCount: {min: 1, max: 10},
-  clockLimit: {min: 1, max: 24*60*60},
+  bestof: {min: 1, max: 7},
+  playerspermatch: {min: 2, max: 8},
+  roundcount: {min: 1, max: 10},
+  clocklimit: {min: 1, max: 24*60*60},
 };
-export const defVal = {
+export const defaultValues = {
   title: defaultDraftTitle, day: null,
-  players: [], bestOf: 3,
-  playersPerMatch: 2,
-  roundCount: 3, clockLimit: 3600,
-  lockAt: 2
+  players: [], bestof: 3,
+  playerspermatch: 2,
+  roundcount: 3, clocklimit: 3600,
+  lockat: 2
 };
 
 // For local render of playerList
