@@ -1,21 +1,29 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect, useImperativeHandle, forwardRef, useCallback } from "react";
 import PropTypes from 'prop-types';
 
 import SuggestText from "./SuggestText";
 
 import { usePlayerQuery, useCreatePlayerMutation, } from "../../models/playerApi";
 
-import { formatQueryError, createPlayerMsg, duplicatePlayerMsg, } from "../../assets/strings";
 import { equalArrays } from "../../controllers/misc";
 import { emptyNewPlayer, usePreviousArray, updateArrayWithChanges } from "../../controllers/draftHelpers";
+import { 
+  formatQueryError,
+  createPlayerMsg,
+  duplicatePlayerMsg,
+  unsavedPlayerMsg,
+  unaddedPlayerMsg
+} from "../../assets/strings";
 
 
-function PlayerEditor({ players, status, newPlayer, setNewPlayer, playerList, setPlayerList, handleChange }) {
-  // Global State
+
+const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit }, ref) {
+  // Init State
   const { data, isLoading, error } = usePlayerQuery();
+  const [playerList, setPlayerList] = useState([]);
   const remainingPlayers = data ? Object.keys(data).filter(p=>!playerList.includes(p)) : [];
 
-  // Global Actions
+  // Add Player to global players
   const [ createPlayer, { isLoading: playersUpdating } ] = useCreatePlayerMutation();
   const addNewPlayer = async playerInfo => {
     if (!window.confirm(createPlayerMsg(playerInfo.name))) return true;
@@ -24,19 +32,26 @@ function PlayerEditor({ players, status, newPlayer, setNewPlayer, playerList, se
     pushPlayer(id);
   };
 
-  // Controlled component method for SuggestText
+  // Run onEdit when first edit is made
+  const [isChanged, setChanged] = useState(false);
+  const handleChange = useCallback(() => { 
+    if (!isChanged) { onEdit(); setChanged(true); }
+  }, [isChanged, setChanged, onEdit]);
+
+  // Controller for SuggestText
+  const [newPlayer, setNewPlayer] = useState(emptyNewPlayer);
   const newPlayerChange = e => e.target.value !== undefined ? 
     setNewPlayer({ ...newPlayer, name: e.target.value, id: e.target.id }):
     setNewPlayer({ ...newPlayer, id: e.target.id });
 
-  // For concurrent write-while-editing
+  // Push remote updates to local state
   const prevPlayers = usePreviousArray(players);
   useEffect(() => {
     if (!equalArrays(prevPlayers, players))
       setPlayerList(p => updateArrayWithChanges(prevPlayers, players || [], p));
   }, [prevPlayers, players, setPlayerList]);
   
-  // Local handlers
+  // Handle button click
   const clickAdd = (e, override) => {
     if (!newPlayer.visible) return setNewPlayer({ ...newPlayer, visible: true });
 
@@ -45,26 +60,51 @@ function PlayerEditor({ players, status, newPlayer, setNewPlayer, playerList, se
     if (!playerInfo.name) return setNewPlayer(emptyNewPlayer);
 
     handleChange();
-    pushPlayer(playerInfo.id);
+    return pushPlayer(playerInfo.id);
   }
 
-  const pushPlayer = playerId => {
+  // Add player to list (If valid)
+  const pushPlayer = useCallback(playerId => {
     if (!playerId) throw new Error("Add player is missing playerId!");
 
-    if (playerList.includes(playerId))
+    let res = true;
+    if (playerList.includes(playerId)) {
       window.alert(duplicatePlayerMsg(data[playerId] && data[playerId].name));
-    else
-      setPlayerList(playerList.concat(playerId));
+      res = false;
+    } else setPlayerList(playerList.concat(playerId));
 
     setNewPlayer(emptyNewPlayer);
-  }
+    return res;
+  },[data,playerList]);
   
+  // Remove player from list
   const popPlayer = (pid, idx) => () => {
     const newList = playerList.slice();
     const rmvIdx = newList[idx] === pid ? idx : newList.lastIndexOf(pid);
     if (rmvIdx in newList) newList.splice(rmvIdx,1);
     setPlayerList(newList);
   };
+
+  // Retrieve list for parent component
+  const getList = useCallback(() => {
+    let savedPlayers = playerList.slice();
+
+    // Handle leftover text in player box
+    if (newPlayer.visible && newPlayer.name.trim()) {
+      if (newPlayer.id) {
+        // Add player if they exist
+        if (window.confirm(unsavedPlayerMsg(newPlayer.name)) && pushPlayer(newPlayer.id))
+          savedPlayers.push(newPlayer.id);
+        else return setNewPlayer(emptyNewPlayer);
+        // Exit if player does not exist
+      } else if (!window.confirm(unaddedPlayerMsg(newPlayer.name))) return; // Abort
+    }
+    
+    setNewPlayer(emptyNewPlayer)
+    return savedPlayers;
+  },[playerList,newPlayer,pushPlayer]);
+  useImperativeHandle(ref, () => ({ getList }), [getList]);
+
 
   // Render
   
@@ -118,17 +158,13 @@ function PlayerEditor({ players, status, newPlayer, setNewPlayer, playerList, se
         </div>
       : null}
     </div>
-  )
-}
+  );
+});
 
 PlayerEditor.propTypes = {
   players: PropTypes.arrayOf(PropTypes.string),
   status: PropTypes.number,
-  playerList: PropTypes.arrayOf(PropTypes.string),
-  setPlayerList: PropTypes.func,
-  newPlayer: PropTypes.object,
-  setNewPlayer: PropTypes.func,
-  handleChange: PropTypes.func,
+  onEdit: PropTypes.func,
 };
 
 export default PlayerEditor;

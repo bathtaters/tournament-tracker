@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useRef } from "react";
 import PropTypes from 'prop-types';
 import { useHistory } from "react-router-dom";
 
@@ -11,16 +11,9 @@ import {
   useDeleteDraftMutation, useUpdateDraftMutation,
 } from "../../models/draftApi";
 
-import {
-  formatQueryError,
-  statusInfo,
-  duplicatePlayerMsg,
-  unsavedPlayerMsg,
-  unaddedPlayerMsg,
-  deleteDraftMsg
-} from "../../assets/strings";
+import { formatQueryError, statusInfo, deleteDraftMsg } from "../../assets/strings";
 
-import { emptyNewPlayer, getStatus, limits, defaultValues } from "../../controllers/draftHelpers";
+import { getStatus, limits, defaultValues } from "../../controllers/draftHelpers";
 
 
 // Settings Window Layout/Validation
@@ -44,40 +37,16 @@ const settingsRows = [ 'custom', [
   },
 ]];
 
-const cleanPlayerBox = (playerList,newPlayer) => {
-  // Deal with leftover player text in Player Editor
-  let savedPlayers = [...playerList];
-  if (newPlayer.visible && newPlayer.name.trim()) {
-    if (newPlayer.id) {
-      if (window.confirm(unsavedPlayerMsg(newPlayer.name))) {
-        if (playerList.includes(newPlayer.id)) {
-          window.alert(duplicatePlayerMsg(newPlayer.name || newPlayer.id || 'New Player'));
-          return; // Clear & Abort
-        }
-        savedPlayers.push(newPlayer.id)
-      }
-    } else if (!window.confirm(unaddedPlayerMsg(newPlayer.name))) return false; // Abort
-  }
-  return savedPlayers; // Continue
-}
-
 
 // Component
 function EditDraft({ draftId, hideModal, lockModal }) {
-  // Global state
+  // Init state
+  const playerList = useRef(null);
   const { data: settings } = useSettingsQuery();
   const { data, isLoading, error } = useDraftQuery(draftId, { skip: !draftId });
   const draftStatus = getStatus(data);
-
-  // Local state
-  const [newPlayer, setNewPlayer] = useState(emptyNewPlayer);
-  const [playerList, setPlayerList] = useState([]);
-  const [isChanged, setChanged] = useState(false);
-  const handleChange = useCallback(() => { 
-    if (!isChanged) { lockModal(); setChanged(true); }
-  }, [isChanged, setChanged, lockModal]);
   
-  // Global actions
+  // Delete (& navigate to home page)
   let history = useHistory();
   const [ deleteDraft ] = useDeleteDraftMutation();
   const clickDelete = () => {
@@ -87,14 +56,13 @@ function EditDraft({ draftId, hideModal, lockModal }) {
     history.push("/home");
   };
   
+  // Submit draft
   const [ createDraft ] = useCreateDraftMutation();
   const [ updateDraft ] = useUpdateDraftMutation();
   const submitDraft = draftData => {
-    // Deal with leftover player text
-    const savedPlayers = cleanPlayerBox(playerList, newPlayer);
-    if (savedPlayers != null) setNewPlayer(emptyNewPlayer);
+    // Retrieve list from component
+    const savedPlayers = playerList.current.getList();
     if (!savedPlayers) return;
-    setPlayerList(savedPlayers);
     
     // Build draft object
     if (!draftData.title.trim() && !savedPlayers.length) return hideModal(true);
@@ -141,15 +109,15 @@ function EditDraft({ draftId, hideModal, lockModal }) {
         data={data}
         baseData={{defaultValues, limits, draftStatus}}
         onSubmit={submitDraft}
-        onEdit={handleChange}
+        onEdit={lockModal}
         buttons={buttons}
         rowFirst={true}
       >
         <PlayerEditor 
-          players={data && data.players} status={draftStatus}
-          newPlayer={newPlayer} setNewPlayer={setNewPlayer}
-          playerList={playerList} setPlayerList={setPlayerList}
-          handleChange={handleChange}
+          players={data && data.players}
+          status={draftStatus}
+          onEdit={lockModal}
+          ref={playerList}
         />
       </InputForm>
       {settings && settings.showrawjson ? 
