@@ -1,22 +1,17 @@
-import React, { Fragment, useState, useCallback } from "react";
-import { useForm } from "react-hook-form";
+import React from "react";
 import PropTypes from 'prop-types';
+
+import InputForm from "./InputForm";
 
 import { usePlayerQuery } from "../../models/playerApi";
 import { useReportMutation } from "../../models/matchApi";
 
 import { formatQueryError } from "../../assets/strings";
 
+
 function Report({ title, match, hideModal, lockModal, bestOf, maxWins, draftId }) {
   // Global
   const { data: players, isLoading, error } = usePlayerQuery();
-  
-  // Local
-  const { register, handleSubmit } = useForm();
-  const [isChanged, setChanged] = useState(false);
-  const handleChange = useCallback(() => { 
-    if (!isChanged) { lockModal(); setChanged(true); }
-  }, [isChanged, setChanged, lockModal]);
 
   // Action
   const [ report ] = useReportMutation();
@@ -35,45 +30,36 @@ function Report({ title, match, hideModal, lockModal, bestOf, maxWins, draftId }
       <h4 className="font-light dim-color text-center">{formatQueryError(error)}</h4>
     </div>);
 
-  const playerRows = Object.keys(match.players).map(pid => (
-    <Fragment key={pid+"R"}>
-      <label htmlFor={pid} className="text-right">{(players[pid] && players[pid].name) || pid}</label>
-      <input
-        type="number" id={pid} min="0" max={maxWins}
-        defaultValue={match.players[pid] || 0}
-        {...register('players.'+pid,{
-          valueAsNumber: true,
-          min: 0, max: maxWins,
-          onChange: handleChange
-        })} 
-      />
-      <div>
-        <input type="checkbox" id={'drops.'+pid} {...register('drops.'+pid,{onChange: handleChange})} />
-        <label htmlFor={'drops.'+pid} className="font-thin dim-color ml-1">Drop</label>
-      </div>
-    </Fragment>
-  ));
+  const playerRows = Object.keys(match.players).map(pid => [
+    {
+      id: 'players.'+pid, type: 'number',
+      label: (players[pid] && players[pid].name) || pid,
+      labelClass: "text-base sm:text-xl font-medium mx-2 text-right",
+      defaultValue: 0, min: 0, max: maxWins, isFragment: true,
+    },{ 
+      label: 'Drop', id: 'drops.'+pid, type: 'checkbox',
+      className: "text-xs sm:text-base font-thin mx-2",
+      labelClass: "ml-1 dim-color", labelIsRight: true,
+    },
+  ]).concat([[
+    {
+      label: 'Draws', id: 'draws', type: 'number', 
+      labelClass: "text-base sm:text-xl font-light mx-2 text-right",
+      defaultValue: 0, min: 0, max: bestOf, isFragment: true,
+    }, 'spacer'
+  ]]);
 
   return (
     <div>
       <h3 className="font-light max-color text-center mb-4">Report for {title}</h3>
-      <form onSubmit={handleSubmit(submitReport)}>
-        <div className="grid grid-cols-3 grid-flow-row gap-2 items-center">
-          {playerRows}
-          <label htmlFor="Rdraws" className="text-right">Draws</label>
-          <input
-            type="number" id="Rdraws" min="0" max={bestOf}
-            defaultValue={match.draws || 0}
-            {...register('draws',{
-              valueAsNumber: true,
-              min: 0, max: bestOf,
-              onChange: handleChange
-            })} />
-          <div />
-        </div>
-        
-        <input type="submit" value="Submit" className="mt-6 mx-auto block" />
-      </form>
+      <InputForm
+        rows={playerRows}
+        submitLabel="Report"
+        onSubmit={submitReport}
+        onEdit={lockModal}
+        isGrid={true}
+        className="grid grid-cols-3 grid-flow-row gap-2 items-center my-8"
+      />
     </div>
   );
 }

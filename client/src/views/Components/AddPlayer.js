@@ -1,75 +1,40 @@
-import React, { Fragment, useState, useCallback } from "react";
+import React from "react";
 import PropTypes from 'prop-types';
-import { useForm } from "react-hook-form";
+
+import InputForm from "./InputForm";
 
 import { useCreatePlayerMutation } from "../../models/playerApi";
 
+import { defaultPlayerName } from "../../assets/strings";
+
 // Compenent settings
 const settingsRows = [
-  { title: 'Name', key: 'name', def: "New Player" },
+  {
+    label: 'Name', id: 'name', type: 'text',
+    defaultValue: defaultPlayerName,
+    transform: name => name.trim()
+  },
 ];
 
 // Component
 function AddPlayer({ hideModal, lockModal }) {
-  const { register, handleSubmit } = useForm();
   const [ createPlayer ] = useCreatePlayerMutation();
-  
-  const [isChanged, setChanged] = useState(false);
-  const handleChange = useCallback(() => { 
-    if (!isChanged) { lockModal(); setChanged(true); }
-  }, [isChanged, setChanged, lockModal]);
 
   const submitPlayer = playerData => {
-    // Apply defaults
-    settingsRows.forEach(row => {
-      if (row.key in playerData) {
-        if (row.calcVal)
-          playerData[row.key] = row.calcVal(playerData[row.key]);
-        if (row.def != null && playerData[row.key] == null)
-          playerData[row.key] = row.def;
-      }
-    });
-    // Add player
-    createPlayer(playerData);
+    if (playerData.name) createPlayer(playerData);
     hideModal(true);
   };
 
-  const settingsToRow = row => (
-    <Fragment key={row.key}>
-      <div className="m-4 text-center">
-        <h4>
-          <label className="mr-2 w-max">{row.title}</label>
-          <input
-            className="max-color pt-1 px-2"
-            type="text"
-            {...register(row.key,{onChange:handleChange})}
-          />
-        </h4>
-      </div>
-    </Fragment>
-  );
-
   return (
     <div>
-      <h3 className="font-light.max-color.text-center.mb-4">Add Player</h3>
-      <form onSubmit={handleSubmit(submitPlayer)}>
-        <div className="flex flex-col flex-wrap-reverse">
-          {settingsRows.map(settingsToRow)}
-        </div>
-        <div className="text-center mt-4">
-          <input
-            className="font-light dim-color w-14 h-8 mx-1 sm:w-20 sm:h-11 sm:mx-4"
-            type="submit"
-            value="Create"
-          />
-          <input
-            className="font-light dim-color w-14 h-8 mx-1 sm:w-20 sm:h-11 sm:mx-4"
-            type="button"
-            value="Cancel"
-            onClick={()=>hideModal(true)}
-          />
-        </div>
-      </form>
+      <h3 className="font-light max-color text-center mb-4">Add Player</h3>
+      <InputForm
+        rows={settingsRows}
+        submitLabel="Create"
+        onSubmit={submitPlayer}
+        onEdit={lockModal}
+        buttons={[{ label: "Cancel", onClick: hideModal }]}
+      />
     </div>
   );
 }
