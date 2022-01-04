@@ -1,6 +1,8 @@
 // --- Static Strings --- \\
 
+export const defaultTournamentTitle = "My Tournament";
 export const defaultDraftTitle = "New Draft";
+export const defaultPlayerName = "New Player";
 
 
 
