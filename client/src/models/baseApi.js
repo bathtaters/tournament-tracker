@@ -30,7 +30,7 @@ export const baseApi = createApi({
     // Updates
     updateSettings: build.mutation({
       query: (body) => ({ url: 'settings', method: 'PATCH', body }),
-      invalidatesTags: ['Settings'],
+      invalidatesTags: ['Settings','Schedule'],
       onQueryStarted(body, { dispatch }) {
         dispatch(baseApi.util.updateQueryData(
           'settings', undefined, draft => Object.assign(draft,body)
