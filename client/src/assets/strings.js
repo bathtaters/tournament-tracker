@@ -26,9 +26,9 @@ export const cantDeletePlayerMsg = name => name+" cannot be deleted while regist
 // --- Lists --- \\
 export const statusInfo = [
   {label: 'N/A', class: "dim-color"},
-  {label: 'Not Started', class: "pos-color"},
+  {label: 'Not Started', class: "max-color"},
   {label: 'Active', class: "neg-color"},
-  {label: 'Complete', class: "max-color"},
+  {label: 'Complete', class: "pos-color"},
 ];
 export const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 export const roundButtonText = [
