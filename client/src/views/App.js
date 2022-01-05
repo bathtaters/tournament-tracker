@@ -6,6 +6,7 @@ import Schedule from "./Schedule";
 import Draft from "./Draft";
 import Players from "./Players";
 import Profile from "./Profile";
+import RawData from "./Components/RawData";
 
 import { useSettingsQuery, usePrefetch } from "../models/baseApi";
 import { formatQueryError } from "../assets/strings";
@@ -52,8 +53,7 @@ function App() {
               
               Redirect(from="*" to="/home")
               
-            if data.showrawjson
-              .text-center.font-thin.m-2.text-xs.dim-color= JSON.stringify(data)
+            RawData.text-xs(data=data)
   `;
 }
 

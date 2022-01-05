@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 
 import InputForm from "./InputForm";
+import RawData from "./RawData";
 
 import { useSettingsQuery, useUpdateSettingsMutation, useResetDbMutation } from "../../models/baseApi";
 
@@ -54,7 +55,7 @@ function Settings({ hideModal, lockModal }) {
         onEdit={lockModal}
         buttons={[{ label: "Cancel", onClick: hideModal }]}
       />
-      {data.showrawjson ? <p className="font-thin text-sm dim-color mt-4">{JSON.stringify(data)}</p> : null}
+      <RawData className="text-sm mt-4" data={data} />
       {data.showadvanced ? (<div className="text-center mt-4">
         <input
           className="w-20 h-8 mx-1 sm:w-28 sm:h-11 sm:mx-4"

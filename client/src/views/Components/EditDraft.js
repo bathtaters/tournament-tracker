@@ -4,8 +4,8 @@ import { useHistory } from "react-router-dom";
 
 import InputForm from "./InputForm";
 import PlayerEditor from "./PlayerEditor";
+import RawData from "./RawData";
 
-import { useSettingsQuery } from "../../models/baseApi";
 import { 
   useDraftQuery, useCreateDraftMutation,
   useDeleteDraftMutation, useUpdateDraftMutation,
@@ -42,7 +42,6 @@ const settingsRows = [ 'custom', [
 function EditDraft({ draftId, hideModal, lockModal }) {
   // Init state
   const playerList = useRef(null);
-  const { data: settings } = useSettingsQuery();
   const { data, isLoading, error } = useDraftQuery(draftId, { skip: !draftId });
   const draftStatus = getStatus(data);
   
@@ -120,8 +119,7 @@ function EditDraft({ draftId, hideModal, lockModal }) {
           ref={playerList}
         />
       </InputForm>
-      {settings && settings.showrawjson ? 
-      <p className="font-thin text-sm dim-color mt-4">{JSON.stringify(data)}</p> : null}
+      <RawData className="text-sm mt-4" data={data} />
     </div>
   );
 }

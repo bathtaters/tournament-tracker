@@ -3,6 +3,7 @@ import React, { useState, useRef, useCallback } from "react";
 import Modal from "./Components/Modal";
 import Day from "./Components/Day";
 import EditDraft from "./Components/EditDraft";
+import RawData from "./Components/RawData";
 
 import { useScheduleQuery } from "../models/baseApi";
 import { useSettingsQuery } from "../models/baseApi";
@@ -57,8 +58,7 @@ function Schedule() {
               key=day
             )
       
-      if settings && settings.showrawjson
-        .text-center.font-thin.m-2= JSON.stringify(data)
+      RawData(data=data)
       
       Modal(ref=modal)
         EditDraft(

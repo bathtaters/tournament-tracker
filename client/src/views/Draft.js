@@ -5,8 +5,8 @@ import Round from "./Components/Round";
 import DraftStats from "./Components/DraftStats";
 import EditDraft from "./Components/EditDraft";
 import Modal from "./Components/Modal";
+import RawData from "./Components/RawData";
 
-import { useSettingsQuery } from "../models/baseApi";
 import {
   useDraftQuery, useNextRoundMutation, useClearRoundMutation, 
 } from "../models/draftApi";
@@ -20,7 +20,6 @@ function Draft() {
   const modal = useRef(null);
 
   // Global
-  const { data: settings } = useSettingsQuery();
   const { data, isLoading, error, isFetching } = useDraftQuery(id);
   const matches = (data && data.matches) || [];
   const status = !isLoading && getStatus(data);
@@ -97,8 +96,7 @@ function Draft() {
               key=(id+"."+roundNum)
             )
         
-        if settings && settings.showrawjson
-          .text-center.font-thin.m-2= JSON.stringify(data)
+        RawData(data=data)
       
         Modal(ref=modal)
           EditDraft(

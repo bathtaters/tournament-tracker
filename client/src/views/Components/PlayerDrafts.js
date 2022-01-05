@@ -1,7 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { useSettingsQuery } from "../../models/baseApi";
+import RawData from "./RawData";
+
 import { usePlayerDraftsQuery } from "../../models/playerApi";
 
 import { formatQueryError, statusInfo } from "../../assets/strings";
@@ -29,7 +30,6 @@ const scheduleGridClass = `grid-cols-${scheduleRows.reduce((c,r) => c + (r.span 
 
 // Main component
 function PlayerDrafts({ id }) {
-  const { data: settings } = useSettingsQuery();
   const { data, isLoading, error } = usePlayerDraftsQuery(id);
 
   return pug`
@@ -69,8 +69,7 @@ function PlayerDrafts({ id }) {
               else
                 div(key=draft.id+"_"+row.title className=(row.span ? "col-span-"+row.span : ""))
 
-      if settings && settings.showrawjson
-        p.mt-8.font-thin.dim-color= JSON.stringify(data)
+      RawData.mt-6(data=data)
   `;
 }
 

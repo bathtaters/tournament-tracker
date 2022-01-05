@@ -11,6 +11,7 @@ import Modal from "./Modal";
 import DragBlock from "./DragBlock";
 import Report from "./Report";
 import Counter from "./Counter";
+import RawData from "./RawData";
 
 import { useSettingsQuery } from "../../models/baseApi";
 import { usePlayerQuery } from "../../models/playerApi";
@@ -29,7 +30,7 @@ function Match({ draftId, matchId, bestOf, isEditing }) {
   const canSwap = useCallback((types, a, b) => a !== b && types.includes("json/matchplayer"),[]);
   
   // Global State
-  const { data: settings } = useSettingsQuery(); const showRawJson = settings && settings.showrawjson;
+  const { data: settings } = useSettingsQuery();
   const { data, isLoading, error } = useMatchQuery(draftId);
   const { data: rankings, isLoading: loadingRank, error: rankError } = useBreakersQuery(draftId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
@@ -62,7 +63,9 @@ function Match({ draftId, matchId, bestOf, isEditing }) {
   
   // Render
   return pug`
-    .m-1.border.dim-border.rounded-md.flex.flex-col.justify-evenly.relative(className=(showRawJson?"h-64":"h-32"))
+    .m-1.border.dim-border.rounded-md.flex.flex-col.justify-evenly.relative(
+      className=(settings && settings.showrawjson ? "h-64" : "h-32")
+    )
       if isLoading || loadingRank || loadingPlayers || !matchData
         .m-auto ...
       
@@ -145,9 +148,8 @@ function Match({ draftId, matchId, bestOf, isEditing }) {
               onClick=(()=>reportModal.current.open())
               disabled=(isEditing || isReporting)
             )
-          
-        if showRawJson
-          .text-center.font-thin.text-xs.w-80.m-auto= JSON.stringify(matchData)
+        
+        RawData.text-xs.w-80.m-auto(data=matchData)
         
         Modal(ref=reportModal)
           Report(
