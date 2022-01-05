@@ -26,6 +26,17 @@ exports.sortById = (a,b) => a.id < b.id ? -1 : (a.id > b.id ? 1 : 0);
 // Splice command that doesn't modify in place
 exports.splicing = (arr, index, count = 1) => arr.slice(0,index).concat(arr.slice(index + count));
 
+// Splice item into array in order
+exports.insertInOrder = (arr, val, { asc = true, transform = null, key = null } = {}) => {
+  const testVal = transform ? transform(val) : key ? val[key] : val;
+  for (let i = arr.length, t; i--; ) {
+      t = transform ? transform(arr[i]) : key ? arr[i][key] : arr[i];
+      if (asc ? testVal > t : testVal < t) { arr.splice(i+1,0,val); return arr; }
+  }
+  arr.unshift(val);
+  return arr;
+};
+
 // Check if any elements are common to both arrays
 exports.anyElements = (arrA, arrB) => arrA.some(elem => arrB.includes(elem));
 
