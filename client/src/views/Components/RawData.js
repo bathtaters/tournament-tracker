@@ -12,6 +12,6 @@ function RawData({ data, className = "" }) {
   return <div className={defaultRawClass + className}>{JSON.stringify(data)}</div>
 }
 
-RawData.propTypes = { data: PropTypes.object.isRequired, className: PropTypes.string };
+RawData.propTypes = { data: PropTypes.any, className: PropTypes.string };
 
 export default RawData;
