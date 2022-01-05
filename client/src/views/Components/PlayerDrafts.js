@@ -1,9 +1,11 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 import RawData from "./RawData";
 
 import { usePlayerDraftsQuery } from "../../models/playerApi";
+import { usePrefetch, } from "../../models/baseApi";
 
 import { formatQueryError, statusInfo } from "../../assets/strings";
 import { dayClasses } from "../../controllers/getDays";
@@ -14,7 +16,7 @@ const scheduleRows = [
   { 
     title: 'Day', 
     value: d => d.day ? d.day.slice(5,10).replace(/-/g,'/') : 'None', 
-    class: d => dayClasses(d.day.slice(0,10)).titleCls 
+    class: d => dayClasses(d.day && d.day.slice(0,10)).titleCls 
   },
   { title: 'Draft', value: d => d.title, span: 3, link: d => `/draft/${d.id}` },
   {
@@ -31,6 +33,12 @@ const scheduleGridClass = `grid-cols-${scheduleRows.reduce((c,r) => c + (r.span 
 // Main component
 function PlayerDrafts({ id }) {
   const { data, isLoading, error } = usePlayerDraftsQuery(id);
+
+  // Setup pre-fetching
+  const prefetchDraft = usePrefetch('draft');
+  const prefetchMatch = usePrefetch('match');
+  const prefetchStats = usePrefetch('breakers');
+  const loadDraft = id => { prefetchDraft(id); prefetchMatch(id); prefetchStats(id); };
 
   return pug`
     .my-4
@@ -58,9 +66,10 @@ function PlayerDrafts({ id }) {
                   className=(row.span ? " col-span-"+row.span : "")
                 )
                   if row.link
-                    a(
-                      href=row.link(draft,status)
+                    Link(
+                      to=row.link(draft,status)
                       className=(row.class ? row.class(draft,status): '')
+                      onMouseEnter=(()=>loadDraft(draft.id))
                     )= row.value(draft,status)
 
                   else
