@@ -1,6 +1,7 @@
 /* *** PLAYER Object *** */
 const ops = require('./admin/base');
 const { matchQueries } = require('./constants');
+const { insertInOrder } = require('../services/utils');
 
 // Basic settings
 // const defVal = {name: null};
@@ -19,13 +20,25 @@ const validator = () => [
 
 // Player Ops
 const getDrafts = playerId => ops.query(
+    "SELECT id, day, title FROM draft "+
+    "WHERE $1::UUID = ANY (players); "+
     "SELECT "+
         "id, matches, day, isDrop, "+
         "wins, draws, count, "+
         "title, day, roundActive, roundCount "+
     "FROM draftPlayer JOIN draft ON draftId = id "+
     "WHERE playerId = $1 ORDER BY day DESC;",
-[playerId]).then(r => r && !Array.isArray(r) ? [r] : r);
+[playerId]).then(r => {
+    if (!r) return r;
+    if (!Array.isArray(r)) r = [r];
+
+    let res = r[1] || [];
+    r[0] && r[0].forEach(a => { 
+        if (!res.some(b => a.id === b.id))
+            res = insertInOrder(res, a, {asc:0, key:'day'});
+    });
+    return res;
+});
 
 const list = () => ops.query(
     "SELECT * FROM player WHERE isTeam IS FALSE;"
