@@ -30,7 +30,7 @@ export default function getDays(start, end) {
 export const dayClasses = day => {
   const today = new Date();
   if (day === toDate(today)) return { titleCls: "max-color", borderCls: "pos-border" };
-  return (day === 'none' || new Date(day) < today) ?
+  return (!day || day === 'none' || new Date(day) < today) ?
     { titleCls: "dim-color-inv", borderCls: "dimmer-border" } :
     { titleCls: "base-color",    borderCls: "base-border" };
 }
