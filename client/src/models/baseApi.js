@@ -30,10 +30,14 @@ export const baseApi = createApi({
     // Updates
     updateSettings: build.mutation({
       query: (body) => ({ url: 'settings', method: 'PATCH', body }),
+      transformResponse: res => console.log('UPD_SETTINGS',res) || res,
       invalidatesTags: ['Settings','Schedule'],
       onQueryStarted(body, { dispatch }) {
         dispatch(baseApi.util.updateQueryData(
-          'settings', undefined, draft => Object.assign(draft,body)
+          'settings', undefined, draft => { 
+            draft = Object.assign(draft,body);
+            draft.dateRange = getDays(draft.datestart, draft.dateend);
+          }
         ));
       }
     }),
