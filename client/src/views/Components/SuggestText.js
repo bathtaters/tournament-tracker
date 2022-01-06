@@ -100,7 +100,7 @@ function SuggestText({
         onFocus=showList
         onBlur=hideList
         ref=textbox
-        className=(className+(isHidden ? " invisible" : ""))
+        className=(className+(isHidden ? " hidden" : ""))
       )
       if listIsVisible && !isSolo && listCount
         .absolute.left-0.z-50.right-0.top-auto.max-h-screen.bg-red-500.transform
