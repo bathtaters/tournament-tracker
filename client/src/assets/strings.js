@@ -29,6 +29,7 @@ export const statusInfo = [
   {label: 'Not Started', class: "max-color"},
   {label: 'Active', class: "neg-color"},
   {label: 'Complete', class: "pos-color"},
+  {label: 'N/A', class: "dim-color"},
 ];
 export const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 export const roundButtonText = [
