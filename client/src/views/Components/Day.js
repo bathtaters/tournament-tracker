@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import DragBlock from './DragBlock';
 
 import { toDateObj, dayClasses } from '../../controllers/getDays';
+import { isTempId } from "../../controllers/misc";
 import { formatQueryError, weekdays, statusInfo } from '../../assets/strings';
 
 import { usePrefetch, } from "../../models/baseApi";
@@ -57,7 +58,7 @@ function Day({ drafts, isEditing, setDraftModal, day }) {
 
       else if drafts && drafts.length
         each draftId in drafts
-          if data && data[draftId]
+          if data && data[draftId] && !isTempId(draftId)
             DragBlock.relative.p-1.m-1.rounded-xl.text-center(
               storeData=({ id: draftId, day })
               onDrop=dropHandler
@@ -67,27 +68,25 @@ function Day({ drafts, isEditing, setDraftModal, day }) {
               key=draftId
               onHover=(()=>loadDraft(draftId))
             )
-              - var status = data[draftId].status || 0
-
               if isEditing
                 .text-sm.font-normal.pointer-events-none(
                   className=(data[draftId].isDone ? "dim-color" : "link-color")
                 )= data[draftId].title
                 
-                if status < 3
+                if data[draftId].status < 3
                   .absolute.top-0.right-1.text-sm.font-normal.cursor-pointer(
-                    className="hover:"+(statusInfo[status].class)
+                    className="hover:"+(statusInfo[data[draftId].status].class)
                     onClick=editDraft(draftId)
                   ) ✐
-
+              
               else
                 Link.text-sm.font-normal.block(
                   to="/draft/"+draftId
-                  className=(data[draftId].isDone ? "dim-color" : "")
+                  className=(data[draftId].status === 1 ? "" : statusInfo[data[draftId].status + 1].class)
                 )= data[draftId].title
 
           else
-            .text-sm.font-thin.text-center.dim-color.italic.pointer-events-none(key=draftId) Missing
+            .text-sm.font-thin.text-center.dim-color.pointer-events-none(key=draftId) ...
                 
       else if !isEditing
         .text-center.text-sm.font-light.dim-color.italic.pointer-events-none.opacity-60 No drafts
