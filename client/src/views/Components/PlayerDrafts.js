@@ -9,24 +9,23 @@ import { usePrefetch, } from "../../models/baseApi";
 
 import { formatQueryError, statusInfo } from "../../assets/strings";
 import { dayClasses } from "../../controllers/getDays";
-import { getStatus } from "../../controllers/draftHelpers";
 
 // Component layout
 const scheduleRows = [
   { 
     title: 'Day', 
-    value: d => d.day ? d.day.slice(5,10).replace(/-/g,'/') : 'None', 
-    class: d => dayClasses(d.day && d.day.slice(0,10)).titleCls 
+    value: ({day}) => day ? day.slice(5,10).replace(/-/g,'/') : 'None', 
+    class: ({day}) => dayClasses(day && day.slice(0,10)).titleCls,
   },
   { title: 'Draft', value: d => d.title, span: 3, link: d => `/draft/${d.id}` },
   {
     title: 'Status', span: 2,
-    value: (d,s) => statusInfo[s].label + (d.isdrop ? " (Dropped)" : ""),
-    class: (_,s) => statusInfo[s].class
+    value: ({isdrop, status}) => statusInfo[status || 0].label + (isdrop ? " (Dropped)" : ""),
+    class: ({status}) => statusInfo[status || 0].class,
   },
-  { title: 'Wins', value: d => d.wins, hideBelow: 2 },
+  { title: 'Wins', value: ({wins}) => wins, hideBelow: 2 },
   { title: 'Losses', value: d => d.count - d.wins - d.draws, hideBelow: 2 },
-  { title: 'Draws', value: d => d.draws, hideBelow: 2 },
+  { title: 'Draws', value: ({draws}) => draws, hideBelow: 2 },
 ]
 const scheduleGridClass = `grid-cols-${scheduleRows.reduce((c,r) => c + (r.span || 1),0)}`;
 
@@ -58,22 +57,21 @@ function PlayerDrafts({ id }) {
             )= row.title
 
           each draft in data
-            -var status = getStatus(draft)
             each row in scheduleRows
-              if !row.hideBelow || row.hideBelow <= status
+              if !row.hideBelow || row.hideBelow <= draft.status
                 h4.font-thin.base-color(
                   key=draft.id+"_"+row.title
                   className=(row.span ? " col-span-"+row.span : "")
                 )
                   if row.link
                     Link(
-                      to=row.link(draft,status)
-                      className=(row.class ? row.class(draft,status): '')
+                      to=row.link(draft)
+                      className=(row.class ? row.class(draft): '')
                       onMouseEnter=(()=>loadDraft(draft.id))
-                    )= row.value(draft,status)
+                    )= row.value(draft)
 
                   else
-                    span(className=(row.class ? row.class(draft,status): ''))= row.value(draft,status)
+                    span(className=(row.class ? row.class(draft): ''))= row.value(draft)
 
               else
                 div(key=draft.id+"_"+row.title className=(row.span ? "col-span-"+row.span : ""))

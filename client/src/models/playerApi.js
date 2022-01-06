@@ -1,6 +1,7 @@
 import { baseApi, tagIds } from './baseApi';
 import { draftApi } from './draftApi';
 import { nextTempId } from '../controllers/misc';
+import { getStatus } from '../controllers/draftHelpers';
 
 
 export const playerApi = baseApi.injectEndpoints({
@@ -13,7 +14,11 @@ export const playerApi = baseApi.injectEndpoints({
     }),
     playerDrafts:  build.query({
       query: (id) => `player/${id}/drafts`,
-      transformResponse: res => console.log('PLAYER_DET',res) || res,
+      transformResponse: res => {
+        res.forEach((d,i) => res[i].status = getStatus(d));
+        console.log('PLAYER_DET',res);
+        return res;
+      },
       providesTags: tagIds('PlayerDetail',{ all: false }),
     }),
 

@@ -1,6 +1,6 @@
 import { baseApi, tagIds } from './baseApi';
 
-import { fakeRound, swapToDay } from '../controllers/draftHelpers';
+import { fakeRound, swapToDay, getStatus } from '../controllers/draftHelpers';
 import { nextTempId } from '../controllers/misc';
 
 
@@ -9,7 +9,12 @@ export const draftApi = baseApi.injectEndpoints({
     // Queries
     draft:   build.query({
       query: (id=null) => `draft/${id || 'all'}`,
-      transformResponse: res => console.log('DRAFT',res) || res,
+      transformResponse: (res) => {
+        if (res.id) res.status = getStatus(res);
+        else Object.keys(res).forEach(id => res[id].status = getStatus(res[id]));
+        console.log('DRAFT',res);
+        return res;
+      },
       providesTags: tagIds('Draft'),
     }),
     breakers: build.query({
@@ -69,7 +74,7 @@ export const draftApi = baseApi.injectEndpoints({
     nextRound: build.mutation({
       query: id => ({ url: `draft/${id}/round`, method: 'POST' }),
       transformResponse: res => console.log('ROUND+',res) || res,
-      invalidatesTags: tagIds(['Draft','Match'], {all:0}),
+      invalidatesTags: tagIds(['Draft','Match'], {all:0,addBase:['PlayerDetail']}),
       onQueryStarted(id, { dispatch }) {
         dispatch(draftApi.util.updateQueryData('draft', id, draft => { 
           if (draft.roundactive > draft.roundcount) return;
@@ -82,7 +87,7 @@ export const draftApi = baseApi.injectEndpoints({
     clearRound: build.mutation({
       query: id => ({ url: `draft/${id}/round`, method: 'DELETE' }),
       transformResponse: res => console.log('ROUND-',res) || res,
-      invalidatesTags: tagIds(['Draft','Match'], {all:0}),
+      invalidatesTags: tagIds(['Draft','Match'], {all:0,addBase:['PlayerDetail']}),
       onQueryStarted(id, { dispatch }) {
         dispatch(draftApi.util.updateQueryData('draft', id, draft => { 
           if (draft.roundactive < 1) return;

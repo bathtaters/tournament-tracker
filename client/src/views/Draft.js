@@ -12,7 +12,7 @@ import {
 } from "../models/draftApi";
 
 import { deleteRoundMsg, formatQueryError } from "../assets/strings";
-import { getRoundButton, getStatus } from "../controllers/draftHelpers";
+import { getRoundButton } from "../controllers/draftHelpers";
 
 function Draft() {
   // Local
@@ -22,7 +22,6 @@ function Draft() {
   // Global
   const { data, isLoading, error, isFetching } = useDraftQuery(id);
   const matches = (data && data.matches) || [];
-  const status = !isLoading && getStatus(data);
   
   // Actions
   const [ nextRound ] = useNextRoundMutation();
@@ -52,14 +51,14 @@ function Draft() {
           input(
             type="button"
             value=getRoundButton(data)
-            disabled=(isFetching || data.canadvance === false || status > 2)
+            disabled=(isFetching || data.canadvance === false || data.status > 2)
             onClick=()=>nextRound(id)
           )
 
         .flex.flex-row.flex-wrap.justify-evenly
           .text-center.font-light
             h4.font-thin.max-color
-              if status === 2
+              if data.status === 2
                 span.mr-2 Round
                 
                 span.mr-2.text-lg.font-light(className="sm:text-2xl")= data.roundactive
@@ -68,8 +67,8 @@ function Draft() {
 
                 span.text-lg.font-light(className="sm:text-2xl")= data.roundcount
 
-              else if status
-                span= status === 1 ? 'Not started' : 'Complete'
+              else if data.status
+                span= data.status === 1 ? 'Not started' : 'Complete'
             
             if data.playerspermatch && data.bestof
               h5.pt-0.italic.dim-color #{data.playerspermatch}-player, best of #{data.bestof}

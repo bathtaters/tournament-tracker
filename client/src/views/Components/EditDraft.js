@@ -13,7 +13,7 @@ import {
 
 import { formatQueryError, statusInfo, deleteDraftMsg } from "../../assets/strings";
 
-import { getStatus, limits, defaultValues } from "../../controllers/draftHelpers";
+import { limits, defaultValues } from "../../controllers/draftHelpers";
 
 
 // Settings Window Layout/Validation
@@ -43,7 +43,7 @@ function EditDraft({ draftId, hideModal, lockModal }) {
   // Init state
   const playerList = useRef(null);
   const { data, isLoading, error } = useDraftQuery(draftId, { skip: !draftId });
-  const draftStatus = getStatus(data);
+  const draftStatus = data ? data.status : 0;
   
   // Delete (& navigate to home page)
   let history = useHistory();
