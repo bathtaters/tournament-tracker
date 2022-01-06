@@ -85,7 +85,7 @@ function formRow(row, data, baseData, isFragment, register, onChange, custom, de
 
   else if (typeof row === 'string') row = {type: row};
   
-  if (row.type === 'spacer') return <div className={row.className} />;
+  if (row.type === 'spacer') return <div key={'Spacer'+depth+'.'+idx} className={row.className} />;
 
   if (!('defaultValue' in row) && baseData.defaultValues && row.id && row.id in baseData.defaultValues)
     row.defaultValue = baseData.defaultValues[row.id];
