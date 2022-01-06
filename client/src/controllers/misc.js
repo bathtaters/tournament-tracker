@@ -13,8 +13,20 @@ export const equalArrays = (a,b) =>
     a.every((v,i) => b[i] === v)
   );
 
+// Radomizes an array, optionally trimming it to a specific size
+export const randomArray = (arr, size) => {
+  if (typeof size !== 'number' || size > arr.length) size = arr.length;
+  let res = [], rem = arr.slice();
+  for (let i = 0; i < size; i++) {
+    res.push(rem.splice(Math.floor(Math.random()*rem.length), 1)[0]);
+  }
+  return res;
+};
+
 // Generates a temporary ID
-const tempId = type => n => `TEMPID-${type}-${('0000'+n).slice(-4)}`;
+const TEMP_ID_PREFIX = 'TEMPID'
+export const isTempId = id => id.slice(0,TEMP_ID_PREFIX.length) === TEMP_ID_PREFIX;
+const tempId = type => n => `${TEMP_ID_PREFIX}-${type}-${('0000'+n).slice(-4)}`;
 export const nextTempId = (type, exists) => {
   if (!exists) return tempId(type)(0);
   let n = 0, id; const getId = tempId(type);
