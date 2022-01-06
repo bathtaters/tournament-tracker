@@ -5,7 +5,7 @@ import SuggestText from "./SuggestText";
 
 import { usePlayerQuery, useCreatePlayerMutation, } from "../../models/playerApi";
 
-import { equalArrays } from "../../controllers/misc";
+import { equalArrays, randomArray } from "../../controllers/misc";
 import { emptyNewPlayer, usePreviousArray, updateArrayWithChanges } from "../../controllers/draftHelpers";
 import { 
   formatQueryError,
@@ -15,7 +15,7 @@ import {
   unaddedPlayerMsg
 } from "../../assets/strings";
 
-
+const autofillSize = 8;
 
 const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit }, ref) {
   // Init State
@@ -62,6 +62,9 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
     handleChange();
     return pushPlayer(playerInfo.id);
   }
+
+  // Automatically fill in up to 8 random players
+  const autofill = () => setPlayerList(randomArray(Object.keys(data), autofillSize));
 
   // Add player to list (If valid)
   const pushPlayer = useCallback(playerId => {
@@ -117,7 +120,7 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
     </div>);
 
   const playerRow = (name, pid, idx) => (
-    <div key={pid} className="min-w-40">
+    <div key={pid} className="min-w-48">
       {status < 2 ? <input
         className="my-1 mx-2 text-xs font-light px-0"
         type="button"
@@ -137,15 +140,24 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
       <h4>{`Players (${playerList.length})`}</h4>
       {playerList.map((pid,idx) => playerRow(data[pid] && data[pid].name, pid, idx))}
       {status < 2 ? 
-        <div>
+        <div className={playerList.length || newPlayer.visible ? null : "text-cente"}>
           <input
             className="my-1 mx-2 text-xs font-light px-0"
             type="button"
             value="+"
             onClick={clickAdd}
           />
+          <input 
+            className={
+              "my-1 mx-8 w-24 text-sm font-light"
+              + (playerList.length || newPlayer.visible ? " hidden" : "")
+            }
+            type="button"
+            value={"Random "+autofillSize}
+            onClick={autofill}
+          />
           <SuggestText
-            className="align-middle"
+            className="align-middle w-40"
             isHidden={!newPlayer.visible}
             value={newPlayer.name}
             onChange={newPlayerChange}

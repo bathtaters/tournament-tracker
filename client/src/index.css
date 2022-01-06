@@ -74,7 +74,7 @@
     .small-caps { font-variant-caps: small-caps; }
     .min-h-20 { min-height: 5rem; }
     .min-h-32 { min-height: 8rem; }
-    .min-w-40 { min-width: 10rem; }
+    .min-w-48 { min-width: 14rem; }
     .text-3xs { font-size: 0.5rem; line-height: 0.5rem; }
     
     /* NavLink styling */
