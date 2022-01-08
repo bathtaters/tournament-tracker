@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import PropTypes from 'prop-types';
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import InputForm from "./InputForm";
 import PlayerEditor from "./PlayerEditor";
@@ -46,13 +46,13 @@ function EditDraft({ draftId, hideModal, lockModal }) {
   const draftStatus = data ? data.status : 0;
   
   // Delete (& navigate to home page)
-  let history = useHistory();
+  let navigate = useNavigate();
   const [ deleteDraft ] = useDeleteDraftMutation();
   const clickDelete = () => {
     if (!window.confirm(deleteDraftMsg(data && data.title))) return;
     if (draftId) deleteDraft(draftId);
     hideModal(true);
-    history.push("/home");
+    navigate("/home");
   };
   
   // Submit draft
