@@ -41,8 +41,9 @@ const start = (getData, getTestData, dataType='text/json') =>
   };
 
 // Apply highlight classes while dragging over
-const enter = (highlightCls, illegalCls, canDrop, getData, privateDataType) =>
+const enter = (highlightCls, removeCls, illegalCls, canDrop, getData, privateDataType) =>
   ev => {
+    removeCls.forEach(c => ev.target.classList.remove(c));
     if (canDrop) {
       if (!canDrop(
         ev.dataTransfer.types,
@@ -54,8 +55,9 @@ const enter = (highlightCls, illegalCls, canDrop, getData, privateDataType) =>
     highlightCls.forEach(c => ev.target.classList.add(c));
   };
 
-const leave = (highlightCls, illegalCls, canDrop, getData, privateDataType) =>
+const leave = (highlightCls, removeCls, illegalCls, canDrop, getData, privateDataType) =>
   ev => {
+    removeCls.forEach(c => ev.target.classList.add(c));
     if (canDrop) {
       if (!canDrop(
         ev.dataTransfer.types,
@@ -68,7 +70,7 @@ const leave = (highlightCls, illegalCls, canDrop, getData, privateDataType) =>
   };
 
 // End Drag (Highlight Class clears any highlight classes still remaining)
-const drop = (getData, action, highlightCls=null, canDrop, getCanDropData, dataType='text/json') => ev => {
+const drop = (getData, action, highlightCls, removeCls, illegalCls, canDrop, getCanDropData, dataType='text/json') => ev => {
   preventDef(ev); ev.stopPropagation();
 
   if (canDrop && !canDrop(
@@ -76,10 +78,10 @@ const drop = (getData, action, highlightCls=null, canDrop, getCanDropData, dataT
     getDataUsing(getCanDropData, [ev]),
     getPublicData(ev, dataType),
     ev
-  )) return;
+  )) return leave(highlightCls.concat(illegalCls), removeCls)(ev);
 
   action(getStored(ev, dataType, true), getDataUsing(getData, [ev,dataType]));
-  if (highlightCls) leave(highlightCls)(ev);
+  leave(highlightCls.concat(illegalCls), removeCls)(ev);
   return false;
 };
 
