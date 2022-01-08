@@ -39,45 +39,55 @@ function PlayerDrafts({ id }) {
   const prefetchStats = usePrefetch('breakers');
   const loadDraft = id => { prefetchDraft(id); prefetchMatch(id); prefetchStats(id); };
 
-  return pug`
-    .my-4
-      h3.dim-color.mt-4.font-thin Schedule
-      if isLoading
-        h4.base-color.font-thin Loading...
+  const draftRow = draft => scheduleRows.map(row => 
+    !row.hideBelow || row.hideBelow <= draft.status ?
+      <h4
+        className={'font-thin base-color ' + (row.span ? ' col-span-'+row.span : '')}
+        key={draft.id+'_'+row.title}
+      >
+        { row.link ?
+          <Link
+            className={row.class ? row.class(draft): ''}
+            onMouseEnter={()=>loadDraft(draft.id)}
+            to={row.link(draft)}
+          >
+            {row.value(draft)}
+          </Link>
+        :
+          <span className={row.class ? row.class(draft): ''}>{row.value(draft)}</span>
+        }
+      </h4>
+    : 
+    <div className={row.span ? 'col-span-'+row.span : ''} key={draft.id+'_'+row.title} />
+  );
 
-      else if error || !Array.isArray(data)
-        h4.base-color.font-thin.italic= error ? formatQueryError(error) : 'Not found'
+  return (
+    <div className="my-4">
+      <h3 className="dim-color mt-4 font-thin">Schedule</h3>
+      { isLoading ?
+        <h4 className="base-color font-thin">Loading...</h4>
 
-      else
-        .grid.grid-flow-row.gap-x-2.gap-y-1.mx-4(className=scheduleGridClass)
-          each row in scheduleRows
-            h4(
-              key="HDR_"+row.title
-              className=(row.span ? "col-span-"+row.span : "")
-            )= row.title
+      : error || !Array.isArray(data) ?
+        <h4 className="base-color font-thin italic">{error ? formatQueryError(error) : 'Not found'}</h4>
 
-          each draft in data
-            each row in scheduleRows
-              if !row.hideBelow || row.hideBelow <= draft.status
-                h4.font-thin.base-color(
-                  key=draft.id+"_"+row.title
-                  className=(row.span ? " col-span-"+row.span : "")
-                )
-                  if row.link
-                    Link(
-                      to=row.link(draft)
-                      className=(row.class ? row.class(draft): '')
-                      onMouseEnter=(()=>loadDraft(draft.id))
-                    )= row.value(draft)
+      :
+        <div className={'grid grid-flow-row gap-x-2 gap-y-1 mx-4 ' + (scheduleGridClass)}>
+          { scheduleRows.map(row => 
+            <h4 className={row.span ? 'col-span-'+row.span : ''} key={'HDR_'+row.title}>
+              {row.title}
+            </h4>
+          ) }
 
-                  else
-                    span(className=(row.class ? row.class(draft): ''))= row.value(draft)
-
-              else
-                div(key=draft.id+"_"+row.title className=(row.span ? "col-span-"+row.span : ""))
-
-      RawData.mt-6(data=data)
-  `;
+          { 
+            data && data.length ? data.map(draftRow) : 
+            <div className={"dim-color italic font-thin text-center my-2 "+scheduleGridClass.replace('grid-cols','col-span')}>– None –</div> 
+          }
+        </div>
+      }
+      
+      <RawData className="mt-6" data={data} />
+    </div>
+  );
 }
 
 PlayerDrafts.propTypes = { id: PropTypes.string };

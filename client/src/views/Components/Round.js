@@ -16,37 +16,50 @@ function Round({ draftId, round, deleteRound }) {
   // Local
   const [isEditing, setEditing] = useState(false);
 
-  return pug`
-    .m-4.relative(className=(isEditing ? "z-40" : ""))
-      h3.font-light.text-center= 'Round '+(round+1)
-      .flex.flex-col
-        if isLoading || error || !data.matches[round]
-          .dim-color.text-center.font-thin.italic= isLoading ? '...' : error ? formatQueryError(error) : 'Missing'
+  return (<>
+    <div className={'m-4 relative ' + (isEditing ? 'z-40' : '')}>
+      <h3 className="font-light text-center">{'Round '+(round+1)}</h3>
+      <div className="flex flex-col">
+        { isLoading || error || !data.matches[round] ?
+          <div className="dim-color text-center font-thin italic">
+            {isLoading ? '...' : error ? formatQueryError(error) : 'Missing'}
+          </div>
 
-        else
-          each matchId, idx in data.matches[round]
-            Match(
-              key=matchId
-              draftId=draftId
-              matchId=matchId
-              bestOf=data.bestof
-              isEditing=isEditing
-            )
+        : <>
+          { data.matches[round].map((matchId, idx) => 
+            <Match
+              bestOf={data.bestof}
+              draftId={draftId}
+              isEditing={isEditing}
+              key={matchId}
+              matchId={matchId}
+            />
+          ) }
 
-          .font-thin.text-sm.italic.text-center.mt-1
-            if isEditing
-              a(onClick=(()=>setEditing(false))) Back
-              if deleteRound
-                span.mx-1 /
-                a(onClick=deleteRound) Delete
+          <div className="font-thin text-sm italic text-center mt-1">
+            { isEditing ? <>
+              <span className="link" onClick={()=>setEditing(false)}>Back</span>
+              
+              { deleteRound && <>
+                <span className="mx-1">/</span>
+                <span className="link" onClick={deleteRound}>Delete</span>
+              </> }
 
-            else
-              if settings && settings.showadvanced
-                a(onClick=(()=>setEditing(true)))= 'Edit Round '+(round+1)
-    
-    if isEditing
-      .fixed.top-0.left-0.w-screen.h-screen.z-30.base-bgd.bg-opacity-50
-  `;
+            </> : settings && settings.showadvanced &&
+              <span className="link" onClick={()=>setEditing(true)}>
+                {'Edit Round '+(round+1)}
+              </span>
+
+            }
+          </div>
+        </>}
+      </div>
+
+    </div>
+    {isEditing &&
+      <div className="fixed top-0 left-0 w-screen h-screen z-30 base-bgd bg-opacity-50" />
+    }
+  </>);
 }
 
 Round.propTypes = {

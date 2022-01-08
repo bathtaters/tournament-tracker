@@ -14,16 +14,15 @@ function ReloadButton({ size = 8, weight = 4, force = null, hideBgd = false, col
   
   const forceRefetch = () => dispatch(baseApi.util.invalidateTags(tagTypes));
 
-  return pug`
-    if display
-      .loader.ease-linear.rounded-full.dim-border(
-        className=sizeClass+" "+className
-        style=({borderTopColor: color})
-      )
+  if (!display)
+    return <h4 className={'link '+className} onClick={forceRefetch}>↻</h4>;
 
-    else
-      h4.link(onClick=forceRefetch className=className) ↻
-  `;
+  return (
+    <div
+      className={`loader ease-linear rounded-full dim-border ${sizeClass} ${className}`}
+      style={{borderTopColor: color}}
+    />
+  );
 }
 
 ReloadButton.propTypes = { 

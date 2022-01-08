@@ -17,41 +17,61 @@ function DraftStats({ draftId }) {
   const { data: draft,   isLoading: loadingDraft,   error: draftError  } = useDraftQuery(draftId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
   
-  return pug`
-    .m-4
-      h3.font-light.text-center= data ? 'Standings' : 'Players'
+  return (
+    <div className="m-4">
+      <h3 className="font-light text-center">{data ? 'Standings' : 'Players'}</h3>
 
-      if isLoading || loadingDraft || loadingPlayers
-        .italic.text-xs.text-center.font-thin.block.mb-2= isLoading ? 'Loading...' : 'N/A'
+      { isLoading || loadingDraft || loadingPlayers ?
+        <div className="italic text-xs text-center font-thin block mb-2">
+          {isLoading ? 'Loading...' : 'N/A'}
+        </div>
 
-      else if error || draftError || playerError
-        .italic.text-xs.text-center.font-thin.block.mb-2= formatQueryError(error || draftError || playerError)
+      : error || draftError || playerError  ?
+        <div className="italic text-xs text-center font-thin block mb-2">
+          {formatQueryError(error || draftError || playerError)}
+        </div>
 
-      else
-        .italic.text-xs.text-center.font-thin.block.mb-2(
-          className=(data && data.ranking.length ? "link" : "cursor-not-allowed")
-          onClick=(()=>modal.current.open())
-        ) View Stats
+      : <div>
+        <div
+          className={'italic text-xs text-center font-thin block mb-2 ' + (data && data.ranking.length ? 'link' : 'cursor-not-allowed')}
+          onClick={()=>modal.current.open()}
+        >
+          View Stats
+        </div>
+        <div className="grid grid-flow-row grid-cols-5 gap-x-2 gap-y-1 items-center dim-color">
 
-        .grid.grid-flow-row.grid-cols-5.gap-x-2.gap-y-1.items-center.dim-color
-          each pid, idx in (data ? data.ranking : draft.players)
-            Fragment(key=pid)
-              span.font-light.text-right(
-                className=(draft.drops && draft.drops.includes(pid) ? 'neg-color' : '')
-              )= (idx + 1)+')'
+          { (data ? data.ranking : draft.players).map((pid,idx) => 
+            <Fragment key={pid}>
+              <span
+                className={'font-light text-right ' + (draft.drops && draft.drops.includes(pid) ? 'neg-color' : '')}
+              >
+                {(idx + 1)+')'}
+              </span>
 
-              if players[pid]
-                Link.col-span-2.text-lg.font-normal.text-left(to="/profile/"+pid)= players[pid].name
-                span.col-span-2.text-xs.font-light.align-middle= formatRecord(data && data[pid].matches,0)
-              
-              else
-                span.col-span-4.text-md.font-thin.align-middle.text-center.dim-color.italic – Missing –
-      
-    Modal(ref=modal)
-      h3.font-light.max-color.text-center.mb-4= draft.title+' Stats'
-      
-      Stats(draftId=draftId playerList=(data && data.ranking) players=players)
-  `;
+              { players[pid] ? <>
+                <Link className="col-span-2 text-lg font-normal text-left" to={'/profile/'+pid}>
+                  {players[pid].name}
+                </Link>
+                <span className="col-span-2 text-xs font-light align-middle">
+                  {formatRecord(data && data[pid].matches,0)}
+                </span>
+
+              </> :
+                <span className="col-span-4 text-md font-thin align-middle text-center dim-color italic">
+                  – Missing –
+                </span>
+              }
+            </Fragment>
+          ) }
+        </div>
+      </div> }
+
+      <Modal ref={modal}>
+        <h3 className="font-light max-color text-center mb-4">{draft.title+' Stats'}</h3>
+        <Stats draftId={draftId} playerList={data && data.ranking} players={players} />
+      </Modal>
+    </div>
+  );
 }
 
 DraftStats.propTypes = {

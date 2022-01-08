@@ -31,28 +31,38 @@ function Players() {
     deletePlayer(playerId);
   }, [canDelete, deletePlayer]);
 
-  return pug`
-    div
-      h2.font-thin.text-center.mb-6 Player Stats
-
-      .px-6.flex.justify-center.mb-6
-        Stats.border.neg-border.border-8(
-          onPlayerClick=handlePlayerClick
-          className=(!canDelete && "border-opacity-0")
-          highlightClass=(canDelete ? "neg-bgd" : "")
-        )
-
-      h4.text-center
-        input.m-2.p-lg(type="button" value="+" onClick=(()=>modal.current.open()) disabled=canDelete)
-        if settings && settings.showadvanced
-          input.m-2.p-lg(type="button" value=(canDelete ? "x" : "–") onClick=toggleDelete)
-      
-      Modal(ref=modal)
-        NewPlayer(
-          hideModal=(force=>modal.current.close(force))
-          lockModal=(()=>modal.current.lock())
-        )
-  `;
+  return (
+    <div>
+      <h2 className="font-thin text-center mb-6">Player Stats</h2>
+      <div className="px-6 flex justify-center mb-6">
+        <Stats
+          className={'neg-border border-8' + (canDelete ? '' : ' border-opacity-0')}
+          highlightClass={canDelete ? 'neg-bgd' : ''}
+          onPlayerClick={handlePlayerClick}
+        />
+      </div>
+      <h4 className="text-center">
+        <input
+          className="m-2 p-lg"
+          disabled={canDelete}
+          onClick={()=>modal.current.open()}
+          type="button"
+          value="+"
+        />
+        { settings && settings.showadvanced ? 
+          <input
+            className="m-2 p-lg"
+            onClick={toggleDelete}
+            type="button"
+            value={canDelete ? 'x' : '–'}
+          />
+        : null }
+      </h4>
+      <Modal ref={modal}>
+        <NewPlayer hideModal={force=>modal.current.close(force)} lockModal={()=>modal.current.lock()} />
+      </Modal>
+    </div>
+  );
 }
 
 export default Players;

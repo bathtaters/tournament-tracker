@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import PropTypes from 'prop-types';
 
-// Constants
+// Constants (Note the spaces at the start/end)
 const defStyle = "base-bgd dim-color py-0.5 px-2 w-full ";
 const selectStyle = " base-bgd-inv base-color-inv";
 const suggestionKey = 'name', uniqueKey = 'id';
@@ -91,39 +91,54 @@ function SuggestText({
     return () => document.removeEventListener('keydown', keystrokeHandler, false);
   });
 
-  return pug`
-    span.inline-block.relative.p-1
-      input(
+  return (
+    <span className="inline-block relative p-1">
+      <input
+        className={className+(isHidden ? ' hidden' : '')}
+        onBlur={hideList}
+        onChange={onChange}
+        onFocus={showList}
+        ref={textbox}
         type="text"
-        value=value
-        onChange=onChange
-        onFocus=showList
-        onBlur=hideList
-        ref=textbox
-        className=(className+(isHidden ? " hidden" : ""))
-      )
-      if listIsVisible && !isSolo && listCount
-        .absolute.left-0.z-50.right-0.top-auto.max-h-screen.bg-red-500.transform
-          .fixed.border.dim-border.shadow-lg.overflow-auto.max-h-24.w-full
-            ul
-              each suggest, idx in suggestions
-                li(
-                  key=suggest[uniqueKey]
-                  className=defStyle+suggestClass+(selected === idx ? selectStyle : "")
-                  onMouseDown=handleClick(suggest)
-                  onMouseEnter=handleMouseOver(idx)
-                )= suggest[suggestionKey]
-              
-              if value
-                each staticOption, sidx in staticList
-                  -var i = sidx + suggestions.length
-                  li(
-                    key="_STATIC:"+staticOption
-                    className=defStyle+staticClass+(selected === i ? selectStyle : "")
-                    onMouseDown=handleClick(staticOption)
-                    onMouseEnter=handleMouseOver(i)
-                  )= staticOption
-  `;
+        value={value}
+      />
+      
+      { listIsVisible && !isSolo && listCount ? 
+        <div className="absolute left-0 z-50 right-0 top-auto max-h-screen bg-red-500">
+          <div className="fixed border dim-border shadow-lg overflow-auto max-h-24 w-full">
+            <ul>
+              { suggestions.map((suggest, idx) => (
+                <li
+                  className={defStyle + suggestClass + (selected === idx ? selectStyle : '')}
+                  key={suggest[uniqueKey]}
+                  onMouseDown={handleClick(suggest)}
+                  onMouseEnter={handleMouseOver(idx)}
+                >
+                  {suggest[suggestionKey]}
+                </li>
+              )) }
+
+              { value && staticList ? staticList.map((staticOption, sidx) => 
+                <li
+                  className={
+                    defStyle + staticClass + 
+                    (selected === sidx + suggestions.length ? selectStyle : '')
+                  }
+                  key={'_STATIC:' + staticOption}
+                  onMouseDown={handleClick(staticOption)}
+                  onMouseEnter={handleMouseOver(sidx + suggestions.length)}
+                >
+                  {staticOption}
+                </li>
+                
+              ) : null }
+            </ul>
+          </div>
+        </div>
+
+      : null }
+    </span>
+  );
 }
 
 SuggestText.propTypes = {

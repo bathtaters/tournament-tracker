@@ -3,18 +3,16 @@ import PropTypes from 'prop-types';
 
 function Counter({val, setVal, maxVal, isEditing, suff = '', className = ''}) {
   const incVal = () => setVal((val + 1) % (maxVal + 1));
+  const dispVal = val + (typeof suff === 'function' ? suff(val) : suff || '');
 
-  return pug`
-    if isEditing
-      span.link.select-none(
-        onClick=incVal,
-        className=className,
-        unselectable="on"
-      )= val + (typeof suff === 'function' ? suff(val) : suff || '')
-    
-    else
-      span(className=className)= val + (typeof suff === 'function' ? suff(val) : suff || '')
-  `;
+  if (!isEditing)
+    return <span className={className}>{dispVal}</span>
+
+  return (
+    <span className={'link select-none '+className} onClick={incVal} unselectable="on">
+      {dispVal}
+    </span>
+  );
 }
 
 Counter.propTypes = {
