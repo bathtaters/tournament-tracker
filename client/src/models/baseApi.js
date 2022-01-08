@@ -94,7 +94,7 @@ export function tagIds(types, { key=null, all=true, addBase=[], addAll=[], limit
           if (id) tags.push({ type, id });
         }
       }
-    } else if (typeof res === 'object') {
+    } else if (res && typeof res === 'object') {
       for (const type in types) {
         if (typeof types[type] !== 'function' && res[types[type] || DEF_KEY]) {
           tags.push({ type, id: res[types[type] || DEF_KEY] });
