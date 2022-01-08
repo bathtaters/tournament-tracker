@@ -9,31 +9,33 @@
 
 /* Base Styles */
 @layer base {
-    @variants hover, active, group-hover {
-        .link-color       { @apply text-indigo-800   dark:text-indigo-200;   }
-        .link-hover-color { @apply text-indigo-600   dark:text-indigo-400;   }
-        .base-color       { @apply text-gray-800     dark:text-gray-200;     }
-        .dim-color        { @apply text-gray-600     dark:text-gray-400;     }
-        .dim-color-inv    { @apply text-gray-400     dark:text-gray-600;     }
-        .base-color-inv   { @apply text-gray-200     dark:text-gray-800;     }
-        .max-color        { @apply text-black        dark:text-white;        }
-        .pos-color        { @apply text-green-700    dark:text-green-300;    }
-        .neg-color        { @apply text-red-700      dark:text-red-300;      }
-        .base-bgd         { @apply bg-gray-200       dark:bg-gray-800;       }
-        .alt-bgd          { @apply bg-gray-400       dark:bg-gray-600;       }
-        .alt-bgd-inv      { @apply bg-gray-600       dark:bg-gray-400;       }
-        .base-bgd-inv     { @apply bg-gray-800       dark:bg-gray-200;       }
-        .max-bgd          { @apply bg-white          dark:bg-black;          }
-        .pos-bgd          { @apply bg-green-700      dark:bg-green-300;      }
-        .neg-bgd          { @apply bg-red-700        dark:bg-red-300;        }
-        .base-border      { @apply border-gray-800   dark:border-gray-200;   }
-        .dim-border       { @apply border-gray-600   dark:border-gray-400;   }
-        .dimmer-border    { @apply border-gray-400   dark:border-gray-600;   }
-        .inv-border       { @apply border-gray-200   dark:border-gray-800;   }
-        .max-border       { @apply border-black      dark:border-white;      }
-        .pos-border       { @apply border-green-700  dark:border-green-300;  }
-        .neg-border       { @apply border-red-700    dark:border-red-300;    }
-    }
+    /* Colors */
+    .link-color       { @apply text-indigo-800   dark:text-indigo-200;   }
+    .link-hover-color { @apply text-indigo-600   dark:text-indigo-400;   }
+    .base-color       { @apply text-gray-800     dark:text-gray-200;     }
+    .dim-color        { @apply text-gray-600     dark:text-gray-400;     }
+    .dim-color-inv    { @apply text-gray-400     dark:text-gray-600;     }
+    .base-color-inv   { @apply text-gray-200     dark:text-gray-800;     }
+    .max-color        { @apply text-black        dark:text-white;        }
+    .pos-color        { @apply text-green-700    dark:text-green-300;    }
+    .neg-color        { @apply text-red-700      dark:text-red-300;      }
+    .base-bgd         { @apply bg-gray-200       dark:bg-gray-800;       }
+    .alt-bgd          { @apply bg-gray-400       dark:bg-gray-600;       }
+    .alt-bgd-inv      { @apply bg-gray-600       dark:bg-gray-400;       }
+    .base-bgd-inv     { @apply bg-gray-800       dark:bg-gray-200;       }
+    .max-bgd          { @apply bg-white          dark:bg-black;          }
+    .pos-bgd          { @apply bg-green-700      dark:bg-green-300;      }
+    .neg-bgd          { @apply bg-red-700        dark:bg-red-300;        }
+    .no-bgd           { @apply  bg-gray-200/0       dark:bg-gray-800/0;      }
+    .base-border      { @apply border-gray-800   dark:border-gray-200;   }
+    .dim-border       { @apply border-gray-600   dark:border-gray-400;   }
+    .dimmer-border    { @apply border-gray-400   dark:border-gray-600;   }
+    .inv-border       { @apply border-gray-200   dark:border-gray-800;   }
+    .max-border       { @apply border-black      dark:border-white;      }
+    .pos-border       { @apply border-green-700  dark:border-green-300;  }
+    .neg-border       { @apply border-red-700    dark:border-red-300;    }
+    .no-border        { @apply  border-gray-200/0    dark:border-gray-800/0; }
+    
     body {
         @apply relative  leading-none  font-sans;
         @apply base-color   base-bgd print:bg-white;
@@ -58,7 +60,7 @@
     input[type="button"], input[type="submit"] {
         @apply text-center rounded-lg;
         @apply py-0 px-1 sm:py-1 sm:px-2;
-        @apply transform transition-transform duration-300;
+        @apply transition-transform duration-300;
         @apply active:translate-y-0.5;
         @apply hover:bg-opacity-90    active:bg-opacity-90;
         @apply active:base-color-inv  active:base-bgd-inv;
@@ -66,6 +68,11 @@
     }
     input[type="button"].p-lg, input[type="submit"].p-lg {
         @apply py-1 px-3 sm:py-2 sm:px-4;
+    }
+
+    /* Effects */
+    a, .link {
+        @apply transition-all duration-500;
     }
 }
 
@@ -84,17 +91,12 @@
     a.active-parent.group:hover .link {
         @apply opacity-50 link-color hover:link-color;
     }
-    
-    /* Specific custom styles */
-    .grid-cols-stats {
-        grid-template-columns: auto auto repeat(6, minmax(0, 1fr));
-    }
 }
 
 @layer utilities {
-    /* Effects */
-    a, .link {
-        @apply transition-all duration-500;
+    /* Specific custom styles */
+    .grid-cols-stats {
+        grid-template-columns: auto auto repeat(6, minmax(0, 1fr));
     }
 
     /* Loading Spinner - top-color = spinner color */

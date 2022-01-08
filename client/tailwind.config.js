@@ -1,8 +1,10 @@
+// const colors = require('tailwindcss/colors');
+
 module.exports = {
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  darkMode: 'media',
+  content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   theme: {
     extend: {
+      // colors: { green: colors.emerald, },
       screens: {
         'print': {'raw': 'print'},
       },
@@ -11,16 +13,6 @@ module.exports = {
         serif: [ 'Garamond', 'serif' ],
         heading: [ 'Josefin Sans', 'sans-serif' ],
       },
-    },
-  },
-  variants: {
-    extend: {
-      borderWidth: ['disabled'],
-      opacity: ['disabled'],
-      backgroundOpacity: ['hover', 'focus', 'active', 'disabled'],
-      backgroundColor: ['active'],
-      textColor: ['active'],
-      translate: ['active'],
     },
   },
   plugins: [
