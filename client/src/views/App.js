@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import Header from "./Header";
 import Schedule from "./Schedule";
@@ -23,38 +23,30 @@ function App() {
     loadSched(); loadDraft(); loadPlayer(); loadStats();
   }, [loadSched,loadDraft,loadPlayer,loadStats]);
 
-  return pug`
-    .min-h-screen.relative
-      if isLoading
-        h4.m-2.text-center Loading your data...
-      
-      else if error
-        h4.m-2.text-center= formatQueryError(error)
-
-      else
-        Router
-          Header(title=(data && data.title))
-          
-          .m-2
-            Switch
-              Redirect(exact=true from="/" to="/home")
-
-              Route(path="/home" exact=true)
-                Schedule
-
-              Route(path="/draft/:id")
-                Draft
-              
-              Route(path="/players" exact=true)
-                Players
-
-              Route(path="/profile/:id")
-                Profile
-              
-              Redirect(from="*" to="/home")
-              
-            RawData.text-xs(data=data)
-  `;
+  return (
+    <div className="min-h-screen relative">
+      { isLoading ? 
+        <h4 className="m-2 text-center">Loading your data...</h4>
+      : error ? 
+        <h4 className="m-2 text-center">{formatQueryError(error)}</h4>
+      : 
+        <Router>
+          <Header title={data && data.title} />
+          <div className="m-2">
+            <Routes>
+              <Route path="/" element={<Navigate replace to="/home" />} />
+              <Route path="/home" element={<Schedule />} />
+              <Route path="/draft/:id" element={<Draft />} />
+              <Route path="/players" element={<Players />} />
+              <Route path="/profile/:id" element={<Profile />} />
+              <Route path="*" element={<Navigate replace to="/home" />} />
+            </Routes>
+            <RawData className="text-xs" data={data} />
+          </div>
+        </Router>
+      }
+    </div>
+  );
 }
 
 export default App;
