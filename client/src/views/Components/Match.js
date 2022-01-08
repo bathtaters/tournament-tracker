@@ -61,107 +61,159 @@ function Match({ draftId, matchId, bestOf, isEditing }) {
     swapPlayers({draftId, playerA, playerB});
   };
   
-  // Render
-  return pug`
-    .m-1.border.dim-border.rounded-md.flex.flex-col.justify-evenly.relative(
-      className=(settings && settings.showrawjson ? "h-64" : "h-32")
-    )
-      if isLoading || loadingRank || loadingPlayers || !matchData
-        .m-auto ...
+  
+// Render
+const outerClass = 'm-1 border dim-border rounded-md flex justify-evenly ' + 
+  (settings && settings.showrawjson ? 'h-64' : 'h-32');
+
+if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankError || playerError)
+  return (
+    <div className={outerClass}>
+      <div className="m-auto">{
+          error || rankError || playerError ?
+          formatQueryError(error || rankError || playerError)
+          : '...'
+      }</div>
+    </div>
+  );
+
+  // Player's name box
+  const playerBox = (playerId, index) => (<Fragment key={playerId+'.n'}>
+    { index ?
+      <div className="inline-block shrink font-thin text-sm dim-color p-2 align-middle pointer-events-none">
+        vs.
+      </div>
+    : null }
+
+    <DragBlock
+      storeData={{ id: matchData.id, playerId, reported: matchData.reported }}
+      onDrop={handleSwap}
+      canDrop={canSwap}
+      storeTestData={matchData.id}
+      className="inline-block grow rounded-2xl p-2 mx-1 mb-1"
+      dataType="json/matchplayer"
+      disabled={!isEditing}
+    >
+
+      {/* Name */}
+      <h4 className={'mb-0 pb-0 block text-xl ' + (isEditing ? 'pointer-events-none' : '')}>
+        
+        { isEditing ?
+          <span className="link-color font-light">
+            {(players[playerId] && players[playerId].name) || '?'}
+          </span>
+
+        : players[playerId] ?
+          <Link className="font-light" to={'/profile/'+playerId}>
+            {players[playerId].name || '?'}
+          </Link>
+        :
+          <div className="font-light link-color" playerid={playerId}>?</div>
+        }
+      </h4>
       
-      else if error || rankError || playerError
-        .m-auto= formatQueryError(error || rankError || playerError)
+      {/* Player Info */}
+      <div className="text-xs font-thin mt-0 pt-0 pointer-events-none mb-1">
+        { matchData.drops.includes(playerId) ?
+          <div className="neg-color">Dropped</div>
+        :
+          <div className="dim-color">
+            {formatRecord(rankings && rankings[playerId] && rankings[playerId].matches)}
+          </div>
+        }
 
-      else
-        .flex.justify-evenly.items-center.text-center
-          each playerId, index in Object.keys(matchData.players)
-            Fragment(key=playerId+".n")
-              if index
-                .inline-block.flex-shrink.font-thin.text-sm.dim-color.p-2.align-middle.pointer-events-none vs.
-              
-              DragBlock.inline-block.flex-grow.rounded-2xl.p-2.mx-1.mb-1(
-                storeData=({ id: matchData.id, playerId, reported: matchData.reported })
-                storeTestData=matchData.id
-                onDrop=handleSwap
-                canDrop=canSwap
-                isAvailable=isEditing
-                dataType="json/matchplayer"
-              )
-                h4.mb-0.pb-0.block.text-xl(className=(isEditing ? "pointer-events-none" : ""))
-                  if isEditing
-                    span.link-color.font-light= players[playerId] && players[playerId].name || '?'
+      </div>
+    </DragBlock>
+  </Fragment>);
 
-                  else if players[playerId]
-                    Link.font-light(to="/profile/"+playerId)= players[playerId].name || '?'
-                  
-                  else
-                    .font-light.link-color(playerid=playerId) ?
 
-                .text-xs.font-thin.mt-0.pt-0.pointer-events-none.mb-1
-                  if matchData.drops.includes(playerId)
-                    .neg-color Dropped
+  // Player's win counter
+  const winsBox = (playerId, index) => (<Fragment key={playerId+'.w'}>
+    {/* Divider */}
+    { index ? <span className="inline-block">{' – '}</span> : null }
 
-                  else
-                    .dim-color= formatRecord(rankings && rankings[playerId] && rankings[playerId].matches)
-        
-        if matchData.reported
-          .text-center.w-full.font-light.text-xs.base-color.-mt-1(
-            className=(isEditing || (matchData.draws && !matchData.isbye) ? "" : "invisible")
-          )
-            Counter(
-              val=isNaN(matchData.draws) ? matchData.draws : +matchData.draws,
-              setVal=setVal('draws'),
-              suff=(d=>" draw"+(d===1?"":"s")),
-              maxVal=bestOf || 0, isEditing=isEditing
-            )
+    { matchData.isbye && !isEditing ?
+      <div className="pos-color italic font-thin">Bye</div>
 
-        .flex.justify-evenly.text-center.base-color.mb-2 
-          if matchData.reported
-            each playerId, index in Object.keys(matchData.players)
-              Fragment(key=playerId+".w")
-                -var isWinner = matchData.winners && matchData.winners.includes(playerId)
+    :
+      <Counter
+        isEditing={isEditing}
+        maxVal={maxWins}
+        setVal={setVal('players', playerId)}
+        val={
+          isNaN(matchData.players[playerId]) ?
+          matchData.players[playerId] :
+          +matchData.players[playerId]
+        }
+        className={
+          'text-base ' + 
+          (isEditing || !matchData.isbye ? '' : 'invisible ') + 
+          (matchData.winners && matchData.winners.includes(playerId) ? 'pos-color' : '')
+        }
+      />
+    }
+  </Fragment>);
+  
 
-                if index
-                  span.inline-block= ' – '
+  // Main
+  return (
+    <div className={outerClass + ' flex-col relative'}>
+      <div className="flex justify-evenly items-center text-center">
+        { Object.keys(matchData.players).map(playerBox) }
+      </div>
 
-                if matchData.isbye && !isEditing
-                  .pos-color.italic.font-thin Bye
+      { matchData.reported &&
+        <div
+          className={'text-center w-full font-light text-xs base-color -mt-1 ' + (isEditing || (matchData.draws && !matchData.isbye) ? '' : 'invisible')}
+        >
+          <Counter
+            isEditing={isEditing}
+            maxVal={bestOf || 0}
+            setVal={setVal('draws')}
+            suff={d=>' draw'+(d===1?'':'s')}
+            val={isNaN(matchData.draws) ? matchData.draws : +matchData.draws}
+          />
+        </div>
+      }
 
-                else
-                  Counter.text-base(
-                    className=(isEditing || !matchData.isbye ? "" : "invisible ")+(isWinner ? "pos-color" : "")
-                    val=isNaN(matchData.players[playerId]) ? matchData.players[playerId] : +matchData.players[playerId],
-                    setVal=setVal('players', playerId),
-                    maxVal=maxWins, isEditing=isEditing
-                  )
+      <div className="flex justify-evenly text-center base-color mb-2">
+        { matchData.reported ? <>
+          { Object.keys(matchData.players).map(winsBox) }
+          { isEditing && 
+            <div
+              className="text-red-500 absolute bottom-0 right-1 text-xs font-thin cursor-pointer hover:neg-color"
+              onClick={clearReport}
+            >
+              ∅
+            </div>
+          }
+        </> :
+          <input
+            className="block text-xs font-light neg-color mt-1"
+            disabled={isEditing || isReporting}
+            onClick={()=>reportModal.current.open()}
+            type="button"
+            value="Report"
+          />
+        }
+      </div>
 
-            if isEditing
-              .text-red-500.absolute.bottom-0.right-1.text-xs.font-thin.cursor-pointer(
-                className="hover:neg-color"
-                onClick=clearReport
-              ) ∅
-              
-          else
-            input.block.text-xs.font-light.neg-color.mt-1(
-              type="button"
-              value="Report"
-              onClick=(()=>reportModal.current.open())
-              disabled=(isEditing || isReporting)
-            )
-        
-        RawData.text-xs.w-80.m-auto(data=matchData)
-        
-        Modal(ref=reportModal)
-          Report(
-            title=title
-            match=matchData
-            hideModal=(()=>reportModal.current.close(true))
-            lockModal=(()=>reportModal.current.lock())
-            bestOf=bestOf
-            maxWins=maxWins
-            draftId=draftId
-          )
-  `;
+      <RawData className="text-xs w-80 m-auto" data={matchData} />
+
+      <Modal ref={reportModal}>
+        <Report
+          bestOf={bestOf}
+          draftId={draftId}
+          hideModal={()=>reportModal.current.close(true)}
+          lockModal={()=>reportModal.current.lock()}
+          match={matchData}
+          maxWins={maxWins}
+          title={title}
+        />
+      </Modal>
+
+    </div>
+  );
 }
 
 Match.propTypes = {
