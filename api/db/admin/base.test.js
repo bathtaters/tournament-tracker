@@ -6,6 +6,35 @@ jest.mock('fs/promises');
 jest.mock('./connect');
 
 // Tests
+describe('operation', () => {
+  
+  it('passes falsy value', async () => {
+    connect.runOperation.mockResolvedValueOnce(false);
+    expect(base.operation()).resolves.toBe(false);
+  });
+
+  it('returns truthy value', async () => {
+    connect.runOperation.mockResolvedValueOnce('test');
+    expect(base.operation()).resolves.toBe('test');
+  });
+
+  it('passes standard array', async () => {
+    connect.runOperation.mockResolvedValueOnce(['test','rows']);
+    expect(base.operation()).resolves.toEqual(['test','rows']);
+  });
+
+  it('gets rows from pg object array', async () => {
+    connect.runOperation.mockResolvedValueOnce([{rows:['test','rows','a']},{rows:['test','rows','b']}]);
+    expect(base.operation()).resolves.toEqual([['test','rows','a'],['test','rows','b']]);
+  });
+
+  it('gets rows from single pg object', async () => {
+    connect.runOperation.mockResolvedValueOnce({rows:['test','rows']});
+    expect(base.operation()).resolves.toEqual(['test','rows']);
+  });
+
+});
+
 describe('query', () => {
   let mockRun, mockClient;
 
@@ -120,14 +149,14 @@ describe('query', () => {
     // expect(res).toEqual([['QRY;',[]]]);
   });
 
-})
+});
 
 
 
 describe('loadFiles', () => {
 
   it('fails on file error', async () => {
-    fs.readFile.mockRejectedValueOnce(new Error('Test Error'));
+    fs.readFile.mockImplementation(() => { throw new Error('Test Error'); });
     await expect(base.loadFiles(['File'])).rejects.toThrowError('Test Error');
   });
 

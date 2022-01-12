@@ -7,6 +7,7 @@ const logger = console;
 
 // Connect to the DB
 let staticPool;
+/* istanbul ignore next */
 async function openConnection(asUser = 'api', cfg = null) {
   if (staticPool) { await closeConnection(); }
   const connStr = getConnStr(asUser, cfg); // Build URI
@@ -19,6 +20,7 @@ async function openConnection(asUser = 'api', cfg = null) {
 }
 
 // Disconnect from DB
+/* istanbul ignore next */
 async function closeConnection() {
   if (!staticPool) { throw new Error("Attempting to close connection before opening."); }
   await staticPool.end();

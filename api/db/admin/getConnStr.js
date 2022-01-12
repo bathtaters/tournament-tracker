@@ -23,6 +23,7 @@
 //*/
 
 // Environment variables to substitute (Uses $ prefix)
+/* istanbul ignore next */
 const envVars = { "HOME": process.env.HOME || "", "env:appdata": process.env.APPDATA || "" };
 
 // Import
