@@ -32,6 +32,22 @@ const prependStack = (stack, prevStack) => prevStack ?
   stack +'\n\t--- pre-pg ---\n'+ prevStack.substring(prevStack.indexOf('\n')+1) : stack;
 exports.prependStack = prependStack;
 
+// Promise.all that waits before moving on
+exports.awaitEach = async (asyncCb, argsArray) => {
+  if (typeof asyncCb !== 'function') throw new Error('awaitEach expects function not '+typeof asyncCb);
+  let res = [];
+  for (const args of argsArray) {
+      try {
+          await asyncCb(...args).then(r => res.push(r));
+      } catch (e) {
+          console.error('Error during awaitEach: ',args,e);
+          res.push(null);
+      }
+  }
+  if (res.length !== argsArray.length) console.error('awaitEach input/output mismatch:',argsArray,res);
+  return res;
+};
+
 // Retry block base
 exports.retryBlock = async (func, args, max, n = 0, retryCodes = null, retryCb = null) => { 
   while (true) {
