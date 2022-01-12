@@ -16,7 +16,7 @@ async function dbCheck() {
     
     // CLEAR DB
     // console.log('Resetting database...'); await require('../db/admin/connect').resetDb();
-    console.log('Initializing test data...'); await dbOp.execFile(initTestFile);
+    console.log('Initializing test data...'); await dbOp.execFiles([initTestFile]);
 
     // Data for testing
     const playIds = await player.list().then(a => console.log('getPlayIds:',a.map(p=>p.name))||a.map(p => p.id));

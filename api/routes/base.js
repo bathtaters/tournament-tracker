@@ -68,12 +68,11 @@ const dbOp = require('../db/admin/base');
 const dbResetFile = require('path').join(__dirname,'..','db','admin','resetDb.sql');
 const dbTestFile = require('path').join(__dirname,'..','testing','dbtest.sql');
 router.post('/reset/full', async function(req, res) {
-    await dbOp.execFile(dbResetFile);
-    await dbOp.execFile(dbTestFile);
+    await dbOp.execFiles([dbResetFile,dbTestFile]);
     res.sendAndLog({reset: true});
 });
 router.post('/reset', async function(req, res) {
-  await dbOp.execFile(dbTestFile);
+  await dbOp.execFiles([dbTestFile]);
   res.sendAndLog({reset: true});
 });
 
