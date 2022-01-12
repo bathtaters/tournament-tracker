@@ -1,72 +1,68 @@
+const fs = require("fs/promises");
+const join = require("path").join;
 const db = require('./connect');
-const { strTest, queryVars, unnestIfSolo } = require('../../services/sqlUtils');
+const utils = require('../../services/sqlUtils');
+
+// DB Parameters
+const resetDbFiles = [ join(__dirname,'resetDb.sql') ];
+const attemptsDefault = 15;
+const retriesDefault = 0;
 
 // Force init on load
 if (!db.isConnected()) db.openConnection();
 
-// Base DB controller (Set default maxAttempts/retryCount here)
-function operation(clientOp = (client => null), maxAttempts = 15, retryCount = 0) {
-    return db.runOperation(clientOp,maxAttempts,retryCount)
-        .then(res => res && res.rows || res);
+// Base DB controller
+function operation(clientOp = client => null, maxAttempts = attemptsDefault, retryCount = retriesDefault) {
+    return db.runOperation(clientOp, maxAttempts, retryCount)
+        .then(res => !res ? res : Array.isArray(res) ? res.map(r => r && (r.rows || r)) : res.rows || res);
 }
 
-// Base DB controller (Set default maxAttempts/retryCount here)
-function query(text, args, maxAttempts = 15, retryCount = 0) {
+// Execute query
+function query(text, args = [], splitArgs = null, maxAttempts = attemptsDefault, retryCount = retriesDefault) {
     // Split text/args into arrays
     if (!Array.isArray(text)) text = text.split(';').filter(q=>q.trim());
     text = text.map(q => /;\s*$/.test(q) ? q : q+';');
-    const useArgArr = args && args.length === text.length && args.every(Array.isArray);
+    splitArgs = splitArgs != null ? splitArgs :
+        args && args.length === text.length && args.every(Array.isArray); // back compat
     
     // console.log('QUERIES:',text);
-    return Promise.all(text.map((q,i) => operation(
-        client => client.query(q, useArgArr ? args[i] : args),
+    return operation(
+        client => utils.awaitEach(client.query, text.map((q,i) => [q, splitArgs ? args[i] : args])),
         maxAttempts, retryCount
-    ))).then(res => res && res.map(unnestIfSolo)).then(unnestIfSolo);
+    ).then(res => res && res.map(utils.unnestIfSolo)).then(utils.unnestIfSolo); // back compat
 }
 
-// Simple Shared Ops
-const getRow = (table, rowId, cols) => 
-    // strTest(table);
-    query(
-        `SELECT ${cols || '*'} FROM ${table}${rowId ? ' WHERE id = $1' : ''};`,
-        rowId ? [rowId] : []
-    );
+// Load commands from a .SQL file
+async function loadFiles(pathArray) {
+    // Read files into array
+    let sqlFileText = await Promise.all(pathArray.map(path =>
+        fs.readFile(path)
+        .then(file => file.toString().split(';'))
+        .catch(e => { throw new Error(`Unable to read SQL file '${path}': ${e.message || e.description || e}`) })
+    ));
+    
+    sqlFileText = sqlFileText.flat(1);
+  
+    // Remove comments and minimize white space
+    sqlFileText = sqlFileText.map(l => 
+        l.replace(/--[^\n]*(?:\n|$)/g,'').replace(/\s+/g,' ').trim()
+    ).filter(Boolean);
 
-const addRow = (table, colObj) => {
-    // strTest(table) || 
-    const keys = Object.keys(colObj);
-    keys.forEach(strTest);
-    return query(
-        `INSERT INTO ${table}(${
-            keys.join(',')
-        }) VALUES(${queryVars(keys)}) RETURNING id;`,
-        Object.values(colObj)
-    )
-};
+    // logger.debug(sqlFileText);
+    return sqlFileText;
+}
 
-const rmvRow = (table, rowId) => 
-    // strTest(table) ||
-    query(
-        `DELETE FROM ${table} WHERE id = $1 RETURNING id;`,
-        [rowId]
-    );
+// Load and execute file
+const execFiles = (pathArray, maxAttempts = attemptsDefault, retryCount = retriesDefault) => 
+    loadFiles(pathArray).then(text => query(text,[],maxAttempts,retryCount));
 
-const updateRow = (table, rowId, updateObj, returning = 'id') => {
-    // strTest(table) || 
-    const keys = Object.keys(updateObj);
-    keys.forEach(strTest);
-    return query(
-        `UPDATE ${table} SET (${
-            keys.join(',')
-        }) = (${queryVars(keys,2)}) WHERE id = $1 RETURNING ${returning};`,
-        [rowId, ...Object.values(updateObj)]
-    ).then(()=>({[returning]: rowId, ...updateObj}));
-};
+// Completely erase the database & create a new one
+const resetDb = (maxAttempts = attemptsDefault, retryCount = retriesDefault) =>
+    execFiles(resetDbFiles, maxAttempts, retryCount);
 
 module.exports = {
-    operation, query,
+    operation, query, execFiles, resetDb,
     init: db.openConnection,
     deinit: db.closeConnection,
-    execFile: db.runSqlFile,
-    getRow, addRow, rmvRow, updateRow,
+    loadFiles
 }

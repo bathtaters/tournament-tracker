@@ -1,54 +1,35 @@
-const fs = require("fs/promises");
-const join = require("path").join;
 const { Pool } = require("pg");
 const parse = require("pg-connection-string").parse;
 
 const getConnStr = require('./getConnStr');
-const { throwErr } = require('../../services/utils');
 const utils = require('../../services/sqlUtils');
-const logger = console; // Setup logger
+const logger = console;
 
 // Connect to the DB
-let pool;
+let staticPool;
 async function openConnection(asUser = 'api', cfg = null) {
-  if (pool) { await closeConnection(); }
+  if (staticPool) { await closeConnection(); }
   const connStr = getConnStr(asUser, cfg); // Build URI
 
-  try { pool = new Pool(parse(connStr)); }
-  catch(err) { throwErr(err, 'Unable to connect to DB: '+connStr); }
+  try { staticPool = new Pool(parse(connStr)); }
+  catch(e) { 
+    throw new Error(`Unable to connect to DB: ${connStr}: ${e.message || e.description || e}`);
+  }
   return;
 }
 
 // Disconnect from DB
 async function closeConnection() {
-  if (!pool) { throw new Error("Attempting to close connection before opening."); }
-  await pool.end();
-  pool = undefined;
+  if (!staticPool) { throw new Error("Attempting to close connection before opening."); }
+  await staticPool.end();
+  staticPool = undefined;
 }
-
-// Execute commands from a .SQL file
-async function runSqlFile(path, maxAttempts, retryCount = 0) {
-  const sqlFile = await fs.readFile(path)
-    .then(f => f.toString().split(';').map(l=>l.replace(/--[^\n]*(?:\n|$)/g,'').replace(/(?:\n|\r\n)+/g,' ').trim()).filter(l=>!!l))
-    .catch(er => throwErr(er, "Unable to read SQL file ("+path+")"));
-  // logger.debug(sqlFile);
-  return runOperation(async client => {
-    let resArr = [];
-    for (let cmd of sqlFile) {
-      cmd = cmd.trimLeft().replace(/\s+/g,' ') + ';';
-      const res = await client.query(cmd);
-      res && res.rows && res.rows.length && resArr.push(res.rows);
-    }
-    return resArr;
-  }, maxAttempts, retryCount);
-}
-
-
 
 //--- Wrapper for SQL Operations ---//
 // This gets a client from pool & re-calls operation(client)
 // for up to <maxAttempts> (starting @ <retryCount> w/ delay = 2^<retryCount> secs)
-async function runOperation(operation, maxAttempts, retryCount = 0) {
+async function runOperation(operation, maxAttempts, retryCount, usingPool = null) {
+  const pool = usingPool || staticPool;
   if (!pool) throw new Error("Attempting DB access before successfully opening connection.");
   
   let client = await utils.retryBlock(
@@ -72,9 +53,8 @@ async function runOperation(operation, maxAttempts, retryCount = 0) {
       
       // On retry
       async (e, client) => {
-        await client.query(
-          "ROLLBACK;", () => logger.log("Rolling back transaction.")
-        );
+        await client.query("ROLLBACK;BEGIN;")
+          .then(() => logger.log("Rolling back transaction and retrying due to "+(e.message || e.name || e || 'error')));
       }
     );
 
@@ -92,11 +72,8 @@ async function runOperation(operation, maxAttempts, retryCount = 0) {
   }
 }
 
-// Completely erase the database & create a new one
-const resetDb = (maxAttempts = 15, retryCount = 0) => runSqlFile(join(__dirname,'resetDb.sql'), maxAttempts, retryCount);
-
 // Public functions
-module.exports = { openConnection, closeConnection, runOperation, runSqlFile, resetDb, isConnected: () => !!pool }
+module.exports = { openConnection, closeConnection, runOperation, isConnected: () => !!pool }
 
 // Setup integer parsing
 utils.initNumberParsing();
