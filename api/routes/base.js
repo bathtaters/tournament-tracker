@@ -64,15 +64,15 @@ router.get('/schedule', async function(req, res) {
 // TEST BACKEND & RESET TO DEMO DB (Temp)
 router.get('/test_backend', (req, res) => res.sendAndLog({result: 'Connected to internal API server.'}));
 
-const dbOp = require('../db/admin/base');
+const ops = require('../db/admin/basicAccess');
 const dbResetFile = require('path').join(__dirname,'..','db','admin','resetDb.sql');
 const dbTestFile = require('path').join(__dirname,'..','testing','dbtest.sql');
 router.post('/reset/full', async function(req, res) {
-    await dbOp.execFiles([dbResetFile,dbTestFile]);
+    await ops.file(dbResetFile,dbTestFile);
     res.sendAndLog({reset: true});
 });
 router.post('/reset', async function(req, res) {
-  await dbOp.execFiles([dbTestFile]);
+  await ops.file(dbTestFile);
   res.sendAndLog({reset: true});
 });
 

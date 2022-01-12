@@ -1,5 +1,5 @@
 // Imports
-const ops = require('./admin/base');
+const ops = require('./admin/basicAccess');
 const { toMatchResults, toGameResults, toBreakers } = require('../services/dbResults');
 const { breakerBase, breakerOpps } = require('./constants').resultQueries;
 
@@ -11,7 +11,7 @@ const limits = {
 
 // Advanced validation
 const { body, param } = require('express-validator');
-const base = require('./admin/base');
+const base = require('./admin/advancedAccess');
 const player = require('./player');
 const validator = () => [
     param('matchId').isUUID(4),

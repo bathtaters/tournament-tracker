@@ -1,5 +1,5 @@
 /* *** PLAYER Object *** */
-const ops = require('./admin/base');
+const ops = require('./admin/basicAccess');
 const { matchQueries } = require('./constants');
 const { insertInOrder } = require('../services/utils');
 

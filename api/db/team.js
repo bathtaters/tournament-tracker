@@ -1,5 +1,5 @@
 /* *** TEAM (PLAYER) Sub-Object *** */
-const ops = require('./admin/base');
+const ops = require('./admin/basicAccess');
 const { rename, swap } = require('./player');
 const { teamQueries } = require('./constants');
 

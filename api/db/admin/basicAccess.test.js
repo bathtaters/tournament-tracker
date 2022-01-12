@@ -1,9 +1,9 @@
 
 // Imports/Mocks
-const simple = require('./simple');
+const simple = require('./basicAccess');
 const utils = require('../../services/sqlUtils');
 
-jest.mock('./base', () => ({
+jest.mock('./advancedAccess', () => ({
   query: jest.fn((...args) => Promise.resolve(args)),
 }));
 jest.mock('../../services/sqlUtils', () => ({
@@ -37,6 +37,18 @@ describe('getRow', () => {
       ['ID']
     ]);
   });
+  it('cols as string', () => {
+    expect(simple.getRow('test', 0, 'colA, colB')).resolves.toEqual([
+      'SELECT colA, colB FROM test;',
+      []
+    ]);
+  });
+  it('cols as array', () => {
+    expect(simple.getRow('test', 0, ['colA','colB'])).resolves.toEqual([
+      'SELECT colA, colB FROM test;',
+      []
+    ]);
+  });
 });
 
 describe('rmvRow', () => {
@@ -62,7 +74,7 @@ describe('updateRow', () => {
   it('correct query', async () => {
     await expect(simple.updateRow('test', 'ID', {a: 1, b: 2, c: 3}, 'ret')).resolves.toEqual({
       id: 'ID',
-      0: 'UPDATE test SET (a,b,c) = ($2+3) WHERE id = $1 RETURNING ret;',
+      0: 'UPDATE test SET a = $2, b = $3, c = $4 WHERE id = $1 RETURNING ret;',
       1: ['ID', 1, 2, 3],
       a: 1, b: 2, c: 3,
     });

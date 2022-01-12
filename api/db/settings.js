@@ -1,7 +1,7 @@
 /* *** SETTINGS Object *** */
 
 // Imports
-const ops = require('./admin/base');
+const ops = require('./admin/basicAccess');
 const { arrToObj } = require('../services/utils');
 
 // Convert between values
