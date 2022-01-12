@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "inspect": "node --inspect server.js"
   },
   "config": {
@@ -31,5 +31,9 @@
     "prompt": "latest",
     "uuid": "latest",
     "validator": "^13.6.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "jest": "^27.4.7"
   }
 }

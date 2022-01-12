@@ -9,7 +9,8 @@
 *Cfg.json
 
 # testing
-/client/coverage
+/*/coverage
+jsconfig.json
 
 # production
 /client/build
