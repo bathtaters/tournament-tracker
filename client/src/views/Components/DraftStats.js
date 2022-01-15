@@ -16,10 +16,11 @@ function DraftStats({ draftId }) {
   const { data,          isLoading,                 error              } = useBreakersQuery(draftId);
   const { data: draft,   isLoading: loadingDraft,   error: draftError  } = useDraftQuery(draftId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
+  const isRanking = data && Array.isArray(data.ranking) && data.ranking.length;
   
   return (
     <div className="m-4">
-      <h3 className="font-light text-center">{data ? 'Standings' : 'Players'}</h3>
+      <h3 className="font-light text-center">{isRanking ? 'Standings' : 'Players'}</h3>
 
       { isLoading || loadingDraft || loadingPlayers ?
         <div className="italic text-xs text-center font-thin block mb-2">
@@ -33,28 +34,30 @@ function DraftStats({ draftId }) {
 
       : <div>
         <div
-          className={'italic text-xs text-center font-thin block mb-2 ' + (data && data.ranking.length ? 'link' : 'cursor-not-allowed')}
-          onClick={()=>modal.current.open()}
+          className={'italic text-xs text-center font-thin block mb-2 ' + (isRanking ? 'link' : 'hidden')}
+          onClick={isRanking ? ()=>modal.current.open() : null}
         >
           View Stats
         </div>
         <div className="grid grid-flow-row grid-cols-5 gap-x-2 gap-y-1 items-center dim-color">
 
-          { (data ? data.ranking : draft.players).map((pid,idx) => 
+          { (isRanking ? data.ranking : draft.players).map((pid,idx) => 
             <Fragment key={pid}>
               <span
                 className={'font-light text-right ' + (draft.drops && draft.drops.includes(pid) ? 'neg-color' : '')}
               >
-                {(idx + 1)+')'}
+                {isRanking ? (idx + 1)+')' : '• '}
               </span>
 
               { players[pid] ? <>
-                <Link className="col-span-2 text-lg font-normal text-left" to={'/profile/'+pid}>
+                <Link className={`col-span-${isRanking? 2:4} text-lg font-normal text-left`} to={'/profile/'+pid}>
                   {players[pid].name}
                 </Link>
-                <span className="col-span-2 text-xs font-light align-middle">
-                  {formatRecord(data && data[pid].matches,0)}
-                </span>
+                {isRanking ? (
+                  <span className="col-span-2 text-xs font-light align-middle">
+                    {formatRecord(data[pid] && data[pid].matches, false)}
+                  </span>
+                ) : null }
 
               </> :
                 <span className="col-span-4 text-md font-thin align-middle text-center dim-color italic">
