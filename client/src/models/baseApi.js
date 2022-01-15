@@ -69,8 +69,9 @@ export const {
 
 
  // Tag builder code
-const ALL_ID = 'LIST', DEF_KEY = 'id';
-export function tagIds(types, { key=null, all=true, addBase=[], addAll=[], limit=0 } = {}) {
+const ALL_ID = '_LIST', DEF_KEY = 'id';
+const getVal = (obj,keyStr) => keyStr ? obj && [obj].concat(keyStr.split('.')).reduce(function(a, b) { return a && a[b] }) : obj;
+export function tagIds(types, { key=DEF_KEY, all=true, addBase=[], addAll=[], limit=0 } = {}) {
   // Normalize 'types' input
   if (typeof types !== 'object') types = types ? {[types]: key} : {};
   else if (Array.isArray(types)) types = types.reduce((obj,t) => {obj[t] = key; return obj;},{});
@@ -78,14 +79,14 @@ export function tagIds(types, { key=null, all=true, addBase=[], addAll=[], limit
   if (all) addAll = (addAll || []).concat(Object.keys(types));
   const baseTags = (addBase || []).concat(addAll.map(type => ({ type, id: ALL_ID })));
   // Create 'getId' function
-  const getId = (type, r, a, k=null) => typeof types[type] === 'function' ? types[type](r,k,a) : r && r[types[type] || DEF_KEY];
+  const getId = (type, r, a, k=null) => typeof types[type] === 'function' ? types[type](r,k,a) : getVal(r,types[type]);
 
   // Return callback for [provides|invalidates]Tags
   return (res,err,arg) => {
     if (err) console.error('Query error on '+JSON.stringify(types)+':'+JSON.stringify(arg), err);
 
     let tags = [...baseTags], i;
-    if (Array.isArray(res)) {
+    if (Array.isArray(res) && res.length) {
       for (const type in types) {
         i = 0;
         for (const r of res) {
@@ -94,10 +95,10 @@ export function tagIds(types, { key=null, all=true, addBase=[], addAll=[], limit
           if (id) tags.push({ type, id });
         }
       }
-    } else if (res && typeof res === 'object') {
+    } else if (res && typeof res === 'object' && Object.keys(res).length) {
       for (const type in types) {
-        if (typeof types[type] !== 'function' && res[types[type] || DEF_KEY]) {
-          tags.push({ type, id: res[types[type] || DEF_KEY] });
+        if (typeof types[type] !== 'function' && getVal(res, types[type])) {
+          tags.push({ type, id: getVal(res, types[type]) });
           continue;
         }
         i = 0;

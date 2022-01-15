@@ -50,7 +50,7 @@ export const playerApi = baseApi.injectEndpoints({
     updatePlayer: build.mutation({
       query: ({ id, ...body }) => ({ url: `player/${id}`, method: 'PATCH', body }),
       transformResponse: res => console.log('UPD_PLAYER',res) || res,
-      invalidatesTags: tagIds('Player'),
+      invalidatesTags: tagIds('Player',{all:0}),
       onQueryStarted({ id, ...body }, { dispatch }) {
         dispatch(playerApi.util.updateQueryData('player', undefined, draft => { 
           Object.assign(draft[id], body); 

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import Round from "./Components/Round";
@@ -10,6 +10,7 @@ import RawData from "./Components/RawData";
 import {
   useDraftQuery, useNextRoundMutation, useClearRoundMutation, 
 } from "../models/draftApi";
+import { usePrefetch } from "../models/baseApi";
 
 import { deleteRoundMsg, formatQueryError } from "../assets/strings";
 import { getRoundButton } from "../controllers/draftHelpers";
@@ -22,6 +23,10 @@ function Draft() {
   // Global
   const { data, isLoading, error, isFetching } = useDraftQuery(id);
   const matches = (data && data.matches) || [];
+
+  // Get Match data
+  const prefetchMatch = usePrefetch('match');
+  useEffect(() => { prefetchMatch(id); }, [id]);
   
   // Actions
   const [ nextRound ] = useNextRoundMutation();
