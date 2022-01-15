@@ -57,16 +57,20 @@ const enter = (highlightCls, removeCls, illegalCls, canDrop, getData, privateDat
 
 const leave = (highlightCls, removeCls, illegalCls, canDrop, getData, privateDataType) =>
   ev => {
-    removeCls.forEach(c => ev.target.classList.add(c));
     if (canDrop) {
       if (!canDrop(
         ev.dataTransfer.types,
         getDataUsing(getData, [ev]),
         getPublicData(ev, privateDataType),
         ev
-      )) return illegalCls.forEach(c => ev.target.classList.remove(c));
+      )) {
+        illegalCls.forEach(c => ev.target.classList.remove(c));
+        removeCls.forEach(c => ev.target.classList.add(c));
+        return;
+      }
     }
     highlightCls.forEach(c => ev.target.classList.remove(c));
+    removeCls.forEach(c => ev.target.classList.add(c));
   };
 
 // End Drag (Highlight Class clears any highlight classes still remaining)

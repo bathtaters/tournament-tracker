@@ -141,7 +141,6 @@ function DragBlock({
   const staticClsStr = `${brdAgg.baseWidth} ${bgdAgg.baseColor} ${className}`;
   const enableClsStr = enableCls.join(' ') + (enableCls.length && matches.length ? ' ' : '') + matches.join(' ');
   const disableClsStr = disableCls.join(' ');
-  console.log('STATIC',staticClsStr,'DISABLED',disableClsStr,'ENABLED',enableClsStr,'IS_DIS',disabled);
 
   return (
     <div
