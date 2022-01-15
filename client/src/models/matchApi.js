@@ -1,4 +1,5 @@
-import { baseApi, tagIds } from './baseApi';
+import { baseApi } from './baseApi';
+import getTags from '../services/getTags';
 
 export const matchApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -6,7 +7,7 @@ export const matchApi = baseApi.injectEndpoints({
     match:   build.query({
       query: draftId => draftId ? `match/all/draft/${draftId}` : 'match/all',
       transformResponse: res => console.log('MATCH',res) || res,
-      providesTags: tagIds({Match: (r,i,a)=> (r && r.draftid) || a},{limit:1}),
+      providesTags: getTags({Match: (r,i,a)=> (r && r.draftid) || a},{limit:1}),
     }),
 
     // Mutations
@@ -14,7 +15,7 @@ export const matchApi = baseApi.injectEndpoints({
       query: ({ id, draftId, clear = false, ...body }) =>
         ({ url: `match/${id}`, method: clear ? 'DELETE' : 'POST', body }),
       transformResponse: res => console.log('REPORT',res) || res,
-      invalidatesTags: tagIds(['Match','Draft','Breakers'],{key:'draftId',addBase:['PlayerDetail'],all:0}),
+      invalidatesTags: getTags(['Match','Draft','Breakers'],{key:'draftId',addBase:['PlayerDetail'],all:0}),
       onQueryStarted({ id, draftId, clear = false, ...body }, { dispatch, queryFulfilled }) {
         dispatch(matchApi.util.updateQueryData('match', draftId, draft => { 
           if (clear) {
@@ -28,7 +29,7 @@ export const matchApi = baseApi.injectEndpoints({
     updateMatch: build.mutation({
       query: ({ id, draftId, ...body }) => ({ url: `match/${id}`, method: 'PATCH', body }),
       transformResponse: res => console.log('UPD_MATCH',res) || res,
-      invalidatesTags: tagIds(['Match','Draft','Breakers'],{key:'draftId',addBase:['PlayerDetail'],all:0}),
+      invalidatesTags: getTags(['Match','Draft','Breakers'],{key:'draftId',addBase:['PlayerDetail'],all:0}),
       onQueryStarted({ id, draftId, clear = false, ...body }, { dispatch }) {
         dispatch(matchApi.util.updateQueryData('match', draftId, draft => { 
           if ('draws' in body) draft[id].draws = body.draws;
@@ -39,7 +40,7 @@ export const matchApi = baseApi.injectEndpoints({
     swapPlayers: build.mutation({
       query: ({ draftId, ...body}) => ({ url: `match/util/swap`, method: 'PATCH', body }),
       transformResponse: res => console.log('SWAP',res) || res,
-      invalidatesTags: tagIds('Match',{key:'draftId',addBase:['PlayerDetail'],all:0}),
+      invalidatesTags: getTags('Match',{key:'draftId',addBase:['PlayerDetail'],all:0}),
       onQueryStarted({ id, draftId, clear = false, ...body }, { dispatch }) {
         dispatch(matchApi.util.updateQueryData('match', draftId, draft => { 
           draft[body.playerA.id].players[body.playerB.playerId] = draft[body.playerA.id].players[body.playerA.playerId];

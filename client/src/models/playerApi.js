@@ -1,5 +1,7 @@
-import { baseApi, tagIds } from './baseApi';
+import { baseApi } from './baseApi';
 import { draftApi } from './draftApi';
+
+import getTags from '../services/getTags';
 import { nextTempId } from '../controllers/misc';
 import { getStatus } from '../controllers/draftHelpers';
 
@@ -10,7 +12,7 @@ export const playerApi = baseApi.injectEndpoints({
     player:  build.query({
       query: (id=null) => `player/${id || 'all'}`,
       transformResponse: res => console.log('PLAYER',res) || res,
-      providesTags: tagIds('Player'),
+      providesTags: getTags('Player'),
     }),
     playerDrafts:  build.query({
       query: (id) => `player/${id}/drafts`,
@@ -19,14 +21,14 @@ export const playerApi = baseApi.injectEndpoints({
         console.log('PLAYER_DET',res);
         return res;
       },
-      providesTags: tagIds('PlayerDetail',{ all: false }),
+      providesTags: getTags('PlayerDetail',{ all: false }),
     }),
 
     // Mutations
     createPlayer: build.mutation({
       query: (body) => ({ url: `player`, method: 'POST', body, }),
       transformResponse: res => console.log('ADD_PLAYER',res) || res,
-      invalidatesTags: tagIds('Player', { addAll:['Breakers'] }),
+      invalidatesTags: getTags('Player', { addAll:['Breakers'] }),
       onQueryStarted(body, { dispatch, getState }) {
         const breakers = getState().dbApi.queries['breakers(undefined)'];
         const id = nextTempId('PLAYER', breakers && breakers.data && breakers.data.ranking);
@@ -37,7 +39,7 @@ export const playerApi = baseApi.injectEndpoints({
     deletePlayer: build.mutation({
       query: id => ({ url: `player/${id}`, method: 'DELETE' }),
       transformResponse: res => console.log('DEL_PLAYER',res) || res,
-      invalidatesTags: tagIds('Player', { addAll:['Breakers'] }),
+      invalidatesTags: getTags('Player', { addAll:['Breakers'] }),
       onQueryStarted(id, { dispatch }) {
         dispatch(playerApi.util.updateQueryData('player', undefined, draft => { delete draft[id]; }));
         dispatch(draftApi.util.updateQueryData('breakers', undefined, draft => {
@@ -50,7 +52,7 @@ export const playerApi = baseApi.injectEndpoints({
     updatePlayer: build.mutation({
       query: ({ id, ...body }) => ({ url: `player/${id}`, method: 'PATCH', body }),
       transformResponse: res => console.log('UPD_PLAYER',res) || res,
-      invalidatesTags: tagIds('Player',{all:0}),
+      invalidatesTags: getTags('Player',{all:0}),
       onQueryStarted({ id, ...body }, { dispatch }) {
         dispatch(playerApi.util.updateQueryData('player', undefined, draft => { 
           Object.assign(draft[id], body); 
