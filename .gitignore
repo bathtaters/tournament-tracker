@@ -6,9 +6,9 @@
 .pnp.js
 
 # credentials
-*Cfg.json
+dbServer.json
 
-# testing
+# dev-only testing files
 /*/coverage
 jsconfig.json
 
