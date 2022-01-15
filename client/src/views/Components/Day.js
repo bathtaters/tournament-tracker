@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import DragBlock from './DragBlock';
 
-import { toDateObj, dayClasses } from '../../controllers/getDays';
+import { noDate, toDateObj, dayClasses } from '../../controllers/getDays';
 import { isTempId } from "../../controllers/misc";
 import { formatQueryError, weekdays, statusInfo } from '../../assets/strings';
 
@@ -24,7 +24,7 @@ function Day({ drafts, isEditing, setDraftModal, day }) {
   
   // Actions
   const dropHandler = (a,b) => {
-    [a.day, b.day] = [b.day, a.day].map(d => d === 'none' ? null : d);
+    [a.day, b.day] = [b.day, a.day].map(d => d === noDate ? null : d);
     updateDraft(a);
     if (b.id) updateDraft(b);
   }

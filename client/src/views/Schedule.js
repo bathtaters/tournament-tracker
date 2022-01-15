@@ -9,7 +9,7 @@ import { useScheduleQuery, useSettingsQuery } from "../models/baseApi";
 import { useDraftQuery } from "../models/draftApi";
 
 import { formatQueryError } from "../assets/strings";
-import { getMissingDrafts } from "../controllers/getDays";
+import { noDate, getMissingDrafts } from "../controllers/getDays";
 
 function Schedule() {
   // Global state
@@ -23,7 +23,7 @@ function Schedule() {
   const modal = useRef(null);
   const [isEditing, setEdit] = useState(false);
   const [currentDraft, setCurrentDraft] = useState(null);
-  const openDraftModal = useCallback(draftId => { console.log('MODAL',draftId); setCurrentDraft(draftId); modal.current.open(); }, [modal]);
+  const openDraftModal = useCallback(draftId => { setCurrentDraft(draftId); modal.current.open(); }, [modal]);
 
   return (
     <div>
@@ -52,7 +52,7 @@ function Schedule() {
           settings.dateRange && settings.dateRange.map(day => 
             <Day
               day={day}
-              drafts={day === 'none' ? otherDrafts : data[day]}
+              drafts={day === noDate ? otherDrafts : data[day] && data[day].drafts}
               isEditing={isEditing}
               key={day}
               setDraftModal={openDraftModal}

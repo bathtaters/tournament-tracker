@@ -70,14 +70,15 @@ export const fakeRound = (draftData) => {
 export function swapToDay(schedule, id, newDay) {
   // Remove old
   for (const day in schedule) {
-    const idx = schedule[day].indexOf(id);
+    const idx = (schedule[day].drafts || []).indexOf(id);
     if (idx >= 0) { 
-      schedule[day].splice(idx,1); break;
+      schedule[day].drafts.splice(idx,1); break;
     }
   }
   // Add new
-  if (!schedule[newDay]) schedule[newDay] = [id];
-  else schedule[newDay].push(id);
+  if (!schedule[newDay]) schedule[newDay] = { drafts: [id] };
+  else if (!schedule[newDay].drafts) schedule[newDay].drafts = [id];
+  else schedule[newDay].drafts.push(id);
 }
 
 
