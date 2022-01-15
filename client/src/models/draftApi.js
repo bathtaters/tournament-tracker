@@ -20,7 +20,7 @@ export const draftApi = baseApi.injectEndpoints({
     breakers: build.query({
       query: (draftId) => `draft/${draftId || 'all'}/breakers`,
       transformResponse: res => console.log('BRKRS',res) || res,
-      providesTags: tagIds('Breakers'),
+      providesTags: tagIds({Breakers: (r,i,a)=> (r && r.draftIds && r.draftIds[0]) || a},{limit:1}),
     }),
 
     // Mutations
@@ -33,7 +33,9 @@ export const draftApi = baseApi.injectEndpoints({
         const id = nextTempId('DRAFT', drafts && Object.keys(drafts));
         dispatch(draftApi.util.updateQueryData('draft', undefined, draft => { draft[id] = body; }));
         dispatch(baseApi.util.updateQueryData('schedule', undefined, draft => { 
-          if (!draft.none) draft.none = []; draft.none.push(id);
+          if (!draft.none) draft.none = {};
+          if (!draft.none.drafts) draft.none.drafts = [];
+          draft.none.drafts.push(id);
         }));
       },
     }),
@@ -43,9 +45,10 @@ export const draftApi = baseApi.injectEndpoints({
       invalidatesTags: tagIds('Draft',{addBase:['Schedule','PlayerDetail']}),
       onQueryStarted(id, { dispatch }) {
         dispatch(baseApi.util.updateQueryData('schedule', undefined, draft => { 
-          Object.keys(draft).forEach(day => 
-            draft[day] && draft[day].includes(id) && draft[day].splice(draft[day].indexOf(id),1)
-          );
+          Object.keys(draft).forEach(day => {
+            if (draft[day] && draft[day].drafts && draft[day].drafts.includes(id))
+              draft[day].drafts.splice(draft[day].drafts.indexOf(id),1);
+          });
         }));
         dispatch(draftApi.util.updateQueryData('draft', undefined, draft => { 
           delete draft[id]; 
@@ -74,25 +77,37 @@ export const draftApi = baseApi.injectEndpoints({
     nextRound: build.mutation({
       query: id => ({ url: `draft/${id}/round`, method: 'POST' }),
       transformResponse: res => console.log('ROUND+',res) || res,
-      invalidatesTags: tagIds(['Draft','Match'], {all:0,addBase:['PlayerDetail']}),
-      onQueryStarted(id, { dispatch }) {
+      invalidatesTags: tagIds(['Draft','Match','Breakers'], {all:0,addBase:['PlayerDetail']}),
+      onQueryStarted(id, { dispatch, getState }) {
+        const current = getState().dbApi.queries['draft("'+id+'")'].data;
+        if (current.status < 2) dispatch(draftApi.util.updateQueryData('breakers', id, draft => {
+          draft.ranking = current.players;
+        }));
         dispatch(draftApi.util.updateQueryData('draft', id, draft => { 
           if (draft.roundactive > draft.roundcount) return;
           if (!draft.matches) draft.matches = [];
           if (draft.roundactive++ < draft.roundcount)
             draft.matches.push(fakeRound(draft));
+          else draft.status = 3;
+          if (draft.status < 2) draft.status = 2;
         }));
       },
     }),
     clearRound: build.mutation({
       query: id => ({ url: `draft/${id}/round`, method: 'DELETE' }),
       transformResponse: res => console.log('ROUND-',res) || res,
-      invalidatesTags: tagIds(['Draft','Match'], {all:0,addBase:['PlayerDetail']}),
-      onQueryStarted(id, { dispatch }) {
+      invalidatesTags: tagIds(['Draft','Match','Breakers'], {all:0,addBase:['PlayerDetail']}),
+      onQueryStarted(id, { dispatch, getState }) {
+        const current = getState().dbApi.queries['draft("'+id+'")'].data;
+        if (current.roundactive === 1) dispatch(draftApi.util.updateQueryData('breakers', id, draft => {
+          draft.ranking = [];
+        }));
         dispatch(draftApi.util.updateQueryData('draft', id, draft => { 
           if (draft.roundactive < 1) return;
           draft.matches.pop();
-          draft.roundactive--;
+          draft.roundactive = draft.matches.length;
+          if (!draft.roundactive) draft.status = 1;
+          else if (draft.status === 3) draft.status = 2;
         }));
       },
     }),
