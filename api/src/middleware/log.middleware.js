@@ -2,14 +2,19 @@
 const logger = console;
 
 function setupLogging(req, res, next) {
+  // Log request
   logger.log('REQ:',req.originalUrl,req.method,req.body);
+
+  // Log response
   res.sendAndLog = (...args) => { 
-    logger.log('RES:', ...args.map(a =>
+    logger.log('RES:', req.originalUrl, res.statusCode, ...args.map(a =>
       typeof a === 'object' && !a.error ? Object.keys(a) : a
     ));
     return res.send(...args);
   };
-  res.setHeader('Access-Control-Allow-Origin','*'); // To bypass CORS
+
+  // Bypass CORS
+  res.setHeader('Access-Control-Allow-Origin','*');
   return next();
 }
 
