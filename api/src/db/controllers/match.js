@@ -1,10 +1,10 @@
 /* *** MATCH Object *** */
-const ops = require('./admin/basicAccess');
-const strings = require('./sqlStrings').match;
-const { arrToObj } = require('../services/utils');
+const ops = require('../admin/basicAccess');
+const strings = require('../sql/strings').match;
+const { arrToObj } = require('../../helpers/utils');
 
 // Create empty report object
-const defs = require('../config/validation').config.defaults.match;
+const defs = require('../../config/validation').config.defaults.match;
 const emptyReport = {
     players: defs.players,
     draws: defs.draws,

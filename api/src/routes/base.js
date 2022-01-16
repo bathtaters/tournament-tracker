@@ -15,13 +15,13 @@ Returns: schedule data
 // Init
 const router = require('express').Router();
 const logger = console;
-const { arrToObj } = require('../services/utils');
+const { arrToObj } = require('../helpers/utils');
 
 // DB
-const draft = require('../db/draft');
-const match = require('../db/match');
-const player = require('../db/player');
-const settings = require('../db/settings');
+const draft = require('../db/controllers/draft');
+const match = require('../db/controllers/match');
+const player = require('../db/controllers/player');
+const settings = require('../db/controllers/settings');
 
 /* GET page data. */
 

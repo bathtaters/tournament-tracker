@@ -2,7 +2,7 @@ const { Pool } = require("pg");
 const parse = require("pg-connection-string").parse;
 
 const getConnStr = require('./getConnStr');
-const utils = require('../../services/sqlUtils');
+const utils = require('../../helpers/sqlUtils');
 const logger = console;
 
 // Connect to the DB

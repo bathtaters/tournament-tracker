@@ -9,7 +9,7 @@
 
 
 /* *** TEAM (PLAYER) Sub-Object *** */
-const ops = require('./admin/basicAccess');
+const ops = require('../admin/basicAccess');
 const { set, swap } = require('./player');
 
 

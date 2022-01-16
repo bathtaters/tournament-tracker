@@ -1,7 +1,7 @@
 /* *** DRAFT CLOCK Sub-Object *** */
-const ops = require('./admin/basicAccess');
-const RawPG = require('./admin/RawPG');
-const sqlStrings = require('./sqlStrings').clock;
+const ops = require('../admin/basicAccess');
+const RawPG = require('../admin/RawPG');
+const sqlStrings = require('../sql/strings').clock;
 
 
 // Draft Clock Operations //

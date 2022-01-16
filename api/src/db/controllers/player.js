@@ -1,8 +1,8 @@
 /* *** PLAYER Object *** */
-const ops = require('./admin/basicAccess');
-const strings = require('./sqlStrings').player;
-const { insertInOrder } = require('../services/utils');
-const defs = require('../config/validation').config.defaults.player;
+const ops = require('../admin/basicAccess');
+const strings = require('../sql/strings').player;
+const { insertInOrder } = require('../../helpers/utils');
+const defs = require('../../config/validation').config.defaults.player;
 
 
 // Player Table Operations //

@@ -1,6 +1,6 @@
 /* *** SIMPLE SQL UI *** */
 const advanced = require('./advancedAccess');
-const { strTest, queryVars, getReturn, getFirst, getSolo } = require('../../services/sqlUtils');
+const { strTest, queryVars, getReturn, getFirst, getSolo } = require('../../helpers/sqlUtils');
 
 // Custom query
 const query = (text, args, splitArgs) => advanced.query(text, args, splitArgs)

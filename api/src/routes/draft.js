@@ -45,11 +45,11 @@ Returns: Undrop player from draft
 // Init
 const router = require('express').Router();
 const logger = console;
-const { arrToObj, sortById } = require('../services/utils');
+const { arrToObj } = require('../helpers/utils');
 
 // DB
-const draft = require('../db/draft');
-const match = require('../db/match');
+const draft = require('../db/controllers/draft');
+const match = require('../db/controllers/match');
 
 /* GET draft database. */
 

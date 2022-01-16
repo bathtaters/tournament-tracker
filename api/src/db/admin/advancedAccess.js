@@ -2,7 +2,7 @@
 const fs = require("fs/promises");
 const join = require("path").join;
 const db = require('./connect');
-const utils = require('../../services/sqlUtils');
+const utils = require('../../helpers/sqlUtils');
 
 // DB Parameters
 const resetDbFiles = [ join(__dirname,'resetDb.sql') ];

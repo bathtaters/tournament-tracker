@@ -1,7 +1,7 @@
 // Imports/Mocks
 const mockWarn = jest.spyOn(global.console, "warn");
 const connect = require('./connect');
-const utils = require('../../services/sqlUtils');
+const utils = require('../../helpers/sqlUtils');
 jest.mock('../../services/sqlUtils');
 
 

@@ -1,7 +1,7 @@
 // Calculate records from DB data
-const resultCalc = require('./resultUtils');
-// const { breakersFields } = require('../db/constants');
-// const { concatUnique } = require('./utils');
+const resultCalc = require('../helpers/resultUtils');
+// const { breakersFields } = require('../config/constants');
+// const { concatUnique } = require('../helpers/utils');
 
 
 

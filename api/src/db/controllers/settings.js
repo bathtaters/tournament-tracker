@@ -1,7 +1,7 @@
 /* *** SETTINGS Object *** */
-const ops = require('./admin/basicAccess');
-const { asType, getType } = require('../services/settings');
-const strings = require('./sqlStrings').settings;
+const ops = require('../admin/basicAccess');
+const { asType, getType } = require('../../services/settings');
+const strings = require('../sql/strings').settings;
 
 
 // Batch get settings object

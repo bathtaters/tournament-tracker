@@ -5,7 +5,7 @@
 const envVars = { "HOME": process.env.HOME || "", "env:appdata": process.env.APPDATA || "" };
 
 // Import
-const utils = require('../../services/utils');
+const utils = require('../../helpers/utils');
 const serverCfg = require('../../config/dbServer.json');
 
 // Convert credentials to connectionString

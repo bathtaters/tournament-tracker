@@ -1,10 +1,10 @@
 /* *** DRAFT Object *** */
-const ops = require('./admin/basicAccess');
-const Raw = require('./admin/RawPG');
-const strings = require('./sqlStrings').draft;
-const defs = require('../config/validation').config.defaults.draft;
-const newRound = require('../services/newRound');
-const { toBreakers } = require('../services/dbResults');
+const ops = require('../admin/basicAccess');
+const Raw = require('../admin/RawPG');
+const strings = require('../sql/strings').draft;
+const defs = require('../../config/validation').config.defaults.draft;
+const newRound = require('../../services/newRound');
+const { toBreakers } = require('../../services/results');
 
 
 // Draft Table Operations //

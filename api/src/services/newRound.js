@@ -1,6 +1,6 @@
 const roundMatchups = require('./matchups');
-const { toBreakers } = require('./dbResults');
-const { mapObjArr, staticValObj } = require('./utils');
+const { toBreakers } = require('./results');
+const { mapObjArr, staticValObj } = require('../helpers/utils');
 
 const autoReportByes = true;
 

@@ -24,8 +24,8 @@ const router = require('express').Router();
 const logger = console;
 
 // DB
-const matches = require('../db/match');
-const players = require('../db/player');
+const matches = require('../db/controllers/match');
+const players = require('../db/controllers/player');
 
 
 /* GET match database. */

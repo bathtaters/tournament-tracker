@@ -1,11 +1,10 @@
-const ops = require('../db/admin/basicAccess');
-const player = require('../db/player');
-const settings = require('../db/settings');
-const team = require('../db/team');
-const draft = require('../db/draft');
-const match = require('../db/match');
-const clock = require('../db/clock');
-const results = require('../db/results');
+const ops = require('./basicAccess');
+const player = require('../controllers/player');
+const settings = require('../controllers/settings');
+const team = require('../controllers/team');
+const draft = require('../db/controllers/draft');
+const match = require('../db/controllers/match');
+const clock = require('../controllers/clock');
 
 const initTestFile = require('path').join(__dirname,'dbtest.sql');
 
@@ -229,15 +228,15 @@ async function dbCheck() {
     let fakeResults = temp[0].players;
     fakeResults.draws = Math.floor(Math.random() * 3);
     Object.keys(fakeResults).forEach(k => fakeResults[k] = Math.floor(Math.random() * 3))
-    await results.report(temp[0].id, fakeResults);
+    await match.report(temp[0].id, fakeResults);
     await match.get(temp[0].id, true).then(console.log);
     fakeResults = temp[1].players;
     Object.keys(fakeResults).forEach(k => fakeResults[k] = Math.floor(Math.random() * 3))
     fakeResults.draws = Math.floor(Math.random() * 3);
     await match.get(temp[1].id, true).then(console.log);
-    await results.report(temp[1].id, fakeResults);
+    await match.report(temp[1].id, fakeResults);
     await match.get(temp[1].id, true).then(console.log);
-    await results.unreport(temp[1].id);
+    await match.unreport(temp[1].id);
     await match.get(temp[1].id, true).then(console.log);
     console.log(' --- DELETE ROUND --- ');
     await match.list(useDraft.id).then(console.log);
@@ -247,18 +246,18 @@ async function dbCheck() {
     
     /*console.log('\nRecords... *******************************');
     try {
-        await results.getRecord().then(console.log);
+        await draft.getRecord().then(console.log);
     } catch (e) { console.error('ERROR getRecord():',e); }
     console.log('PLAYER',playIds[0],'DRAFT',useDraft.title);
-    await results.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:1,ofGames:0}).then(console.log);
-    await results.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:0,ofGames:0}).then(console.log);
-    await results.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:1,ofGames:1}).then(console.log);
-    await results.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:0,ofGames:1}).then(console.log);
-    await results.getRecord({playerId: playIds[0]}).then(console.log);
-    await results.getRecord({playerId: playIds[0]},{sortByDraft:1}).then(console.log);
-    await results.getRecord({draftId: useDraft.id}).then(console.log);
-    await results.getBreakers(useDraft.id, playIds.slice(1,4)).then(console.log);
-    await results.getBreakers(useDraft.id).then(console.log);
+    await draft.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:1,ofGames:0}).then(console.log);
+    await draft.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:0,ofGames:0}).then(console.log);
+    await draft.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:1,ofGames:1}).then(console.log);
+    await draft.getRecord({draftId: useDraft.id, playerId: playIds[0]},{asScore:0,ofGames:1}).then(console.log);
+    await draft.getRecord({playerId: playIds[0]}).then(console.log);
+    await draft.getRecord({playerId: playIds[0]},{sortByDraft:1}).then(console.log);
+    await draft.getRecord({draftId: useDraft.id}).then(console.log);
+    await draft.getBreakers(useDraft.id, playIds.slice(1,4)).then(console.log);
+    await draft.getBreakers(useDraft.id).then(console.log);
     //*/
     
     // Close connection

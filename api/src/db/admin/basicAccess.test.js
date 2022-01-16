@@ -2,7 +2,7 @@
 // Imports/Mocks
 const mockWarn = jest.spyOn(global.console, "warn");
 const simple = require('./basicAccess');
-const utils = require('../../services/sqlUtils');
+const utils = require('../../helpers/sqlUtils');
 const advancedAccess = require('./advancedAccess');
 
 jest.mock('./advancedAccess', () => ({

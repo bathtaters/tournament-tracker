@@ -1,5 +1,5 @@
 // SQL Constants
-const RawPG = require('./admin/RawPG');
+const RawPG = require('../admin/RawPG');
 
 exports.clock = {
     modPause: RawPG("(now() - (SELECT clockstart FROM draft WHERE id = $1))")
