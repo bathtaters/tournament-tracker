@@ -1,6 +1,7 @@
-const defaultError = { status: 500, message: 'Unknown server error' }; // MOVE TO CONFIG
+// Handle error response to client
+const defaultError = require('../config/constants.json').defaultError;
 
-function handleError(err, req, res, next) {
+function handleError(err, req, res) {
   if (!req.error) req.error = err;
 
   res.status((req.error && req.error.status) || defaultError.status);

@@ -1,4 +1,8 @@
 {
+  "defaultError": { 
+    "status": 500,
+    "message": "Unknown server error"
+  },
   "clockStates": [
     "Ended",
     "Running",
