@@ -1,10 +1,10 @@
-const ops = require('./basicAccess');
-const player = require('../controllers/player');
-const settings = require('../controllers/settings');
-const team = require('../controllers/team');
+const db = require('./interface');
+const player = require('../models/player');
+const settings = require('../models/settings');
+const team = require('../models/team');
 const draft = require('../db/controllers/draft');
 const match = require('../db/controllers/match');
-const clock = require('../controllers/clock');
+const clock = require('../models/clock');
 
 const initTestFile = require('path').join(__dirname,'dbtest.sql');
 
@@ -15,7 +15,7 @@ async function dbCheck() {
     
     // CLEAR DB
     // console.log('Resetting database...'); await require('../db/admin/connect').resetDb();
-    console.log('Initializing test data...'); await ops.file(initTestFile);
+    console.log('Initializing test data...'); await db.file(initTestFile);
 
     // Data for testing
     const playIds = await player.list().then(a => console.log('getPlayIds:',a.map(p=>p.name))||a.map(p => p.id));
@@ -34,60 +34,60 @@ async function dbCheck() {
 
     /* VIEW ALL
     console.log('MATCHES')
-    await ops.query("SELECT * FROM match;").then(console.log);
+    await db.query("SELECT * FROM match;").then(console.log);
     console.log('DRAFTS')
-    await ops.query("SELECT * FROM draft;").then(console.log);
+    await db.query("SELECT * FROM draft;").then(console.log);
     console.log('PLAYERS')
-    await ops.query("SELECT * FROM player;").then(console.log);
+    await db.query("SELECT * FROM player;").then(console.log);
     //*/
     
     /* TEST VIEWS
     console.log('Getting player/teamView...');
-    const t = await ops.query("SELECT * FROM player WHERE isTeam IS TRUE LIMIT 1;")
+    const t = await db.query("SELECT * FROM player WHERE isTeam IS TRUE LIMIT 1;")
     .then(r => console.log(r) || r);
-    const p = await ops.query("SELECT * FROM player WHERE id = $1;",[t.members[0]])
+    const p = await db.query("SELECT * FROM player WHERE id = $1;",[t.members[0]])
     .then(r => console.log(r) || r);
-    await ops.query("SELECT * FROM team WHERE id = $1;",[t.id])
+    await db.query("SELECT * FROM team WHERE id = $1;",[t.id])
     .then(console.log);
     
     console.log('Getting draft...');
-    await ops.query("SELECT * FROM draft WHERE title = $1;",['KLD'])
+    await db.query("SELECT * FROM draft WHERE title = $1;",['KLD'])
         .then(r => console.log(r) || r);
-    await ops.query("SELECT * FROM draftReport WHERE id = $1;",[useDraft.id]).then(console.log);
-    await ops.query("SELECT * FROM draftByes;").then(console.log);
+    await db.query("SELECT * FROM draftReport WHERE id = $1;",[useDraft.id]).then(console.log);
+    await db.query("SELECT * FROM draftByes;").then(console.log);
 
     console.log('Getting match...');
-    const m = await ops.query(
+    const m = await db.query(
         "SELECT * FROM match WHERE draftId = $1 AND round = 1 AND players ? $2::STRING;",
         [useDraft.id, p.id]
         ).then(r => console.log(r) || r);
         
         console.log('Getting matchViews...');
-        await ops.query("SELECT players FROM allPlayers WHERE id = $1;",[m.draftid])
+        await db.query("SELECT players FROM allPlayers WHERE id = $1;",[m.draftid])
         .then(console.log);
-        const w = await ops.query("SELECT * FROM matchDetail WHERE id = $1;",[m.id])
+        const w = await db.query("SELECT * FROM matchDetail WHERE id = $1;",[m.id])
         .then(r => console.log(r) || r);
         
         console.log('Getting draftPlayerView...');
-        const res = await ops.query(
+        const res = await db.query(
             "SELECT * FROM draftPlayer WHERE draftId = $1 AND playerId = $2;",
             [useDraft.id, p.id]
     ).then(r => console.log(r) || r);
 
     console.log('Getting matchPlayerView...');
     for (const mId of res.matches) {
-        await ops.query(
+        await db.query(
             "SELECT * FROM matchPlayer JOIN match ON matchId = match.id WHERE matchId = $1 AND playerId = $2;",
             [mId, p.id]
         ).then(console.log);
     }
     
     console.log('Getting breakersView...');
-    await ops.query(
+    await db.query(
             "SELECT * FROM breakers WHERE draftId = $1 AND playerId = $2;",
             [useDraft.id, p.id]
     ).then(r => console.log(r) || r);
-    await ops.query(
+    await db.query(
             "SELECT * FROM breakers WHERE draftId = $1;",
             [useDraft.id]
     ).then(r => console.log(r) || r);

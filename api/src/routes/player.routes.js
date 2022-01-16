@@ -23,10 +23,10 @@ Returns: { ...data from all/a players }
 // Init
 const router = require('express').Router();
 const logger = console;
-const { arrToObj } = require('../helpers/utils');
+const { arrToObj } = require('../utils/utils');
 
 // DB
-const players = require('../db/controllers/player');
+const players = require('../db/models/player');
 
 /* GET player database. */
 

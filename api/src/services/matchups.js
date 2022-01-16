@@ -1,7 +1,7 @@
 // Get matchups for new round
 // FORMAT: [ [ player/[team], player/[team] ], ...  ] (match table)
-const { unflat, splicing, anyElements } = require('../helpers/utils');
-const { shuffled } = require('../helpers/random');
+const { unflat, splicing, anyElements } = require('../utils/utils');
+const { shuffled } = require('../utils/random');
 
 const defPlaysPerMatch = 2;
 

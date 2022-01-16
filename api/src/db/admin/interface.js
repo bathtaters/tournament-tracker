@@ -1,15 +1,15 @@
 /* *** SIMPLE SQL UI *** */
-const advanced = require('./advancedAccess');
-const { strTest, queryVars, getReturn, getFirst, getSolo } = require('../../helpers/sqlUtils');
+const direct = require('./directOps');
+const { strTest, queryVars, getReturn, getFirst, getSolo } = require('../../utils/sqlUtils');
 
 // Custom query
-const query = (text, args, splitArgs) => advanced.query(text, args, splitArgs)
+const query = (text, args, splitArgs) => direct.query(text, args, splitArgs)
     .then(getSolo(text)).then(getReturn);
 
 // Simple Shared Ops
 const getRows = (table, sqlFilter, args = null, cols = null, client = null) => 
     // strTest(table) || strTest(sqlFilter) || strTest(cols) ||
-    (client || advanced).query(
+    (client || direct).query(
         `SELECT ${
             !cols ? '*' : Array.isArray(cols) ? cols.join(', ') || '*' : cols
         } FROM ${table} ${sqlFilter || ''};`,
@@ -32,7 +32,7 @@ const addRow = (table, colObj, client = null) => {
     const keys = Object.keys(colObj || {});
     if (!keys.length) console.warn("Added empty row to "+table);
     strTest(keys);
-    return (client || advanced).query(
+    return (client || direct).query(
         `INSERT INTO ${table} ${
             keys.length ? '('+keys.join(',')+')' : 'DEFAULT'
         } VALUES${
@@ -44,7 +44,7 @@ const addRow = (table, colObj, client = null) => {
 
 const rmvRow = (table, rowId, client = null) => 
     // strTest(table) ||
-    (client || advanced).query(
+    (client || direct).query(
         `DELETE FROM ${table} WHERE id = $1 RETURNING id;`,
         [rowId]
     ).then(getSolo()).then(getReturn).then(getFirst());
@@ -54,7 +54,7 @@ const updateRow = (table, rowId, updateObj, returning = 'id', client = null) => 
     const keys = Object.keys(updateObj || {});
     if (!keys.length) throw new Error("No properties provided to update "+table+"["+rowId+"]");
     strTest(keys);
-    return (client || advanced).query(
+    return (client || direct).query(
         `UPDATE ${table} SET ${
             keys.map((col,idx) => `${col} = $${idx+2}`).join(', ')
         } WHERE id = $1 RETURNING ${returning || 'id'};`,
@@ -72,6 +72,6 @@ module.exports = {
     query,
     getRow, getRows,
     addRow, rmvRow, updateRow,
-    operation: op => advanced.operation(op).then(getReturn),
-    file: (...files) => advanced.execFiles(files).then(getReturn),
+    operation: op => direct.operation(op).then(getReturn),
+    file: (...files) => direct.execFiles(files).then(getReturn),
 }

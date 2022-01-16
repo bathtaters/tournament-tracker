@@ -15,13 +15,13 @@ Returns: schedule data
 // Init
 const router = require('express').Router();
 const logger = console;
-const { arrToObj } = require('../helpers/utils');
+const { arrToObj } = require('../utils/utils');
 
 // DB
-const draft = require('../db/controllers/draft');
-const match = require('../db/controllers/match');
-const player = require('../db/controllers/player');
-const settings = require('../db/controllers/settings');
+const draft = require('../db/models/draft');
+const match = require('../db/models/match');
+const player = require('../db/models/player');
+const settings = require('../db/models/settings');
 
 /* GET page data. */
 
@@ -64,7 +64,7 @@ router.get('/schedule', async function(req, res) {
 // TEST BACKEND & RESET TO DEMO DB (Temp)
 router.get('/test_backend', (req, res) => res.sendAndLog({result: 'Connected to internal API server.'}));
 
-const ops = require('../db/admin/basicAccess');
+const ops = require('../db/admin/interface');
 const dbResetFile = require('path').join(__dirname,'..','db','admin','resetDb.sql');
 const dbTestFile = require('path').join(__dirname,'..','testing','dbtest.sql');
 router.post('/reset/full', async function(req, res) {

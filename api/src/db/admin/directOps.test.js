@@ -1,5 +1,5 @@
 // Imports/Mocks
-const base = require('./advancedAccess');
+const base = require('./directOps');
 const connect = require('./connect');
 const fs = require('fs/promises');
 jest.mock('fs/promises');

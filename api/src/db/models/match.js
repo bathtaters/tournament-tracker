@@ -1,7 +1,7 @@
 /* *** MATCH Object *** */
-const ops = require('../admin/basicAccess');
+const db = require('../admin/interface');
 const strings = require('../sql/strings').match;
-const { arrToObj } = require('../../helpers/utils');
+const { arrToObj } = require('../../utils/utils');
 
 // Create empty report object
 const defs = require('../../config/validation').config.defaults.match;
@@ -16,10 +16,10 @@ const emptyReport = {
 // Match Table Operations //
 
 
-const get = (matchId, detail) => ops.getRow(detail ? strings.detail : 'match', matchId);
+const get = (matchId, detail) => db.getRow(detail ? strings.detail : 'match', matchId);
 
 
-const listByDraft = draftId => ops.query(strings.list, [draftId])
+const listByDraft = draftId => db.query(strings.list, [draftId])
     .then(r => r && r.reduce((res,next) => {
         // Create round array w/ matchIds
         res[next.round - 1] = next.matches;
@@ -27,24 +27,24 @@ const listByDraft = draftId => ops.query(strings.list, [draftId])
     }, []));
 
 const getByDraft = draftId =>
-    ops.getRows(strings.detail, draftId && "WHERE draftId = $1", draftId && [draftId])
+    db.getRows(strings.detail, draftId && "WHERE draftId = $1", draftId && [draftId])
         .then(arrToObj('id', false));
 
         
 // Report as { players: {playerId: winCount, ...} , draws: drawCount, drops: [droppedPlayers] }
 const report = (matchId, results) =>
-    ops.updateRow('match', matchId, { ...emptyReport, ...results }, 'draftId')
+    db.updateRow('match', matchId, { ...emptyReport, ...results }, 'draftId')
         .then(r => ({ draftId: r && r.draftid, id: matchId }));
 
 
 // Clear reporting for match
-const unreport = (matchId) => ops.operation(async cl => {
+const unreport = (matchId) => db.operation(async cl => {
     // Get players
-    const match = await ops.getRow('match', matchId, ['players','draftId'], cl);
+    const match = await db.getRow('match', matchId, ['players','draftId'], cl);
     if (!match) throw new Error("Match not found or invalid.");
 
     // Clear report
-    const upd = await ops.updateRow('match', matchId, {
+    const upd = await db.updateRow('match', matchId, {
         ...emptyReport,
         players: match.players,
         reported: false
@@ -54,15 +54,15 @@ const unreport = (matchId) => ops.operation(async cl => {
 
 
 // Update report data partially
-const update = (id, { players, ...other } = {}) => ops.operation(async cl => {
+const update = (id, { players, ...other } = {}) => db.operation(async cl => {
     let ret;
     // Set non-player data
     if (other   && Object.keys(other).length)
-        ret = await ops.updateRow('match', id, other, 'draftId', cl);
+        ret = await db.updateRow('match', id, other, 'draftId', cl);
     // Set player wins
     if (players && Object.keys(players).length) {
-        ret = await ops.getRow('match', id, ['draftid','players'], cl);
-        await ops.updateRow('match', id, { players: Object.assign(ret.players, players) }, 'id', cl);
+        ret = await db.getRow('match', id, ['draftid','players'], cl);
+        await db.updateRow('match', id, { players: Object.assign(ret.players, players) }, 'id', cl);
     }
     return { draftId: ret && ret.draftid, id };
 });

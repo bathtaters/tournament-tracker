@@ -1,5 +1,5 @@
 // Calculate records from DB data
-const resultCalc = require('../helpers/resultUtils');
+const resultCalc = require('../utils/resultUtils');
 // const { breakersFields } = require('../config/constants');
 // const { concatUnique } = require('../helpers/utils');
 

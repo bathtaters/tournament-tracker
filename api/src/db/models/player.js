@@ -1,7 +1,7 @@
 /* *** PLAYER Object *** */
-const ops = require('../admin/basicAccess');
+const db = require('../admin/interface');
 const strings = require('../sql/strings').player;
-const { insertInOrder } = require('../../helpers/utils');
+const { insertInOrder } = require('../../utils/utils');
 const defs = require('../../config/validation').config.defaults.player;
 
 
@@ -9,7 +9,7 @@ const defs = require('../../config/validation').config.defaults.player;
 
 
 // Get Draft detail for player
-const getDrafts = playerId => ops.query(strings.draftDetails,[playerId]).then(r => {
+const getDrafts = playerId => db.query(strings.draftDetails,[playerId]).then(r => {
     if (!r) return r;
 
     // Get player match data
@@ -27,9 +27,9 @@ const getDrafts = playerId => ops.query(strings.draftDetails,[playerId]).then(r 
 // Swap players (or teams) between matches
 function swap(playerL, matchL, playerR = null, matchR = null) {
     // Remove playerL from matchL
-    if (!playerR) return ops.query(strings.pop, [playerL, matchL]);
+    if (!playerR) return db.query(strings.pop, [playerL, matchL]);
     // Swap playerL w/ playerR (No matchR swaps w/in matchL)
-    return ops.query([strings.swap, strings.swap], [
+    return db.query([strings.swap, strings.swap], [
         [playerL, playerR, matchL],
         [playerR, playerL, matchR || matchL]
     ], true);
@@ -38,8 +38,8 @@ function swap(playerL, matchL, playerR = null, matchR = null) {
 
 module.exports = {
     getDrafts, swap,
-    get: id => ops.getRow('player', id),
-    add: playerData => ops.addRow('player', { ...defs, ...playerData }),
-    rmv: id => ops.rmvRow('player', id),
-    set: (id, newParams) => ops.updateRow('player', id, newParams),
+    get: id => db.getRow('player', id),
+    add: playerData => db.addRow('player', { ...defs, ...playerData }),
+    rmv: id => db.rmvRow('player', id),
+    set: (id, newParams) => db.updateRow('player', id, newParams),
 }

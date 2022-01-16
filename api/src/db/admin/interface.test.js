@@ -1,11 +1,11 @@
 
 // Imports/Mocks
 const mockWarn = jest.spyOn(global.console, "warn");
-const simple = require('./basicAccess');
-const utils = require('../../helpers/sqlUtils');
-const advancedAccess = require('./advancedAccess');
+const simple = require('./interface');
+const utils = require('../../utils/sqlUtils');
+const direct = require('./directOps');
 
-jest.mock('./advancedAccess', () => ({
+jest.mock('./direct', () => ({
   query: jest.fn((...args) => Promise.resolve(args)),
 }));
 jest.mock('../../services/sqlUtils');
@@ -228,7 +228,7 @@ describe('updateRow', () => {
   });
 
   it('sends error on empty return', () => {
-    advancedAccess.query.mockResolvedValueOnce(null);
+    direct.query.mockResolvedValueOnce(null);
     return expect(simple.updateRow('test','ID',{a: 1})).resolves
       .toHaveProperty('error','Missing return value.');
   });

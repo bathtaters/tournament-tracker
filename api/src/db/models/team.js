@@ -9,7 +9,7 @@
 
 
 /* *** TEAM (PLAYER) Sub-Object *** */
-const ops = require('../admin/basicAccess');
+const db = require('../admin/interface');
 const { set, swap } = require('./player');
 
 
@@ -25,12 +25,12 @@ const teamQueries = {
 // Team Table Operations //
 
 const list = playerId => playerId ?
-    ops.query("SELECT team.* FROM player "+
+    db.query("SELECT team.* FROM player "+
         "JOIN team USING (id) WHERE player.isTeam IS TRUE "+
         "AND player.members @> ($1)::UUID[];", [[playerId]]) :
-    ops.query("SELECT * FROM team WHERE members IS NOT NULL;");
+    db.query("SELECT * FROM team WHERE members IS NOT NULL;");
 
-const add = (members, withName=null) => ops.operation(async cl => {
+const add = (members, withName=null) => db.operation(async cl => {
     const memberArr = await cl.query(
         "SELECT id, isTeam FROM player WHERE id = ANY($1)::UUID[];", [members]
     ).then(r => (r && r.rows) || []);
@@ -48,7 +48,7 @@ const add = (members, withName=null) => ops.operation(async cl => {
     );
 }).then(r => r[0]);
 
-const rmv = teamId => ops.query(
+const rmv = teamId => db.query(
     "DELETE FROM player WHERE isTeam = TRUE AND id = $1 RETURNING members;",
     [teamId]
 ).then(r => r.members);
@@ -56,26 +56,26 @@ const rmv = teamId => ops.query(
 // Switch in/out members
 const addMember = (teamId, playerId) => 
     // Add checks that members aren't teams
-    ops.query(teamQueries.addMember, [
+    db.query(teamQueries.addMember, [
         Array.isArray(playerId) ? playerId : [playerId],
         teamId
     ]);
 
-const replaceMember = (teamId, oldPlayerId, newPlayerId) => ops.query(
+const replaceMember = (teamId, oldPlayerId, newPlayerId) => db.query(
     // Add checks that newPlayer isn't team
     teamQueries.replMember, [oldPlayerId, newPlayerId, teamId]);
 
-const rmvMember = (teamId, playerId) => ops.query(
+const rmvMember = (teamId, playerId) => db.query(
     teamQueries.rmvMember, [playerId, teamId]);
 
 
-const swapMembers = (playerIdL, teamIdL, playerIdR, teamIdR) => ops.query(
+const swapMembers = (playerIdL, teamIdL, playerIdR, teamIdR) => db.query(
     teamQueries.replMember + teamQueries.replMember2,
     [playerIdL, playerIdR, teamIdL, teamIdR || teamIdL]
 );
 
 // Views
-const get = (teamId) => ops.query("SELECT * FROM team WHERE id = $1;",[teamId]);
+const get = (teamId) => db.query("SELECT * FROM team WHERE id = $1;",[teamId]);
 
 module.exports = {
     get, set, swap, // passthrough to player
