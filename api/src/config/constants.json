@@ -3,6 +3,10 @@
     "status": 500,
     "message": "Unknown server error"
   },
+  "missingError": {
+    "status": 404,
+    "message": "Invalid address and/or method."
+  },
   "clockStates": [
     "Ended",
     "Running",
