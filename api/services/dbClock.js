@@ -1,5 +1,6 @@
 // CLOCK Conversions
-const { clockStates } = require('../db/constants');
+const clockStates = require('../config/constants.json').clockStates;
+
 
 // function toCount(clock) {
 //     if (!clock.clockstart) return clock.clockmod == 0 ? -1 : Math.floor(clock.clockmod);

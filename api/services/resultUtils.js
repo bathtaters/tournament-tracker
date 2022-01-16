@@ -1,5 +1,5 @@
 // BASIC GAME/MATCH Conversions
-const { points } = require('../db/constants');
+const points = require('../config/constants.json').points;
 const { flip } = require('./random');
 
 const resultCalc = {
