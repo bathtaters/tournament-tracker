@@ -10,7 +10,6 @@ dbServer.json
 
 # dev-only testing files
 /*/coverage
-jsconfig.json
 
 # production
 /client/build
