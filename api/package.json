@@ -4,9 +4,9 @@
   "description": "Lords Retreat backend",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node ./src/server.js",
     "test": "jest",
-    "inspect": "node --inspect server.js"
+    "inspect": "node --inspect ./src/server.js"
   },
   "config": {
     "port": "9090"
