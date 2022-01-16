@@ -32,7 +32,7 @@ const players = require('../db/player');
 
 // All players
 router.get('/all', async function(req, res) {
-  const playerData = await players.list().then(arrToObj('id'));
+  const playerData = await players.get().then(arrToObj('id'));
   res.sendAndLog(playerData);
 });
 

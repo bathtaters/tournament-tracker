@@ -55,7 +55,7 @@ router.patch('/settings', (req,res) => {
 
 // Schedule data
 router.get('/schedule', async function(req, res) {
-  const schedule = await draft.getByDay();
+  const schedule = await draft.getSchedule().then(arrToObj('day'));
   res.sendAndLog(schedule);
 });
 

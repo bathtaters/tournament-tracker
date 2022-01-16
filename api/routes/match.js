@@ -29,8 +29,8 @@ const players = require('../db/player');
 
 
 /* GET match database. */
-router.get('/all/draft/:draftId', (req, res) => matches.listDetail(req.params.draftId).then(res.sendAndLog));
-router.get('/all', (req, res) => matches.get(0,0).then(res.sendAndLog));
+router.get('/all/draft/:draftId', (req, res) => matches.getByDraft(req.params.draftId).then(res.sendAndLog));
+router.get('/all', (req, res) => matches.get().then(res.sendAndLog));
 router.get('/:matchId', (req, res) => matches.get(req.params.matchId, true).then(res.sendAndLog));
 
 

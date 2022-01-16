@@ -50,14 +50,13 @@ const { arrToObj, sortById } = require('../services/utils');
 // DB
 const draft = require('../db/draft');
 const match = require('../db/match');
-const results = require('../db/results');
 
 /* GET draft database. */
 
 // All drafts
 router.get('/all', async function(req, res) {
-  const drafts = await draft.list().then(arrToObj('id'));
-  const matches = await match.list();
+  const drafts = await draft.get().then(arrToObj('id'));
+  const matches = await match.listByDraft();
   Object.keys(matches).forEach(d => {
     if (!drafts[d]) return logger.error('Match is missing draft',d);
     drafts[d].matches = matches[d];
@@ -74,7 +73,7 @@ router.get('/:id', async function(req, res) {
 
   const [drops, matches] = await Promise.all([
     draft.getDrops(req.params.id),
-    match.list(req.params.id),
+    match.listByDraft(req.params.id),
   ]);
 
   res.sendAndLog({ ...draftData, matches, drops });
@@ -82,11 +81,11 @@ router.get('/:id', async function(req, res) {
 
 // Breakers from draft
 router.get('/all/breakers', async function(req, res) {
-  const breakers = await results.getBreakers();
+  const breakers = await draft.getBreakers();
   res.sendAndLog(breakers);
 });
 router.get('/:id/breakers', async function(req, res) {
-  const breakers = await results.getBreakers(req.params.id);
+  const breakers = await draft.getBreakers(req.params.id);
   res.sendAndLog(breakers);
 });
 
