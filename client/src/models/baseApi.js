@@ -4,11 +4,13 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import getDays from '../controllers/getDays';
 import { tagTypes } from '../services/getTags';
 
+const apiVersion = 'v0';
+
 
 // Base queries for api server
 export const baseApi = createApi({
   reducerPath: 'dbApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/v1/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: `/api/${apiVersion}/` }),
   tagTypes,
   endpoints: (build) => ({
     // Fetches
