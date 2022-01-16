@@ -56,7 +56,7 @@ async function runOperation(operation, maxAttempts, retryCount, usingPool = null
       // On retry
       async (e, client) => {
         await client.query("ROLLBACK;BEGIN;")
-          .then(() => logger.log("Rolling back transaction and retrying due to "+(e.message || e.name || e || 'error')));
+          .then(() => logger.warn("Rolling back & retrying due to: "+(e.message || e.name || e || 'error')));
       }
     );
 
@@ -69,13 +69,13 @@ async function runOperation(operation, maxAttempts, retryCount, usingPool = null
     try { await client.query("ROLLBACK;"); }
     catch(rollerr) { logger.error('Failed rollback attempt due to', rollerr); }
     client.release();
-    logger.log("Attempted to rollback transaction & released client due to error.");
+    logger.warn("Attempted rollback & released client due to error.");
     throw e;
   }
 }
 
 // Public functions
-module.exports = { openConnection, closeConnection, runOperation, isConnected: () => !!pool }
+module.exports = { openConnection, closeConnection, runOperation, isConnected: () => !!staticPool }
 
 // Setup integer parsing
 utils.initNumberParsing();
