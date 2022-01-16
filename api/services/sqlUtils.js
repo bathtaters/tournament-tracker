@@ -3,8 +3,10 @@ const logger = console;
 
 // Test for SQL injection
 exports.strTest = str => {
-    if(/\s|;/.test(str))
-        throw Error("Possible SQL injection: "+str);
+  if (Array.isArray(str)) return str.forEach(exports.strTest);
+  if(typeof str !== 'string') str = str.toString()
+  if(/\s|;/.test(str))
+    throw new Error("Possible SQL injection: "+str);
 };
 
 // Build placeholders for SQL based on array.length (ie. $1, $2, $3)
@@ -12,9 +14,14 @@ exports.queryVars = (array, startNum = 1) =>
     array.filter(e=>e!==undefined)
         .map((_,i)=>`$${startNum+i}`).join(', ');
 
-// Convert single-entry array into element
-exports.unnestIfSolo = arr =>  arr && (arr.length || undefined) && 
-  (arr.length === 1 ? arr[0] : arr);
+// Process results
+exports.getReturn = res => !res ? res : Array.isArray(res) ? res.map(r => r && (r.rows || r)) : res.rows || res;
+exports.getFirst = (additQual=true) => res => additQual && Array.isArray(res) && res[0] ? res[0] : res;
+exports.getSolo = qry => {
+    if ((Array.isArray(qry) && qry.length !== 1)) return r => r;
+    if (typeof qry === 'string' && (qry.match(/;|\S\s*$/g) || []).length !== 1) return r => r;
+    return r => r && r.length === 1 && r[0] ? r[0] : r;
+};
 
 // Setup number parsing for PG module
 exports.initNumberParsing = () => {
