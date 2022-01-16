@@ -1,29 +1,29 @@
+
+
+
+//     TEAMS ARE NON-FUNCTIONAL     //
+//       MUST BE RE-DESIGNED        //
+
+
+
+
+
 /* *** TEAM (PLAYER) Sub-Object *** */
 const ops = require('./admin/basicAccess');
-const { rename, swap } = require('./player');
-const { teamQueries } = require('./constants');
+const { set, swap } = require('./player');
 
-// Basic settings
-// const defVal = {name: null};
-const limits = {
-    name: require('./player').limits.name,
-    members: { min: 2, max: 10 },
-};
 
-// Advanced validation
-const { body, param } = require('express-validator');
-const { validateArray, sanitizeArray } = require('../services/utils');
-const { isUUID } = require('validator').default;
-const validator = () => [
-    param('teamId').isUUID(4),
-    body('name').optional().isAscii().bail()
-        .stripLow().isLength(limits.name).escape(),
-    body('members')
-        .custom(validateArray(limits.members, m => isUUID(m,4)))
-        .customSanitizer(sanitizeArray()),
-];
+// Team Queries
+const teamQueries = {
+    addMember:  "UPDATE player SET members = members || $1 WHERE isTeam = TRUE AND id = $2;",
+    rmvMember:  "UPDATE player SET members = array_remove(members, $1) WHERE isTeam = TRUE AND id = $2;",
+    replMember: "UPDATE player SET members = array_replace(members, $1, $2) WHERE isTeam = TRUE AND id = $3;",
+    replMember2: " UPDATE player SET members = array_replace(members, $2, $1) WHERE isTeam = TRUE AND id = $4;",
+}
 
-// Team Ops
+
+// Team Table Operations //
+
 const list = playerId => playerId ?
     ops.query("SELECT team.* FROM player "+
         "JOIN team USING (id) WHERE player.isTeam IS TRUE "+
@@ -77,12 +77,9 @@ const swapMembers = (playerIdL, teamIdL, playerIdR, teamIdR) => ops.query(
 // Views
 const get = (teamId) => ops.query("SELECT * FROM team WHERE id = $1;",[teamId]);
 
-// TO DO: Consolidate teams (remove teams that are not tied to matches/drafts)
-
 module.exports = {
+    get, set, swap, // passthrough to player
     list, add, rmv,
-    get, rename, swap, // passthrough to player
     addMember, rmvMember,
     replaceMember, swapMembers,
-    limits, validator
 }

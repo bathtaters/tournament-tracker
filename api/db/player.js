@@ -1,38 +1,21 @@
 /* *** PLAYER Object *** */
 const ops = require('./admin/basicAccess');
-const { matchQueries } = require('./constants');
+const strings = require('./sqlStrings').player;
 const { insertInOrder } = require('../services/utils');
+const defs = require('../config/validation').config.defaults.player;
 
-// Basic settings
-// const defVal = {name: null};
-const limits = {
-    name: { min: 0, max: 50 },
-    members: { min: 2, max: 10 },
-};
 
-// Advanced validation
-const { body, param } = require('express-validator');
-const validator = () => [
-    param('playerId').isUUID(4),
-    body('name').optional().isAscii().bail()
-        .stripLow().isLength(limits.name).escape(),
-];
+// Player Table Operations //
 
-// Player Ops
-const getDrafts = playerId => ops.query(
-    "SELECT id, day, title FROM draft "+
-    "WHERE $1::UUID = ANY (players); "+
-    "SELECT "+
-        "id, matches, day, isDrop, "+
-        "wins, draws, count, "+
-        "title, day, roundActive, roundCount "+
-    "FROM draftPlayer JOIN draft ON draftId = id "+
-    "WHERE playerId = $1 ORDER BY day DESC;",
-[playerId]).then(r => {
+
+// Get Draft detail for player
+const getDrafts = playerId => ops.query(strings.draftDetails,[playerId]).then(r => {
     if (!r) return r;
-    if (!Array.isArray(r)) r = [r];
 
+    // Get player match data
     let res = r[1] || [];
+
+    // Include drafts w/o match data
     r[0] && r[0].forEach(a => { 
         if (!res.some(b => a.id === b.id))
             res = insertInOrder(res, a, {asc:0, key:'day'});
@@ -40,35 +23,23 @@ const getDrafts = playerId => ops.query(
     return res;
 });
 
-const list = () => ops.query(
-    "SELECT * FROM player WHERE isTeam IS FALSE;"
-);
 
-const add = ({ name }) => ops.query(
-    "INSERT INTO player(name) VALUES($1) RETURNING id;",
-    [name]
-);
-
-// Swap players/teams between matches
-function swap(playerIdL, matchIdL, playerIdR = null, matchIdR = null) {
-    return playerIdR ?
-        // Swap
-        ops.query(
-            [matchQueries.swapQuery, matchQueries.swapQuery],
-            [[playerIdL, playerIdR, matchIdL],
-             [playerIdR, playerIdL, matchIdR || matchIdL]]
-        ) :
-        // Pop
-        ops.query(
-            matchQueries.popQuery, [playerIdL, matchIdL]
-        );
+// Swap players (or teams) between matches
+function swap(playerL, matchL, playerR = null, matchR = null) {
+    // Remove playerL from matchL
+    if (!playerR) return ops.query(strings.pop, [playerL, matchL]);
+    // Swap playerL w/ playerR (No matchR swaps w/in matchL)
+    return ops.query([strings.swap, strings.swap], [
+        [playerL, playerR, matchL],
+        [playerR, playerL, matchR || matchL]
+    ], true);
 }
 
+
 module.exports = {
-    list, add, swap,
-    getDrafts,
+    getDrafts, swap,
     get: id => ops.getRow('player', id),
+    add: playerData => ops.addRow('player', { ...defs, ...playerData }),
     rmv: id => ops.rmvRow('player', id),
     set: (id, newParams) => ops.updateRow('player', id, newParams),
-    limits, validator,
 }
