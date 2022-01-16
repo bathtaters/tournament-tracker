@@ -67,6 +67,8 @@ exports.arrToObj = (key, rmvKey = true) => obj => Array.isArray(obj) ? obj.reduc
   return o;
 }, {}) : obj ? exports.arrToObj(key,rmvKey)([obj]) : obj;
 
+exports.staticValObj = (keys, value) => keys.reduce((obj, key) => Object.assign(obj, { [key]: value }), {});
+
   
 // Replace function
 // function(baseString, { replace: with, ... }) => return resultString;
