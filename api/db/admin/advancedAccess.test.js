@@ -6,41 +6,13 @@ jest.mock('fs/promises');
 jest.mock('./connect');
 
 // Tests
-describe('operation', () => {
-  
-  it('passes falsy value', async () => {
-    connect.runOperation.mockResolvedValueOnce(false);
-    expect(base.operation()).resolves.toBe(false);
-  });
-
-  it('returns truthy value', async () => {
-    connect.runOperation.mockResolvedValueOnce('test');
-    expect(base.operation()).resolves.toBe('test');
-  });
-
-  it('passes standard array', async () => {
-    connect.runOperation.mockResolvedValueOnce(['test','rows']);
-    expect(base.operation()).resolves.toEqual(['test','rows']);
-  });
-
-  it('gets rows from pg object array', async () => {
-    connect.runOperation.mockResolvedValueOnce([{rows:['test','rows','a']},{rows:['test','rows','b']}]);
-    expect(base.operation()).resolves.toEqual([['test','rows','a'],['test','rows','b']]);
-  });
-
-  it('gets rows from single pg object', async () => {
-    connect.runOperation.mockResolvedValueOnce({rows:['test','rows']});
-    expect(base.operation()).resolves.toEqual(['test','rows']);
-  });
-
-});
 
 describe('query', () => {
   let mockRun, mockClient;
 
   beforeAll(() => {
     mockClient = {
-      query: jest.fn((...args) => Promise.resolve({ rows: args })).mockName('client.query'),
+      query: jest.fn((...args) => Promise.resolve(args)).mockName('client.query'),
       release: jest.fn().mockName('client.release'),
     };
     mockRun = connect.runOperation.mockImplementation(async op => op(mockClient));
@@ -73,38 +45,6 @@ describe('query', () => {
       ['1;',[]],
       ['2;',[]],
       ['3;',[]]
-    ]);
-  });
-
-  // Back compat
-  it('accepts repeating args', async () => {
-    const res = await base.query(
-      ['1;', '2;', '3;'],
-      ['A', 'R']
-    );
-
-    expect(mockClient.query).toHaveBeenCalledTimes(3);
-    expect(mockClient.release).not.toHaveBeenCalled();
-    expect(res).toEqual([
-      ['1;', ['A','R']],
-      ['2;', ['A','R']],
-      ['3;', ['A','R']]
-    ]);
-  });
-
-  // Back compat
-  it('accepts split args', async () => {
-    const res = await base.query(
-      ['1;', '2;', '3;'],
-      [['A'], ['B'], ['C']]
-    );
-
-    expect(mockClient.query).toHaveBeenCalledTimes(3);
-    expect(mockClient.release).not.toHaveBeenCalled();
-    expect(res).toEqual([
-      ['1;', ['A']],
-      ['2;', ['B']],
-      ['3;', ['C']]
     ]);
   });
 
@@ -145,8 +85,7 @@ describe('query', () => {
 
     expect(mockClient.query).toHaveBeenCalledTimes(1);
     expect(mockClient.release).not.toHaveBeenCalled();
-    expect(res).toEqual(['QRY;',[]]); // back compat (unnestIfSolo)
-    // expect(res).toEqual([['QRY;',[]]]);
+    expect(res).toEqual([['QRY;',[]]]);
   });
 
 });
@@ -156,6 +95,7 @@ describe('query', () => {
 describe('loadFiles', () => {
 
   it('fails on file error', async () => {
+    expect.assertions(1);
     fs.readFile.mockImplementation(() => { throw new Error('Test Error'); });
     await expect(base.loadFiles(['File'])).rejects.toThrowError('Test Error');
   });

@@ -1,3 +1,4 @@
+/* *** ADVANCED SQL UI *** */
 const fs = require("fs/promises");
 const join = require("path").join;
 const db = require('./connect');
@@ -13,8 +14,7 @@ if (!db.isConnected()) db.openConnection();
 
 // Base DB controller
 function operation(clientOp = client => null, maxAttempts = attemptsDefault, retryCount = retriesDefault) {
-    return db.runOperation(clientOp, maxAttempts, retryCount)
-        .then(res => !res ? res : Array.isArray(res) ? res.map(r => r && (r.rows || r)) : res.rows || res);
+    return db.runOperation(clientOp, maxAttempts, retryCount);
 }
 
 // Execute query
@@ -22,14 +22,13 @@ function query(text, args = [], splitArgs = null, maxAttempts = attemptsDefault,
     // Split text/args into arrays
     if (!Array.isArray(text)) text = text.split(';').filter(q=>q.trim());
     text = text.map(q => /;\s*$/.test(q) ? q : q+';');
-    splitArgs = splitArgs != null ? splitArgs :
-        args && args.length === text.length && args.every(Array.isArray); // back compat
     
-    // console.log('QUERIES:',text);
+    // logger.debug('QUERIES:',text);
     return operation(
-        client => utils.awaitEach(client.query, text.map((q,i) => [q, splitArgs ? args[i] : args])),
+        // client => utils.awaitEach(client.query, text.map((q,i) => [q, splitArgs ? args[i] : args])),
+        client => Promise.all(text.map((q,i) => client.query(q, splitArgs ? args[i] : args))),
         maxAttempts, retryCount
-    ).then(res => res && res.map(utils.unnestIfSolo)).then(utils.unnestIfSolo); // back compat
+    );
 }
 
 // Load commands from a .SQL file
