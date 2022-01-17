@@ -23,18 +23,19 @@ Returns: Swap two players w/in matches => { [draft]id }
 
 // Init
 const router = require('express').Router();
+const catcher = require('../middleware/catch.middleware');
 const controller = require('../controllers/match.controllers');
 const action = require('../controllers/action.controllers');
 
 // Gets
-router.get('/all/draft/:draftId', controller.getDraftMatches);
-router.get('/all', controller.getAllMatches);
-router.get('/:matchId', controller.getMatch);
+router.get('/all/draft/:draftId', catcher(controller.getDraftMatches));
+router.get('/all', catcher(controller.getAllMatches));
+router.get('/:matchId', catcher(controller.getMatch));
 
 // Sets
-router.patch('/util/swap', action.swapPlayers);
-router.post(  '/:id', controller.reportMatch);
-router.delete('/:id', controller.unreportMatch);
-router.patch( '/:id', controller.updateMatch);
+router.patch('/util/swap', catcher(action.swapPlayers));
+router.post(  '/:id', catcher(controller.reportMatch));
+router.delete('/:id', catcher(controller.unreportMatch));
+router.patch( '/:id', catcher(controller.updateMatch));
 
 module.exports = router;

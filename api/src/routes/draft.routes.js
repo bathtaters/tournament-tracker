@@ -26,22 +26,23 @@ Returns: Remove last round
 
 // Init
 const router = require('express').Router();
+const catcher = require('../middleware/catch.middleware');
 const controller = require('../controllers/draft.controllers');
 const action = require('../controllers/action.controllers');
 
 // Get
-router.get('/all', controller.getAllDrafts);
-router.get('/:id', controller.getDraft);
+router.get('/all', catcher(controller.getAllDrafts));
+router.get('/:id', catcher(controller.getDraft));
 
-router.get('/all/breakers', controller.getAllBreakers);
-router.get('/:id/breakers', controller.getBreakers);
+router.get('/all/breakers', catcher(controller.getAllBreakers));
+router.get('/:id/breakers', catcher(controller.getBreakers));
 
 // Set
-router.post('/', controller.createDraft);
-router.delete('/:id', controller.removeDraft);
-router.patch('/:id', controller.updateDraft);
+router.post('/', catcher(controller.createDraft));
+router.delete('/:id', catcher(controller.removeDraft));
+router.patch('/:id', catcher(controller.updateDraft));
 
-router.post(  '/:id/round', action.nextRound);
-router.delete('/:id/round', action.prevRound);
+router.post(  '/:id/round', catcher(action.nextRound));
+router.delete('/:id/round', catcher(action.prevRound));
 
 module.exports = router;

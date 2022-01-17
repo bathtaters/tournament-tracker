@@ -20,6 +20,7 @@ Returns: (full) reset of DB => { reset: true, full: false/(true) }
 
 // Init
 const router = require('express').Router();
+const catcher = require('../middleware/catch.middleware');
 const controller = require('../controllers/base.controllers');
 const { name, version } = require('../config/meta');
 const testError = require('../config/constants.json').testError;
@@ -29,18 +30,18 @@ router.get('/test', (_, res) => res.sendAndLog({ connected: true, name, version 
 router.get('/error', (_,res) => { throw testError; });
 
 // All data
-router.get('/all', controller.getAll);
+router.get('/all', catcher(controller.getAll));
 
 // Settings
-router.get('/settings', controller.getSettings);
-router.patch('/settings', controller.setSettings);
+router.get('/settings', catcher(controller.getSettings));
+router.patch('/settings', catcher(controller.setSettings));
 
 // Schedule
-router.get('/schedule', controller.getSchedule);
+router.get('/schedule', catcher(controller.getSchedule));
 
 
 // RESET TO DEMO DB (Dev only)
-router.post('/reset/full', controller.resetDB(true));
-router.post('/reset', controller.resetDB());
+router.post('/reset/full', catcher(controller.resetDB(true)));
+router.post('/reset', catcher(controller.resetDB()));
 
 module.exports = router;
