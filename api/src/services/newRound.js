@@ -1,6 +1,7 @@
 const roundMatchups = require('./matchups');
 const { toBreakers } = require('./results');
 const { mapObjArr, staticValObj } = require('../utils/utils');
+const { incRound } = require('../db/sql/strings').draft;
 
 const autoReportByes = true;
 
@@ -23,10 +24,7 @@ function newRound({ draftData, drops, breakers }) {
     
     // Increment round number
     const nextRound = draftData.roundactive + 1;
-    let queries = [
-        ["UPDATE draft SET roundActive = $1 WHERE id = $2;"],
-        [[nextRound, draftData.id]]
-    ]
+    let queries = [ [incRound], [[nextRound, draftData.id]] ];
 
     // Determine if draft has ended
     if (draftData.roundactive === draftData.roundcount) return queries;
