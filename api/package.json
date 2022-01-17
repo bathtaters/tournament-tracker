@@ -2,7 +2,7 @@
   "name": "lol-retreat-api",
   "version": "0.0.1",
   "description": "Lords Retreat backend",
-  "main": "server.js",
+  "main": "./src/server.js",
   "scripts": {
     "start": "node ./src/server.js",
     "test": "jest",
