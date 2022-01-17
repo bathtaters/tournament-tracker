@@ -1,4 +1,5 @@
 // Calculate records from DB data
+const logger = console;
 const resultCalc = require('../utils/resultUtils');
 // const { breakersFields } = require('../config/constants');
 // const { concatUnique } = require('../helpers/utils');
@@ -8,9 +9,9 @@ const resultCalc = require('../utils/resultUtils');
 // Get results based on match
 function toMatchResults(data, asScore, byDraft = true, onlyPlayer = null) {
     // TESTING
-    console.log('toMatchResults:','asScore:',asScore,', byDraft:',byDraft,'onlyPlayer:',onlyPlayer);
-    console.log('\tDATA:',Array.isArray(data) ? '['+data.length+']' : Object.keys(data));
-    console.log('\tDRAFT:', data.draft,'\n\tSAMPLE MATCH:',(data.matches || data)[0]);
+    logger.log('toMatchResults:','asScore:',asScore,', byDraft:',byDraft,'onlyPlayer:',onlyPlayer);
+    logger.log('\tDATA:',Array.isArray(data) ? '['+data.length+']' : Object.keys(data));
+    logger.log('\tDRAFT:', data.draft,'\n\tSAMPLE MATCH:',(data.matches || data)[0]);
 
     const resultAs = asScore ? 'score' : 'record';
 
@@ -53,9 +54,9 @@ function toMatchResults(data, asScore, byDraft = true, onlyPlayer = null) {
 // Get results based on games w/in match(es)
 function toGameResults(data, asScore, byDraft = true, onlyPlayer = null) {
     // TESTING
-    console.log('toGameResults:','asScore:',asScore,', byDraft:',byDraft,'onlyPlayer:',onlyPlayer);
-    console.log('\tDATA:',Array.isArray(data) ? '['+data.length+']' : Object.keys(data));
-    console.log('\tDRAFT:', data.draft,'\n\tSAMPLE MATCH:',(data.matches || data)[0]);
+    logger.log('toGameResults:','asScore:',asScore,', byDraft:',byDraft,'onlyPlayer:',onlyPlayer);
+    logger.log('\tDATA:',Array.isArray(data) ? '['+data.length+']' : Object.keys(data));
+    logger.log('\tDRAFT:', data.draft,'\n\tSAMPLE MATCH:',(data.matches || data)[0]);
 
     const resultAs = asScore ? 'score' : 'record';
 

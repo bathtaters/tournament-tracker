@@ -1,4 +1,5 @@
 /* *** SIMPLE SQL UI *** */
+const logger = console;
 const direct = require('./directOps');
 const { strTest, queryVars, getReturn, getFirst, getSolo } = require('../../utils/sqlUtils');
 
@@ -30,7 +31,7 @@ const getRow = (table, rowId = null, cols = null, client = null) =>
 const addRow = (table, colObj, client = null) => {
     // strTest(table);
     const keys = Object.keys(colObj || {});
-    if (!keys.length) console.warn("Added empty row to "+table);
+    if (!keys.length) logger.warn("Added empty row to "+table);
     strTest(keys);
     return (client || direct).query(
         `INSERT INTO ${table} ${

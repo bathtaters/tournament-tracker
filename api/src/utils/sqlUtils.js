@@ -47,11 +47,11 @@ exports.awaitEach = async (asyncCb, argsArray) => {
       try {
           await asyncCb(...args).then(r => res.push(r));
       } catch (e) {
-          console.error('Error during awaitEach: ',args,e);
+          logger.error('Error during awaitEach: ',args,e);
           res.push(null);
       }
   }
-  if (res.length !== argsArray.length) console.error('awaitEach input/output mismatch:',argsArray,res);
+  if (res.length !== argsArray.length) logger.error('awaitEach input/output mismatch:',argsArray,res);
   return res;
 };
 

@@ -1,4 +1,5 @@
 // Handle error response to client
+const logger = console;
 
 // String formatting
 const defaultError = require('../config/constants.json').defaultError;
@@ -11,7 +12,7 @@ const formatErr = err => err.stack || `${err.name || 'Error'} <${getCode(err)}>:
 function handleError(err, req, res, _) {
   if (!req.error) req.error = err;
   
-  console.error('Request "'+req.originalUrl+'" encountered:', formatErr(req.error));
+  logger.error('Request "'+req.originalUrl+'" encountered:', formatErr(req.error));
 
   res.status(getCode(req.error));
   return res.sendAndLog({ error: getMsg(req.error) });
