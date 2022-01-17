@@ -7,6 +7,10 @@
     "status": 404,
     "message": "Invalid address and/or method."
   },
+  "testError": {
+    "status": 418,
+    "message": "API Test Error."
+  },
   "clockStates": [
     "Ended",
     "Running",
