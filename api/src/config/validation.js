@@ -117,8 +117,7 @@ const validateConfig = {
 // Save JSON of validation to client assets
 const join = require('path').join;
 const fs = require('fs/promises');
-const projectDir = join(__dirname,'..','..');
-const defaultClientPath = join(projectDir,'client','src','assets','validation.json')
+const defaultClientPath = join(require('./meta').rootPath,'..','client','src','assets','validation.json')
 const exportToClient = (path = defaultClientPath) => fs.writeFile(path, JSON.stringify(valConfig));
 
 module.exports = { config: validateConfig, exportToClient }
