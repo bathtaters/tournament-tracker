@@ -1,79 +1,46 @@
 ` *** Public API commands ***
 
- -- LEGEND --
-draftId = UUID for draft entry
-playerId = UUID for player entry
-
- -- Get Page --
+ -- Get Base --
 GET: ./all
-Returns: all data from db
+Returns: all data from db as object
+
+GET: ./settings
+Returns: settings object
 
 GET: ./schedule
 Returns: schedule data
+
+-- Set Base --
+PATCH: ./settings
+Returns: update settings => { success: true (false on fail) }
+
+POST: ./reset(/full) /* For Dev Only */
+Returns: (full) reset of DB => { reset: true, full: false/(true) }
 `
 
 // Init
 const router = require('express').Router();
-const logger = console;
-const { arrToObj } = require('../utils/utils');
+const controller = require('../controllers/base.controllers');
+const { name, version } = require('../config/meta');
+const testError = require('../config/constants.json').testError;
 
-// DB
-const draft = require('../db/models/draft');
-const match = require('../db/models/match');
-const player = require('../db/models/player');
-const settings = require('../db/models/settings');
-
-/* GET page data. */
+// Test Api
+router.get('/test', (_, res) => res.sendAndLog({ connected: true, name, version }));
+router.get('/error', (_,res) => { throw testError; });
 
 // All data
-router.get('/all', async function(req, res) {
-  const schedule = await draft.getByDay().then(days => days && days.map(d => {
-    d.day = d.day && d.day.getTime();
-    return d;
-  }));
-  const drafts = await draft.list().then(arrToObj('id'));
-  const players = await player.list().then(arrToObj('id'));
-  const matches = await match.listDetail();
-  matches.forEach(m => {
-    if (!m.draftid || !m.round) return logger.error('Match is missing ID/round',m);
-    if (!drafts[m.draftid].matches) drafts[m.draftid].matches = [];
-    if (drafts[m.draftid].matches[m.round - 1]) drafts[m.draftid].matches[m.round - 1].push(m);
-    else drafts[m.draftid].matches[m.round - 1] = [m];
-    delete m.draftid;
-    delete m.round;
-  });
+router.get('/all', controller.getAll);
 
-  res.sendAndLog({ settings, schedule, drafts, players });
-});
+// Settings
+router.get('/settings', controller.getSettings);
+router.patch('/settings', controller.setSettings);
 
-// Base settings
-router.get('/settings', (req,res) => settings.getAll().then(res.sendAndLog));
-router.patch('/settings', (req,res) => {
-  if (req.body) settings.batchSet(req.body);
-  return res.sendAndLog({ success: !!req.body });
-});
-
-// Schedule data
-router.get('/schedule', async function(req, res) {
-  const schedule = await draft.getSchedule().then(arrToObj('day'));
-  res.sendAndLog(schedule);
-});
+// Schedule
+router.get('/schedule', controller.getSchedule);
 
 
-
-// TEST BACKEND & RESET TO DEMO DB (Temp)
-router.get('/test_backend', (req, res) => res.sendAndLog({result: 'Connected to internal API server.'}));
-
-const ops = require('../db/admin/interface');
-const dbResetFile = require('path').join(__dirname,'..','db','admin','resetDb.sql');
-const dbTestFile = require('path').join(__dirname,'..','testing','dbtest.sql');
-router.post('/reset/full', async function(req, res) {
-    await ops.file(dbResetFile,dbTestFile);
-    res.sendAndLog({reset: true});
-});
-router.post('/reset', async function(req, res) {
-  await ops.file(dbTestFile);
-  res.sendAndLog({reset: true});
-});
+// RESET TO DEMO DB (Dev only)
+router.post('/reset/full', controller.resetDB(true));
+router.post('/reset', controller.resetDB());
 
 module.exports = router;

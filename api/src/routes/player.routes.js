@@ -1,12 +1,7 @@
 ` *** Public API commands ***
 
- -- LEGEND --
-draftId = UUID for draft entry
-matchId = UUID for match entry
-playerId = UUID for player entry
-
 -- Get Players --
-GET: ./player/all | <playerId>
+GET: ./player/{all | <playerId>}
 Returns: { ...data from all/a players }
 
  -- Edit Players --
@@ -22,40 +17,16 @@ Returns: { ...data from all/a players }
 
 // Init
 const router = require('express').Router();
-const logger = console;
-const { arrToObj } = require('../utils/utils');
+const controller = require('../controllers/player.controllers');
 
-// DB
-const players = require('../db/models/player');
+// Gets
+router.get('/all', controller.getAllPlayers);
+router.get('/:id', controller.getPlayer);
+router.get('/:id/drafts', controller.getPlayerDrafts);
 
-/* GET player database. */
-
-// All players
-router.get('/all', async function(req, res) {
-  const playerData = await players.get().then(arrToObj('id'));
-  res.sendAndLog(playerData);
-});
-
-// Individual player
-router.get('/:id', async function(req, res) {
-  const playerData = await players.get(req.params.id);
-  res.sendAndLog(playerData);
-});
-
-router.get('/:id/drafts', async function(req, res) {
-  const playerDrafts = await players.getDrafts(req.params.id);
-  res.sendAndLog(playerDrafts);
-});
-
-
-/* SET player database. */
-
-// Create/remove player
-router.post('/', (req, res) => players.add(req.body).then(res.sendAndLog));
-router.delete('/:id', (req, res) => players.rmv(req.params.id).then(res.sendAndLog));
-
-// Rename
-router.patch('/:id', (req, res) => players.set(req.params.id, req.body).then(res.sendAndLog));
-
+// Sets
+router.post('/', controller.createPlayer);
+router.delete('/:id', controller.removePlayer);
+router.patch('/:id', controller.updatePlayer);
 
 module.exports = router;

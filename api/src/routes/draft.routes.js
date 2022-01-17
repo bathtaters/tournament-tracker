@@ -1,13 +1,7 @@
 ` *** Public API commands ***
 
- -- LEGEND --
- draftId = UUID for draft entry
- matchId = UUID for match entry
- playerId = UUID for player entry
-
  -- Get Drafts --
-GET: ./draft/all
-GET: ./draft/<draftId>
+GET: ./draft/{all | <draftId>}
 Returns: data from all/a drafts
 
 GET: ./draft/<draftId>/breakers
@@ -28,79 +22,26 @@ Returns: Create a new round
 
 DELETE: ./draft/<draftId>/round
 Returns: Remove last round
-
-PATCH: ./draft/<matchId>/report { ...reportData }
-Returns: Report wins/losses/etc for match
-
-PATCH: ./draft/<matchId>/unreport
-Returns: Clear report wins/losses/etc for match
-
-DELETE: ./draft/<draftId>/player/<playerId>
-Returns: Drop player from draft
-
-PUT: ./draft/<draftId>/player/<playerId>
-Returns: Undrop player from draft
 `
 
 // Init
 const router = require('express').Router();
-const logger = console;
-const { arrToObj } = require('../utils/utils');
+const controller = require('../controllers/draft.controllers');
+const action = require('../controllers/action.controllers');
 
-// DB
-const draft = require('../db/models/draft');
-const match = require('../db/models/match');
+// Get
+router.get('/all', controller.getAllDrafts);
+router.get('/:id', controller.getDraft);
 
-/* GET draft database. */
+router.get('/all/breakers', controller.getAllBreakers);
+router.get('/:id/breakers', controller.getBreakers);
 
-// All drafts
-router.get('/all', async function(req, res) {
-  const drafts = await draft.get().then(arrToObj('id'));
-  const matches = await match.listByDraft();
-  Object.keys(matches).forEach(d => {
-    if (!drafts[d]) return logger.error('Match is missing draft',d);
-    drafts[d].matches = matches[d];
-  });
+// Set
+router.post('/', controller.createDraft);
+router.delete('/:id', controller.removeDraft);
+router.patch('/:id', controller.updateDraft);
 
-  res.sendAndLog(drafts);
-});
-
-// Specific draft
-router.get('/:id', async function(req, res) {
-  const draftData = await draft.getDetail(req.params.id);
-
-  if (!draftData) return res.sendAndLog({ error: 'Draft does not exist: '+ req.params.id});
-
-  const [drops, matches] = await Promise.all([
-    draft.getDrops(req.params.id),
-    match.listByDraft(req.params.id),
-  ]);
-
-  res.sendAndLog({ ...draftData, matches, drops });
-});
-
-// Breakers from draft
-router.get('/all/breakers', async function(req, res) {
-  const breakers = await draft.getBreakers();
-  res.sendAndLog(breakers);
-});
-router.get('/:id/breakers', async function(req, res) {
-  const breakers = await draft.getBreakers(req.params.id);
-  res.sendAndLog(breakers);
-});
-
-
-/* SET draft database. */
-
-// Create draft
-router.post('/', (req, res) => draft.add(req.body).then(res.sendAndLog));
-router.delete('/:id', (req, res) => draft.rmv(req.params.id).then(res.sendAndLog));
-
-// Manually set draft data
-router.patch('/:id', (req, res) => draft.set(req.params.id, req.body).then(res.sendAndLog));
-
-// Generate round
-router.post(  '/:id/round', (req, res) => draft.pushRound(req.params.id).then(res.sendAndLog));
-router.delete('/:id/round', (req, res) => draft.popRound(req.params.id).then(res.sendAndLog));
+router.post(  '/:id/round', action.nextRound);
+router.delete('/:id/round', action.prevRound);
 
 module.exports = router;
