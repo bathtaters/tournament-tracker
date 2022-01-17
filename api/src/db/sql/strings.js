@@ -7,15 +7,13 @@ exports.clock = {
 
 exports.draft = {
     byDraftId: "WHERE draftId = $1",
+    schedule: "SELECT COALESCE(to_char(day), 'none') as day, array_agg(id) as drafts FROM draft@date_idx GROUP BY day;",
     // Array layout is [ get(id), get(*) ]
-    schedule: [
-        "SELECT array_agg(id) drafts FROM draft@date_idx WHERE day = $1 GROUP BY day;",
-        "SELECT COALESCE(to_char(day), 'none') as day, array_agg(id) as drafts FROM draft@date_idx GROUP BY day;",
-    ],
     getByDay: [
         "SELECT * FROM draft WHERE day = $1;",
         "SELECT * FROM draft ORDER BY INDEX draft@date_idx;",
     ],
+    incRound: "UPDATE draft SET roundactive = $1 WHERE id = $2 RETURNING roundactive;",
     maxRound: "SELECT round FROM match WHERE draftId = $1 ORDER BY round DESC LIMIT 1;",
     deleteRound: "DELETE FROM match WHERE draftId = $1 AND round = $2;",
     breakers: "SELECT breakers.*, oppIds FROM breakers LEFT JOIN draftOpps USING(draftId, playerId) ",
