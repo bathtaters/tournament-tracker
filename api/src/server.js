@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 9090;
-const version = (require('../package.json').version || '1').split('.',1)[0];
+const logger = console;
+const { name, port, apiVersion: version } = require('./config/meta');
 
 // Setup middleware
 app.use(express.json());
@@ -18,4 +18,4 @@ app.use(`/api/v${version}/player`, require('./routes/player.routes'));
 app.use(() => { throw require('./config/constants.json').missingError; })
 app.use(require('./middleware/error.middleware'));
 
-app.listen(port, () => console.log(`lol-retreat api (v${version}) started. Listening on port ${port}.`));
+app.listen(port, () => logger.log(`${name} (v${version}) started. Listening on port ${port}.`));
