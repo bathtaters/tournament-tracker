@@ -1,9 +1,16 @@
+// Imports
 const { Pool } = require("pg");
 const parse = require("pg-connection-string").parse;
 
 const getConnStr = require('../../utils/getConnStr');
 const utils = require('../../utils/sqlUtils');
 const logger = console;
+
+// Default Settings
+const retryAttempts = 15;
+
+// Setup integer parsing
+utils.initNumberParsing();
 
 // Connect to the DB
 let staticPool;
@@ -16,7 +23,7 @@ async function openConnection(asUser = 'api', cfg = null) {
   catch(e) { 
     throw new Error(`Unable to connect to DB: ${connStr}: ${e.message || e.description || e}`);
   }
-  return;
+  return logger.log('Connected to DB server.');
 }
 
 // Disconnect from DB
@@ -25,12 +32,13 @@ async function closeConnection() {
   if (!staticPool) { throw new Error("Attempting to close connection before opening."); }
   await staticPool.end();
   staticPool = undefined;
+  return logger.log('Disconnected from DB server.');
 }
 
 //--- Wrapper for SQL Operations ---//
 // This gets a client from pool & re-calls operation(client)
 // for up to <maxAttempts> (starting @ <retryCount> w/ delay = 2^<retryCount> secs)
-async function runOperation(operation, maxAttempts, retryCount, usingPool = null) {
+async function runOperation(operation = client => {}, maxAttempts = retryAttempts, retryCount = 0, usingPool = null) {
   const pool = usingPool || staticPool;
   if (!pool) throw new Error("Attempting DB access before successfully opening connection.");
   
@@ -77,5 +85,5 @@ async function runOperation(operation, maxAttempts, retryCount, usingPool = null
 // Public functions
 module.exports = { openConnection, closeConnection, runOperation, isConnected: () => !!staticPool }
 
-// Setup integer parsing
-utils.initNumberParsing();
+// Open on load
+if (!staticPool) openConnection();
