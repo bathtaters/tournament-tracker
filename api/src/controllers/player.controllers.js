@@ -1,24 +1,30 @@
 const players = require('../db/models/player');
-const { arrToObj } = require('../utils/utils');
+const { arrToObj, insertInOrder } = require('../utils/utils');
 
 /* GET player database. */
 
 // Individual player
-async function getPlayer(req, res) {
-  const playerData = await players.get(req.params.id);
-  res.sendAndLog(playerData);
-}
+const getPlayer = (req, res) => players.get(req.params.id)
+  .then(res.sendAndLog);
 
 // All players
-async function getAllPlayers(req, res) {
-  const playerData = await players.get().then(arrToObj('id'));
-  res.sendAndLog(playerData);
-}
+const getAllPlayers = (req, res) => players.get().then(arrToObj('id'))
+  .then(res.sendAndLog);
 
 // Individual player draft details
 async function getPlayerDrafts(req, res) {
-  const playerDrafts = await players.getDrafts(req.params.id);
-  res.sendAndLog(playerDrafts);
+  const drafts = await players.getPlayerDrafts(req.params.id);
+  if (!drafts) return drafts;
+
+  // Get player match data
+  let ret = drafts[1] || [];
+
+  // Append drafts w/o match data (Sorted by day)
+  drafts[0] && drafts[0].forEach(a => { 
+      if (!ret.some(b => a.id === b.id))
+        ret = insertInOrder(ret, a, {asc:0, key:'day'});
+  });
+  return res.sendAndLog(ret);
 }
 
 

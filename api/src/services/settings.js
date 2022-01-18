@@ -22,7 +22,11 @@ const toType = (value, type) => {
     default: return JSON.stringify(value);
   }
 };
-exports.getType = (value,forceType) => ({ 
+const getType = (value,forceType) => ({ 
   value: toType(value, forceType || typeof value),
   type: forceType || typeof value
 });
+exports.toObjArray = settings => 
+  Object.keys(settings).map(id =>
+    ({ ...getType(settings[id]), id })
+  );

@@ -22,12 +22,14 @@ function newRound({ draftData, drops, breakers }) {
         throw new Error("All matches have not been reported.");
     
     
-    // Increment round number
-    const nextRound = draftData.roundactive + 1;
-    let queries = [ [incRound], [[nextRound, draftData.id]] ];
+    // Increment round number & create return object
+    const retObj = { 
+        round: draftData.roundactive + 1,
+        draftId: draftData.id,
+    };
 
     // Determine if draft has ended
-    if (draftData.roundactive === draftData.roundcount) return queries;
+    if (draftData.roundactive === draftData.roundcount) return retObj;
 
     // Get ranking info
     let oppData, rankings;
@@ -42,17 +44,12 @@ function newRound({ draftData, drops, breakers }) {
     // Auto-report byes
     const byeWins = autoReportByes ? Math.ceil((draftData.bestof + 1) / 2) : 0;
     
-    // Create matches
-    let qry = "INSERT INTO match(draftId, round, players) VALUES";
-    let args = [draftData.id, nextRound];
+    // Create array of match.players
+    retObj.matches = [];
     for (const match of matchTable) {
-        args.push(staticValObj(match, match.length === 1 ? byeWins : 0));
-        qry += ` ($1, $2, ($${args.length})),`;
+        retObj.matches.push(staticValObj(match, match.length === 1 ? byeWins : 0));
     }
-    queries[0].push(qry.replace(/,$/,';'));
-    queries[1].push(args);
-
-    return queries;
+    return retObj;
 }
 
 module.exports = newRound;
