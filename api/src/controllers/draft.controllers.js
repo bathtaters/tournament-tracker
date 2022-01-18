@@ -5,18 +5,18 @@ const defs = require('../config/validation').config.defaults.draft;
 
 // Services/Utils
 const { toBreakers } = require('../services/results');
-const { arrToObj } = require('../utils/utils');
+const { arrToObj, matchListToArray } = require('../utils/utils');
 
 /* GET draft database. */
 
 // Specific draft
-async function getDraft(req, res) {
+async function getDraft(req, res, next) {
   const draftData = await draft.getDraftDetail(req.params.id);
-  if (!draftData) return res.sendAndLog({ error: 'Draft does not exist: '+ req.params.id});
+  if (!draftData || draftData.length === 0) throw new Error('Draft does not exist <'+ req.params.id+'>');
 
   const [drops, matches] = await Promise.all([
     draft.getDraftDrops(req.params.id),
-    match.listByDraft(req.params.id),
+    match.listByDraft(req.params.id).then(matchListToArray),
   ]);
 
   res.sendAndLog({ ...draftData, matches, drops });
@@ -25,7 +25,7 @@ async function getDraft(req, res) {
 // All drafts
 async function getAllDrafts(_, res) {
   const drafts = await draft.get().then(arrToObj('id'));
-  const matches = await match.listByDraft();
+  const matches = await match.listByDraft().then(matchListToArray);
   Object.keys(matches).forEach(d => {
     if (!drafts[d]) return logger.error('Match is missing draft',d);
     drafts[d].matches = matches[d];
