@@ -69,6 +69,11 @@ exports.arrToObj = (key, rmvKey = true) => obj => Array.isArray(obj) ? obj.reduc
 
 exports.staticValObj = (keys, value) => keys.reduce((obj, key) => Object.assign(obj, { [key]: value }), {});
 
+exports.matchListToArray = matches => matches && matches.reduce((arr,round) => {
+  // Create array like: [ [ round 1 matchIds ], [ round 2 ], ... ]
+  arr[round.round - 1] = round.matches;
+  return arr;
+}, []);
   
 // Replace function
 // function(baseString, { replace: with, ... }) => return resultString;
