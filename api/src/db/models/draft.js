@@ -10,15 +10,16 @@ const getDraftRound = id => db.query(strings.maxRound, [id]).then(r => (r[0] || 
 const getDraftReport = draftId => db.operation(async cl => {
     const draftData = await db.getRow('draftReport', draftId, 0, cl);
     if (!draftData || draftData.length === 0) return;
-    
+    const bestof = await module.exports.getDraft(draftId).then(r=>r&&r.bestof); // TEMP FIX
+
     const drops = await db.getRow('draftDrops', draftId, 'drops', cl).then(r => r && r.drops);
     const breakers = await db.getRows('breakers', strings.byDraftId, [draftId], 0, cl);
-    return { draftData, drops, breakers };
+    return { draftData: { ...draftData, bestof }, drops, breakers };
 });
 
 // Breakers object: { playerId: { [match|game]Points, [m|g]Percent, opp[M|G]Percent,  } ... rankings: [playerId] }
-const getBreakers = draftId => db.query(
-    strings.breakers + (draftId ? strings.byDraftId : ''),
+const getBreakers = (draftId, ignoringIncomplete) => db.query(
+    strings.breakers + (draftId ? strings.byDraftId : ignoringIncomplete ? strings.complete : ''),
     draftId && [draftId], false
 );
 
@@ -59,7 +60,7 @@ module.exports = {
     getDraftReport, getDraftRound,
     add, popRound, pushRound,
 
-    getDraftDetail: id => db.getRow('draftDetail', id),
+    getDraft: (id, detail=false) => db.getRow('draft'+(detail ? 'Detail' : ''), id),
     getDraftDrops: id => db.getRow('draftDrops', id).then(r => (r && r.drops) || []),
     rmv:  id => db.rmvRow('draft', id),
     set: (id, newParams) => db.updateRow('draft', id, newParams)
