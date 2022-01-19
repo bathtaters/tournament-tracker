@@ -5,7 +5,7 @@ const player = require('../db/models/player');
 const setting = require('../db/models/settings');
 
 // Imports
-const { asType, toObjArray } = require('../services/settings');
+const { asType, toObjArray } = require('../services/settings.services');
 const { arrToObj } = require('../utils/utils');
 const logger = console;
 
