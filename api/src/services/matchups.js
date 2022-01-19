@@ -1,90 +1,69 @@
 // Get matchups for new round
-// FORMAT: [ [ player/[team], player/[team] ], ...  ] (match table)
-const { unflat, splicing, anyElements } = require('../utils/utils');
-const { shuffled } = require('../utils/random');
+// => Match Table: (2D ID Array) [ [ playerIds in match1 ], [ match2 ], ...  ]
+const { unflat, splicing, anyElements, revReplace2dIndex } = require('../utils/utils');
+const defs = require('../config/validation').config.defaults.draft;
 
-const defPlaysPerMatch = 2;
+// Generate Match Table //
 
-// const getByes = "SELECT players FROM draftByes WHERE draftId = $1;";
-// -> returns (0) undef, (1) {draftid, players[]}, (2+) [{draftid, players[]},...]
-
-// Helper function to reverse-search for a replacement
-function revReplaceIndex(arr2d, startInd, isReplace) {
-    for (let i = startInd; i >= 0; i--) {
-        for (let j = arr2d[i].length - 1; j >= 0; j--) {
-            if (isReplace(arr2d[i][j],arr2d[i],j)) return [i,j];
-        }
-    }
-    return;
-}
-
-// INPUT:
-// draft = {players:[playerIds...], playerspermatch, byes:[playerIds...]},
-// breakers { [playerId] : [ prior oppids ] }
-// rankings = [playerids] OR null if firstRound,
-// 
-// RETURN:
-// => (matchups) [[(match1) playerids, ...], [(match2) ...], ...]
-function generateMatchups(draft, drops = null, priorOpps = null, rankings = null) {
-    // Generate simple matchups
-    let matches = rankings ?
-        rankings.filter(p => draft.players.includes(p))
-            .concat(draft.players.filter(p => !rankings.includes(p))) :
-        shuffled(draft.players);
+function generateMatchups(ranking, playerspermatch, byes, drops, allOpps) {
+    // Generate simple matchups (w/o drops)
+    let matches = [...ranking];
     if (drops) matches = matches.filter(p => !drops.includes(p));
-    matches = unflat(matches, draft.playerspermatch || defPlaysPerMatch);
+    matches = unflat(matches, playerspermatch || defs.playerspermatch);
     
-    // Don't allow multiple byes
-    if (draft.byes) {
-        // Go backwards to avoid array mutation issues
-        for (let i = matches.length - 1; i >= 0; i--) {
-            if (matches[i].length === 1 && draft.byes.includes(matches[i][0])) {
-                // If player w/ bye already has a bye, find the nearest player w/o a bye
-                const idx = revReplaceIndex(matches, i - 1, m => !draft.byes.includes(m));
+    // Don't allow players to have multiple byes
+    if (byes) {
+        for (let i = matches.length; i-- > 0; ) { // mutate in reverse
+            if (matches[i].length === 1 && byes.includes(matches[i][0])) {
+                // Find the nearest swap w/o a bye
+                const idx = revReplace2dIndex(matches, i, m => !draft.byes.includes(m));
                 if (idx) {
-                    // If replacement is found, swap in place
                     [matches[i][0], matches[idx[0]][idx[1]]] = 
                     [matches[idx[0]][idx[1]], matches[i][0]];
                 }
+                // If no replacement is found, player stuck w/ 2nd bye
             }
         }
     }
 
-    // Don't allow same matchups
-    if (priorOpps) {
-        // Go backwards to avoid array mutation issues
-        for (let i = matches.length - 1; i >= 0; i--) {
-            for (let j = matches[i].length - 1; j > 0; j--) {
-                // Get player's prior opponents
-                const priorOpp = priorOpps[matches[i][j]] &&
-                    priorOpps[matches[i][j]].oppids;
-                // Check if player is paired with any of them
-                if (priorOpp && anyElements(matches[i], priorOpp)) {
-                    // Find swap player whose...
-                    const idx = revReplaceIndex(matches, i - 1, (p,m,k) =>
-                        // opponents are new to current player
-                        !anyElements(splicing(m,k), priorOpp)
-                        // AND vice versa
-                        && (!priorOpps[p] || !anyElements(
-                            splicing(matches[i],j),
-                            priorOpps[p].oppids
-                        ))
+    // Don't allow rematches
+    if (allOpps) {
+        for (let i = matches.length; i-- > 0; ) {
+            for (let j = matches[i].length; j-- > 0; ) {
+                const playerId = matches[i][j];
+                const playerOpps = allOpps[playerId] && allOpps[playerId].oppids;
+
+                if (playerOpps && anyElements(matches[i], playerOpps)) {
+                    // Find a swap who won't cause another rematch
+                    const idx = revReplace2dIndex(
+                        matches, i,
+                        isUniqueMatchup(playerOpps, allOpps, splicing(matches[i], j))
                     );
                     if (idx) {
-                        // If replacement is found, swap in place
-                        [matches[i][j], matches[idx[0]][idx[1]]] = 
-                        [matches[idx[0]][idx[1]], matches[i][j]];
+                        [playerId, matches[idx[0]][idx[1]]] = 
+                        [matches[idx[0]][idx[1]], playerId];
                     }
+                    // If no replacement is found, rematch will happen
                 }
             }
         }
     }
-
     return matches;
 }
 
-module.exports = generateMatchups;
 
-// TEST
-// generateMatchups({players:[1,2,3,4,5,6,7,8,9,10],playerspermatch:3},{1:{oppids:[7,4]},2:{oppids:[5,6]},3:{oppids:[8,9]},4:{oppids:[1,7]},5:{oppids:[2,6]},6:{oppids:[2,5]},7:{oppids:[1,4]},8:{oppids:[3,9]},9:{oppids:[2,8]}},[1,2,3,4,10,6,7,8,9,5],[5,6,7,8,9])
-// = [[1,2,3],[4,5,9],[7,8,6],[10]]
+// Callback for checking for unique matchups
+const isUniqueMatchup = (playerOpps, allOpps, matchMinusPlayer) => (testId, testMatch, testIdx) =>
+    !anyElements(                   // No overlap between:
+        splicing(testMatch, testIdx),   // test player's current opponents
+        playerOpps                      // current player's prior opponents
+    ) && (                          // AND
+        !allOpps[testId] ||         // test player doesn't have prior opponents
+        !anyElements(               // OR No overlap between:
+            matchMinusPlayer,           // current player's current opponents
+            allOpps[testId].oppids      // test player's prior opponents
+        )
+    );
+
+
+module.exports = generateMatchups;
