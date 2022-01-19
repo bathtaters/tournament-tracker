@@ -10,9 +10,16 @@ exports.strTest = str => {
 };
 
 // Build placeholders for SQL based on array.length (ie. $1, $2, $3)
-exports.queryVars = (array, startNum = 1) => 
-    array.filter(e=>e!==undefined)
-        .map((_,i)=>`$${startNum+i}`).join(', ');
+exports.queryLabels = (objArray, keys) => {
+  const size = Array.isArray(keys) ? keys.filter(k=>k!==undefined).length : +keys;
+  if (!size) return '';
+  return objArray.map((_,idx) => `(${
+      [...Array(size)].map((_,i) => '$'+(idx*size+i+1)).join(', ')
+  })`);
+}
+exports.queryValues = (objArray, keys) => objArray.flatMap(colObj => 
+  keys.filter(k=>k!==undefined).map(k => colObj[k])
+);
 
 // Process results
 exports.getReturn = res => !res ? res : Array.isArray(res) ? res.map(r => r && (r.rows || r)) : res.rows || res;
