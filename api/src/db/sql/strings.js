@@ -17,6 +17,7 @@ exports.draft = {
     maxRound: "SELECT round FROM match WHERE draftId = $1 ORDER BY round DESC LIMIT 1;",
     deleteRound: "DELETE FROM match WHERE draftId = $1 AND round = $2;",
     breakers: "SELECT breakers.*, oppIds FROM breakers LEFT JOIN draftOpps USING(draftId, playerId) ",
+    complete: "LEFT JOIN draft ON draft.id = draftId WHERE draft.roundActive > draft.roundCount",
 }
 
 exports.player = {
