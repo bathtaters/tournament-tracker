@@ -1,17 +1,18 @@
 // Models
 const draft = require('../db/models/draft');
+const player = require('../db/models/player');
 const match = require('../db/models/match');
 const defs = require('../config/validation').config.defaults.draft;
 
 // Services/Utils
-const { toBreakers } = require('../services/results');
+const toBreakers = require('../services/toBreakers');
 const { arrToObj, matchListToArray } = require('../utils/utils');
 
 /* GET draft database. */
 
 // Specific draft
 async function getDraft(req, res, next) {
-  const draftData = await draft.getDraftDetail(req.params.id);
+  const draftData = await draft.getDraft(req.params.id, true);
   if (!draftData || draftData.length === 0) throw new Error('Draft does not exist <'+ req.params.id+'>');
 
   const [drops, matches] = await Promise.all([
@@ -34,14 +35,22 @@ async function getAllDrafts(_, res) {
   res.sendAndLog(drafts);
 }
 
-// Breakers from draft
+// Draft Stats
 async function getBreakers(req, res) {
-  const breakers = await draft.getBreakers(req.params.id);
-  res.sendAndLog(breakers && toBreakers([breakers]));
+  const [players,breakers] = await Promise.all([
+    draft.getDraft(req.params.id).then(r => r && r.players),
+    draft.getBreakers(req.params.id),
+  ]);
+  
+  res.sendAndLog(breakers && toBreakers([breakers], players, true));
 }
 async function getAllBreakers(_, res) {
-  const breakers = await draft.getBreakers();
-  res.sendAndLog(breakers && toBreakers([breakers]));
+  const [players,breakers] = await Promise.all([
+    player.get().then(r => r && r.map(p => p.id)),
+    draft.getBreakers(null, true),
+  ]);
+
+  res.sendAndLog(breakers && toBreakers([breakers], players, false));
 }
 
 
