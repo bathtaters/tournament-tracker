@@ -18,12 +18,6 @@ describe('query', () => {
     mockRun = connect.runOperation.mockImplementation(async op => op(mockClient));
   });
 
-  it('passes attempts/retries to runOp', async () => {
-    const res = await base.query(['1;'], [], false, 43, 21);
-    expect(mockRun).toHaveBeenCalledTimes(1);
-    expect(mockRun).toBeCalledWith(expect.any(Function), 43, 21);
-  })
-
   it('accepts array input', async () => {
     const res = await base.query(['1','2','3']);
 
