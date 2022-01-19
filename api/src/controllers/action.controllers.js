@@ -44,8 +44,15 @@ async function nextRound(req, res) {
   const matchData = matches && matches.map(players => ({ draftId, round, players }));
   
   // Create matches
-  const ret = await draft.pushRound(draftId, round, matchData).then(r=>r&&r[0]);
-  return res.sendAndLog({ id: ret && ret.id, round: ret && ret.roundactive, });
+  const ret = await draft.pushRound(draftId, round, matchData);
+  if (!Array.isArray(ret) || !ret[0])
+    throw new Error("Error adding round to database");
+
+  return res.sendAndLog({
+    id: ret[0].id,
+    round: ret[0].roundactive,
+    matches: ret[1] && ret[1].map(m => m.id),
+  });
 }
 
 // Delete round matches

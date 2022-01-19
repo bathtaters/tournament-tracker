@@ -37,7 +37,7 @@ const pushRound = (draftId, round, matchData) => db.operation(client => Promise.
         { returning: 'roundactive', client }
     ),
     // Create matches
-    matchData && db.addRows('match', matchData, { client, returning: 0 }),
+    matchData && db.addRows('match', matchData, { client }),
 ]));
 
 
