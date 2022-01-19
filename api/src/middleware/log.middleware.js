@@ -8,7 +8,8 @@ function setupLogging(req, res, next) {
   // Log response
   res.sendAndLog = (...args) => { 
     logger.log('RES:',res.statusCode,req.originalUrl, ...args.map(a =>
-      typeof a === 'object' && !a.error ? Object.keys(a) : a
+      typeof a !== 'object' || a.error ? a :
+      Object.keys(a).map(k => (a[k] ? '' : '!') + k)
     ));
     return res.send(...args);
   };
