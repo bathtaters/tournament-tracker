@@ -41,8 +41,8 @@ async function setSettings(req,res) {
   
   const settingsArray = toObjArray(req.body);
 
-  await setting.batchSet(settingsArray);
-  return res.sendAndLog({ success: true });
+  const set = await setting.batchSet(settingsArray).then(r => r && r.map(s => s.id));
+  return res.sendAndLog({ success: true, set });
 }
 
 // Schedule data
