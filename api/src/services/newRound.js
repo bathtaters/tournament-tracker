@@ -1,7 +1,6 @@
 const roundMatchups = require('./matchups');
-const { toBreakers } = require('./results');
+const toBreakers = require('./toBreakers');
 const { mapObjArr, staticValObj } = require('../utils/utils');
-const { incRound } = require('../db/sql/strings').draft;
 
 const autoReportByes = true;
 
@@ -13,43 +12,53 @@ function newRound({ draftData, drops, breakers }) {
         !draftData.players.length ||
         (drops && drops.length >= draftData.players.length)
     )
-        throw new Error("No active players are registered.");
+        throw new Error("No active players are registered");
 
     if (draftData.roundactive > draftData.roundcount)
-        throw new Error("Draft is over.");
+        throw new Error("Draft is over");
 
     if (draftData.roundactive && !draftData.canadvance)
-        throw new Error("All matches have not been reported.");
+        throw new Error("All matches have not been reported");
     
     
     // Increment round number & create return object
-    const retObj = { 
+    const matchBase = { 
         round: draftData.roundactive + 1,
         draftId: draftData.id,
     };
 
     // Determine if draft has ended
-    if (draftData.roundactive === draftData.roundcount) return retObj;
+    if (draftData.roundactive === draftData.roundcount) return matchBase;
 
-    // Get ranking info
-    let oppData, rankings;
-    if (draftData.roundactive) {
-        rankings = toBreakers([breakers]).ranking;
-        oppData = mapObjArr(breakers,'playerid','oppids');
-    }
+    // Format player info 
+    const ranking = draftData.roundactive ?
+        toBreakers([breakers], draftData.players).ranking :
+        draftData.players || [];
 
-    // Build match table
-    const matchTable = roundMatchups(draftData, drops, oppData, rankings);
+    const oppData = draftData.roundactive &&
+        mapObjArr(breakers, 'playerid', 'oppids');
+
+    // Get match table
+    const matchTable = roundMatchups(
+        ranking,
+        draftData.playerspermatch,
+        draftData.byes,
+        drops, oppData
+    );
 
     // Auto-report byes
     const byeWins = autoReportByes ? Math.ceil((draftData.bestof + 1) / 2) : 0;
     
-    // Create array of match.players
-    retObj.matches = [];
-    for (const match of matchTable) {
-        retObj.matches.push(staticValObj(match, match.length === 1 ? byeWins : 0));
-    }
-    return retObj;
+    // Create array of matches
+    return {
+        ...matchBase,
+
+        matches: matchTable.map(match => ({
+            ...matchBase,
+            players: staticValObj(match, match.length === 1 ? byeWins : 0),
+            reported: autoReportByes && match.length === 1,
+        }))
+    };
 }
 
 module.exports = newRound;
