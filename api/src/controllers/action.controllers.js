@@ -39,12 +39,9 @@ async function nextRound(req, res) {
   const { draftId, round, matches } = newRound(data);
   if (!draftId || round == null)
     throw new Error("Error determining current round");
-
-  // Build matches
-  const matchData = matches && matches.map(players => ({ draftId, round, players }));
   
   // Create matches
-  const ret = await draft.pushRound(draftId, round, matchData);
+  const ret = await draft.pushRound(draftId, round, matches);
   if (!Array.isArray(ret) || !ret[0])
     throw new Error("Error adding round to database");
 
