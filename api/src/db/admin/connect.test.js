@@ -2,7 +2,7 @@
 const mockWarn = jest.spyOn(global.console, "warn");
 const connect = require('./connect');
 const utils = require('../../utils/sqlUtils');
-jest.mock('../../services/sqlUtils');
+jest.mock('../../utils/sqlUtils');
 
 
 // Mock retryBlock (Forces retry, then resolves)

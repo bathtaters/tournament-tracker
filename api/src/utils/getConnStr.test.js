@@ -8,8 +8,8 @@ const mockServerCfg = {
 // Imports/Mocks
 const getConnStr = require('./getConnStr');
 const utils = require('./utils');
-jest.mock('./dbServerCfg.json', () => mockServerCfg, {virtual: true});
-jest.mock('../../services/utils', () => ({ replaceFromObj: jest.fn(o=>o) }));
+jest.mock('../config/dbServer.json', () => mockServerCfg, {virtual: true});
+jest.mock('./utils', () => ({ replaceFromObj: jest.fn(o=>o) }));
 
 
 // Test
