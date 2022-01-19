@@ -2,10 +2,9 @@ const swissMonrad = require('./matchGenerators/swissMonrad');
 const toBreakers = require('./breakers.services');
 const { mapObjArr, staticValObj } = require('../utils/utils');
 
-const autoReportByes = true;
 
 // Builds queries for creating a round
-function newRound({ draftData, drops, breakers }) {
+function newRound({ draftData, drops, breakers, autoReportByes = true }) {
     // Error check
     if (
         !draftData.players ||
@@ -27,29 +26,21 @@ function newRound({ draftData, drops, breakers }) {
         draftId: draftData.id,
     };
 
-    // Determine if draft has ended
-    if (draftData.roundactive === draftData.roundcount) return matchBase;
+    if (draftData.roundactive === draftData.roundcount) return matchBase; // Draft has ended
 
-    // Format player info 
-    const ranking = draftData.roundactive ?
+    // Collect data for match generator
+    let playerList = draftData.roundactive ?
         toBreakers([breakers], draftData.players).ranking :
         draftData.players || [];
+    if (drops) playerList = playerList.filter(p => !drops.includes(p));
 
-    const oppData = draftData.roundactive &&
-        mapObjArr(breakers, 'playerid', 'oppids');
+    const oppData = draftData.roundactive && mapObjArr(breakers, 'playerid', 'oppids');
 
-    // Get match table
-    const matchTable = swissMonrad(
-        ranking,
-        draftData.playerspermatch,
-        draftData.byes,
-        drops, oppData
-    );
+    // Generate match table (Can add more alogrithms later)
+    const matchTable = swissMonrad(playerList, {...draftData, oppData});
 
-    // Auto-report byes
+    // Format for DB write (auto-reporting byes)
     const byeWins = autoReportByes ? Math.ceil((draftData.bestof + 1) / 2) : 0;
-    
-    // Create array of matches
     return {
         ...matchBase,
 

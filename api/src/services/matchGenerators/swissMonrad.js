@@ -5,11 +5,9 @@ const defs = require('../../config/validation').config.defaults.draft;
 
 // -- Generate Match Table: Swiss Monrad Alogrithm -- //
 
-function generateMatchups(ranking, playerspermatch, byes, drops, allOpps) {
+function generateMatchups(ranking, { playerspermatch, byes, allOpps }) {
     // Generate simple matchups (w/o drops)
-    let matches = [...ranking];
-    if (drops) matches = matches.filter(p => !drops.includes(p));
-    matches = unflat(matches, playerspermatch || defs.playerspermatch);
+    let matches = unflat(ranking, playerspermatch || defs.playerspermatch);
     
     // Don't allow players to have multiple byes
     if (byes) {
