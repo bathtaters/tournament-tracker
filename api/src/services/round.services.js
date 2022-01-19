@@ -1,5 +1,5 @@
-const roundMatchups = require('./matchups');
-const toBreakers = require('./toBreakers');
+const swissMonrad = require('./matchGenerators/swissMonrad');
+const toBreakers = require('./breakers.services');
 const { mapObjArr, staticValObj } = require('../utils/utils');
 
 const autoReportByes = true;
@@ -39,7 +39,7 @@ function newRound({ draftData, drops, breakers }) {
         mapObjArr(breakers, 'playerid', 'oppids');
 
     // Get match table
-    const matchTable = roundMatchups(
+    const matchTable = swissMonrad(
         ranking,
         draftData.playerspermatch,
         draftData.byes,

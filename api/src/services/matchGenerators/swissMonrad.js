@@ -1,9 +1,9 @@
-// Get matchups for new round
+// Get matchups for new round using Swiss Monrad Alogrithm
 // => Match Table: (2D ID Array) [ [ playerIds in match1 ], [ match2 ], ...  ]
-const { unflat, splicing, anyElements, revReplace2dIndex } = require('../utils/utils');
-const defs = require('../config/validation').config.defaults.draft;
+const { unflat, splicing, anyElements, revReplace2dIndex } = require('../../utils/utils');
+const defs = require('../../config/validation').config.defaults.draft;
 
-// Generate Match Table //
+// -- Generate Match Table: Swiss Monrad Alogrithm -- //
 
 function generateMatchups(ranking, playerspermatch, byes, drops, allOpps) {
     // Generate simple matchups (w/o drops)

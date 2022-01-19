@@ -4,7 +4,7 @@ const resultCalc = require('../utils/resultCalc');
 
 // Get breakers data & determine winner
 
-function toBreakers(data, originalOrder, sameTournament = true) {
+function breakers(data, originalOrder, sameTournament = true) {
     
     // Build map of data
     let dataMap = {};
@@ -40,4 +40,4 @@ function toBreakers(data, originalOrder, sameTournament = true) {
 }
 
 
-module.exports = toBreakers;
+module.exports = breakers;

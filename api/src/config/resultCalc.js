@@ -1,5 +1,5 @@
 // BASIC GAME/MATCH Conversions
-const points = require('../config/constants.json').points;
+const points = require('./constants.json').points;
 
 const resultCalc = {
     record: (w,d,c) => [ w || 0,  (c||0) - (w||0) - (d||0),  d || 0 ],
