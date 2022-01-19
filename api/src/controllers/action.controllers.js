@@ -4,7 +4,7 @@ const players = require('../db/models/player');
 
 // Services
 const db = require('../db/admin/interface');
-const newRound = require('../services/newRound');
+const roundService = require('../services/round.services');
 
 
 // Swap players in matches
@@ -36,7 +36,7 @@ async function nextRound(req, res) {
   const data = await draft.getDraftReport(req.params.id);
 
   // Build round
-  const { draftId, round, matches } = newRound(data);
+  const { draftId, round, matches } = roundService(data);
   if (!draftId || round == null)
     throw new Error("Error determining current round");
   
