@@ -1,6 +1,6 @@
 // Calculate records from DB data
 const logger = console;
-const resultCalc = require('../utils/resultCalc');
+const resultCalc = require('../config/resultCalc');
 
 // Get breakers data & determine winner
 
