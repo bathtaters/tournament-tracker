@@ -1,13 +1,14 @@
 /* *** SIMPLE SQL UI *** */
 const logger = console;
 const direct = require('./directOps');
-const { strTest, queryVars, getReturn, getFirst, getSolo } = require('../../utils/sqlUtils');
+const { strTest, queryLabels, queryValues, getReturn, getFirst, getSolo } = require('../../utils/sqlUtils');
 
 // Custom query
 const query = (text, args, splitArgs) => direct.query(text, args, splitArgs)
     .then(getSolo(text)).then(getReturn);
 
-// Simple Shared Ops
+
+// SELECT
 const getRows = (table, sqlFilter, args = null, cols = null, client = null) => 
     // strTest(table) || strTest(sqlFilter) || strTest(cols) ||
     (client || direct).query(
@@ -28,21 +29,30 @@ const getRow = (table, rowId = null, cols = null, client = null) =>
     ).then(getFirst(rowId));
 
 
-const addRow = (table, colObj, client = null) => {
+// INSERT/UPSERT
+const addRows = (table, objArray, { client = null, upsert = false, returning = 'id' } = {}) => {
     // strTest(table);
-    const keys = Object.keys(colObj || {});
+    if (!objArray) throw new Error("Missing rows to add to "+table+" table.");
+    const keys = objArray[0] ? Object.keys(objArray[0]) : [];
     if (!keys.length) logger.warn("Added empty row to "+table);
     strTest(keys);
+
     return (client || direct).query(
-        `INSERT INTO ${table} ${
+        `${upsert ? 'UP' : 'IN'}SERT INTO ${table} ${
             keys.length ? '('+keys.join(',')+')' : 'DEFAULT'
-        } VALUES${
-            keys.length ? ' ('+queryVars(keys)+')' : ''
-        } RETURNING id;`,
-        Object.values(colObj || {})
-    ).then(getSolo()).then(getReturn).then(getFirst());
+        } VALUES ${
+            queryLabels(objArray, keys).join(', ')
+        }${returning ? ' RETURNING '+returning : ''};`,
+        queryValues(objArray, keys)
+    ).then(getSolo()).then(getReturn);
 };
 
+const addRow = (table, rowObj, options = {}) => 
+    module.exports.addRows(table, rowObj ? [rowObj] : [], options)
+        .then(getFirst());
+
+
+// DELETE
 const rmvRow = (table, rowId, client = null) => 
     // strTest(table) ||
     (client || direct).query(
@@ -50,16 +60,22 @@ const rmvRow = (table, rowId, client = null) =>
         [rowId]
     ).then(getSolo()).then(getReturn).then(getFirst());
 
-const updateRow = (table, rowId, updateObj, returning = 'id', client = null) => {
+
+// UPDATE
+const updateRow = (table, rowId, updateObj, { returning = 'id', client = null } = {}) => {
     // strTest(table) || strTest(returning);
     const keys = Object.keys(updateObj || {});
+
     if (!keys.length) throw new Error("No properties provided to update "+table+"["+rowId+"]");
     strTest(keys);
+
     return (client || direct).query(
         `UPDATE ${table} SET ${
             keys.map((col,idx) => `${col} = $${idx+2}`).join(', ')
         } WHERE id = $1 RETURNING ${returning || 'id'};`,
+
         [rowId, ...Object.values(updateObj || {})]
+
     ).then(getSolo()).then(getReturn).then(getFirst())
     .then(ret => ({
         id: rowId,
@@ -72,7 +88,8 @@ const updateRow = (table, rowId, updateObj, returning = 'id', client = null) => 
 module.exports = { 
     query,
     getRow, getRows,
-    addRow, rmvRow, updateRow,
+    addRows, addRow,
+    rmvRow, updateRow,
     operation: op => direct.operation(op).then(getReturn),
     file: (...files) => direct.execFiles(files).then(getReturn),
 }
