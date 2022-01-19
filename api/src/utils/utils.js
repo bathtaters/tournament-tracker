@@ -89,6 +89,19 @@ exports.replaceFromObj = (str, obj, {pre, suff, notAll, caseI, esc}={}) => Objec
     str
 );
 
+// Reverse-search 2D Array for a replacement
+// (loops around when it reaches the start of the array)
+// Callback: (value, inner array, inner array idx) => true/false
+exports.revReplace2dIndex = (arr2d, startIdx, replaceCb) => {
+  const start = (startIdx || arr2d.length) - 1; // ignores itself
+  const end = startIdx % arr2d.length; // ensure end is in arr2d
+  for (let i = start; i !== end; i = (i || arr2d.length) - 1) {
+      for (let j = arr2d[i].length; j-- > 0; ) {
+          if (replaceCb(arr2d[i][j], arr2d[i], j)) return [i,j];
+      }
+  }
+};
+
 // Custom array validator
 exports.validateArray = (lenLimit, innerCheck) =>
   (arr, evObj) => Array.isArray(arr) &&
