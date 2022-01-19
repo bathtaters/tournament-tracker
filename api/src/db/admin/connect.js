@@ -9,9 +9,6 @@ const logger = console;
 // Default Settings
 const retryAttempts = 15;
 
-// Setup integer parsing
-utils.initNumberParsing();
-
 // Connect to the DB
 let staticPool;
 /* istanbul ignore next */
@@ -84,6 +81,3 @@ async function runOperation(operation = client => {}, maxAttempts = retryAttempt
 
 // Public functions
 module.exports = { openConnection, closeConnection, runOperation, isConnected: () => !!staticPool }
-
-// Open on load
-if (!staticPool) openConnection();

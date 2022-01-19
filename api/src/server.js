@@ -18,4 +18,9 @@ app.use(`/api/v${version}/player`, require('./routes/player.routes'));
 app.use(() => { throw require('./config/constants.json').missingError; })
 app.use(require('./middleware/error.middleware'));
 
-app.listen(port, () => logger.log(`${name} (v${version}) started. Listening on port ${port}.`));
+// Initialize services
+require('./services/init')().then(() => 
+
+  // Start server
+  app.listen(port, () => logger.log(`${name} (v${version}) started. Listening on port ${port}.`))
+);
