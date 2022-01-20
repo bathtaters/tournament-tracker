@@ -1,7 +1,6 @@
 /* *** ADVANCED SQL UI *** */
 const fs = require("fs/promises");
 const db = require('./connect');
-const logger = console;
 
 // Execute query
 function query(text, args = [], splitArgs = null) {
@@ -11,7 +10,6 @@ function query(text, args = [], splitArgs = null) {
     
     // logger.debug('QUERIES:',text);
     return db.runOperation(
-        // client => utils.awaitEach(client.query, text.map((q,i) => [q, splitArgs ? args[i] : args])),
         client => Promise.all(text.map((q,i) => client.query(q, splitArgs ? args[i] : args)))
     );
 }

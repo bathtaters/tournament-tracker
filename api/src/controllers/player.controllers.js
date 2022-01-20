@@ -1,5 +1,5 @@
 const players = require('../db/models/player');
-const { arrToObj, insertInOrder } = require('../utils/utils');
+const { arrToObj, insertSorted } = require('../utils/shared.utils');
 
 /* GET player database. */
 
@@ -22,7 +22,7 @@ async function getPlayerDrafts(req, res) {
   // Append drafts w/o match data (Sorted by day)
   drafts[0] && drafts[0].forEach(a => { 
       if (!ret.some(b => a.id === b.id))
-        ret = insertInOrder(ret, a, {asc:0, key:'day'});
+        ret = insertSorted(ret, a, b => b.day > a.day);
   });
   return res.sendAndLog(ret);
 }

@@ -3,7 +3,7 @@ const matches = require('../db/models/match');
 const defs = require('../config/validation').config.defaults.match;
 
 // Imports
-const { arrToObj } = require('../utils/utils');
+const { arrToObj } = require('../utils/shared.utils');
 
 // Create empty report object
 const emptyReport = {
@@ -19,7 +19,7 @@ const getMatch = (req, res) => matches.get(req.params.matchId, true).then(res.se
 const getAllMatches = (_, res) => matches.get().then(res.sendAndLog);
 
 async function getDraftMatches(req, res) {
-  const matchData = await matches.getByDraft(req.params.draftId).then(arrToObj('id', false));
+  const matchData = await matches.getByDraft(req.params.draftId).then(arrToObj('id', {delKey:0}));
   return res.sendAndLog(matchData || {});
 }
 

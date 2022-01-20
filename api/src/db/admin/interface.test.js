@@ -1,13 +1,13 @@
 // Imports/Mocks
 const mockWarn = jest.spyOn(global.console, "warn");
 const ops = require('./interface');
-const utils = require('../../utils/sqlUtils');
+const utils = require('../../utils/dbInterface.utils');
 const direct = require('./directOps');
 
 jest.mock('./directOps', () => ({
   query: jest.fn((...args) => Promise.resolve(args)),
 }));
-jest.mock('../../utils/sqlUtils');
+jest.mock('../../utils/dbInterface.utils');
 
 // Setup Tests
 const client = {

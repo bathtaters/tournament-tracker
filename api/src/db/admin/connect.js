@@ -2,8 +2,7 @@
 const { Pool } = require("pg");
 const parse = require("pg-connection-string").parse;
 
-const getConnStr = require('../../utils/getConnStr');
-const utils = require('../../utils/sqlUtils');
+const { getConnStr, retryBlock } = require('../../utils/dbConnect.utils');
 const logger = console;
 
 // Default Settings
@@ -39,14 +38,14 @@ async function runOperation(operation = client => {}, maxAttempts = retryAttempt
   const pool = usingPool || staticPool;
   if (!pool) throw new Error("Attempting DB access before successfully opening connection.");
   
-  let client = await utils.retryBlock(
+  let client = await retryBlock(
     pool => pool.connect(), [pool], 5
   );
   if (!client) throw new Error("Unable to connect to DB.");
 
   await client.query("BEGIN;");
   try {
-    const res = await utils.retryBlock(
+    const res = await retryBlock(
       // Operation
       async (client,operation) => {
         const res = await operation(client);
@@ -79,5 +78,4 @@ async function runOperation(operation = client => {}, maxAttempts = retryAttempt
   }
 }
 
-// Public functions
 module.exports = { openConnection, closeConnection, runOperation, isConnected: () => !!staticPool }

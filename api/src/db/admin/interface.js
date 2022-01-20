@@ -1,7 +1,10 @@
 /* *** SIMPLE SQL UI *** */
 const logger = console;
 const direct = require('./directOps');
-const { strTest, queryLabels, queryValues, getReturn, getFirst, getSolo } = require('../../utils/sqlUtils');
+const {
+    strTest, queryLabels, queryValues,
+    getReturn, getFirst, getSolo
+} = require('../../utils/dbInterface.utils');
 
 // Custom query
 const query = (text, args, splitArgs) => direct.query(text, args, splitArgs)

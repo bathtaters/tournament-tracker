@@ -6,7 +6,7 @@ const setting = require('../db/models/settings');
 
 // Imports
 const { asType, toObjArray } = require('../services/settings.services');
-const { arrToObj } = require('../utils/utils');
+const { arrToObj } = require('../utils/shared.utils');
 const logger = console;
 
 /* GET page data. */
