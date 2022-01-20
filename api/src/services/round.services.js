@@ -1,7 +1,12 @@
 const swissMonrad = require('./matchGenerators/swissMonrad');
 const toBreakers = require('./breakers.services');
-const { mapObjArr, staticValObj } = require('../utils/utils');
+const { arrToObj } = require('../utils/shared.utils');
 
+// HELPER: Convert array of keys into single object using 'value' as value for each key
+const monoValueObj = (keys, value) => keys.reduce((obj, key) => 
+    Object.assign(obj, { [key]: value }), 
+    {}
+);
 
 // Builds queries for creating a round
 function newRound({ draftData, drops, breakers, autoReportByes = true }) {
@@ -34,7 +39,7 @@ function newRound({ draftData, drops, breakers, autoReportByes = true }) {
         draftData.players || [];
     if (drops) playerList = playerList.filter(p => !drops.includes(p));
 
-    const oppData = draftData.roundactive && mapObjArr(breakers, 'playerid', 'oppids');
+    const oppData = draftData.roundactive && arrToObj('playerid', { valKey: 'oppids' })(breakers);
 
     // Generate match table (Can add more alogrithms later)
     const matchTable = swissMonrad(playerList, {...draftData, oppData});
@@ -46,7 +51,7 @@ function newRound({ draftData, drops, breakers, autoReportByes = true }) {
 
         matches: matchTable.map(match => ({
             ...matchBase,
-            players: staticValObj(match, match.length === 1 ? byeWins : 0),
+            players: monoValueObj(match, match.length === 1 ? byeWins : 0),
             reported: autoReportByes && match.length === 1,
         }))
     };

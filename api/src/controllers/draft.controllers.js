@@ -6,9 +6,16 @@ const defs = require('../config/validation').config.defaults.draft;
 
 // Services/Utils
 const toBreakers = require('../services/breakers.services');
-const { arrToObj, matchListToArray } = require('../utils/utils');
+const { arrToObj } = require('../utils/shared.utils');
 
 /* GET draft database. */
+
+// HELPER: Convert array of match object to 2D array using round as index
+const matchListToRoundArray = matches => matches && matches.reduce((arr,round) => {
+  arr[round.round - 1] = round.matches;
+  return arr;
+}, []);
+
 
 // Specific draft
 async function getDraft(req, res, next) {
@@ -17,7 +24,7 @@ async function getDraft(req, res, next) {
 
   const [drops, matches] = await Promise.all([
     draft.getDraftDrops(req.params.id),
-    match.listByDraft(req.params.id).then(matchListToArray),
+    match.listByDraft(req.params.id).then(matchListToRoundArray),
   ]);
 
   res.sendAndLog({ ...draftData, matches, drops });
@@ -26,7 +33,7 @@ async function getDraft(req, res, next) {
 // All drafts
 async function getAllDrafts(_, res) {
   const drafts = await draft.get().then(arrToObj('id'));
-  const matches = await match.listByDraft().then(matchListToArray);
+  const matches = await match.listByDraft().then(matchListToRoundArray);
   Object.keys(matches).forEach(d => {
     if (!drafts[d]) return logger.error('Match is missing draft',d);
     drafts[d].matches = matches[d];
