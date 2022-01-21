@@ -3,11 +3,11 @@ const logger = console;
 
 function setupLogging(req, res, next) {
   // Log request
-  logger.log('REQ:',req.method,req.originalUrl,req.body);
+  logger.info('REQ:',req.method,req.originalUrl,req.body);
 
   // Log response
   res.sendAndLog = (...args) => { 
-    logger.log('RES:',res.statusCode,req.originalUrl, ...args.map(a =>
+    logger.info('RES:',res.statusCode,req.originalUrl, ...args.map(a =>
       typeof a !== 'object' || a.error ? a :
       Object.keys(a).map(k => (a[k] ? '' : '!') + k)
     ));
