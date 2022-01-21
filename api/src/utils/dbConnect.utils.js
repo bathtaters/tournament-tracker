@@ -37,22 +37,26 @@ exports.getConnStr = (dbUser, config = null) => {
 
 // Retry Block //
 
-exports.retryBlock = async (func, args, max, n = 0, retryCodes = null, retryCb = null) => { 
+exports.retryBlock = async (
+  func, args, max, n = 0,
+  retryCodes = null, retryCb = null,
+  delayMultiplierMs = 10 // 10 x 2^(retry attempt)
+) => { 
   // Runs func multiple times until it is successful or reaches 'max'
   while (true) {
-    if (n++ === max) { throw new Error("Max retries reached."); }
-    try { const res = await func(...args); return res; }
+    if (n++ >= max) { throw new Error("Max retries reached"); }
+    try { const res = await func(...(args || [])); return res; }
     catch (err) {
       if (Array.isArray(retryCodes) && !retryCodes.includes(err.code)) {
-        err.stack = extendStackTrace(err.stack, new Error().stack);
+        err.stack = extendStackTrace(err.stack, (new Error()).stack);
         throw err;
       }
       else {
         // Retry operation
-        logger.log("Attempt failed:", err.message, "Retrying...");
         if (typeof retryCb === 'function') { await retryCb(err, ...args); }
+        else { logger.warn("Attempt failed:", err.message, "Retrying..."); }
         // Pause for increasingly more time between each attempt
-        await new Promise((r) => setTimeout(r, 2 ** n * 1000));
+        await new Promise((r) => setTimeout(r, 2 ** (n-1) * delayMultiplierMs));
       }
     }
   }
@@ -63,13 +67,13 @@ exports.retryBlock = async (func, args, max, n = 0, retryCodes = null, retryCb =
 // -- Helper Functions -- //
 
 // Extend stack trace to before pg module
-const extendStackTrace = (stack, prevStack) => prevStack ?
-  stack +'\n\t--- pre-pg ---\n'+ prevStack.substring(prevStack.indexOf('\n')+1) : stack;
+const extendStackTrace = (stack, prevStack) => prevStack ? (stack || '') +
+  '\n\t--- pre-pg ---\n'+ prevStack.substring(prevStack.indexOf('\n')+1) : stack;
 
-// Replace using object options
+// Replace using { replace: with } object 
 // function(baseString, { replace: with, ... }) => return resultString;
-// Options: { pre: "replacePrefix", suff: "replaceSuffix", notAll? globalFlag, caseI?, esc? escapesReplVal }
-exports.replaceFromObj = (str, obj, {pre, suff, notAll, caseI, esc}={}) => Object.keys(obj).reduce(
+// Options: { pre: "replacePrefix", suff: "replaceSuffix", notAll? gFlag, caseI? iFlag, esc? escapes obj.values }
+exports.replaceFromObj = (str, obj, {pre, suff, notAll, caseI, esc}={}) => Object.keys(obj || {}).reduce(
   (curr,next) => curr.replace(
     RegExp(
       (pre || '') + next + (suff || ''),
