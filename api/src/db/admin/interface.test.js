@@ -26,6 +26,9 @@ afterAll(() => { mockWarn.mockRestore(); });
 
 
 // Tests
+
+// ----- SELECT ----- //
+
 describe('getRows', () => {
   it('table param only', () => 
     expect(ops.getRows('test')).resolves.toEqual([
@@ -113,6 +116,16 @@ describe('getRow', () => {
       null,
     );
   });
+  it('no id param', async () => {
+    await ops.getRow('test', null, 'cols');
+    expect(getRowsSpy).toBeCalledWith(
+      expect.anything(),
+      '',
+      null,
+      expect.anything(),
+      null,
+    );
+  });
   it('col param', async () => {
     await ops.getRow('test', 'ID', 'cols');
     expect(getRowsSpy).toBeCalledWith(
@@ -142,6 +155,8 @@ describe('getRow', () => {
 });
 
 
+// ----- DELETE ----- //
+
 describe('rmvRow', () => {
   it('correct query', () => 
     expect(ops.rmvRow('test', 'ID')).resolves.toEqual([
@@ -168,7 +183,10 @@ describe('rmvRow', () => {
 });
 
 
+// ----- INSERT ----- //
+
 describe('addRows', () => {
+
   it('correct query', async () => {
     await expect(ops.addRows('test', [{a: 11, b: 12},{a: 21, b: 22}])).resolves.toEqual([
       'INSERT INTO test (a,b) VALUES 0, 1 RETURNING id;',
@@ -250,6 +268,15 @@ describe('addRow', () => {
       expect.anything(),
     );
   });
+  it('no rowObj param', async () => {
+    mockWarn.mockImplementationOnce(()=>{});
+    await ops.addRow('test', null);
+    expect(addRowsSpy).toBeCalledWith(
+      expect.anything(),
+      [],
+      expect.anything(),
+    );
+  });
   it('options param', async () => {
     await ops.addRow('test', 'obj', { test: true });
     expect(addRowsSpy).toBeCalledWith(
@@ -265,6 +292,9 @@ describe('addRow', () => {
     expect(utils.getFirst).toHaveBeenCalledWith('ID');
   });
 });
+
+
+// ----- UPDATE ----- //
 
 describe('updateRow', () => {
   it('correct query', async () => {
@@ -285,7 +315,7 @@ describe('updateRow', () => {
 
   it('throws on empty updateObj', () => {
     expect.assertions(1);
-    return expect(() => ops.updateRow('test','ID',{}))
+    return expect(() => ops.updateRow('test','ID'))
       .toThrowError('No properties provided to update test[ID]');
   });
 
