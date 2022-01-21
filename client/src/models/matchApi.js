@@ -38,7 +38,7 @@ export const matchApi = baseApi.injectEndpoints({
       },
     }),
     swapPlayers: build.mutation({
-      query: ({ draftId, ...body}) => ({ url: `match/util/swap`, method: 'PATCH', body }),
+      query: ({ draftId, ...body}) => ({ url: `match/swap`, method: 'POST', body }),
       transformResponse: res => console.log('SWAP',res) || res,
       invalidatesTags: getTags('Match',{key:'draftId',addBase:['PlayerDetail'],all:0}),
       onQueryStarted({ id, draftId, clear = false, ...body }, { dispatch }) {
