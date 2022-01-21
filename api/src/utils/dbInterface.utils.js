@@ -2,10 +2,11 @@
 
 // Test for SQL injection
 exports.strTest = str => {
-  if (Array.isArray(str)) return str.forEach(exports.strTest);
-  if(typeof str !== 'string') str = str.toString()
+  if (Array.isArray(str)) return str.map(exports.strTest);
+  if(typeof str !== 'string') str = str.toString();
   if(/\s|;/.test(str))
     throw new Error("Possible SQL injection: "+str);
+  return str;
 };
 
 // Build labels for SQL based on array.length & keys.length (ie. $1, $2, $3)
@@ -15,7 +16,7 @@ exports.queryLabels = (objArray, keys) => {
   return objArray.map((_,idx) => `(${
       [...Array(size)].map((_,i) => '$'+(idx*size+i+1)).join(', ')
   })`);
-}
+};
 
 // Get args from objArray based on keys (ie. objArray[0][keys[0]], etc)
 exports.queryValues = (objArray, keys) => objArray.flatMap(colObj => 
@@ -23,10 +24,20 @@ exports.queryValues = (objArray, keys) => objArray.flatMap(colObj =>
 );
 
 // Process results
-exports.getReturn = res => !res ? res : Array.isArray(res) ? res.map(r => r && (r.rows || r)) : res.rows || res;
-exports.getFirst = (additQual=true) => res => additQual && Array.isArray(res) && res[0] ? res[0] : res;
+const pgReturnKey = 'rows';
+
+exports.getFirst = (additBool=true) => res =>
+  additBool && Array.isArray(res) && res[0] ? res[0] : res;
+
+exports.getReturn = res =>
+  Array.isArray(res) ? res.map(r => (r && r[pgReturnKey]) || r) :
+  (res && res[pgReturnKey]) || res;
+
+exports.lineCount = qry => qry ? (qry.match(/;|\S\s*$/g) || []).length : 0; // SQL line counter
 exports.getSolo = qry => {
-    if ((Array.isArray(qry) && qry.length !== 1)) return r => r;
-    if (typeof qry === 'string' && (qry.match(/;|\S\s*$/g) || []).length !== 1) return r => r;
-    return r => r && r.length === 1 && r[0] ? r[0] : r;
+    if (Array.isArray(qry) && qry.length !== 1)
+      return r => r;
+    if (typeof qry === 'string' && exports.lineCount(qry) !== 1)
+      return r => r;
+    return r => exports.getFirst(r.length === 1)(r);
 };
