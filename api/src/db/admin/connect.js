@@ -7,6 +7,7 @@ const logger = console;
 
 // Default Settings
 const retryAttempts = 15;
+const retryPauseMs = 1000;
 
 // Connect to the DB
 let staticPool;
@@ -19,7 +20,7 @@ async function openConnection(asUser = 'api', cfg = null) {
   catch(e) { 
     throw new Error(`Unable to connect to DB: ${connStr}: ${e.message || e.description || e}`);
   }
-  return logger.log('Connected to DB server.');
+  return logger.info('Connected to DB server.');
 }
 
 // Disconnect from DB
@@ -28,7 +29,7 @@ async function closeConnection() {
   if (!staticPool) { throw new Error("Attempting to close connection before opening."); }
   await staticPool.end();
   staticPool = undefined;
-  return logger.log('Disconnected from DB server.');
+  return logger.info('Disconnected from DB server.');
 }
 
 //--- Wrapper for SQL Operations ---//
@@ -39,7 +40,8 @@ async function runOperation(operation = client => {}, maxAttempts = retryAttempt
   if (!pool) throw new Error("Attempting DB access before successfully opening connection.");
   
   let client = await retryBlock(
-    pool => pool.connect(), [pool], 5
+    pool => pool.connect(), [pool], 5,
+    0, null, null, 1000
   );
   if (!client) throw new Error("Unable to connect to DB.");
 
@@ -61,7 +63,9 @@ async function runOperation(operation = client => {}, maxAttempts = retryAttempt
       async (e, client) => {
         await client.query("ROLLBACK;BEGIN;")
           .then(() => logger.warn("Rolling back & retrying due to: "+(e.message || e.name || e || 'error')));
-      }
+      },
+      // Wait 1s+ between attempts
+      1000
     );
 
     // Cleanup
