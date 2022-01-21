@@ -16,7 +16,7 @@ const getRows = (table, sqlFilter, args = null, cols = null, client = null) =>
     // strTest(table) || strTest(sqlFilter) || strTest(cols) ||
     (client || direct).query(
         `SELECT ${
-            !cols ? '*' : Array.isArray(cols) ? cols.join(', ') || '*' : cols
+            (Array.isArray(cols) ? cols.join(', ') : cols) || '*'
         } FROM ${table} ${sqlFilter || ''};`,
         args || []
     ).then(getSolo()).then(getReturn);
@@ -65,7 +65,7 @@ const rmvRow = (table, rowId, client = null) =>
 
 
 // UPDATE
-const updateRow = (table, rowId, updateObj, { returning = 'id', client = null } = {}) => {
+const updateRow = (table, rowId, updateObj, { returning = null, client = null } = {}) => {
     // strTest(table) || strTest(returning);
     const keys = Object.keys(updateObj || {});
 
