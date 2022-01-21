@@ -117,7 +117,10 @@ describe('runOperation', () => {
       expect(utils.retryBlock).toHaveBeenNthCalledWith(1, 
         expect.any(Function), // pool => pool.connect()
         [mockPool],
-        expect.any(Number) // 5 (maxRetries)
+        expect.any(Number), // 5 (maxRetries)
+        expect.any(Number), // 0 (n)
+        null, null,
+        expect.any(Number), // 1000 (delayMultiplierMs)
       );
     });
 
@@ -162,6 +165,7 @@ describe('runOperation', () => {
         21, // retryCount
         ["40001"], // retryCodes (= ["40001"])
         expect.any(Function), // retryCallback
+        expect.any(Number), // delayMultiplierMs (1000)
       );
     });
 
@@ -175,6 +179,7 @@ describe('runOperation', () => {
         expect.any(Number), // retryCount (tested prior)
         expect.anything(), // retryCodes (tested prior)
         expect.any(Function), // retryCallback
+        expect.any(Number), // delayMultiplierMs (1000)
       );
     });
 
