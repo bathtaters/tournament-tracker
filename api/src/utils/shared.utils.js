@@ -17,19 +17,22 @@ const logger = console;
  * @param {Object[]} objArray - Array of objects to be converted
  * @returns {Object} Result object
  */
-exports.arrToObj = (key, { delKey=true, valKey=null }={}) => obj => Array.isArray(obj) ?
-  obj.reduce((o,e) => {
-    if (!e || !e[key]) logger.error('Entry is missing key:',key,e);
-    else if (o[e[key]]) logger.error('Key is not unique:',key,e[key],e);
-    else o[e[key]] = valKey ? e[valKey] : e;
-    if (delKey && !valKey) delete e[key];
-    return o;
-  }, {}) :
-  obj ? exports.arrToObj(key,rmvKey)([obj]) : obj;
+exports.arrToObj = (key, { delKey=true, valKey=null }={}) =>
+  obj => typeof obj !== 'object' ? 
+    obj && logger.warn('Expected object:',typeof obj,obj) || obj
+    :
+    (Array.isArray(obj) ? obj : [obj]).reduce((o,e) => {
+      if (!e || !e[key]) logger.warn('Entry is missing key:',key,e);
+      else if (o[e[key]]) throw new Error(`Object has duplicate key: [${key}] = ${e[key]}`);
+      else o[e[key]] = valKey ? e[valKey] : e;
+      if (delKey && !valKey) delete e[key];
+      return o;
+    }, {});
 
 
 /**
  * Place 'item' into 'array' in order.
+ * This mutates the array & returns it.
  * Based off 'sortedIndex' by 'Web_Designer' on Stack Exchange
  * @param {Array} array - Array to insert into
  * @param {*} item - Item to insert in array
