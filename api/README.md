@@ -67,9 +67,8 @@ _Represented below by api/v[n]_
 |/|POST|{ playerData }|{ id }|Create new player|
 |/[id]|DELETE| |{ id }|Remove a player|
 |/[id]|PATCH|{ newData }|{ id }|Update player data|
-|/swap|POST|{ playerA: {id,playerId}, playerB } |{ draftId }|Swap players between matches|
 
-
+---
 
 
 ## Database Layout
