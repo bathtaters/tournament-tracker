@@ -7,6 +7,7 @@ exports.asType = ({value, type}) => {
     case 'number': return +value;
     case 'date': return new Date(value);
     case 'boolean':
+      return !value || value === 'false' ? false : true;
     case 'object':
     default: return value ? JSON.parse(value) : value;
   }
@@ -16,16 +17,21 @@ const toType = (value, type) => {
     case 'string': return value;
     case 'bigint':
     case 'number': return value.toString();
-    case 'date':
+    case 'date': 
+      if (typeof value.toISOString === 'function')
+        return console.log(value, 'not date') || value.toISOString();
     case 'boolean':
+      return !value || value === 'false' ? 'false' : 'true';
     case 'object': 
-    default: return JSON.stringify(value);
+    default: return value && JSON.stringify(value);
   }
 };
-const getType = (value,forceType) => ({ 
-  value: toType(value, forceType || typeof value),
-  type: forceType || typeof value
-});
+const getType = (value,forceType) => {
+  let type = forceType || typeof value;
+  if (type === 'object' && value && typeof value.getMonth === 'function')
+    type = 'date';
+  return { value: toType(value, type), type, };
+}
 exports.toObjArray = settings => 
   Object.keys(settings).map(id =>
     ({ ...getType(settings[id]), id })
