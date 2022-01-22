@@ -14,10 +14,15 @@ function generateMatchups(ranking, { playerspermatch, byes, allOpps }) {
         for (let i = matches.length; i-- > 0; ) { // mutate in reverse
             if (matches[i].length === 1 && byes.includes(matches[i][0])) {
                 // Find the nearest swap w/o a bye
-                const idx = revReplace2dIndex(matches, i, m => !draft.byes.includes(m));
+                const idx = revReplace2dIndex(matches, i, m => !byes.includes(m));
                 if (idx) {
-                    [matches[i][0], matches[idx[0]][idx[1]]] = 
-                    [matches[idx[0]][idx[1]], matches[i][0]];
+                    [
+                        matches[i][0],
+                        matches[idx[0]][idx[1]]
+                    ] = [
+                        matches[idx[0]][idx[1]],
+                        matches[i][0]
+                    ];
                 }
                 // If no replacement is found, player stuck w/ 2nd bye
             }
@@ -38,8 +43,13 @@ function generateMatchups(ranking, { playerspermatch, byes, allOpps }) {
                         isUniqueMatchup(playerOpps, allOpps, splicing(matches[i], j))
                     );
                     if (idx) {
-                        [playerId, matches[idx[0]][idx[1]]] = 
-                        [matches[idx[0]][idx[1]], playerId];
+                        [
+                            matches[i][j],
+                            matches[idx[0]][idx[1]]
+                        ] = [
+                            matches[idx[0]][idx[1]],
+                            playerId
+                        ];
                     }
                     // If no replacement is found, rematch will happen
                 }
