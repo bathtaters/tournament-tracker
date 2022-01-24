@@ -6,11 +6,11 @@ const mockServerCfg = {
 };
 
 // Imports/Mocks
-const mockWarn = jest.spyOn(global.console, "warn");
+const warnSpy = jest.spyOn(global.console, "warn");
 const connectUtils = require('./dbConnect.utils');
 jest.mock('../config/dbServer.json', () => mockServerCfg, {virtual: true});
 
-afterAll(() => { mockWarn.mockRestore(); });
+afterAll(() => { warnSpy.mockRestore(); });
 
 // Test
 describe('getConnStr', () => {
@@ -96,12 +96,12 @@ describe('retryBlock', () => {
   });
 
   it('retries on fail', async () => {
-    mockWarn.mockImplementationOnce(()=>{}).mockImplementationOnce(()=>{});
+    warnSpy.mockImplementationOnce(()=>{}).mockImplementationOnce(()=>{});
     mockFunc.mockRejectedValueOnce('Fail');
 
     await connectUtils.retryBlock(mockFunc, [], 3);
     expect(mockFunc).toBeCalledTimes(2);
-    expect(mockWarn).toBeCalledTimes(1);
+    expect(warnSpy).toBeCalledTimes(1);
   });
 
   it('calls retryCb on each retry', async () => {
@@ -129,7 +129,7 @@ describe('retryBlock', () => {
 
   it('throws on max retries reached', () => {
     expect.assertions(1);
-    mockWarn.mockImplementationOnce(()=>{});
+    warnSpy.mockImplementationOnce(()=>{});
     mockFunc.mockRejectedValueOnce('Fail');
 
     return expect(connectUtils.retryBlock(mockFunc, [], 1)).rejects

@@ -1,5 +1,5 @@
 // Imports/Mocks
-const mockWarn = jest.spyOn(global.console, "warn");
+const warnSpy = jest.spyOn(global.console, "warn");
 const ops = require('./interface');
 const utils = require('../../utils/dbInterface.utils');
 const direct = require('./directOps');
@@ -22,7 +22,7 @@ beforeAll(() => {
   utils.getReturn.mockImplementation(r => r);
 });
 
-afterAll(() => { mockWarn.mockRestore(); });
+afterAll(() => { warnSpy.mockRestore(); });
 
 
 // Tests
@@ -197,7 +197,7 @@ describe('addRows', () => {
   });
 
   it('adds empty row', () => {
-    mockWarn.mockImplementationOnce(()=>{});
+    warnSpy.mockImplementationOnce(()=>{});
     return expect(ops.addRows('test',[])).resolves.toEqual([
       'INSERT INTO test DEFAULT VALUES  RETURNING id;',
       []
@@ -233,9 +233,9 @@ describe('addRows', () => {
   );
 
   it('warns on empty objects', async () => {
-    mockWarn.mockImplementationOnce(()=>{});
+    warnSpy.mockImplementationOnce(()=>{});
     await ops.addRows('test',[]);
-    expect(mockWarn).toHaveBeenCalledWith('Added empty row to test');
+    expect(warnSpy).toHaveBeenCalledWith('Added empty row to test');
   });
 
   it('uses sqlHelpers', async () => {
@@ -269,7 +269,7 @@ describe('addRow', () => {
     );
   });
   it('no rowObj param', async () => {
-    mockWarn.mockImplementationOnce(()=>{});
+    warnSpy.mockImplementationOnce(()=>{});
     await ops.addRow('test', null);
     expect(addRowsSpy).toBeCalledWith(
       expect.anything(),

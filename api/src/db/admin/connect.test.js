@@ -1,5 +1,5 @@
 // Imports/Mocks
-const mockWarn = jest.spyOn(global.console, "warn");
+const warnSpy = jest.spyOn(global.console, "warn");
 const connect = require('./connect');
 const utils = require('../../utils/dbConnect.utils');
 jest.mock('../../utils/dbConnect.utils');
@@ -12,7 +12,7 @@ const forceRetry = async (callback,args,m,n,c,retryCb) => {
 };
 
 // console.warn settings
-afterAll(() => { mockWarn.mockRestore(); });
+afterAll(() => { warnSpy.mockRestore(); });
 
 
 describe('runOperation', () => {
@@ -38,21 +38,21 @@ describe('runOperation', () => {
   });
 
   describe('error handling', () => {
-    beforeEach(() => { mockWarn.mockImplementationOnce(()=>{}); });
+    beforeEach(() => { warnSpy.mockImplementationOnce(()=>{}); });
 
     it('fails on no pool', async () => {
-      console.warn('Clear mockWarn');
+      console.warn('Clear warnSpy');
       await expect(connect.runOperation(mockOp))
         .rejects.toThrowError("Attempting DB access before successfully opening connection.");
-      expect(mockWarn).toBeCalledTimes(1);
+      expect(warnSpy).toBeCalledTimes(1);
     });
 
     it('fails on no client', async () => {
-      console.warn('Clear mockWarn');
+      console.warn('Clear warnSpy');
       mockPool.connect.mockResolvedValueOnce(null);
       await expect(connect.runOperation(mockOp, 43, 21, mockPool))
         .rejects.toThrowError("Unable to connect to DB.");
-      expect(mockWarn).toBeCalledTimes(1);
+      expect(warnSpy).toBeCalledTimes(1);
     });
 
     it('rollback on operation retry', async () => {
@@ -64,8 +64,8 @@ describe('runOperation', () => {
         .toBe('Op success');
       
       expect(mockClient.query).toHaveBeenNthCalledWith(2,"ROLLBACK;BEGIN;");
-      expect(mockWarn).toBeCalledWith('Rolling back & retrying due to: ERR');
-      expect(mockWarn).toBeCalledTimes(1);
+      expect(warnSpy).toBeCalledWith('Rolling back & retrying due to: ERR');
+      expect(warnSpy).toBeCalledTimes(1);
     });
 
     it('rollback on retryBlock error', async () => {
@@ -76,8 +76,8 @@ describe('runOperation', () => {
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects.toThrow();
 
       expect(mockClient.query).toHaveBeenNthCalledWith(2,"ROLLBACK;");
-      expect(mockWarn).toBeCalledWith(retryBlockErr);
-      expect(mockWarn).toBeCalledTimes(1);
+      expect(warnSpy).toBeCalledWith(retryBlockErr);
+      expect(warnSpy).toBeCalledTimes(1);
     });
 
     it('bubbles up retryBlock error', async () => {
@@ -87,7 +87,7 @@ describe('runOperation', () => {
 
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects
         .toThrowError('Test Error');
-      expect(mockWarn).toBeCalledTimes(1);
+      expect(warnSpy).toBeCalledTimes(1);
     });
 
     it('rollback on operation error', async () => {
@@ -95,8 +95,8 @@ describe('runOperation', () => {
 
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects.toThrow();
       expect(mockClient.query).toHaveBeenNthCalledWith(2,"ROLLBACK;");
-      expect(mockWarn).toBeCalledWith(retryBlockErr);
-      expect(mockWarn).toBeCalledTimes(1);
+      expect(warnSpy).toBeCalledWith(retryBlockErr);
+      expect(warnSpy).toBeCalledTimes(1);
     });
 
     it('bubbles up operation error', async () => {
@@ -104,8 +104,8 @@ describe('runOperation', () => {
 
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects
         .toThrowError('Test Error');
-        expect(mockWarn).toBeCalledWith(retryBlockErr);
-        expect(mockWarn).toBeCalledTimes(1);
+        expect(warnSpy).toBeCalledWith(retryBlockErr);
+        expect(warnSpy).toBeCalledTimes(1);
     });
   });
 
@@ -145,12 +145,12 @@ describe('runOperation', () => {
     });
 
     it('releases client on failure', async () => {
-      mockWarn.mockImplementationOnce(()=>{}); // Ignore warning
+      warnSpy.mockImplementationOnce(()=>{}); // Ignore warning
       mockOp.mockImplementationOnce(() => { throw new Error('Test Error'); });
 
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects.toThrow();
       expect(mockClient.release).toHaveBeenCalledTimes(1);
-      expect(mockWarn).toBeCalledTimes(1);
+      expect(warnSpy).toBeCalledTimes(1);
     });
   });
 
