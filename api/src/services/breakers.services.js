@@ -1,39 +1,48 @@
 // Calculate records from DB data
 const logger = console;
-const resultCalc = require('../config/resultCalc');
+const { combine, calcAll, rankSort, finalize } = require('../utils/breakers.utils');
 
 // Get breakers data & determine winner
 
 function breakers(data, originalOrder, sameTournament = true) {
     
-    // Build map of data
-    let dataMap = {};
-    data.forEach((a,ai) => a.forEach((b,bi) => dataMap[b.playerid] = [ai,bi]));
+    // Index data by [playerId][draftId] for opponent lookup
+    const playerData = {};
+    data.forEach((d,idx) => {
+        if (!playerData[d.draftid]) playerData[d.draftid] = {};
+        if (d.playerid in playerData[d.draftid])
+            logger.warn('Duplicate player-draft data:',d.playerid,d.draftid);
+        playerData[d.draftid][d.playerid] = idx;
+    });
 
     // Calculate results (Combining multiples for a player)
     let result = {};
-    data[0].forEach(d => {
-        // Get opponent stats
-        const opps = d.oppids ? d.oppids.map(o => {
-            const [i,j] = dataMap[o];
-            return data[i][j] || {};
-        }) : [];
-        // Create or add to entry
+    data.forEach(d => {
+        // Collect opponent stats (Warn if oppId doesn't exist)
+        const opps = d.oppids ? d.oppids.map(o => 
+            // Safely get from 
+            (d.draftid in playerData && o in playerData[d.draftid] &&
+                data[playerData[d.draftid][o]]) ||
+            logger.warn('Opponent missing from draftData:',o)
+        ).filter(Boolean) : [];
+
         result[d.playerid] = result[d.playerid]
-            ? resultCalc.combine(
-                resultCalc.calcAll(d, opps),
+            // Append entry
+            ? combine(
+                calcAll(d, opps),
                 result[d.playerid]
-            ) : resultCalc.calcAll(d, opps);
+            // Create entry
+            ) : calcAll(d, opps);
     });
 
     // Finalize records w/ multiple entries (Calc averages)
     Object.keys(result).forEach(p => {
-        if (result[p].avgCounter) result[p] = resultCalc.finalize(result[p]);
+        if (result[p].avgCounter) result[p] = finalize(result[p]);
     });
 
     // Rank players
     result.ranking = Object.keys(result).sort(
-        resultCalc.rankSort(result, sameTournament, originalOrder)
+        rankSort(result, originalOrder, sameTournament)
     );
     
     return result;
