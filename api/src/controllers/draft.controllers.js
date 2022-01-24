@@ -49,7 +49,7 @@ async function getBreakers(req, res) {
     draft.getBreakers(req.params.id),
   ]);
   
-  res.sendAndLog(breakers && toBreakers([breakers], players, true));
+  res.sendAndLog(breakers && toBreakers(breakers, players, true));
 }
 async function getAllBreakers(_, res) {
   const [players,breakers] = await Promise.all([
@@ -57,7 +57,7 @@ async function getAllBreakers(_, res) {
     draft.getBreakers(null, true),
   ]);
 
-  res.sendAndLog(breakers && toBreakers([breakers], players, false));
+  res.sendAndLog(breakers && toBreakers(breakers, players, false));
 }
 
 
