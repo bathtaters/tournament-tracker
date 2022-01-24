@@ -19,7 +19,8 @@ const toType = (value, type) => {
     case 'number': return value.toString();
     case 'date': 
       if (typeof value.toISOString === 'function')
-        return console.log(value, 'not date') || value.toISOString();
+        return value.toISOString();
+      else console.warn('non-date passed as date',value);
     case 'boolean':
       return !value || value === 'false' ? 'false' : 'true';
     case 'object': 
