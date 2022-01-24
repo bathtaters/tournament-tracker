@@ -9,34 +9,20 @@ const monoValueObj = (keys, value) => keys.reduce((obj, key) =>
 );
 
 // Builds queries for creating a round
-function newRound({ draftData, drops, breakers, autoReportByes = true }) {
-    // Error check
-    if (
-        !draftData.players ||
-        !draftData.players.length ||
-        (drops && drops.length >= draftData.players.length)
-    )
-        throw new Error("No active players are registered");
-
-    if (draftData.roundactive > draftData.roundcount)
-        throw new Error("Draft is over");
-
-    if (draftData.roundactive && !draftData.canadvance)
-        throw new Error("All matches have not been reported");
-    
-    
+function round({ draftData, drops, breakers }, autoReportByes = true) {
     // Increment round number & create return object
     const matchBase = { 
-        round: draftData.roundactive + 1,
+        round: Math.min(draftData.roundactive + 1, draftData.roundcount),
         draftId: draftData.id,
     };
 
-    if (draftData.roundactive === draftData.roundcount) return matchBase; // Draft has ended
+    if (matchBase.round === draftData.roundcount) return matchBase; // Draft has ended
 
     // Collect data for match generator
     let playerList = draftData.roundactive ?
-        toBreakers([breakers], draftData.players).ranking :
-        draftData.players || [];
+        toBreakers(breakers, draftData.players).ranking :
+        draftData.players;
+    if (!playerList) playerList = [];
     if (drops) playerList = playerList.filter(p => !drops.includes(p));
 
     const oppData = draftData.roundactive && arrToObj('playerid', { valKey: 'oppids' })(breakers);
@@ -57,4 +43,4 @@ function newRound({ draftData, drops, breakers, autoReportByes = true }) {
     };
 }
 
-module.exports = newRound;
+module.exports = round;
