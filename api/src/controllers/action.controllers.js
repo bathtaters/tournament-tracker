@@ -35,15 +35,29 @@ async function swapPlayers(req, res) {
 async function nextRound(req, res) {
   const data = await draft.getDraftReport(req.params.id);
 
+  // Error check
+  if (!data) throw new Error("Draft not found: "+req.params.id);
+
+  if (
+    !data.draftData.players ||
+    !data.draftData.players.length ||
+    (data.drops && data.drops.length >= data.draftData.players.length)
+  )
+    throw new Error("No active players are registered");
+
+  if (data.draftData.roundactive > data.draftData.roundcount)
+    throw new Error("Draft is over");
+
+  if (data.draftData.roundactive && !data.draftData.canadvance)
+    throw new Error("All matches have not been reported");
+
   // Build round
-  const { draftId, round, matches } = roundService(data);
-  if (!draftId || round == null)
-    throw new Error("Error determining current round");
+  const { draftId, round, matches } = roundService(data, true);
+  // if (!draftId || round == null) throw new Error("Error determining current round");
   
   // Create matches
   const ret = await draft.pushRound(draftId, round, matches);
-  if (!Array.isArray(ret) || !ret[0])
-    throw new Error("Error adding round to database");
+  if (!Array.isArray(ret) || !ret[0]) throw new Error("Error adding round to database");
 
   return res.sendAndLog({
     id: ret[0].id,
