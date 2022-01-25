@@ -1,5 +1,5 @@
 // Model
-const matches = require('../db/models/match');
+const match = require('../db/models/match');
 const defs = require('../config/validation').config.defaults.match;
 
 // Imports
@@ -7,19 +7,18 @@ const { arrToObj } = require('../utils/shared.utils');
 
 // Create empty report object
 const emptyReport = {
-    players: defs.players,
+    wins: defs.wins,
     draws: defs.draws,
     drops: defs.drops,
     reported: true,
 };
 
 /* GET match database. */
-const getMatch = (req, res) => matches.get(req.params.matchId, true).then(res.sendAndLog);
-
-const getAllMatches = (_, res) => matches.get().then(res.sendAndLog);
+const getAllMatches = (_, res) => match.get().then(res.sendAndLog);
 
 async function getDraftMatches(req, res) {
-  const matchData = await matches.getByDraft(req.params.draftId).then(arrToObj('id', {delKey:0}));
+  const matchData = await match.getByDraft(req.params.draftId).then(arrToObj('id', {delKey:0}));
+  matchData && Object.values(matchData).forEach(m => m.isDraw = m.wins.filter(w => w == m.maxwins).length !== 1);
   return res.sendAndLog(matchData || {});
 }
 
@@ -28,25 +27,24 @@ async function getDraftMatches(req, res) {
 // Report match
 //   { players: {playerId: winCount, ...} , draws: drawCount, drops: [droppedPlayers] }
 async function reportMatch(req, res) {
-  const ret = await matches.update(req.params.id, { ...emptyReport, ...req.body });
+  const ret = await match.update(req.params.id, { ...emptyReport, ...req.body });
   return res.sendAndLog({ id: req.params.id, draftId: ret && ret.draftid, });
 } 
 
 // Clear report
 async function unreportMatch(req, res) {
   // Get player names
-  const match = await matches.get(req.params.id, false, 'players, draftId');
-  if (!match) throw new Error("Match not found or invalid.");
+  const matches = await match.get(req.params.id, false, 'players, draftId');
+  if (!matches) throw new Error("Match not found or invalid.");
 
-  // Zero out & set report
-  match.players && Object.keys(match.players).forEach(p => match.players[p] = 0);
-  await matches.update(req.params.id, {
+  // zero out wins, set reported
+  await match.update(req.params.id, {
     ...emptyReport,
-    players: match.players,
+    wins: (matches.wins || []).map(() => 0),
     reported: false
   });
 
-  return res.sendAndLog({ id: req.params.id, draftId: match.draftid, });
+  return res.sendAndLog({ id: req.params.id, draftId: matches.draftid, });
 }
 
 // Update partial report data
@@ -56,12 +54,12 @@ async function updateMatch(req, res) {
   // Update players object
   let ret;
   if (req.body.players && Object.keys(req.body.players).length)
-    ret = await matches.updatePlayer(req.params.id, req.body.players);
+    ret = await match.updatePlayer(req.params.id, req.body.players);
     
   // Update remaining data
   delete req.body.players;
   if (Object.keys(req.body).length)
-    ret = await matches.update(req.params.id, req.body);
+    ret = await match.update(req.params.id, req.body);
   
   // Return match & draft IDs
   return res.sendAndLog({ id: req.params.id, draftId: ret && ret.draftid, });
@@ -69,6 +67,6 @@ async function updateMatch(req, res) {
 
 
 module.exports = {
-  getMatch, getAllMatches, getDraftMatches,
+  getAllMatches, getDraftMatches,
   reportMatch, unreportMatch, updateMatch,
 };

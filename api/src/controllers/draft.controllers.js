@@ -8,56 +8,41 @@ const defs = require('../config/validation').config.defaults.draft;
 const toBreakers = require('../services/breakers.services');
 const { arrToObj } = require('../utils/shared.utils');
 
+const ignoreUnfinishedDrafts = true;
+
 /* GET draft database. */
 
-// HELPER: Convert array of match object to 2D array using round as index
-const matchListToRoundArray = matches => matches && matches.reduce((arr,round) => {
-  arr[round.round - 1] = round.matches;
-  return arr;
-}, []);
-
-
 // Specific draft
-async function getDraft(req, res, next) {
-  const draftData = await draft.getDraft(req.params.id, true);
+async function getDraft(req, res) {
+  const draftData = await draft.get(req.params.id, true);
   if (!draftData || draftData.length === 0) throw new Error('Draft does not exist <'+ req.params.id+'>');
 
-  const [drops, matches] = await Promise.all([
-    draft.getDraftDrops(req.params.id),
-    match.listByDraft(req.params.id).then(matchListToRoundArray),
-  ]);
+  const matches = await match.listByDraft(req.params.id).then(sortMatchResult);
 
-  res.sendAndLog({ ...draftData, matches, drops });
+  return res.sendAndLog({ ...draftData, matches });
 }
 
 // All drafts
-async function getAllDrafts(_, res) {
-  const drafts = await draft.get().then(arrToObj('id'));
-  const matches = await match.listByDraft().then(matchListToRoundArray);
-  Object.keys(matches).forEach(d => {
-    if (!drafts[d]) return logger.error('Match is missing draft',d);
-    drafts[d].matches = matches[d];
-  });
-
-  res.sendAndLog(drafts);
-}
+const getAllDrafts = (_, res) => draft.get().then(arrToObj('id')).then(res.sendAndLog);
 
 // Draft Stats
 async function getBreakers(req, res) {
-  const [players,breakers] = await Promise.all([
-    draft.getDraft(req.params.id).then(r => r && r.players),
-    draft.getBreakers(req.params.id),
+  const [matches, players, opps] = await Promise.all([
+    match.getByDraft(req.params.id),
+    draft.getPlayers(req.params.id).then(d => d.players),
+    draft.getOpponents(req.params.id).then(arrToObj('playerid',{ valKey: 'oppids' })),
   ]);
   
-  res.sendAndLog(breakers && toBreakers(breakers, players, true));
+  return res.sendAndLog(toBreakers(matches, players, opps, true));
 }
 async function getAllBreakers(_, res) {
-  const [players,breakers] = await Promise.all([
-    player.get().then(r => r && r.map(p => p.id)),
-    draft.getBreakers(null, true),
+  const [matches, players, opps] = await Promise.all([
+    match.getAll(ignoreUnfinishedDrafts).then(matchesByDraft),
+    player.list(),
+    draft.getOpponents(null, ignoreUnfinishedDrafts).then(oppsByDraft),
   ]);
-
-  res.sendAndLog(breakers && toBreakers(breakers, players, false));
+  
+  return res.sendAndLog(toBreakers(matches, players, opps, false));
 }
 
 
@@ -81,3 +66,26 @@ module.exports = {
   getBreakers, getAllBreakers, 
   createDraft, removeDraft, updateDraft,
 };
+
+// HELPER - index
+const sortMatchResult = result => result && result.reduce((matchArr, row) => {
+  matchArr[row.round - 1] = row.matches;
+  return matchArr;
+}, []);
+
+// HELPERS - breakersGetAll - index opps/matches by draft
+const oppsByDraft = opps => opps.reduce((obj,entry) => {
+  if (!obj[entry.draftid]) obj[entry.draftid] = {};
+
+  else if (obj[entry.draftid][entry.playerid])
+    console.error('Duplicate player opponent objects:',entry,obj[entry.draftid][entry.playerid]);
+
+  obj[entry.draftid][entry.playerid] = entry.oppids;
+  return obj;
+}, {});
+
+const matchesByDraft = matches => matches.reduce((obj,entry) => {
+  if (!obj[entry.draftid]) obj[entry.draftid] = [ entry ];
+  else obj[entry.draftid].push(entry);
+  return obj;
+}, {});
