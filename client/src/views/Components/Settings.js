@@ -19,6 +19,8 @@ const settingsRows = [
   },
   [{ label: 'Start Date', id: 'datestart', type: 'date' },
   { label: 'End Date', id: 'dateend', type: 'date' }],
+  [{ label: 'Auto-Report Byes', id: 'autobyes', type: 'checkbox' },
+  { label: 'Daily Slots', id: 'dayslots', type: 'number' },],
   { label: 'Show Advanced', id: 'showadvanced', type: 'checkbox' },
   { label: 'Show Raw Data', id: 'showrawjson', type: 'checkbox' },
 ];
