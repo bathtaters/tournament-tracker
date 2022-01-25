@@ -16,11 +16,7 @@ export const playerApi = baseApi.injectEndpoints({
     }),
     playerDrafts:  build.query({
       query: (id) => `player/${id}/drafts`,
-      transformResponse: res => {
-        res.forEach((d,i) => res[i].status = getStatus(d));
-        console.log('PLAYER_DET',res);
-        return res;
-      },
+      transformResponse: res => console.log('PLAYER_DRAFTS',res) || res,
       providesTags: getTags('PlayerDetail',{ all: false }),
     }),
 
