@@ -1,3 +1,4 @@
+const logger = console;
 
 // Convert between values
 exports.asType = ({value, type}) => {
@@ -20,7 +21,7 @@ const toType = (value, type) => {
     case 'date': 
       if (typeof value.toISOString === 'function')
         return value.toISOString();
-      else console.warn('non-date passed as date',value);
+      else logger.warn('non-date passed as date',value);
     case 'boolean':
       return !value || value === 'false' ? 'false' : 'true';
     case 'object': 

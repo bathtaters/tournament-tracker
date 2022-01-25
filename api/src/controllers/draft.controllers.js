@@ -5,6 +5,7 @@ const match = require('../db/models/match');
 const defs = require('../config/validation').config.defaults.draft;
 
 // Services/Utils
+const logger = console;
 const toBreakers = require('../services/breakers.services');
 const { arrToObj } = require('../utils/shared.utils');
 
@@ -78,7 +79,7 @@ const oppsByDraft = opps => opps.reduce((obj,entry) => {
   if (!obj[entry.draftid]) obj[entry.draftid] = {};
 
   else if (obj[entry.draftid][entry.playerid])
-    console.error('Duplicate player opponent objects:',entry,obj[entry.draftid][entry.playerid]);
+    logger.error('Duplicate player opponent objects:',entry,obj[entry.draftid][entry.playerid]);
 
   obj[entry.draftid][entry.playerid] = entry.oppids;
   return obj;
