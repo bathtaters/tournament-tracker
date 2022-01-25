@@ -3,9 +3,8 @@ import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 import {
-  formatQueryError, formatMatchTitle, formatRecord, swapPlayerMsg
+  formatQueryError, formatMatchTitle, formatRecord, swapPlayerMsg, maxDrawsCounter
 } from '../../assets/strings';
-import { getWinsMax } from "../../controllers/draftHelpers";
 
 import Modal from "./Modal";
 import DragBlock from "./DragBlock";
@@ -23,8 +22,7 @@ import {
 import { useBreakersQuery } from "../../models/draftApi";
 
 
-
-function Match({ draftId, matchId, bestOf, isEditing }) {
+function Match({ draftId, matchId, wincount, isEditing }) {
   // Init
   const reportModal = useRef(null);
   const canSwap = useCallback((types, a, b) => a !== b && types.includes("json/matchplayer"),[]);
@@ -35,7 +33,6 @@ function Match({ draftId, matchId, bestOf, isEditing }) {
   const { data: rankings, isLoading: loadingRank, error: rankError } = useBreakersQuery(draftId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
   const matchData = data && data[matchId];
-  const maxWins = getWinsMax(bestOf);
   const title = isLoading || loadingPlayers || !matchData || !players ? 'Loading' :
     matchData.players ? formatMatchTitle(matchData.players, players) :
     console.error('Title error:',matchData) || 'Untitled';
@@ -58,7 +55,7 @@ function Match({ draftId, matchId, bestOf, isEditing }) {
   const handleSwap = (playerA, playerB) => {
     if (playerA.id === playerB.id) return;
     if ((playerA.reported || playerB.reported) && !window.confirm(swapPlayerMsg())) return;
-    swapPlayers({draftId, playerA, playerB});
+    swapPlayers({draftId, swap: [ playerA, playerB ] });
   };
   
   
@@ -138,17 +135,16 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
     :
       <Counter
         isEditing={isEditing}
-        maxVal={maxWins}
+        maxVal={wincount}
         setVal={setVal('players', playerId)}
         val={
-          isNaN(matchData.players[playerId]) ?
-          matchData.players[playerId] :
-          +matchData.players[playerId]
+          matchData.wins && isNaN(matchData.wins[index]) ?
+          matchData.wins[index] : matchData.wins ? +matchData.wins[index] : '-'
         }
         className={
           'text-base ' + 
           (isEditing || !matchData.isbye ? '' : 'invisible ') + 
-          (matchData.winners && matchData.winners.includes(playerId) ? 'pos-color' : '')
+          (matchData.wins && matchData.wins[index] && matchData.wins[index] == matchData.maxwins ? 'pos-color' : '')
         }
       />
     }
@@ -159,7 +155,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
   return (
     <div className={outerClass + ' flex-col relative'}>
       <div className="flex justify-evenly items-center text-center">
-        { Object.keys(matchData.players).map(playerBox) }
+        { matchData.players.map(playerBox) }
       </div>
 
       { matchData.reported &&
@@ -168,7 +164,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
         >
           <Counter
             isEditing={isEditing}
-            maxVal={bestOf || 0}
+            maxVal={maxDrawsCounter || 0}
             setVal={setVal('draws')}
             suff={d=>' draw'+(d===1?'':'s')}
             val={isNaN(matchData.draws) ? matchData.draws : +matchData.draws}
@@ -178,7 +174,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
 
       <div className="flex justify-evenly text-center base-color mb-2">
         { matchData.reported ? <>
-          { Object.keys(matchData.players).map(winsBox) }
+          { matchData.players.map(winsBox) }
           { isEditing && 
             <div
               className="text-red-500 absolute bottom-0 right-1 text-xs font-thin cursor-pointer hover:neg-color"
@@ -202,12 +198,11 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
 
       <Modal ref={reportModal}>
         <Report
-          bestOf={bestOf}
           draftId={draftId}
           hideModal={()=>reportModal.current.close(true)}
           lockModal={()=>reportModal.current.lock()}
           match={matchData}
-          maxWins={maxWins}
+          wincount={wincount}
           title={title}
         />
       </Modal>
@@ -219,7 +214,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
 Match.propTypes = {
   matchId: PropTypes.string,
   draftId: PropTypes.string,
-  bestOf: PropTypes.number,
+  wincount: PropTypes.number,
   isEditing: PropTypes.bool.isRequired,
 };
 
