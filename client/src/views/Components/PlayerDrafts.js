@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import RawData from "./RawData";
 
 import { usePlayerDraftsQuery } from "../../models/playerApi";
+import { useDraftQuery } from "../../models/draftApi";
 import { usePrefetch, } from "../../models/baseApi";
 
 import { formatQueryError, statusInfo } from "../../assets/strings";
@@ -28,38 +29,11 @@ const scheduleRows = [
   { title: 'Draws', value: ({draws}) => draws, hideBelow: 2 },
 ]
 const scheduleGridClass = `grid-cols-${scheduleRows.reduce((c,r) => c + (r.span || 1),0)}`;
+const scheduleGridSpan = scheduleGridClass.replace('grid-cols','col-span')
 
 // Main component
 function PlayerDrafts({ id }) {
   const { data, isLoading, error } = usePlayerDraftsQuery(id);
-
-  // Setup pre-fetching
-  const prefetchDraft = usePrefetch('draft');
-  const prefetchMatch = usePrefetch('match');
-  const prefetchStats = usePrefetch('breakers');
-  const loadDraft = id => { prefetchDraft(id); prefetchMatch(id); prefetchStats(id); };
-
-  const draftRow = draft => scheduleRows.map(row => 
-    !row.hideBelow || row.hideBelow <= draft.status ?
-      <h4
-        className={'font-thin base-color ' + (row.span ? ' col-span-'+row.span : '')}
-        key={draft.id+'_'+row.title}
-      >
-        { row.link ?
-          <Link
-            className={row.class ? row.class(draft): ''}
-            onMouseEnter={()=>loadDraft(draft.id)}
-            to={row.link(draft)}
-          >
-            {row.value(draft)}
-          </Link>
-        :
-          <span className={row.class ? row.class(draft): ''}>{row.value(draft)}</span>
-        }
-      </h4>
-    : 
-    <div className={row.span ? 'col-span-'+row.span : ''} key={draft.id+'_'+row.title} />
-  );
 
   return (
     <div className="my-4">
@@ -79,8 +53,8 @@ function PlayerDrafts({ id }) {
           ) }
 
           { 
-            data && data.length ? data.map(draftRow) : 
-            <div className={"dim-color italic font-thin text-center my-2 "+scheduleGridClass.replace('grid-cols','col-span')}>– None –</div> 
+            data && data.length ? data.map(draftId => <DraftRow draftId={draftId}/>) : 
+            <div className={"dim-color italic font-thin text-center my-2 "+scheduleGridSpan}>– None –</div> 
           }
         </div>
       }
@@ -90,6 +64,48 @@ function PlayerDrafts({ id }) {
   );
 }
 
+// Row w/ draft info
+
+function DraftRow({ draftId }) {
+  const { data, isLoading, error } = useDraftQuery(draftId);
+
+  // Setup pre-fetching
+  const prefetchMatch = usePrefetch('match');
+  const prefetchStats = usePrefetch('breakers');
+  const loadDraft = id => { prefetchMatch(id); prefetchStats(id); };
+
+  if (isLoading) return (<div className={"dim-color font-thin text-center "+scheduleGridSpan}>...</div>);
+
+  if (error || !data)
+    return (<div className={"dim-color font-thin italic "+scheduleGridSpan}>{
+      error ? formatQueryError(error) : 'Not found'
+    }</div>);
+
+  return scheduleRows.map(row => 
+    !row.hideBelow || row.hideBelow <= data.status ?
+      <h4
+        className={'font-thin base-color ' + (row.span ? ' col-span-'+row.span : '')}
+        key={draftId+'_'+row.title}
+      >
+        { row.link ?
+          <Link
+            className={row.class ? row.class(data): ''}
+            onMouseEnter={()=>loadDraft(draftId)}
+            to={row.link(data)}
+          >
+            {row.value(data)}
+          </Link>
+        :
+          <span className={row.class ? row.class(data): ''}>{row.value(data)}</span>
+        }
+      </h4>
+    : 
+    <div className={row.span ? 'col-span-'+row.span : ''} key={draftId+'_'+row.title} />
+  );
+}
+
+
 PlayerDrafts.propTypes = { id: PropTypes.string };
+DraftRow.propTypes = { draftId: PropTypes.string };
 
 export default PlayerDrafts;
