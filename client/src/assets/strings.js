@@ -3,7 +3,7 @@
 export const defaultTournamentTitle = "My Tournament";
 export const defaultDraftTitle = "New Draft";
 export const defaultPlayerName = "New Player";
-
+export const maxDrawsCounter = 1;
 
 
 
@@ -42,7 +42,7 @@ export const roundButtonText = [
 export const formatQueryError = err => 'ERROR: '+JSON.stringify(err);
 
 export const formatMatchTitle = (matchPlayers, playerData) =>
-  Object.keys(matchPlayers).map(id => (playerData[id] && playerData[id].name) || '?').join(' vs. ');
+  matchPlayers.map(id => (playerData[id] && playerData[id].name) || '?').join(' vs. ');
 
 export const formatRecord = (record, braces=true) => (braces?'[ ':'')+(record || ['','']).join(' - ')+(braces?' ]':'');
 
