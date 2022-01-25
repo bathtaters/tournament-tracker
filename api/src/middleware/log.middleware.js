@@ -1,5 +1,5 @@
 // Initialize logging on requests
-const logger = console;
+const logger = require('../utils/log.adapter');
 
 function setupLogging(req, res, next) {
   // Log request

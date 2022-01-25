@@ -1,5 +1,5 @@
 // Handle error response to client
-const logger = console;
+const logger = require('../utils/log.adapter');
 
 // String formatting
 const defaultError = require('../config/constants.json').defaultError;

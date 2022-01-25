@@ -1,5 +1,5 @@
 // -- Common Utility Functions -- //
-const logger = console;
+const logger = require('./log.adapter');
 
 
 /**

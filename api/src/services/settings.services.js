@@ -1,4 +1,4 @@
-const logger = console;
+const logger = require('../utils/log.adapter');
 
 // Convert between values
 exports.asType = ({value, type}) => {

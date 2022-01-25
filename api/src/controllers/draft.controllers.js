@@ -5,7 +5,7 @@ const match = require('../db/models/match');
 const defs = require('../config/validation').config.defaults.draft;
 
 // Services/Utils
-const logger = console;
+const logger = require('../utils/log.adapter');
 const toBreakers = require('../services/breakers.services');
 const { arrToObj } = require('../utils/shared.utils');
 

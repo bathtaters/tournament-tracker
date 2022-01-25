@@ -5,7 +5,7 @@ const envVars = { "HOME": process.env.HOME || "", "env:appdata": process.env.APP
 
 // Import
 const serverCfg = require('../config/dbServer.json');
-const logger = console;
+const logger = require('./log.adapter');
 
 // Get DB connection string //
 

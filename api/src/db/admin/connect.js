@@ -3,7 +3,7 @@ const { Pool } = require("pg");
 const parse = require("pg-connection-string").parse;
 
 const { getConnStr, retryBlock } = require('../../utils/dbConnect.utils');
-const logger = console;
+const logger = require('../../utils/log.adapter');
 
 // Default Settings
 const retryAttempts = 15;

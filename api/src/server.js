@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const logger = console;
+const logger = require('./utils/log.adapter');
 const { name, port, apiVersion: version } = require('./config/meta');
 
 // Setup middleware

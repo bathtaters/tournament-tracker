@@ -1,11 +1,11 @@
 // Calculate records from DB data
-const logger = console;
+const logger = require('../utils/log.adapter');
 const { combine, calcAll, rankSort, finalize } = require('../utils/breakers.utils');
 
 // Get breakers data & determine winner
 
-function breakers(data, originalOrder, sameTournament = true) {
-    
+function breakers(data, originalOrder, opps, sameTournament = true) {
+    return console.log('MATCHES',data,'PLAYERS',originalOrder,'OPPS',opps) || { ranking: originalOrder };
     // Index data by [playerId][draftId] for opponent lookup
     const playerData = {};
     data.forEach((d,idx) => {

@@ -1,5 +1,5 @@
 /* *** SIMPLE SQL UI *** */
-const logger = console;
+const logger = require('../../utils/log.adapter');
 const direct = require('./directOps');
 const {
     strTest, queryLabels, queryValues,

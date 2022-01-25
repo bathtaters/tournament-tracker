@@ -1,4 +1,4 @@
-const logger = console;
+const logger = require('../utils/log.adapter');
 const db = require('../db/admin/connect');
 
 async function initServices() {
