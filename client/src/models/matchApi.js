@@ -1,11 +1,13 @@
 import { baseApi } from './baseApi';
+import { swapPlayerArrays, moveDrops } from '../services/playerSwappers';
 import getTags from '../services/getTags';
+
 
 export const matchApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     // Queries
     match:   build.query({
-      query: draftId => draftId ? `match/all/draft/${draftId}` : 'match/all',
+      query: draftId => draftId ? `match/draft/${draftId}` : 'match/all',
       transformResponse: res => console.log('MATCH',res) || res,
       providesTags: getTags({Match: (r,i,a)=> (r && r.draftid) || a},{limit:1}),
     }),
@@ -43,10 +45,13 @@ export const matchApi = baseApi.injectEndpoints({
       invalidatesTags: getTags('Match',{key:'draftId',addBase:['PlayerDetail'],all:0}),
       onQueryStarted({ id, draftId, clear = false, ...body }, { dispatch }) {
         dispatch(matchApi.util.updateQueryData('match', draftId, draft => { 
-          draft[body.playerA.id].players[body.playerB.playerId] = draft[body.playerA.id].players[body.playerA.playerId];
-          draft[body.playerB.id].players[body.playerA.playerId] = draft[body.playerB.id].players[body.playerB.playerId];
-          delete draft[body.playerA.id].players[body.playerA.playerId];
-          delete draft[body.playerB.id].players[body.playerB.playerId];
+          const idx = [...Array(2)].map((_,i) => draft[body.swap[i].id].players.indexOf(body.swap[i].playerId));
+          if (idx.every(i => i !== -1)) {
+            swapPlayerArrays(draft, body.swap, idx, 'players');
+            swapPlayerArrays(draft, body.swap, idx, 'wins');
+          }
+          moveDrops(draft, body.swap[0].id, body.swap[1].id, body.swap[0].playerId, 'drops');
+          moveDrops(draft, body.swap[1].id, body.swap[0].id, body.swap[1].playerId, 'drops');
         }));
       },
     }),
