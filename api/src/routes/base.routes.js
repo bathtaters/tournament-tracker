@@ -17,6 +17,7 @@ router.get('/all', catcher(controller.getAll));
 
 // Settings
 router.get('/settings', catcher(controller.getSettings));
+router.get('/settings/:setting', catcher(controller.getSetting));
 router.patch('/settings', catcher(controller.setSettings));
 
 // Schedule
