@@ -6,14 +6,14 @@ import { equalArrays } from "./misc";
 // Base settings
 export const limits = {
   title: {min: 0, max: 50},
-  bestof: {min: 1, max: 7},
+  wincount: {min: 1, max: 7},
   playerspermatch: {min: 2, max: 8},
   roundcount: {min: 1, max: 10},
   clocklimit: {min: 1, max: 24*60*60},
 };
 export const defaultValues = {
   title: defaultDraftTitle, day: null,
-  players: [], bestof: 3,
+  players: [], wincount: 2,
   playerspermatch: 2,
   roundcount: 3, clocklimit: 3600,
   lockat: 2
@@ -49,7 +49,6 @@ export const orderPlayers = breakersData => (a,b) => {
   }
   return a > b ? 1 : -1;
 }
-export const getWinsMax = bestOf => bestOf == null ? 0 : Math.floor(bestOf/2) + 1;
 
 
 // Generate temp round

@@ -81,9 +81,9 @@ function Draft() {
               <span>{data.status === 1 ? 'Not started' : 'Complete'}</span>
             ) : null }
           </h4>
-          { data.playerspermatch && data.bestof ? (
+          { data.playerspermatch && data.wincount ? (
             <h5 className="pt-0 italic dim-color">
-              {data.playerspermatch}-player, best of {data.bestof}
+              {data.playerspermatch}-player, first to {data.wincount}
             </h5>
           ) : null }
           <form className="text-center my-6">

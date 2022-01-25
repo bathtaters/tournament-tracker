@@ -29,7 +29,7 @@ const settingsRows = [ 'custom', [
     type: 'number', disabled: lockAt(3),
     min: data => data ? data.roundactive : limits.roundcount.min
   },{
-    label: 'Best Of', id: 'bestof',
+    label: 'Wins Needed', id: 'wincount',
     type: 'number', disabled: lockAt(),
   },{
     label: 'Players per Game', id: 'playerspermatch',

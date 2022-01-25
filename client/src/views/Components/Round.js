@@ -28,7 +28,7 @@ function Round({ draftId, round, deleteRound }) {
         : <>
           { data.matches[round].map((matchId, idx) => 
             <Match
-              bestOf={data.bestof}
+              wincount={data.wincount}
               draftId={draftId}
               isEditing={isEditing}
               key={matchId}

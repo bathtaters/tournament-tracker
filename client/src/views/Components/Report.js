@@ -8,8 +8,9 @@ import { useReportMutation } from "../../models/matchApi";
 
 import { formatQueryError } from "../../assets/strings";
 
+const maxDraws = 9; // TEMP
 
-function Report({ title, match, hideModal, lockModal, bestOf, maxWins, draftId }) {
+function Report({ title, match, hideModal, lockModal, wincount, draftId }) {
   // Global
   const { data: players, isLoading, error } = usePlayerQuery();
 
@@ -30,12 +31,12 @@ function Report({ title, match, hideModal, lockModal, bestOf, maxWins, draftId }
       <h4 className="font-light dim-color text-center">{formatQueryError(error)}</h4>
     </div>);
 
-  const playerRows = Object.keys(match.players).map(pid => [
+  const playerRows = match.players.map((pid,idx) => [
     {
-      id: 'players.'+pid, type: 'number',
+      id: 'wins.'+idx, type: 'number',
       label: (players[pid] && players[pid].name) || pid,
       labelClass: "text-base sm:text-xl font-medium mx-2 text-right",
-      defaultValue: 0, min: 0, max: maxWins, isFragment: true,
+      defaultValue: 0, min: 0, max: wincount, isFragment: true,
     },{ 
       label: 'Drop', id: 'drops.'+pid, type: 'checkbox',
       className: "text-xs sm:text-base font-thin mx-2",
@@ -45,7 +46,7 @@ function Report({ title, match, hideModal, lockModal, bestOf, maxWins, draftId }
     {
       label: 'Draws', id: 'draws', type: 'number', 
       labelClass: "text-base sm:text-xl font-light mx-2 text-right",
-      defaultValue: 0, min: 0, max: bestOf, isFragment: true,
+      defaultValue: 0, min: 0, max: maxDraws, isFragment: true,
     }, 'spacer'
   ]]);
 
@@ -68,8 +69,7 @@ function Report({ title, match, hideModal, lockModal, bestOf, maxWins, draftId }
 Report.propTypes = {
   match: PropTypes.object,
   title: PropTypes.string,
-  bestOf: PropTypes.number,
-  maxWins: PropTypes.number,
+  wincount: PropTypes.number,
   hideModal: PropTypes.func,
   lockModal: PropTypes.func,
   draftId: PropTypes.string,
