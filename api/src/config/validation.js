@@ -21,8 +21,10 @@ const validateConfig = {
       title: "Tournament Tracker",
       showadvanced: false,
       showrawjson: false,
+      dayslots: 4,
       datestart: today,
       dateend: tomorrow,
+      autobyes: true,
     },
     player: {
       name: "New Player",
@@ -32,10 +34,11 @@ const validateConfig = {
     draft: {
       title: "New Game",
       day: null,
+      slot: 0,
       players: [],
       roundactive: 0,
       roundcount: 3,
-      bestof: 3,
+      wincount: 2,
       playerspermatch: 3,
       clocklimit: '60 mins',
       clockstart: null,
@@ -43,7 +46,8 @@ const validateConfig = {
     },
     match: {
       round: 1,
-      players: {},
+      players: [],
+      wins: [],
       draws: 0,
       drops: [],
       reported: false,
@@ -54,6 +58,7 @@ const validateConfig = {
     settings: {
       title: sharedLimits.title,
       daterange: { min: 1, max: 30 },
+      dayslots: { min: 0, max: 10 },
     },
     player: {
       name: sharedLimits.title,
@@ -64,12 +69,13 @@ const validateConfig = {
       players: sharedLimits.player,
       roundactive: activeRoundLimit,
       roundcount: sharedLimits.rounds,
-      bestof: { min: 1, max: 11 },
+      wincount: { min: 1, max: 10 },
       playerspermatch: { min: 1, max: 4 },
     },
     match: {
       round:   sharedLimits.rounds,
       players: sharedLimits.player,
+      wins:    sharedLimits.player,
       draws:   { min: 1, max: 99 },
       drops:   sharedLimits.player,
     }
@@ -80,6 +86,8 @@ const validateConfig = {
       title: "string",
       showadvanced: "boolean",
       showrawjson: "boolean",
+      autobyes: "boolean",
+      dayslots: "int",
       datestart: "string",
       dateend: "string"
     },
@@ -96,7 +104,7 @@ const validateConfig = {
       players: "array:uuid",
       roundactive: "int",
       roundcount: "int",
-      bestof: "int",
+      wincount: "int",
       playerspermatch: "int",
       clocklimit: "interval",
       clockstart: "date?",
@@ -106,7 +114,8 @@ const validateConfig = {
       id: "uuid",
       draftid: "uuid",
       round: "int",
-      players: "object:uuid=int",
+      players: "array:uuid",
+      wins: "array:int",
       draws: "int",
       drops: "array:uuid",
       reported: "boolean"

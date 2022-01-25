@@ -9,35 +9,34 @@ const monoValueObj = (keys, value) => keys.reduce((obj, key) =>
 );
 
 // Builds queries for creating a round
-function round({ draftData, drops, breakers }, autoReportByes = true) {
+function round(draftData, matchData, oppData, autoReportByes = true) {
     // Increment round number & create return object
     const matchBase = { 
-        round: Math.min(draftData.roundactive + 1, draftData.roundcount),
+        round: Math.min(draftData.roundactive, draftData.roundcount) + 1,
         draftId: draftData.id,
     };
 
-    if (matchBase.round === draftData.roundcount) return matchBase; // Draft has ended
+    if (draftData.roundactive >= draftData.roundcount) return matchBase; // Draft has ended
 
     // Collect data for match generator
     let playerList = draftData.roundactive ?
-        toBreakers(breakers, draftData.players).ranking :
+        toBreakers(matchData, draftData.players, oppData, true).ranking :
         draftData.players;
     if (!playerList) playerList = [];
-    if (drops) playerList = playerList.filter(p => !drops.includes(p));
-
-    const oppData = draftData.roundactive && arrToObj('playerid', { valKey: 'oppids' })(breakers);
+    if (draftData.drops) playerList = playerList.filter(p => !draftData.drops.includes(p));
 
     // Generate match table (Can add more alogrithms later)
     const matchTable = swissMonrad(playerList, {...draftData, oppData});
 
     // Format for DB write (auto-reporting byes)
-    const byeWins = autoReportByes ? Math.ceil((draftData.bestof + 1) / 2) : 0;
+    const byeWins = autoReportByes ? draftData.wincount : 0;
     return {
         ...matchBase,
 
         matches: matchTable.map(match => ({
             ...matchBase,
-            players: monoValueObj(match, match.length === 1 ? byeWins : 0),
+            players: match,
+            wins: match.map(() => match.length === 1 ? byeWins : 0),
             reported: autoReportByes && match.length === 1,
         }))
     };
