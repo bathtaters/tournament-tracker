@@ -8,9 +8,8 @@ const action = require('../controllers/action.controllers');
 // *** Match API commands *** \\
 
 // Gets
-router.get('/all/draft/:draftId', catcher(controller.getDraftMatches));
 router.get('/all', catcher(controller.getAllMatches));
-router.get('/:matchId', catcher(controller.getMatch));
+router.get('/draft/:draftId', catcher(controller.getDraftMatches));
 
 // Sets
 router.post( '/swap', catcher(action.swapPlayers));
