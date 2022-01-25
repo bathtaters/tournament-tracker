@@ -22,14 +22,14 @@ const getRows = (table, sqlFilter, args = null, cols = null, client = null) =>
     ).then(getSolo()).then(getReturn);
 
 
-const getRow = (table, rowId = null, cols = null, client = null) => 
+const getRow = (table, rowId = null, cols = null, { idCol = 'id', getOne = true, client = null } = {}) => 
     // strTest(table) || strTest(cols);
     module.exports.getRows( // exports required for unit testing
         table,
-        rowId ? 'WHERE id = $1' : '',
+        rowId ? `WHERE ${idCol} = $1${getOne ? ' LIMIT 1' : ''}` : '',
         rowId && [rowId],
         cols, client
-    ).then(getFirst(rowId));
+    ).then(getFirst(getOne && rowId));
 
 
 // INSERT/UPSERT
