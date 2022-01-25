@@ -27,6 +27,12 @@ async function getAll(_, res) {
 }
 
 // Settings
+async function getSetting(req,res) {
+  const settingsData = await setting.get(req.param.setting);
+  if (!settingsData) throw new Error(req.param.setting + ' setting not found.');
+  return res.sendAndLog(asType(settingsData));
+}
+
 async function getSettings(req,res) {
   const settingsData = await setting.getAll();
   if (!Array.isArray(settingsData)) throw new Error('Settings not found.');
@@ -47,7 +53,8 @@ async function setSettings(req,res) {
 
 // Schedule data
 const getSchedule = async function(_, res) {
-  const schedule = await draft.getSchedule().then(arrToObj('day'));
+  const schedule = await draft.getSchedule().then(sortSlots).then(arrToObj('day'));
+  
   return res.sendAndLog(schedule);
 }
 
@@ -56,7 +63,6 @@ const getSchedule = async function(_, res) {
 // RESET TO DEMO DB (Dev only)
 const ops = require('../db/admin/interface');
 const sqlFolder = require('../config/meta').sqlFilesPath;
-const { settings } = require('../db/sql/strings');
 const dbResetFile = require('path').join(sqlFolder,'resetDb.sql');
 const dbTestFile = require('path').join(sqlFolder,'dbtest.sql');
 const resetDB = full => (_, res) => ops.file(full && dbResetFile, dbTestFile)
@@ -64,4 +70,21 @@ const resetDB = full => (_, res) => ops.file(full && dbResetFile, dbTestFile)
 
 
 
-module.exports = { getAll, getSettings, setSettings, getSchedule, resetDB, };
+module.exports = { getAll, getSetting, getSettings, setSettings, getSchedule, resetDB, };
+
+
+
+// HELPER - Sort schedule to daily slots, appending unslotted to the end
+function sortSlots(schedArray) {
+  return schedArray.map(entry => {
+    entry.drafts = []; entry.slots = [];
+    
+    for (const [draft,slot] of Object.entries(entry.draftslots)) {
+      if (slot && !entry.slots[slot - 1]) entry.slots[slot - 1] = draft;
+      else entry.drafts.push(draft);
+    }
+    
+    delete entry.draftslots;
+    return entry;
+  });
+}
