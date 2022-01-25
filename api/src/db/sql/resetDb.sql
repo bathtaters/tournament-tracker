@@ -35,10 +35,11 @@ CREATE TABLE draft (
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     title STRING NULL,
     day DATE NULL,
+    slot SMALLINT NOT NULL DEFAULT 0,
     players UUID[] NOT NULL DEFAULT '{}',
     roundActive SMALLINT NOT NULL DEFAULT 0,
     roundCount SMALLINT NOT NULL DEFAULT 3,
-    bestOf SMALLINT NOT NULL DEFAULT 3,
+    winCount SMALLINT NOT NULL DEFAULT 2,
     playersPerMatch SMALLINT NOT NULL DEFAULT 2,
 
     -- Clock base (clockLimit set by user, others set by start/stop/etc)
@@ -47,7 +48,7 @@ CREATE TABLE draft (
     clockMod INTERVAL NULL,
 
     -- Index
-    INDEX date_idx (day) STORING (title, roundActive, roundCount),
+    INDEX date_idx (day) STORING (slot),
     INVERTED INDEX player_idx (players)
 );
 
@@ -56,7 +57,8 @@ CREATE TABLE match (
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     draftId UUID REFERENCES draft(id) ON DELETE CASCADE,
     round SMALLINT NOT NULL,
-    players JSON NOT NULL,
+    players UUID[] NOT NULL,
+    wins SMALLINT[] NOT NULL,
     draws SMALLINT NOT NULL DEFAULT 0,
     drops UUID[] NOT NULL DEFAULT '{}',
     reported BOOLEAN NOT NULL DEFAULT FALSE,
@@ -73,233 +75,51 @@ GRANT INSERT, UPDATE, DELETE, SELECT ON TABLE * TO db_rw;
 GRANT SELECT ON TABLE * TO db_read;
 
 
--- FULL VIEWS --
-
-CREATE VIEW team (id, name, members)
-AS SELECT
-    p.id, p.name,
-    IF(
-        p.isTeam,
-        json_object(
-            array_agg(mems.name),
-            array_agg(mems.id)::STRING[]
-        ), NULL
-    )
-FROM player@team_idx p
-LEFT JOIN player mems
-ON p.isTeam IS TRUE
-AND mems.isTeam IS FALSE
-AND p.members @> ARRAY[mems.id]
-GROUP BY p.id;
-
-
-CREATE VIEW draftDrops (id, drops)
-AS SELECT
-    draftId,
-    array_agg(DISTINCT playerIds)
-FROM match@draft_idx, unnest(drops) playerIds
-GROUP BY draftId ORDER BY draftId;
-
-
-CREATE VIEW draftClock (
-    id, lim, mod,
-    state, -- 1-index of: [on, off, paused]
-    startMod, -- w/ modifier
-    endTime
-) AS SELECT
-    -- Base info
-    draft.id,
-    draft.clockLimit,
-    draft.clockMod,
-    -- state
-    (CASE WHEN draft.clockStart IS NOT NULL THEN 1
-    WHEN draft.clockMod IS NULL THEN 2
-    ELSE 3 END)::SMALLINT,
-    -- startMod (w/ modifier)
-    CASE WHEN draft.clockStart IS NULL THEN NULL
-    WHEN draft.clockMod IS NULL THEN draft.clockStart
-    ELSE draft.clockStart - draft.clockMod END,
-    -- endTime
-    CASE WHEN draft.clockStart IS NULL THEN NULL
-    WHEN draft.clockMod IS NULL THEN draft.clockStart + draft.clockLimit
-    ELSE draft.clockStart + draft.clockLimit - draft.clockMod END
-FROM draft;
+-- COMBO VIEWS --
 
 CREATE VIEW draftDetail (
     id, title, players, playersPerMatch,
-    roundActive, roundCount, bestOf,
-    canAdvance
+    day, slot, roundActive, roundCount, winCount,
+    canAdvance,
+    byes,
+    drops
 ) AS SELECT
     draft.id, draft.title, draft.players, playersPerMatch,
-    roundActive, roundCount, bestOf,
-    bool_and(reported)
+    day, slot, roundActive, roundCount, winCount,
+    bool_and(reported),
+    array_agg(match.players[1]) FILTER(WHERE array_length(match.players,1) = 1),
+    json_agg(drops)
 FROM draft
 LEFT JOIN match ON draft.id = match.draftId
-AND match.round = roundActive
 GROUP BY draft.id;
 
-CREATE VIEW draftByes (draftId, players)
-AS SELECT draftId, array_agg(byes.pids[1])
-FROM match,
-LATERAL (SELECT
-    count(pid) pcount,
-    array_agg(pid) pids
-FROM json_object_keys(players) pid) byes
-WHERE byes.pcount = 1
-GROUP BY draftId;
 
-
-CREATE VIEW draftReport (
-    id, players, playersPerMatch,
-    roundActive, roundCount,
-    canAdvance, byes
+CREATE VIEW matchDetail (
+    id, draftId, round, reported,
+    draws, drops,
+    maxWins, totalWins,
+    players, wins
 ) AS SELECT
-    draft.id, draft.players, playersPerMatch,
-    roundActive, roundCount,
-    bool_and(reported), draftByes.players
-FROM draft
-LEFT JOIN match ON draft.id = match.draftId
-    AND match.round = roundActive
-LEFT JOIN draftByes ON draft.id = draftByes.draftId
-GROUP BY draft.id, draftByes.players;
+    match.id, draftId, round, reported,
+    draws, drops,
+    MAX(player.win), SUM(player.win),
+    players, wins
+FROM match, unnest(players,wins) player(id,win)
+GROUP BY match.id ORDER BY match.id;
 
 
-CREATE VIEW matchDetail
-	(id, maxWins, count, isBye, winners)
+-- INVERTED INDEX QUERIES --
+
+CREATE VIEW draftOpps (playerId, draftId, oppIds)
+AS SELECT playerId, draftId, array_agg(oppId)
+FROM match,
+    unnest(match.players) playerId,
+    unnest(match.players) oppId
+WHERE oppId != playerId GROUP BY draftId, playerId;
+
+
+CREATE VIEW schedule (day, draftSlots)
 AS SELECT
-    match.id,
-    MAX(wins.maxm),
-    MAX(wins.total) + draws,
-    COUNT(player.id) = 1,
-    -- Winners array
-    IF(reported,
-        array_agg(player.id)
-            FILTER(WHERE player.win::SMALLINT = wins.maxm),
-        NULL)
-  
-FROM match,
-json_each_text(players) player(id,win),
-LATERAL (SELECT
-        MAX(value::SMALLINT) maxm,
-        SUM(value::SMALLINT) total
-    FROM jsonb_each_text(players)
-) wins
-
-GROUP BY match.id
-ORDER BY match.id;
-
-
-CREATE VIEW matchPlayer (
-    playerId, matchId,
-    wins,
-    draws,
-    count,
-    isBye,
-    isDrop,
-    result -- 1-Index in [W,L,D] or NULL if TBD
-) AS SELECT
-	player.id, match.id,
-    MAX(win::SMALLINT),
-    draws,
-	MAX(count),
-    BOOL_AND(isBye),
-    player.id::UUID = ANY(drops),
-    MIN(
-        CASE WHEN isBye IS TRUE THEN 1::SMALLINT
-        WHEN winners IS NULL THEN NULL
-		WHEN array_length(winners,1) = 1 THEN
-			(win::SMALLINT != maxWins)::SMALLINT + 1::SMALLINT
-		ELSE 3::SMALLINT END
-    )
-FROM match
-JOIN matchDetail USING(id),
-jsonb_each_text(players) player(id, win)
-GROUP BY match.id, player.id
-ORDER BY match.id;
-
-
-CREATE VIEW draftPlayer (
-    playerId, draftId,
-    matches,
-    isDrop,
-    wins,
-    draws,
-    count
-) AS SELECT
-    matchPlayer.playerId, match.draftId,
-    array_agg(match.id ORDER BY match.round),
-    bool_or(matchPlayer.playerId::UUID = ANY(match.drops)),
-    -- wins
-    (COUNT(matchId)
-        FILTER(WHERE matchPlayer.result = 1))::SMALLINT,
-    -- draws
-    (COUNT(matchId)
-        FILTER(WHERE matchPlayer.result = 3))::SMALLINT,
-    -- count
-    (COUNT(match.id)
-        FILTER(WHERE match.reported))::SMALLINT
-
-FROM match@draft_idx
-JOIN matchPlayer ON match.id = matchId
--- , jsonb_each_text(players) player(id, win)
-GROUP BY match.draftId, playerId
-ORDER BY match.draftId, playerId;
-
-
-CREATE VIEW draftOpps (
-    playerId, draftId, oppIds
-) AS SELECT
-    playerId, draft.id, array_agg(oppId)
-FROM draft
-JOIN match ON draftId = draft.id,
-    json_object_keys(match.players) playerId,
-    json_object_keys(match.players) oppId
-    WHERE oppId != playerId
-GROUP BY draft.id, playerId;
-
-
-CREATE VIEW breakers (
-    playerId, draftId, 
-    isDrop,
-    matchWins,
-    matchDraws,
-    matchCount,
-    gameWins,
-    gameDraws,
-    gameCount
-) AS SELECT
-    playerId, draft.id,
-    BOOL_OR(playerId::UUID = ANY(match.drops)),
-    -- matchWins
-    (COUNT(match.id)
-    FILTER(WHERE isBye
-        OR reported
-        AND array_length(winners,1) = 1
-        AND playerId = winners[1]::STRING))::SMALLINT,
-    -- matchDraws
-    (COUNT(match.id)
-    FILTER(WHERE NOT isBye
-        AND reported
-        AND array_length(winners,1) != 1))::SMALLINT,
-    -- matchCount
-    (COUNT(match.id) FILTER(WHERE reported))::SMALLINT,
-
-    -- gameWins
-    SUM((match.players->>(playerId))::SMALLINT),
-    -- gameDraws
-    SUM(draws),
-    -- gameCount
-    SUM(count)
-
-FROM draft
-JOIN (
-    SELECT
-        match.id id, draftId,
-        reported, isBye,
-        players, winners,
-        draws, count, drops
-    FROM match JOIN matchDetail USING (id)
-) match ON draftId = draft.id,
-    json_object_keys(match.players) playerId
-GROUP BY draft.id, playerId;
-
+    COALESCE(to_char(day), 'none'),
+    json_object_agg(id::STRING, slot)
+FROM draft@date_idx GROUP BY day;
