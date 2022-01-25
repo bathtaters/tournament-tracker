@@ -15,7 +15,11 @@ import {ReactComponent as ProfilePic} from "../assets/blank-user.svg";
 const profileRows = [
   { title: 'Name', key: 'name', editable: true },
   // { title: 'Record', key: 'record', formatString: r=>(r || []).join(' - ') },
-]
+];
+const teamOnlyRows = [
+  { title: 'Members', key: 'members', formatString: (r,p) => r.map(m=>p[m].name).join(' & ') },
+  // { title: 'Record', key: 'record', formatString: r=>(r || []).join(' - ') },
+];
 
 // Main component
 function Profile() {
@@ -57,7 +61,7 @@ function Profile() {
         { row.editable && editing === row.key ?
           <input onChange={changeData(row.key)} type="text" value={editData[row.key]} />
         :
-          <div>{row.formatString ? row.formatString(data[row.key]) : data[row.key]}</div>
+          <div>{row.formatString ? row.formatString(data[row.key], playerData) : data[row.key]}</div>
         }
       </h4>
       { row.editable ?
@@ -82,7 +86,7 @@ function Profile() {
 
   return (
     <div>
-      <h3 className="font-thin">User Profile</h3>
+      <h3 className="font-thin">{data.isteam ? 'Team' : 'User'} Profile</h3>
       { isLoading ?
         <h4 className="base-color font-thin">Loading...</h4>
       : error ?
@@ -95,6 +99,7 @@ function Profile() {
           <div className="grow shrink max-w-lg">
             <div className="grid grid-flow-row gap-x-2 gap-y-1 grid-cols-4 items-baseline w-full">
               {profileRows.map(tableRow)}
+              {data.isteam ? teamOnlyRows.map(tableRow) : null}
             </div>
           </div>
         </div>
