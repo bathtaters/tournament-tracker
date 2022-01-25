@@ -4,6 +4,7 @@ const db = require('./connect');
 
 // Execute query
 function query(text, args = [], splitArgs = null) {
+    // console.log('QUERY:',text,args); // uncomment to output every query
     // Split text/args into arrays
     if (!Array.isArray(text)) text = text.split(';').filter(q=>q.trim());
     text = text.map(q => /;\s*$/.test(q) ? q : q+';');
