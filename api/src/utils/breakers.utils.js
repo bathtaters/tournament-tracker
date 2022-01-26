@@ -1,67 +1,81 @@
-// BASIC GAME/MATCH Conversions
-const points = require('../config/constants.json').points;
+// CALCs, COMBINERs & SORTER for PLAYER STATS
 
-// Get results in correct format
-exports.record = (w,d,c) => [ w || 0,  (c||0) - (w||0) - (d||0),  d || 0 ];
-exports.score = (w,d) => (w||0) * points.win + (d||0) * points.draw;
-exports.rate = (w,d,c) => c ? Math.max(
-    exports.score(w,d) / exports.score(c),
-    points.floor
-) : 1;
+// Import constants
+const { points } = require('../config/constants');
 
-// Get average of array of scores
-exports.average = (prefix,players) => players.length && 
-    players.reduce((sum,p) =>
-        sum + exports.rate(
-            p[prefix+'wins'],
-            p[prefix+'draws'],
-            p[prefix+'count']
-        ),
-        0
-    ) / players.length;
+// Win % calculator
+exports.rate = (score, record) => Math.max(
+    score / (sumArr(record) * points.win),
+    points.floor || 0
+); // If no games played, returns NaN
 
-// Combine breakObjs (Must run combine on each then finalize)
-exports.combine = (a, b) => ({
-    draftIds: a.draftIds.concat(b.draftIds),
-    matches: a.matches.map((v,i) => v + b.matches[i]),
-    matchScore: a.matchScore + b.matchScore,
-    matchRate: a.matchRate + b.matchRate,
-    games: a.games.map((v,i) => v + b.games[i]),
-    gameScore: a.gameScore + b.gameScore,
-    gameRate: a.gameRate + b.gameRate,
-    oppMatch: a.oppMatch + b.oppMatch,
-    oppGame: a.oppGame + b.oppGame,
-    avgCounter: (a.avgCounter || 1) + (b.avgCounter || 1),
+// Builds player array of 'WLD' index (ie Player Win = 0, Player Loss = 1, Draw = 2)
+exports.getWLD = ({ wins, maxwins }) => wins.filter(w => w === maxwins).length === 1 ?
+    wins.map(w => +(w !== maxwins)) :
+    wins.map(w => w === maxwins ? 2 : 1); // Draw if player wins == max, otherwise lose
+
+
+// Calculate Stat Values //
+
+exports.calcBase = (playerIdx, matchArr, { wins, draws, totalwins }, draft) => ({
+    draftIds:    [draft], // In array for combineFinal
+    matchRecord: Object.assign([0,0,0], { [matchArr[playerIdx]]: 1 }),
+    gameRecord:  [ wins[playerIdx], totalwins - wins[playerIdx], draws ],
+    matchScore:  [ points.win, 0, points.draw ][ matchArr[playerIdx] ],
+    gameScore:   ( wins[playerIdx] * points.win ) + ( draws * points.draw ),
 });
-exports.finalize = d => {
-    res = {
-        ...d,
-        // Recalc these
-        matchRate: exports.rate(d.matches[0],d.matches[2],d.matches[0]+d.matches[1]+d.matches[2]),
-        gameRate:  exports.rate(d.games[0],  d.games[2],  d.games[0] + d.games[1] + d.games[2]),
-        // Average these
-        oppMatch: d.oppMatch / (d.avgCounter || 1),
-        oppGame: d.oppGame / (d.avgCounter || 1),
-    };
-    delete res.avgCounter;
-    return res;
+
+exports.calcRates = result => Object.assign(result, {
+    matchRate: exports.rate(result.matchScore, result.matchRecord),
+    gameRate:  exports.rate(result.gameScore,  result.gameRecord),
+});
+
+exports.calcOpps = (result, current, oppList) => {
+    // Collect
+    let oppMatch = [], oppGame = [];
+    oppList && oppList.forEach(oppId => {
+        if (current[oppId]) {
+            isNaN(current[oppId].matchRate) || oppMatch.push(current[oppId].matchRate);
+            isNaN(current[oppId].gameRate ) ||  oppGame.push(current[oppId].gameRate);
+        }
+    });
+    // Average (In array for combineFinal)
+    result.oppMatch = [ avgArr(oppMatch) ];
+    result.oppGame  = [ avgArr(oppGame)  ];
+    return result;
 };
 
-// Convert match/game stats + opp stats into breakers obj
-exports.calcAll = (d,opps) => ({
-    draftIds: [d.draftid],
-    matches: exports.record(d.matchwins,d.matchdraws,d.matchcount),
-    matchScore: exports.score(d.matchwins,d.matchdraws),
-    matchRate: exports.rate(d.matchwins,d.matchdraws,d.matchcount),
-    games: exports.record(d.gamewins,d.gamedraws,d.gamecount),
-    gameScore: exports.score(d.gamewins,d.gamedraws),
-    gameRate: exports.rate(d.gamewins,d.gamedraws,d.gamecount),
-    oppMatch: exports.average('match',opps),
-    oppGame: exports.average('game',opps),
+
+// Combining/Finalizing Stat Objects //
+
+exports.combineStats = (a,b) => Object.assign(a, {
+    matchRecord: addArrs(a.matchRecord, b.matchRecord),
+    gameRecord:  addArrs(a.gameRecord,  b.gameRecord),
+    matchScore:  a.matchScore + b.matchScore,
+    gameScore:   a.gameScore  + b.gameScore,
 });
 
+exports.combineFinal = (final,curr) => Object.assign( combineStats(final,curr), {
+    draftIds: final.draftIds.concat(curr.draftIds),
+    oppMatch: final.oppMatch.concat(curr.oppMatch),
+    oppGame:  final.oppGame.concat(curr.oppGame),
+});
 
-//  Determine ranking using MTG rules
+exports.finalize = result => {
+    // If more than 1 draft, recalc rates
+    if (result.draftIds.length > 1) result = calcRates(result);
+
+    // Average oppRates (Ignoring NaN)
+    result.oppMatch = result.oppMatch.filter(n => !isNaN(n));
+    result.oppGame  = result.oppGame.filter(n  => !isNaN(n));
+    result.oppMatch = avgArr(result.oppMatch);
+    result.oppGame  = avgArr(result.oppGame);
+    return result;
+};
+
+
+// Determine ranking using MTG rules //
+
 exports.rankSort = (data, originalOrder, useMatchScore) => (a,b) => {
     // Same player
     if (a === b) return 0;
@@ -97,3 +111,15 @@ exports.rankSort = (data, originalOrder, useMatchScore) => (a,b) => {
     // Use UUIDs to settle otherwise
     return a < b ? 1 : -1;
 };
+
+
+//  HELPERS  //
+
+// Add together every element in an array
+const sumArr  = array => array.reduce((sum, n) => sum + n, 0);
+
+// Sum parallel elements of two arrays
+const addArrs = (arrA, arrB) => arrA.map((a,i) => a + arrB[i]);
+
+// Get average value of array
+const avgArr  = array => sumArr(array) / array.length;
