@@ -16,9 +16,9 @@ import { usePlayerQuery } from "../../models/playerApi";
 // Component Layout
 const statsHeader = [
   { label: 'Name', get: 'playerName', },
-  { label: 'W',   get: data => data.matches && data.matches[0], },
-  { label: 'L',   get: data => data.matches && data.matches[1], },
-  { label: 'D',   get: data => data.matches && data.matches[2], },
+  { label: 'W',   get: data => data.matchRecord && data.matchRecord[0], },
+  { label: 'L',   get: data => data.matchRecord && data.matchRecord[1], },
+  { label: 'D',   get: data => data.matchRecord && data.matchRecord[2], },
   { label: '%',   get: data => formatPercent(data.gameRate), },
   { label: 'OMW', get: data => formatPercent(data.oppMatch), },
   { label: 'OGW', get: data => formatPercent(data.oppGame), },
@@ -26,11 +26,11 @@ const statsHeader = [
 
 
 // Main Component
-function Stats({ draftId, onPlayerClick, className, highlightClass }) {
+function Stats({ draftId, onPlayerClick, className, highlightClass, hideTeams }) {
   // Global state
   const { data, isLoading, error } = useBreakersQuery(draftId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
-  const playerList = getPlayerList(data && data.ranking, players, !draftId);
+  const playerList = getPlayerList(data && data.ranking, players, !draftId, hideTeams);
 
   // Pass clicks to onPlayerClick
   const clickHandler = pid => event => {
@@ -41,7 +41,7 @@ function Stats({ draftId, onPlayerClick, className, highlightClass }) {
   return (
     <div>
       <div className="relative">
-        <div className="grid grid-flow-row grid-cols-stats gap-x-2 gap-y-1 items-center px-4 py-2">
+        <div className={"grid grid-flow-row grid-cols-stats gap-x-2 gap-y-1 items-center px-4 py-2 "+(className || "")}>
           { statsHeader.map((col,idx) => 
             <span
               className={'font-normal mb-2 text-center ' + ((col.label === 'Name' ? 'col-span-2 ' : 'text-center ') + (col.label.length === 3 ? 'text-xs sm:text-xl' : 'text-xl'))}
