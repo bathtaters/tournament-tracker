@@ -55,7 +55,7 @@ function DraftStats({ draftId }) {
                 </Link>
                 {isRanking ? (
                   <span className="col-span-2 text-xs font-light align-middle">
-                    {formatRecord(data[pid] && data[pid].matches, false)}
+                    {formatRecord(data[pid] && data[pid].matchRecord, false)}
                   </span>
                 ) : null }
 

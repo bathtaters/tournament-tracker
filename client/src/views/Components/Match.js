@@ -115,7 +115,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
           <div className="neg-color">Dropped</div>
         :
           <div className="dim-color">
-            {formatRecord(rankings && rankings[playerId] && rankings[playerId].matches)}
+            {formatRecord(rankings && rankings[playerId] && rankings[playerId].matchRecord)}
           </div>
         }
 
