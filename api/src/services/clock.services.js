@@ -1,5 +1,5 @@
 // CLOCK Conversions
-const clockStates = require('../config/constants.json').clockStates;
+const clockStates = require('../config/constants').clockStates;
 
 
 // function toCount(clock) {

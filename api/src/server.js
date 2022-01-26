@@ -15,7 +15,7 @@ app.use(`/api/v${version}/match`,  require('./routes/match.routes'));
 app.use(`/api/v${version}/player`, require('./routes/player.routes'));
 
 // Error handling
-app.use(() => { throw require('./config/constants.json').missingError; })
+app.use(() => { throw require('./config/constants').missingError; })
 app.use(require('./middleware/error.middleware'));
 
 // Initialize services

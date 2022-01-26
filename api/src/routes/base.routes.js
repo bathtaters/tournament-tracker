@@ -3,7 +3,7 @@ const router = require('express').Router();
 const catcher = require('../middleware/catch.middleware');
 const controller = require('../controllers/base.controllers');
 const { name, version } = require('../config/meta');
-const testError = require('../config/constants.json').testError;
+const { testError } = require('../config/constants');
 
 
 // *** Base API commands *** \\

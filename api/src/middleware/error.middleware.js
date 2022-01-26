@@ -2,7 +2,7 @@
 const logger = require('../utils/log.adapter');
 
 // String formatting
-const defaultError = require('../config/constants.json').defaultError;
+const defaultError = require('../config/constants').defaultError;
 const getMsg  = err => (err && err.message) || defaultError.message;
 const getCode = err => (err && err.status)  || defaultError.status;
 
