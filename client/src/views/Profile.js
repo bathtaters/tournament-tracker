@@ -14,11 +14,9 @@ import {ReactComponent as ProfilePic} from "../assets/blank-user.svg";
 // Component layout
 const profileRows = [
   { title: 'Name', key: 'name', editable: true },
-  // { title: 'Record', key: 'record', formatString: r=>(r || []).join(' - ') },
 ];
 const teamOnlyRows = [
   { title: 'Members', key: 'members', formatString: (r,p) => r.map(m=>p[m].name).join(' & ') },
-  // { title: 'Record', key: 'record', formatString: r=>(r || []).join(' - ') },
 ];
 
 // Main component
