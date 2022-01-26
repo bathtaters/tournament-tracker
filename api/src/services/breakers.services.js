@@ -1,51 +1,74 @@
 // Calculate records from DB data
+const {
+    getWLD, calcBase,
+    calcRates, calcOpps,
+    combineStats, combineFinal,
+    finalize, rankSort
+} = require('../utils/breakers.utils');
 const logger = require('../utils/log.adapter');
-const { combine, calcAll, rankSort, finalize } = require('../utils/breakers.utils');
 
-// Get breakers data & determine winner
 
-function breakers(data, originalOrder, opps, sameTournament = true) {
-    return console.log('MATCHES',data,'PLAYERS',originalOrder,'OPPS',opps) || { ranking: originalOrder };
-    // Index data by [playerId][draftId] for opponent lookup
-    const playerData = {};
-    data.forEach((d,idx) => {
-        if (!playerData[d.draftid]) playerData[d.draftid] = {};
-        if (d.playerid in playerData[d.draftid])
-            logger.warn('Duplicate player-draft data:',d.playerid,d.draftid);
-        playerData[d.draftid][d.playerid] = idx;
+/**
+ * Get Player Stats & Determine Rankings
+ * @param {object} matchData - { draftId: [{ reported, players, wins, draws, maxwins, totalwins }, ...], ... }
+ * @param {string[]} originalOrder - [ playerIds, ... ]
+ * @param {object} oppData - { draftId: { playerId: [ oppIds, ... ], ... }, ... }
+ * @param {boolean} [useMatchScore=true] - use matchScore (Within same draft) vs percent (Comparing apples to oranges)
+ * @returns - { ranking: [ playerIds... ], playerId: { ...playerStats }, ... }
+ */
+function breakers(matchData, originalOrder, oppData, useMatchScore = true) {
+    let final = {};
+
+    // Each draft
+    Object.entries(matchData).forEach(([draft, matches]) => {
+        let current = {};
+
+        // Each match (skip if not reported)
+        matches.forEach(match => {
+            if (match.reported) { 
+                
+                const results = getWLD(match); // Results as [W,L,D] indexes
+
+                // Each player 
+                match.players.forEach((player, playerIdx) => {
+                    current[player] = current[player]
+                        // Append base stats
+                        ? combineStats(
+                            current[player],
+                            calcBase(playerIdx, results, match, draft)
+                        // Create base stats
+                        ) : calcBase(playerIdx, results, match, draft);
+                });
+            }
+        });
+
+        // Append match/game rates
+        Object.keys(current).forEach(player => {
+            if (current[player])
+                current[player] = calcRates(current[player]);
+        });
+
+        // Append opp match/game rates & push to 'final'
+        Object.keys(current).forEach(player => {
+            if (current[player]) {
+                final[player] = final[player]
+                    // Append to other scores
+                    ? combineFinal(
+                        final[player],
+                        calcOpps(current[player], current, oppData[draft][player])  // +oppRates
+                    // Create final score
+                    ) : calcOpps(current[player], current, oppData[draft][player]); // +oppRates
+            }
+        });
     });
 
-    // Calculate results (Combining multiples for a player)
-    let result = {};
-    data.forEach(d => {
-        // Collect opponent stats (Warn if oppId doesn't exist)
-        const opps = d.oppids ? d.oppids.map(o => 
-            // Safely get from 
-            (d.draftid in playerData && o in playerData[d.draftid] &&
-                data[playerData[d.draftid][o]]) ||
-            logger.warn('Opponent missing from draftData:',o)
-        ).filter(Boolean) : [];
-
-        result[d.playerid] = result[d.playerid]
-            // Append entry
-            ? combine(
-                calcAll(d, opps),
-                result[d.playerid]
-            // Create entry
-            ) : calcAll(d, opps);
-    });
-
-    // Finalize records w/ multiple entries (Calc averages)
-    Object.keys(result).forEach(p => {
-        if (result[p].avgCounter) result[p] = finalize(result[p]);
-    });
+    // Finalize records
+    Object.keys(final).forEach(player => { final[player] = finalize(final[player]); });
 
     // Rank players
-    result.ranking = Object.keys(result).sort(
-        rankSort(result, originalOrder, sameTournament)
-    );
+    final.ranking = Object.keys(final).sort(rankSort(final, originalOrder, useMatchScore));
     
-    return result;
+    return final;
 }
 
 
