@@ -36,9 +36,10 @@ function Players() {
       <h2 className="font-thin text-center mb-6">Player Stats</h2>
       <div className="px-6 flex justify-center mb-6">
         <Stats
-          className={'neg-border border-8' + (canDelete ? '' : ' border-opacity-0')}
+          className={'neg-border border-2 rounded-md' + (canDelete ? '' : ' border-opacity-0')}
           highlightClass={canDelete ? 'neg-bgd' : ''}
           onPlayerClick={handlePlayerClick}
+          hideTeams={true}
         />
       </div>
       <h4 className="text-center">
