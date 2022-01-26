@@ -4,7 +4,7 @@ const {
     calcRates, calcOpps,
     combineStats, combineFinal,
     finalize, rankSort
-} = require('../utils/breakers.utils');
+} = require('../utils/stats.utils');
 const logger = require('../utils/log.adapter');
 
 
@@ -16,7 +16,7 @@ const logger = require('../utils/log.adapter');
  * @param {boolean} [useMatchScore=true] - use matchScore (Within same draft) vs percent (Comparing apples to oranges)
  * @returns - { ranking: [ playerIds... ], playerId: { ...playerStats }, ... }
  */
-function breakers(matchData, originalOrder, oppData, useMatchScore = true) {
+function stats(matchData, originalOrder, oppData, useMatchScore = true) {
     let final = {};
 
     // Each draft
@@ -72,4 +72,4 @@ function breakers(matchData, originalOrder, oppData, useMatchScore = true) {
 }
 
 
-module.exports = breakers;
+module.exports = stats;

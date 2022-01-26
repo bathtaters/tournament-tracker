@@ -1,5 +1,5 @@
 // Import test functions
-const resultCalc = require('./breakers.utils');
+const resultCalc = require('./stats.utils');
 const {
   record, score, rate,
   average, combine, finalize,
@@ -102,7 +102,7 @@ describe('average', () => {
 })
 
 
-// ---- BREAKERS CALC ---- // 
+// ---- STATS CALC ---- // 
 
 describe('calcAll', () => {
   const spies = {
@@ -172,7 +172,7 @@ describe('calcAll', () => {
 })
 
 
-// ---- BREAKERS COMBINER ---- // 
+// ---- STATS COMBINER ---- // 
 
 describe('combine + finalize', () => {
   const sampleA = {

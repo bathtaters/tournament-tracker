@@ -1,8 +1,8 @@
 // Imports & Mocks
 const warnSpy = jest.spyOn(global.console, "warn");
-const breakers = require('./breakers.services')
-const util = require('../utils/breakers.utils')
-jest.mock('../utils/breakers.utils')
+const stats = require('./stats.services')
+const util = require('../utils/stats.utils')
+jest.mock('../utils/stats.utils')
 
 afterAll(() => { warnSpy.mockRestore() })
 
@@ -21,7 +21,7 @@ const combineData = (a, b) => ({
 
 // ---- MAIN ---- //
 
-describe('toBreakers', () => {
+describe('toStats', () => {
   // Mock Data
   let sampleA, sampleB, oppos
   beforeEach(() => {
@@ -61,7 +61,7 @@ describe('toBreakers', () => {
       p4: { playerid: 'p4', draftid: 'd1' },
       ranking: expect.anything()
     }
-    expect(breakers(sampleA)).toEqual(result)
+    expect(stats(sampleA)).toEqual(result)
     expect(util.combine).toBeCalledTimes(0)
     expect(util.calcAll).toBeCalledTimes(4);
     ([...Array(4)]).forEach((_,i) =>
@@ -77,7 +77,7 @@ describe('toBreakers', () => {
       p4: { playerid: 'p4', draftid: 'd1' },
       ranking: expect.anything()
     }
-    expect(breakers([...sample])).toEqual(result)
+    expect(stats([...sample])).toEqual(result)
     expect(util.combine).toBeCalledTimes(0)
     expect(util.calcAll).toBeCalledTimes(4);
     ([...Array(4)]).forEach((_,i) =>
@@ -96,7 +96,7 @@ describe('toBreakers', () => {
       p4: { playerid: 'p4', draftid: 'd2,d1' },
       ranking: expect.anything()
     }
-    expect(breakers([...sample])).toEqual(result)
+    expect(stats([...sample])).toEqual(result)
 
     expect(util.combine).toBeCalledTimes(4);
     ([...Array(4)]).forEach((_,i) =>
@@ -120,7 +120,7 @@ describe('toBreakers', () => {
       p4: { playerid: 'p4', draftid: 'd2,d1' },
       ranking: expect.anything()
     }
-    expect(breakers([...sample])).toEqual(result)
+    expect(stats([...sample])).toEqual(result)
     
     expect(util.combine).toBeCalledTimes(4);
     ([...Array(4)]).forEach((_,i) =>
@@ -139,17 +139,17 @@ describe('toBreakers', () => {
     );
   })
   it('runs w/o data', () => {
-    expect(breakers([])).toEqual({ ranking: [] })
+    expect(stats([])).toEqual({ ranking: [] })
   })
 
   // Spot tests
   it('includes player ranking', () => {
-    expect(breakers(sampleA)).toHaveProperty('ranking', ['p1','p2','p3','p4'])
-    expect(breakers(sampleA.reverse())).toHaveProperty('ranking', ['p1','p2','p3','p4'])
+    expect(stats(sampleA)).toHaveProperty('ranking', ['p1','p2','p3','p4'])
+    expect(stats(sampleA.reverse())).toHaveProperty('ranking', ['p1','p2','p3','p4'])
     expect(util.rankSort).toBeCalledTimes(2)
   })
   it('passes sameTournament & originalOrder to rankSort', () => {
-    breakers(sampleA, 'arg2', 'arg3')
+    stats(sampleA, 'arg2', 'arg3')
     expect(util.rankSort).toBeCalledTimes(1)
     expect(util.rankSort).toBeCalledWith(expect.any(Object), 'arg2', 'arg3')
   })
@@ -157,14 +157,14 @@ describe('toBreakers', () => {
   // Log tests
   it('warn on dupe player/draft', () => {
     warnSpy.mockImplementationOnce(()=>{})
-    breakers([{playerid:'a',draftid:'b'},{playerid:'a',draftid:'b'}])
+    stats([{playerid:'a',draftid:'b'},{playerid:'a',draftid:'b'}])
     expect(warnSpy).toBeCalledTimes(1)
     expect(warnSpy).toBeCalledWith('Duplicate player-draft data:','a','b')
   })
 
   it('warn on missing opponent', () => {
     warnSpy.mockImplementationOnce(()=>{})
-    breakers([{playerid:'a',draftid:'b',oppids:['c']}])
+    stats([{playerid:'a',draftid:'b',oppids:['c']}])
     expect(warnSpy).toBeCalledTimes(1)
     expect(warnSpy).toBeCalledWith('Opponent missing from draftData:','c')
   })

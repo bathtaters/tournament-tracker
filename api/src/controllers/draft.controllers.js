@@ -1,15 +1,12 @@
 // Models
 const draft = require('../db/models/draft');
-const player = require('../db/models/player');
 const match = require('../db/models/match');
 const defs = require('../config/validation').config.defaults.draft;
 
 // Services/Utils
 const logger = require('../utils/log.adapter');
-const toBreakers = require('../services/breakers.services');
 const { arrToObj } = require('../utils/shared.utils');
 
-const ignoreUnfinishedDrafts = true;
 
 /* GET draft database. */
 
@@ -25,27 +22,6 @@ async function getDraft(req, res) {
 
 // All drafts
 const getAllDrafts = (_, res) => draft.get().then(arrToObj('id')).then(res.sendAndLog);
-
-// Draft Stats
-async function getBreakers(req, res) {
-  const [matches, players, opps] = await Promise.all([
-    match.getByDraft(req.params.id),
-    draft.getPlayers(req.params.id).then(d => d.players),
-    draft.getOpponents(req.params.id)
-      .then(arrToObj('playerid',{ valKey: 'oppids' })),
-  ]);
-  
-  return res.sendAndLog(toBreakers({solo: matches}, players, {solo: opps}, true));
-}
-async function getAllBreakers(_, res) {
-  const [matches, players, opps] = await Promise.all([
-    match.getAll(ignoreUnfinishedDrafts).then(matchesByDraft),
-    player.list(),
-    draft.getOpponents(null, ignoreUnfinishedDrafts).then(oppsByDraft),
-  ]);
-  
-  return res.sendAndLog(toBreakers(matches, players, opps, false));
-}
 
 
 /* SET draft database. */
@@ -65,29 +41,12 @@ const updateDraft = (req, res) => draft.set(req.params.id, req.body).then(res.se
 
 module.exports = {
   getDraft, getAllDrafts, 
-  getBreakers, getAllBreakers, 
   createDraft, removeDraft, updateDraft,
 };
 
-// HELPER - index
+
+// GetDraft HELPER - index rounds
 const sortMatchResult = result => result && result.reduce((matchArr, row) => {
   matchArr[row.round - 1] = row.matches;
   return matchArr;
 }, []);
-
-// HELPERS - breakersGetAll - index opps/matches by draft
-const oppsByDraft = opps => opps.reduce((obj,entry) => {
-  if (!obj[entry.draftid]) obj[entry.draftid] = {};
-
-  else if (obj[entry.draftid][entry.playerid])
-    logger.error('Duplicate player opponent objects:',entry,obj[entry.draftid][entry.playerid]);
-
-  obj[entry.draftid][entry.playerid] = entry.oppids;
-  return obj;
-}, {});
-
-const matchesByDraft = matches => matches.reduce((obj,entry) => {
-  if (!obj[entry.draftid]) obj[entry.draftid] = [ entry ];
-  else obj[entry.draftid].push(entry);
-  return obj;
-}, {});
