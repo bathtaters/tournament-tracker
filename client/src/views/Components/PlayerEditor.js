@@ -21,7 +21,8 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
   // Init State
   const { data, isLoading, error } = usePlayerQuery();
   const [playerList, setPlayerList] = useState([]);
-  const remainingPlayers = data ? Object.keys(data).filter(p=>!playerList.includes(p)) : [];
+  const remainingPlayers = data ? Object.keys(data)
+    .filter(p => !data[p].isteam && !playerList.includes(p)) : [];
 
   // Add Player to global players
   const [ createPlayer, { isLoading: playersUpdating } ] = useCreatePlayerMutation();
@@ -64,7 +65,7 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
   }
 
   // Automatically fill in up to 8 random players
-  const autofill = () => setPlayerList(randomArray(Object.keys(data), autofillSize));
+  const autofill = () => setPlayerList(randomArray(remainingPlayers, autofillSize));
 
   // Add player to list (If valid)
   const pushPlayer = useCallback(playerId => {
