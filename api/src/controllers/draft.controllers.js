@@ -31,10 +31,11 @@ async function getBreakers(req, res) {
   const [matches, players, opps] = await Promise.all([
     match.getByDraft(req.params.id),
     draft.getPlayers(req.params.id).then(d => d.players),
-    draft.getOpponents(req.params.id).then(arrToObj('playerid',{ valKey: 'oppids' })),
+    draft.getOpponents(req.params.id)
+      .then(arrToObj('playerid',{ valKey: 'oppids' })),
   ]);
   
-  return res.sendAndLog(toBreakers(matches, players, opps, true));
+  return res.sendAndLog(toBreakers({solo: matches}, players, {solo: opps}, true));
 }
 async function getAllBreakers(_, res) {
   const [matches, players, opps] = await Promise.all([

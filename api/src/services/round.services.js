@@ -20,7 +20,7 @@ function round(draftData, matchData, oppData, autoReportByes = true) {
 
     // Collect data for match generator
     let playerList = draftData.roundactive ?
-        toBreakers(matchData, draftData.players, oppData, true).ranking :
+        toBreakers({ solo: matchData }, draftData.players, { solo: oppData }, true).ranking :
         draftData.players;
     if (!playerList) playerList = [];
     if (draftData.drops) playerList = playerList.filter(p => !draftData.drops.includes(p));
