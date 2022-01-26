@@ -36,7 +36,7 @@ _Represented below by api/v[n]_
 |------|------|------|------|------|
 |/all|GET| |{ id: { draftData }, ... }|Data from all drafts by ID|
 |/[id]|GET| |{ draftData }|Data from a draft|
-|/[id]/breakers|GET| |{ playerId: { stats }, ..., ranking: [ids] }|Player stats from a draft|
+|/[id]/stats|GET| |{ playerId: { stats }, ..., ranking: [ids] }|Player stats from a draft|
 |/|POST|{ draftData }|{ id }|Create a new draft|
 |/[id]|DELETE| |{ id }|Deletes draft from database|
 |/[id]|PATCH|{ newData }|{ id, newData }|Update draft data|

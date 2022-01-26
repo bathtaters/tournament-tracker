@@ -24,21 +24,21 @@ export const playerApi = baseApi.injectEndpoints({
     createPlayer: build.mutation({
       query: (body) => ({ url: `player`, method: 'POST', body, }),
       transformResponse: res => console.log('ADD_PLAYER',res) || res,
-      invalidatesTags: getTags('Player', { addAll:['Breakers'] }),
+      invalidatesTags: getTags('Player', { addAll:['Stats'] }),
       onQueryStarted(body, { dispatch, getState }) {
-        const breakers = getState().dbApi.queries['breakers(undefined)'];
-        const id = nextTempId('PLAYER', breakers && breakers.data && breakers.data.ranking);
+        const stats = getState().dbApi.queries['stats(undefined)'];
+        const id = nextTempId('PLAYER', stats && stats.data && stats.data.ranking);
         dispatch(playerApi.util.updateQueryData('player', undefined, draft => { draft[id] = body; }));
-        dispatch(draftApi.util.updateQueryData('breakers', undefined, draft => { draft.ranking.push(id); }));
+        dispatch(draftApi.util.updateQueryData('stats', undefined, draft => { draft.ranking.push(id); }));
       },
     }),
     deletePlayer: build.mutation({
       query: id => ({ url: `player/${id}`, method: 'DELETE' }),
       transformResponse: res => console.log('DEL_PLAYER',res) || res,
-      invalidatesTags: getTags('Player', { addAll:['Breakers'] }),
+      invalidatesTags: getTags('Player', { addAll:['Stats'] }),
       onQueryStarted(id, { dispatch }) {
         dispatch(playerApi.util.updateQueryData('player', undefined, draft => { delete draft[id]; }));
-        dispatch(draftApi.util.updateQueryData('breakers', undefined, draft => {
+        dispatch(draftApi.util.updateQueryData('stats', undefined, draft => {
           const idx = draft.ranking ? draft.ranking.indexOf(id) : -1;
           if (idx > -1) draft.ranking.splice(idx,1);
           delete draft[id];

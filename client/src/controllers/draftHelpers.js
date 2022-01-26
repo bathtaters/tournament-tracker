@@ -40,12 +40,12 @@ export const getRoundButton = draft => roundButtonText[
 
 
 // Player records
-export const breakersOrder = ['matchScore','oppMatch','gameRate','oppGame'];
-export const orderPlayers = breakersData => (a,b) => {
+export const statsOrder = ['matchScore','oppMatch','gameRate','oppGame'];
+export const orderPlayers = statsData => (a,b) => {
   if (a === b) return 0;
-  for (const brk of breakersOrder) {
-    if (breakersData[a][brk] !== breakersData[b][brk])
-      return breakersData[a][brk] - breakersData[b][brk];
+  for (const brk of statsOrder) {
+    if (statsData[a][brk] !== statsData[b][brk])
+      return statsData[a][brk] - statsData[b][brk];
   }
   return a > b ? 1 : -1;
 }

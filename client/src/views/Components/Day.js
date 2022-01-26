@@ -84,7 +84,7 @@ function DayEntry({ day, id, data, isEditing, canDrop, dropHandler, editDraft })
   // Setup prefetching
   const prefetchDraft = usePrefetch('draft');
   const prefetchMatch = usePrefetch('match');
-  const prefetchStats = usePrefetch('breakers');
+  const prefetchStats = usePrefetch('stats');
   const loadDraft = id => { prefetchDraft(id); prefetchMatch(id); prefetchStats(id); };
 
   if (!data || isTempId(id))

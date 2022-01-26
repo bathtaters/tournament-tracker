@@ -21,7 +21,7 @@ const listByDraft = draftId => db.query(strings.list, [draftId]);
 // Get detail from each match
 const getByDraft = draftId => db.getRow('matchDetail', draftId, null, { idCol: 'draftId', getOne: false });
 
-// Get all match details for breakers
+// Get all match details for stats
 const getAll = (completed = true) => db.getRows(
     'matchDetail',
     completed && strings.complete, null,

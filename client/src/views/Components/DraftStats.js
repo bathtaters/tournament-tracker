@@ -6,14 +6,14 @@ import Modal from "./Modal";
 import Stats from "./Stats";
 
 import { usePlayerQuery } from "../../models/playerApi";
-import { useDraftQuery, useBreakersQuery } from "../../models/draftApi";
+import { useDraftQuery, useStatsQuery } from "../../models/draftApi";
 
 import { formatQueryError, formatRecord } from '../../assets/strings';
 
 
 function DraftStats({ draftId }) {
   const modal = useRef(null);
-  const { data,          isLoading,                 error              } = useBreakersQuery(draftId);
+  const { data,          isLoading,                 error              } = useStatsQuery(draftId);
   const { data: draft,   isLoading: loadingDraft,   error: draftError  } = useDraftQuery(draftId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
   const isRanking = data && Array.isArray(data.ranking) && data.ranking.length;

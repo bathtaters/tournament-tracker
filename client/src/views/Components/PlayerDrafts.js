@@ -71,7 +71,7 @@ function DraftRow({ draftId }) {
 
   // Setup pre-fetching
   const prefetchMatch = usePrefetch('match');
-  const prefetchStats = usePrefetch('breakers');
+  const prefetchStats = usePrefetch('stats');
   const loadDraft = id => { prefetchMatch(id); prefetchStats(id); };
 
   if (isLoading) return (<div className={"dim-color font-thin text-center "+scheduleGridSpan}>...</div>);

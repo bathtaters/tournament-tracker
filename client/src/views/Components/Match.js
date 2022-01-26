@@ -19,7 +19,7 @@ import {
   useUpdateMatchMutation, 
   useSwapPlayersMutation,
 } from "../../models/matchApi";
-import { useBreakersQuery } from "../../models/draftApi";
+import { useStatsQuery } from "../../models/draftApi";
 
 
 function Match({ draftId, matchId, wincount, isEditing }) {
@@ -30,7 +30,7 @@ function Match({ draftId, matchId, wincount, isEditing }) {
   // Global State
   const { data: settings } = useSettingsQuery();
   const { data, isLoading, error } = useMatchQuery(draftId);
-  const { data: rankings, isLoading: loadingRank, error: rankError } = useBreakersQuery(draftId);
+  const { data: rankings, isLoading: loadingRank, error: rankError } = useStatsQuery(draftId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
   const matchData = data && data[matchId];
   const title = isLoading || loadingPlayers || !matchData || !players ? 'Loading' :

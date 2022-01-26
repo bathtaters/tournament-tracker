@@ -9,7 +9,7 @@ import {
 } from '../../assets/strings';
 import { getPlayerList } from "../../controllers/misc";
 
-import { useBreakersQuery } from "../../models/draftApi";
+import { useStatsQuery } from "../../models/draftApi";
 import { usePlayerQuery } from "../../models/playerApi";
 
 
@@ -28,7 +28,7 @@ const statsHeader = [
 // Main Component
 function Stats({ draftId, onPlayerClick, className, highlightClass, hideTeams }) {
   // Global state
-  const { data, isLoading, error } = useBreakersQuery(draftId);
+  const { data, isLoading, error } = useStatsQuery(draftId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
   const playerList = getPlayerList(data && data.ranking, players, !draftId, hideTeams);
 

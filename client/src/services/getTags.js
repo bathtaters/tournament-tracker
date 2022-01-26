@@ -3,7 +3,7 @@
 
 // Constants
 const ALL_ID = '_LIST', DEF_KEY = 'id';
-export const tagTypes = ['Settings', 'Schedule', 'Draft', 'Match', 'Player', 'PlayerDetail', 'Breakers'];
+export const tagTypes = ['Settings', 'Schedule', 'Draft', 'Match', 'Player', 'PlayerDetail', 'Stats'];
 
 // Helper, gets value from key string (keyStr='propA.propB.0' would get <obj>.propA.propB[0])
 const getVal = (obj,keyStr) => keyStr ? obj && [obj].concat(keyStr.split('.')).reduce(function(a, b) { return a && a[b] }) : obj;

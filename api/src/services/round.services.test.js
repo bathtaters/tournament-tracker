@@ -3,9 +3,9 @@ const util = require('../utils/shared.utils')
 const arrToObjSpy = jest.spyOn(util,'arrToObj')
 const round = require('./round.services')
 
-// Mock breakers 'ranking'
-const toBreakers = require('./breakers.services')
-jest.mock('./breakers.services', () => 
+// Mock stats 'ranking'
+const toStats = require('./stats.services')
+jest.mock('./stats.services', () => 
   jest.fn((_,players) => ({ ranking: players }))
 )
 
@@ -76,15 +76,15 @@ describe('new round', () => {
     })
   })
 
-  it('calls toBreakers when not 1st round', () => {
-    round({ draftData, breakers: 'brkrs' }, false)
-    expect(toBreakers).toBeCalledTimes(1)
-    expect(toBreakers).toBeCalledWith('brkrs', draftData.players)
+  it('calls toStats when not 1st round', () => {
+    round({ draftData, stats: 'brkrs' }, false)
+    expect(toStats).toBeCalledTimes(1)
+    expect(toStats).toBeCalledWith('brkrs', draftData.players)
   })
-  it('skips toBreakers for 1st round', () => {
+  it('skips toStats for 1st round', () => {
     draftData.roundactive = 0
-    round({ draftData, breakers: 'brkrs' }, false)
-    expect(toBreakers).toBeCalledTimes(0)
+    round({ draftData, stats: 'brkrs' }, false)
+    expect(toStats).toBeCalledTimes(0)
   })
 
   it('does auto-report byes when true', () => {
@@ -104,10 +104,10 @@ describe('new round', () => {
     })
   })
 
-  it('gets opp data from breakersObj', () => {
+  it('gets opp data from statsObj', () => {
     const arrToObjFn = jest.fn(()=>'opps')
     arrToObjSpy.mockImplementationOnce(()=>arrToObjFn)
-    round({ draftData, breakers: 'brkrs' })
+    round({ draftData, stats: 'brkrs' })
 
     expect(arrToObjFn).toBeCalledTimes(1)
     expect(arrToObjFn).toBeCalledWith('brkrs')

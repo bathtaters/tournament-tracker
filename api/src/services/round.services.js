@@ -1,5 +1,5 @@
 const swissMonrad = require('./matchGenerators/swissMonrad');
-const toBreakers = require('./breakers.services');
+const toStats = require('./stats.services');
 const { arrToObj } = require('../utils/shared.utils');
 
 // HELPER: Convert array of keys into single object using 'value' as value for each key
@@ -20,7 +20,7 @@ function round(draftData, matchData, oppData, autoReportByes = true) {
 
     // Collect data for match generator
     let playerList = draftData.roundactive ?
-        toBreakers({ solo: matchData }, draftData.players, { solo: oppData }, true).ranking :
+        toStats({ solo: matchData }, draftData.players, { solo: oppData }, true).ranking :
         draftData.players;
     if (!playerList) playerList = [];
     if (draftData.drops) playerList = playerList.filter(p => !draftData.drops.includes(p));

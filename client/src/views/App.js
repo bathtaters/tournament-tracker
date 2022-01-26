@@ -18,7 +18,7 @@ function App() {
   const loadSched  = usePrefetch('schedule');
   const loadDraft  = usePrefetch('draft');
   const loadPlayer = usePrefetch('player');
-  const loadStats  = usePrefetch('breakers');
+  const loadStats  = usePrefetch('stats');
   useEffect(() => {
     loadSched(); loadDraft(); loadPlayer(); loadStats();
   }, [loadSched,loadDraft,loadPlayer,loadStats]);

@@ -18,10 +18,10 @@ export const draftApi = baseApi.injectEndpoints({
       },
       providesTags: getTags('Draft'),
     }),
-    breakers: build.query({
-      query: (draftId) => `draft/${draftId || 'all'}/breakers`,
+    stats: build.query({
+      query: (draftId) => `draft/${draftId || 'all'}/stats`,
       transformResponse: res => console.log('BRKRS',res) || res,
-      providesTags: getTags({Breakers: (r,i,a)=> (r && r.draftIds && r.draftIds[0]) || a},{limit:1}),
+      providesTags: getTags({Stats: (r,i,a)=> (r && r.draftIds && r.draftIds[0]) || a},{limit:1}),
     }),
 
     // Mutations
@@ -78,10 +78,10 @@ export const draftApi = baseApi.injectEndpoints({
     nextRound: build.mutation({
       query: id => ({ url: `draft/${id}/round`, method: 'POST' }),
       transformResponse: res => console.log('ROUND+',res) || res,
-      invalidatesTags: getTags(['Draft','Match','Breakers'], {all:0,addBase:['PlayerDetail']}),
+      invalidatesTags: getTags(['Draft','Match','Stats'], {all:0,addBase:['PlayerDetail']}),
       onQueryStarted(id, { dispatch, getState }) {
         const current = getState().dbApi.queries['draft("'+id+'")'].data;
-        if (current.status < 2) dispatch(draftApi.util.updateQueryData('breakers', id, draft => {
+        if (current.status < 2) dispatch(draftApi.util.updateQueryData('stats', id, draft => {
           draft.ranking = current.players;
         }));
         dispatch(draftApi.util.updateQueryData('draft', id, draft => { 
@@ -97,10 +97,10 @@ export const draftApi = baseApi.injectEndpoints({
     clearRound: build.mutation({
       query: id => ({ url: `draft/${id}/round`, method: 'DELETE' }),
       transformResponse: res => console.log('ROUND-',res) || res,
-      invalidatesTags: getTags(['Draft','Match','Breakers'], {all:0,addBase:['PlayerDetail']}),
+      invalidatesTags: getTags(['Draft','Match','Stats'], {all:0,addBase:['PlayerDetail']}),
       onQueryStarted(id, { dispatch, getState }) {
         const current = getState().dbApi.queries['draft("'+id+'")'].data;
-        if (current.roundactive === 1) dispatch(draftApi.util.updateQueryData('breakers', id, draft => {
+        if (current.roundactive === 1) dispatch(draftApi.util.updateQueryData('stats', id, draft => {
           draft.ranking = [];
         }));
         dispatch(draftApi.util.updateQueryData('draft', id, draft => { 
@@ -118,7 +118,7 @@ export const draftApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useBreakersQuery, useDraftQuery, 
+  useStatsQuery, useDraftQuery, 
   useCreateDraftMutation, useDeleteDraftMutation, useUpdateDraftMutation,
   useNextRoundMutation, useClearRoundMutation,
 } = draftApi;
