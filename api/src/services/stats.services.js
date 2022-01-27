@@ -27,43 +27,39 @@ function stats(matchData, originalOrder, oppData, useMatchScore = true) {
         matches.forEach(match => {
             if (match.reported) { 
                 
-                const results = getWLD(match); // Results as [W,L,D] indexes
+                // Get [W,L,D] indexes
+                const results = getWLD(match);
 
                 // Each player 
                 match.players.forEach((player, playerIdx) => {
                     current[player] = current[player]
-                        // Append base stats
+                        // Combine entry
                         ? combineStats(
                             current[player],
                             calcBase(playerIdx, results, match, draft)
-                        // Create base stats
+                        // New entry
                         ) : calcBase(playerIdx, results, match, draft);
                 });
             }
         });
 
         // Append match/game rates
-        Object.keys(current).forEach(player => {
-            if (current[player])
-                current[player] = calcRates(current[player]);
-        });
+        Object.keys(current).forEach(player => current[player] = calcRates(current[player]));
 
-        // Append opp match/game rates & push to 'final'
+        // Append opp match/game rates (& push to 'final')
         Object.keys(current).forEach(player => {
-            if (current[player]) {
-                final[player] = final[player]
-                    // Append to other scores
-                    ? combineFinal(
-                        final[player],
-                        calcOpps(current[player], current, oppData[draft][player])  // +oppRates
-                    // Create final score
-                    ) : calcOpps(current[player], current, oppData[draft][player]); // +oppRates
-            }
+            final[player] = final[player]
+                // Combine entry
+                ? combineFinal(
+                    final[player],
+                    calcOpps(current[player], current, oppData[draft][player]) 
+                // New entry
+                ) : calcOpps(current[player], current, oppData[draft][player]);
         });
     });
 
     // Finalize records
-    Object.keys(final).forEach(player => { final[player] = finalize(final[player]); });
+    Object.keys(final).forEach(player => final[player] = finalize(final[player]));
 
     // Rank players
     final.ranking = Object.keys(final).sort(rankSort(final, originalOrder, useMatchScore));

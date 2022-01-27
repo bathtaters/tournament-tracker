@@ -1,22 +1,17 @@
-const swissMonrad = require('./matchGenerators/swissMonrad');
+// Services
+const matchGen = require('./matchGenerators/swissMonrad');
 const toStats = require('./stats.services');
-const { arrToObj } = require('../utils/shared.utils');
 
-// HELPER: Convert array of keys into single object using 'value' as value for each key
-const monoValueObj = (keys, value) => keys.reduce((obj, key) => 
-    Object.assign(obj, { [key]: value }), 
-    {}
-);
-
-// Builds queries for creating a round
-function round(draftData, matchData, oppData, autoReportByes = true) {
+// Builds data object representing a round
+function round(draftData, matchData, oppData, autoReportByes) {
     // Increment round number & create return object
     const matchBase = { 
         round: Math.min(draftData.roundactive, draftData.roundcount) + 1,
         draftId: draftData.id,
     };
 
-    if (draftData.roundactive >= draftData.roundcount) return matchBase; // Draft has ended
+    // Draft has ended
+    if (matchBase.round == draftData.roundcount + 1) return matchBase;
 
     // Collect data for match generator
     let playerList = draftData.roundactive ?
@@ -26,7 +21,7 @@ function round(draftData, matchData, oppData, autoReportByes = true) {
     if (draftData.drops) playerList = playerList.filter(p => !draftData.drops.includes(p));
 
     // Generate match table (Can add more alogrithms later)
-    const matchTable = swissMonrad(playerList, {...draftData, oppData});
+    const matchTable = matchGen(playerList, {...draftData, oppData});
 
     // Format for DB write (auto-reporting byes)
     const byeWins = autoReportByes ? draftData.wincount : 0;
