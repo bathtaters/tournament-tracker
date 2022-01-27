@@ -1,6 +1,6 @@
 // Import/Mocks
 const warnSpy = jest.spyOn(global.console, "warn");
-const { arrToObj, insertSorted } = require('./shared.utils');
+const { arrToObj, insertSorted, filtering } = require('./shared.utils');
 
 afterAll(() => { warnSpy.mockRestore(); });
 
@@ -131,3 +131,22 @@ describe('insertSorted', () => {
     expect(res).toBe(testArray);
   });
 });
+
+describe('filtering', () => {
+  let sample;
+  beforeEach(() => sample = { a:1, b:2, c:3 })
+
+  it('removes ignore keys', () => {
+    expect(filtering(sample, ['a'])).toEqual({ b:2, c:3 })
+    expect(filtering(sample, ['a', 'c'])).toEqual({ b:2 })
+  })
+  it('can ignore missing keys', () => {
+    expect(filtering(sample, ['d','e','f'])).toEqual(sample)
+  })
+  it('can ignore nothing', () => {
+    expect(filtering(sample, [])).toEqual(sample)
+  })
+  it('copies input', () => {
+    expect(filtering(sample, [])).not.toBe(sample)
+  })
+})
