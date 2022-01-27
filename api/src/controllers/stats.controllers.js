@@ -50,7 +50,7 @@ const oppsByDraft = opps => opps.reduce((obj,entry) => {
   return obj;
 }, {});
 
-const matchesByDraft = matches => matches.reduce((obj,entry) => {
+const matchesByDraft = matches => matches && matches.reduce((obj,entry) => {
   if (!obj[entry.draftid]) obj[entry.draftid] = [ entry ];
   else obj[entry.draftid].push(entry);
   return obj;
