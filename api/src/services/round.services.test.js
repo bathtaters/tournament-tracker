@@ -1,117 +1,135 @@
-// Import & Mocks
-const util = require('../utils/shared.utils')
-const arrToObjSpy = jest.spyOn(util,'arrToObj')
+// Import
 const round = require('./round.services')
 
 // Mock stats 'ranking'
 const toStats = require('./stats.services')
-jest.mock('./stats.services', () => 
-  jest.fn((_,players) => ({ ranking: players }))
-)
+jest.mock('./stats.services', () => jest.fn((_,ranking) => ({ ranking })))
 
 // Mock array 'denester'
-const swissMonrad = require('./matchGenerators/swissMonrad')
-jest.mock('./matchGenerators/swissMonrad', () => jest.fn(
-  list => list.reduce((a,p,i) => {
-    i % 2 ? a[a.length-1].push(p) : a.push([p])
-    return a
-  }, [])
-))
+const matchGen = require('./matchGenerators/swissMonrad')
+jest.mock('./matchGenerators/swissMonrad')
 
 
 describe('new round', () => {
-  let draftData;
+  let draftData
+  const matchGenResult = [['a','b'],['c','d'],['e']]
 
-  // Generate match array for result
-  const getMatchArray = (data, reportByes = false) =>
-    swissMonrad(data.players).map(m => ({
-      draftId: data.id, round: data.roundactive + 1,
-      reported: reportByes && m.length === 1,
-      players: m.length === 1 ? 
-        { [m[0]]: reportByes ? 2 : 0 } : 
-        { [m[0]]: 0, [m[1]]: 0 }
-    }))
-
-  beforeAll(() => { arrToObjSpy.mockImplementation(()=>()=>{}) })
-  afterAll(() => { arrToObjSpy.mockRestore() })
+  beforeAll(() => { matchGen.mockImplementation(()=>matchGenResult) })
+  afterAll(() => { matchGen.mockRestore() })
   
   beforeEach(() => {
     draftData = {
       id: 'd1',
       roundactive: 1,
       roundcount: 3,
-      bestof: 3,
-      players: ['a','b','c','d'],
+      wincount: 2,
+      players: ['a','b','c','d','e'],
     }
   })
 
-  it('returns base & matches array', () => {
-    expect(round({ draftData }, false)).toEqual({
-      draftId: 'd1',
-      round: 2,
-      matches: getMatchArray(draftData)
+  // DraftId & Round
+  it('always returns draft/round', () => {
+    const full = round(draftData);
+    expect(full).toHaveProperty('draftId', 'd1')
+    expect(full).toHaveProperty('round')
+    
+    const part = round({...draftData, roundactive:4});
+    expect(part).toHaveProperty('draftId', 'd1')
+    expect(part).toHaveProperty('round')
+  })
+  it('always increment round', () => {
+    expect(round(draftData)).toHaveProperty('round', 2)
+    expect(round({...draftData, roundactive: 3})).toHaveProperty('round', 4)
+    expect(round({...draftData, roundactive: 0})).toHaveProperty('round', 1)
+  })
+  it('round doesn\'t go past count+1', () => {
+    expect(round({...draftData, roundactive: 4})).toHaveProperty('round', 4)
+    expect(round({...draftData, roundactive: 9})).toHaveProperty('round', 4)
+  })
+
+  // Matches Array
+  it('returns matches array', () => {
+    expect(round(draftData)).toHaveProperty('matches')
+  })
+  it('no matches array if draft is over', () => {
+    expect(round({...draftData, roundactive: 4})).not.toHaveProperty('matches')
+    expect(round({...draftData, roundactive: 9})).not.toHaveProperty('matches')
+  })
+  it('matches array is length of matchGen result', () => {
+    expect(round(draftData).matches.length).toBe(3)
+    matchGen.mockImplementationOnce(() => [[],[],[],[],[]])
+    expect(round(draftData).matches.length).toBe(5)
+  })
+  it('each match has round & draftId', () => {
+    const result = round(draftData);
+    result.matches.forEach(match => {
+      expect(match).toHaveProperty('draftId', 'd1')
+      expect(match).toHaveProperty('round', result.round)
+    })
+  })
+  it('each match has players, wins & reported props', () => {
+    round(draftData, null, null, false).matches.forEach((match,i) => {
+      expect(match).toHaveProperty('players', matchGenResult[i])
+      expect(match).toHaveProperty('wins', i != 2 ? [0,0] : [0])
+      expect(match).toHaveProperty('reported', false)
     })
   })
 
-  it('only returns base if draft ends', () => {
-    draftData.roundactive = 2
-    expect(round({ draftData })).toEqual({draftId: 'd1', round: 3})
-    draftData.roundactive = 5
-    expect(round({ draftData })).toEqual({draftId: 'd1', round: 3})
+  // Auto-Report Byes
+  it('auto-reports byes when true', () => {
+    round(draftData, null, null, true).matches.forEach((match,i) => {
+      expect(match).toHaveProperty('wins', i != 2 ? [0,0] : [2])
+      expect(match).toHaveProperty('reported', i != 2 ? false : true)
+    })
   })
 
-  it('uses Swiss Monrad to make matchTable', () => {
-    arrToObjSpy.mockImplementationOnce(()=>()=>'opps')
-    round({ draftData }, false)
-    expect(swissMonrad).toBeCalledTimes(1)
-    expect(swissMonrad).toBeCalledWith(draftData.players, {...draftData, oppData: 'opps'})
-    expect(arrToObjSpy).toBeCalledTimes(1)
+  // MatchGen
+  it('uses matchGen to generate matches', () => {
+    round(draftData)
+    expect(matchGen).toBeCalledTimes(1)
+    expect(matchGen).toBeCalledWith(
+      draftData.players,
+      {...draftData, oppData: undefined}
+    )
   })
 
+  // Edge case
+  it('works w/o players', () => {
+    matchGen.mockImplementationOnce(() => []).mockImplementationOnce(() => [])
+
+    expect(round({...draftData, players: null, round: 0})).toHaveProperty('matches',[])
+    expect(matchGen).toHaveBeenNthCalledWith(1, [], expect.anything())
+    
+    expect(round({...draftData, players: null })).toHaveProperty('matches',[])
+    expect(matchGen).toHaveBeenNthCalledWith(2, [], expect.anything())
+    expect(matchGen).toBeCalledTimes(2)
+  })
+
+  // Drops
   it('drops players in drops array', () => {
-    expect(round({ draftData, drops: ['d','b'] }, false)).toEqual({
-      draftId: 'd1',
-      round: 2,
-      matches: getMatchArray({...draftData, players: ['a','c']})
-    })
+    round({...draftData, drops: ['d','b']})
+    expect(matchGen).toBeCalledWith([
+      expect.stringMatching(/[ace]/),
+      expect.stringMatching(/[ace]/),
+      expect.stringMatching(/[ace]/),
+    ], expect.anything())
   })
 
-  it('calls toStats when not 1st round', () => {
-    round({ draftData, stats: 'brkrs' }, false)
-    expect(toStats).toBeCalledTimes(1)
-    expect(toStats).toBeCalledWith('brkrs', draftData.players)
-  })
-  it('skips toStats for 1st round', () => {
+  // toStats
+  it('skip toStats for 1st round', () => {
     draftData.roundactive = 0
-    round({ draftData, stats: 'brkrs' }, false)
+    round(draftData)
     expect(toStats).toBeCalledTimes(0)
   })
-
-  it('does auto-report byes when true', () => {
-    draftData.players.push('e')
-    expect(round({ draftData }, true)).toEqual({
-      draftId: 'd1',
-      round: 2,
-      matches: getMatchArray(draftData, true)
-    })
-  })
-  it('doesn\'t auto-report byes when false', () => {
-    draftData.players.push('e')
-    expect(round({ draftData }, false)).toEqual({
-      draftId: 'd1',
-      round: 2,
-      matches: getMatchArray(draftData, false)
-    })
+  it('use toStats for other rounds', () => {
+    round(draftData, 'matches', 'opps')
+    expect(toStats).toBeCalledTimes(1)
+    expect(toStats).toBeCalledWith(
+      { solo: 'matches' },
+      draftData.players,
+      { solo: 'opps' },
+      true
+    )
   })
 
-  it('gets opp data from statsObj', () => {
-    const arrToObjFn = jest.fn(()=>'opps')
-    arrToObjSpy.mockImplementationOnce(()=>arrToObjFn)
-    round({ draftData, stats: 'brkrs' })
-
-    expect(arrToObjFn).toBeCalledTimes(1)
-    expect(arrToObjFn).toBeCalledWith('brkrs')
-    expect(swissMonrad).toBeCalledTimes(1)
-    expect(swissMonrad).toBeCalledWith(draftData.players, {...draftData, oppData:'opps'})
-  })
 })
