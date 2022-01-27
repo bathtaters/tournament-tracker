@@ -18,7 +18,7 @@ function query(text, args = [], splitArgs = null) {
 // Load commands from a .SQL file
 async function loadFiles(pathArray) {
     // Read files into array
-    let sqlFileText = await Promise.all(pathArray.filter(Boolean).map(path =>
+    let sqlFileText = await Promise.all(pathArray.map(path => path &&
         fs.readFile(path)
         .then(file => file.toString().split(';'))
         .catch(e => { throw new Error(`Unable to read SQL file '${path}': ${e.message || e.description || e}`) })
