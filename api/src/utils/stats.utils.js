@@ -5,23 +5,30 @@ const { points } = require('../config/constants');
 
 // Win % calculator
 exports.rate = (score, record) => Math.max(
-    score / (sumArr(record) * points.win),
+    score / (sumArr(record || []) * points.win),
     points.floor || 0
 ); // If no games played, returns NaN
 
 // Builds player array of 'WLD' index (ie Player Win = 0, Player Loss = 1, Draw = 2)
-exports.getWLD = ({ wins, maxwins }) => wins.filter(w => w === maxwins).length === 1 ?
-    wins.map(w => +(w !== maxwins)) :
-    wins.map(w => w === maxwins ? 2 : 1); // Draw if player wins == max, otherwise lose
+exports.getWLD = ({ wins, maxwins }) =>
+    wins.filter(w => {
+        if (w === maxwins) return true;
+        if (w < maxwins) return false;
+        // Catch invalid state
+        throw new Error("Invalid maxWins: "+maxwins+" => "+JSON.stringify(wins))
+    }).length === 1 ?
+        wins.map(w => +(w !== maxwins)) :
+        wins.map(w => w === maxwins ? 2 : 1);
+            // Draw if player wins == max, otherwise lose
 
 
 // Calculate Stat Values //
 
-exports.calcBase = (playerIdx, matchArr, { wins, draws, totalwins }, draft) => ({
+exports.calcBase = (playerIdx, wldArr, { wins, draws, totalwins }, draft) => ({
     draftIds:    [draft], // In array for combineFinal
-    matchRecord: Object.assign([0,0,0], { [matchArr[playerIdx]]: 1 }),
+    matchRecord: Object.assign([0,0,0], { [wldArr[playerIdx]]: 1 }),
     gameRecord:  [ wins[playerIdx], totalwins - wins[playerIdx], draws ],
-    matchScore:  [ points.win, 0, points.draw ][ matchArr[playerIdx] ],
+    matchScore:  [ points.win, 0, points.draw ][ wldArr[playerIdx] ],
     gameScore:   ( wins[playerIdx] * points.win ) + ( draws * points.draw ),
 });
 
@@ -55,7 +62,7 @@ exports.combineStats = (a,b) => Object.assign(a, {
     gameScore:   a.gameScore  + b.gameScore,
 });
 
-exports.combineFinal = (final,curr) => Object.assign( combineStats(final,curr), {
+exports.combineFinal = (final,curr) => Object.assign( exports.combineStats(final,curr), {
     draftIds: final.draftIds.concat(curr.draftIds),
     oppMatch: final.oppMatch.concat(curr.oppMatch),
     oppGame:  final.oppGame.concat(curr.oppGame),
@@ -63,13 +70,11 @@ exports.combineFinal = (final,curr) => Object.assign( combineStats(final,curr), 
 
 exports.finalize = result => {
     // If more than 1 draft, recalc rates
-    if (result.draftIds.length > 1) result = calcRates(result);
+    if (result.draftIds.length > 1) result = exports.calcRates(result);
 
-    // Average oppRates (Ignoring NaN)
-    result.oppMatch = result.oppMatch.filter(n => !isNaN(n));
-    result.oppGame  = result.oppGame.filter(n  => !isNaN(n));
-    result.oppMatch = avgArr(result.oppMatch);
-    result.oppGame  = avgArr(result.oppGame);
+    // Average oppRates (Ignoring NaNs)
+    result.oppMatch = avgArr(result.oppMatch.filter(n => !isNaN(n)));
+    result.oppGame  = avgArr(result.oppGame.filter(n  => !isNaN(n)));
     return result;
 };
 
