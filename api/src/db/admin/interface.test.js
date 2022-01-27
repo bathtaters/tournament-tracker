@@ -9,6 +9,9 @@ jest.mock('./directOps', () => ({
 }));
 jest.mock('../../utils/dbInterface.utils');
 
+const soloInner  = jest.fn(r => r);
+const firstInner = jest.fn(r => r);
+
 // Setup Tests
 const client = {
   query: jest.fn((...args) => Promise.resolve(['testClient',...args])),
@@ -17,8 +20,8 @@ const client = {
 beforeAll(() => {
   utils.queryValues.mockImplementation((a) => a.flatMap(o => Object.values(o)));
   utils.queryLabels.mockImplementation((a,k) => Object.keys(k));
-  utils.getSolo.mockImplementation(() => r => r);
-  utils.getFirst.mockImplementation(() => r => r);
+  utils.getSolo.mockImplementation(() => soloInner);
+  utils.getFirst.mockImplementation(() => firstInner);
   utils.getReturn.mockImplementation(r => r);
 });
 
@@ -77,6 +80,7 @@ describe('getRows', () => {
     await ops.getRows('test');
     expect(utils.getReturn).toHaveBeenCalledTimes(1);
     expect(utils.getSolo).toHaveBeenCalledTimes(1);
+    expect(soloInner).toHaveBeenCalledTimes(1);
   });
 
   it('uses custom client', async () => {
@@ -93,11 +97,11 @@ describe('getRow', () => {
   const getRowsSpy = jest.spyOn(ops, 'getRows');
 
   it('uses getRows', async () => {
-    await ops.getRow('test', 'ID', 'cols');
+    await ops.getRow('test', 'ID', 'cols', {getOne: false});
     expect(getRowsSpy).toBeCalledTimes(1);
   });
   it('table param', async () => {
-    await ops.getRow('test', 'ID', 'cols');
+    await ops.getRow('test', 'ID', 'cols', {getOne: false});
     expect(getRowsSpy).toBeCalledWith(
       'test',
       expect.anything(),
@@ -107,7 +111,7 @@ describe('getRow', () => {
     );
   });
   it('id param', async () => {
-    await ops.getRow('test', 'ID', 'cols');
+    await ops.getRow('test', 'ID', 'cols', {getOne: false});
     expect(getRowsSpy).toBeCalledWith(
       expect.anything(),
       'WHERE id = $1',
@@ -117,7 +121,7 @@ describe('getRow', () => {
     );
   });
   it('no id param', async () => {
-    await ops.getRow('test', null, 'cols');
+    await ops.getRow('test', null, 'cols', {getOne: false});
     expect(getRowsSpy).toBeCalledWith(
       expect.anything(),
       '',
@@ -127,7 +131,7 @@ describe('getRow', () => {
     );
   });
   it('col param', async () => {
-    await ops.getRow('test', 'ID', 'cols');
+    await ops.getRow('test', 'ID', 'cols', {getOne: false});
     expect(getRowsSpy).toBeCalledWith(
       expect.anything(),
       expect.anything(),
@@ -136,8 +140,29 @@ describe('getRow', () => {
       null,
     );
   });
+  it('idCol param', async () => {
+    await ops.getRow('test', 'ID', 'cols', {idCol: 'idCol', getOne: false});
+    expect(getRowsSpy).toBeCalledWith(
+      expect.anything(),
+      'WHERE idCol = $1',
+      expect.anything(),
+      expect.anything(),
+      null,
+    );
+  });
+  it('getOne param', async () => {
+    await ops.getRow('test', 'ID', 'cols', {getOne: true});
+    expect(getRowsSpy).toBeCalledWith(
+      expect.anything(),
+      'WHERE id = $1 LIMIT 1',
+      expect.anything(),
+      expect.anything(),
+      null,
+    );
+    expect(utils.getFirst).toHaveBeenCalledWith('ID');
+  });
   it('client param', async () => {
-    await ops.getRow('test', 'ID', 'cols', client);
+    await ops.getRow('test', 'ID', 'cols', {getOne: false, client});
     expect(getRowsSpy).toBeCalledWith(
       expect.anything(),
       expect.anything(),
@@ -148,9 +173,12 @@ describe('getRow', () => {
   });
 
   it('uses sqlHelpers', async () => {
-    await ops.getRow('test','ID');
-    expect(utils.getFirst).toHaveBeenCalledTimes(1);
-    expect(utils.getFirst).toHaveBeenCalledWith('ID');
+    await ops.getRow('test','ID', null, {getOne: true});
+    expect(utils.getFirst).toHaveBeenNthCalledWith(1,'ID');
+    await ops.getRow('test','ID', null, {getOne: false});
+    expect(utils.getFirst).toHaveBeenNthCalledWith(2,false);
+    expect(utils.getFirst).toHaveBeenCalledTimes(2);
+    expect(firstInner).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -170,6 +198,7 @@ describe('rmvRow', () => {
     expect(utils.getReturn).toHaveBeenCalledTimes(1);
     expect(utils.getFirst).toHaveBeenCalledTimes(1);
     expect(utils.getFirst).toHaveBeenCalledWith();
+    expect(firstInner).toHaveBeenCalledTimes(1);
   });
   
   it('uses custom client', async () => {
@@ -242,6 +271,7 @@ describe('addRows', () => {
     await ops.addRows('test',[{a:1}]);
     expect(utils.getReturn).toHaveBeenCalledTimes(1);
     expect(utils.getSolo).toHaveBeenCalledTimes(1);
+    expect(soloInner).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -290,6 +320,7 @@ describe('addRow', () => {
     await ops.getRow('test','ID');
     expect(utils.getFirst).toHaveBeenCalledTimes(1);
     expect(utils.getFirst).toHaveBeenCalledWith('ID');
+    expect(firstInner).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -330,6 +361,7 @@ describe('updateRow', () => {
     expect(utils.getReturn).toHaveBeenCalledTimes(1);
     expect(utils.getFirst).toHaveBeenCalledTimes(1);
     expect(utils.getFirst).toHaveBeenCalledWith();
+    expect(firstInner).toHaveBeenCalledTimes(1);
   });
 
   it('uses custom client', async () => {
