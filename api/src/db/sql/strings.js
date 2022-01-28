@@ -18,6 +18,5 @@ exports.player = {
 
 exports.match = {
     list: "SELECT round, array_agg(id) matches FROM match WHERE eventId = $1 GROUP BY round;",
-    setPlayer: "UPDATE match SET players = players || $2 where id = $1 RETURNING eventid;",
     complete: exports.event.complete,
 }
