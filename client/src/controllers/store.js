@@ -8,7 +8,7 @@ export default configureStore({
   },
   devTools: false,
   enhancers: [devToolsEnhancer({
-    name: 'lol-retreat',
+    name: 'tournament-tracker',
     hostname: '192.168.0.179',
     port: 8000,
     realtime: true, 

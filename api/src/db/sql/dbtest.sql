@@ -1,5 +1,5 @@
 -- Select DB
-USE lolretreat;
+USE tournamenttracker;
 
 -- Erase all entries
 SET sql_safe_updates = FALSE;
@@ -11,9 +11,9 @@ SET sql_safe_updates = TRUE;
 
 -- Setup Settings
 INSERT INTO settings (id, value, type) VALUES
-    ('title','Lords of Luxury Retreat Demo','string'),
-    ('datestart','2020-10-03','string'),
-    ('dateend','2020-10-12','string'),
+    ('title','Tournament Tracker Demo','string'),
+    ('datestart','2022-02-01','string'),
+    ('dateend','2022-02-09','string'),
     ('showadvanced','true','boolean'),
     ('showrawjson','false','boolean'),
     ('autobyes','true','boolean'),

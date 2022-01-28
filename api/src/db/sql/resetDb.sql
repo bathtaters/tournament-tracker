@@ -1,14 +1,14 @@
 SET sql_safe_updates = FALSE;
 
 USE defaultdb;
-DROP DATABASE IF EXISTS lolretreat CASCADE;
+DROP DATABASE IF EXISTS tournamenttracker CASCADE;
 COMMIT;
 
 BEGIN;
 SET sql_safe_updates = TRUE;
-CREATE DATABASE IF NOT EXISTS lolretreat;
+CREATE DATABASE IF NOT EXISTS tournamenttracker;
 
-USE lolretreat;
+USE tournamenttracker;
 
 CREATE TABLE settings (
     id STRING PRIMARY KEY NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE match (
 );
 
 -- Perms
-GRANT ALL ON DATABASE lolretreat TO db_admin;
+GRANT ALL ON DATABASE tournamenttracker TO db_admin;
 GRANT ALL ON TABLE * TO db_admin;
 GRANT INSERT, UPDATE, DELETE, SELECT ON TABLE * TO db_rw;
 GRANT SELECT ON TABLE * TO db_read;

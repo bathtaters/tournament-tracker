@@ -1,5 +1,5 @@
 {
-  "name": "lol-retreat-client",
+  "name": "tournament-tracker-client",
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:9090",
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bathtaters/lol-retreat.git"
+    "url": "git+https://github.com/bathtaters/tournament-tracker.git"
   },
   "eslintConfig": {
     "extends": [

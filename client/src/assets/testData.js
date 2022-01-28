@@ -1,7 +1,7 @@
 const playerList = ['mr1','af1','ad1','td1','iq1','cd1','nc1','js1'];
 const testData = {
   settings: {
-    title: "Lords of Luxury Retreat Demo",
+    title: "Tournament Tracker Demo",
     dateRange: [ (new Date(Date.now() - 1000*60*60*24*2)).getTime(), (new Date(Date.now() + 1000*60*60*24*4)).getTime() ],
   },
   schedule: [

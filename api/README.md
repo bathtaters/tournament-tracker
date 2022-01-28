@@ -1,4 +1,4 @@
-# lol-retreat API
+# tournament-tracker API
 
 ### Current Major Version: v0
 _Represented below by api/v[n]_
