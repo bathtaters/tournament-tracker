@@ -25,6 +25,7 @@ const validateConfig = {
       datestart: today,
       dateend: tomorrow,
       autobyes: true,
+      includeincomplete: false,
     },
     player: {
       name: "New Player",
