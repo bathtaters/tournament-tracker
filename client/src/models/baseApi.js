@@ -2,7 +2,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 import getDays from '../controllers/getDays';
-import { tagTypes } from '../services/getTags';
+import { tagTypes, ALL_ID } from '../services/getTags';
 
 const apiVersion = 'v0';
 
@@ -33,7 +33,7 @@ export const baseApi = createApi({
     updateSettings: build.mutation({
       query: (body) => ({ url: 'settings', method: 'PATCH', body }),
       transformResponse: res => console.log('UPD_SETTINGS',res) || res,
-      invalidatesTags: ['Settings','Schedule'],
+      invalidatesTags: ['Settings','Schedule', { type: 'Stats', id: ALL_ID }],
       onQueryStarted(body, { dispatch }) {
         dispatch(baseApi.util.updateQueryData(
           'settings', undefined, draft => { 
