@@ -9,7 +9,7 @@ import {
 } from '../../assets/strings';
 import { getPlayerList } from "../../controllers/misc";
 
-import { useStatsQuery } from "../../models/draftApi";
+import { useStatsQuery } from "../../models/eventApi";
 import { usePlayerQuery } from "../../models/playerApi";
 
 
@@ -26,11 +26,11 @@ const statsHeader = [
 
 
 // Main Component
-function Stats({ draftId, onPlayerClick, className, highlightClass, hideTeams }) {
+function Stats({ eventId, onPlayerClick, className, highlightClass, hideTeams }) {
   // Global state
-  const { data, isLoading, error } = useStatsQuery(draftId);
+  const { data, isLoading, error } = useStatsQuery(eventId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
-  const playerList = getPlayerList(data && data.ranking, players, !draftId, hideTeams);
+  const playerList = getPlayerList(data && data.ranking, players, !eventId, hideTeams);
 
   // Pass clicks to onPlayerClick
   const clickHandler = pid => event => {
@@ -104,7 +104,7 @@ function Stats({ draftId, onPlayerClick, className, highlightClass, hideTeams })
 }
 
 Stats.propTypes = {
-  draftId: PropTypes.string,
+  eventId: PropTypes.string,
   onPlayerClick: PropTypes.func,
   className: PropTypes.string,
   highlightClass: PropTypes.string,

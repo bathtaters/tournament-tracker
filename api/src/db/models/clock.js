@@ -1,29 +1,29 @@
-/* *** DRAFT CLOCK Sub-Object *** */
+/* *** EVENT CLOCK Sub-Object *** */
 const db = require('../admin/interface');
 const RawPG = require('../admin/RawPG');
 const sqlStrings = require('../sql/strings').clock;
 
 
-// Draft Clock Operations //
+// Event Clock Operations //
 
-const get = draftId => db.getRow(
-    'draft', draftId,
+const get = eventId => db.getRow(
+    'event', eventId,
     ['id','clocklimit','clockstart','clockmod']
 );
 
-const start = draftId => db.updateRow(
-    'draft', draftId,
+const start = eventId => db.updateRow(
+    'event', eventId,
     { clockstart: RawPG('now()') }
 );
 
-const pause = draftId => db.updateRow(
-    'draft', draftId, {
+const pause = eventId => db.updateRow(
+    'event', eventId, {
         clockmod: sqlStrings.modPause,
         clockstart: null,
     }
 );
 
-const reset = draftId => db.updateRow('draft', draftId, {
+const reset = eventId => db.updateRow('event', eventId, {
     clockstart: null, clockmod: null
 });
 

@@ -24,8 +24,8 @@ exports.getWLD = ({ wins, maxwins }) =>
 
 // Calculate Stat Values //
 
-exports.calcBase = (playerIdx, wldArr, { wins, draws, totalwins }, draft) => ({
-    draftIds:    [draft], // In array for combineFinal
+exports.calcBase = (playerIdx, wldArr, { wins, draws, totalwins }, event) => ({
+    eventIds:    [event], // In array for combineFinal
     matchRecord: Object.assign([0,0,0], { [wldArr[playerIdx]]: 1 }),
     gameRecord:  [ wins[playerIdx], totalwins - wins[playerIdx], draws ],
     matchScore:  [ points.win, 0, points.draw ][ wldArr[playerIdx] ],
@@ -63,14 +63,14 @@ exports.combineStats = (a,b) => Object.assign(a, {
 });
 
 exports.combineFinal = (final,curr) => Object.assign( exports.combineStats(final,curr), {
-    draftIds: final.draftIds.concat(curr.draftIds),
+    eventIds: final.eventIds.concat(curr.eventIds),
     oppMatch: final.oppMatch.concat(curr.oppMatch),
     oppGame:  final.oppGame.concat(curr.oppGame),
 });
 
 exports.finalize = result => {
-    // If more than 1 draft, recalc rates
-    if (result.draftIds.length > 1) result = exports.calcRates(result);
+    // If more than 1 event, recalc rates
+    if (result.eventIds.length > 1) result = exports.calcRates(result);
 
     // Average oppRates (Ignoring NaNs)
     result.oppMatch = avgArr(result.oppMatch.filter(n => !isNaN(n)));

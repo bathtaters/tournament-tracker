@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 
 import RawData from "./RawData";
 
-import { usePlayerDraftsQuery } from "../../models/playerApi";
-import { useDraftQuery } from "../../models/draftApi";
+import { usePlayerEventsQuery } from "../../models/playerApi";
+import { useEventQuery } from "../../models/eventApi";
 import { usePrefetch, } from "../../models/baseApi";
 
 import { formatQueryError, statusInfo } from "../../assets/strings";
@@ -18,7 +18,7 @@ const scheduleRows = [
     value: ({day}) => day ? day.slice(5,10).replace(/-/g,'/') : 'None', 
     class: ({day}) => dayClasses(day && day.slice(0,10)).titleCls,
   },
-  { title: 'Draft', value: d => d.title, span: 3, link: d => `/draft/${d.id}` },
+  { title: 'Event', value: d => d.title, span: 3, link: d => `/event/${d.id}` },
   {
     title: 'Status', span: 2,
     value: ({isdrop, status}) => statusInfo[status || 0].label + (isdrop ? " (Dropped)" : ""),
@@ -32,8 +32,8 @@ const scheduleGridClass = `grid-cols-${scheduleRows.reduce((c,r) => c + (r.span 
 const scheduleGridSpan = scheduleGridClass.replace('grid-cols','col-span')
 
 // Main component
-function PlayerDrafts({ id }) {
-  const { data, isLoading, error } = usePlayerDraftsQuery(id);
+function PlayerEvents({ id }) {
+  const { data, isLoading, error } = usePlayerEventsQuery(id);
 
   return (
     <div className="my-4">
@@ -53,7 +53,7 @@ function PlayerDrafts({ id }) {
           ) }
 
           { 
-            data && data.length ? data.map(draftId => <DraftRow draftId={draftId}/>) : 
+            data && data.length ? data.map(eventId => <EventRow eventId={eventId}/>) : 
             <div className={"dim-color italic font-thin text-center my-2 "+scheduleGridSpan}>– None –</div> 
           }
         </div>
@@ -64,15 +64,15 @@ function PlayerDrafts({ id }) {
   );
 }
 
-// Row w/ draft info
+// Row w/ event info
 
-function DraftRow({ draftId }) {
-  const { data, isLoading, error } = useDraftQuery(draftId);
+function EventRow({ eventId }) {
+  const { data, isLoading, error } = useEventQuery(eventId);
 
   // Setup pre-fetching
   const prefetchMatch = usePrefetch('match');
   const prefetchStats = usePrefetch('stats');
-  const loadDraft = id => { prefetchMatch(id); prefetchStats(id); };
+  const loadEvent = id => { prefetchMatch(id); prefetchStats(id); };
 
   if (isLoading) return (<div className={"dim-color font-thin text-center "+scheduleGridSpan}>...</div>);
 
@@ -85,12 +85,12 @@ function DraftRow({ draftId }) {
     !row.hideBelow || row.hideBelow <= data.status ?
       <h4
         className={'font-thin base-color ' + (row.span ? ' col-span-'+row.span : '')}
-        key={draftId+'_'+row.title}
+        key={eventId+'_'+row.title}
       >
         { row.link ?
           <Link
             className={row.class ? row.class(data): ''}
-            onMouseEnter={()=>loadDraft(draftId)}
+            onMouseEnter={()=>loadEvent(eventId)}
             to={row.link(data)}
           >
             {row.value(data)}
@@ -100,12 +100,12 @@ function DraftRow({ draftId }) {
         }
       </h4>
     : 
-    <div className={row.span ? 'col-span-'+row.span : ''} key={draftId+'_'+row.title} />
+    <div className={row.span ? 'col-span-'+row.span : ''} key={eventId+'_'+row.title} />
   );
 }
 
 
-PlayerDrafts.propTypes = { id: PropTypes.string };
-DraftRow.propTypes = { draftId: PropTypes.string };
+PlayerEvents.propTypes = { id: PropTypes.string };
+EventRow.propTypes = { eventId: PropTypes.string };
 
-export default PlayerDrafts;
+export default PlayerEvents;

@@ -9,7 +9,7 @@ const action = require('../controllers/action.controllers');
 
 // Gets
 router.get('/all', catcher(controller.getAllMatches));
-router.get('/draft/:draftId', catcher(controller.getDraftMatches));
+router.get('/event/:eventId', catcher(controller.getEventMatches));
 
 // Sets
 router.post( '/swap', catcher(action.swapPlayers));

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 
 import Header from "./Header";
 import Schedule from "./Schedule";
-import Draft from "./Draft";
+import Event from "./Event";
 import Players from "./Players";
 import Profile from "./Profile";
 import RawData from "./Components/RawData";
@@ -16,12 +16,12 @@ function App() {
 
   // Preload base data
   const loadSched  = usePrefetch('schedule');
-  const loadDraft  = usePrefetch('draft');
+  const loadEvent  = usePrefetch('event');
   const loadPlayer = usePrefetch('player');
   const loadStats  = usePrefetch('stats');
   useEffect(() => {
-    loadSched(); loadDraft(); loadPlayer(); loadStats();
-  }, [loadSched,loadDraft,loadPlayer,loadStats]);
+    loadSched(); loadEvent(); loadPlayer(); loadStats();
+  }, [loadSched,loadEvent,loadPlayer,loadStats]);
 
   return (
     <div className="min-h-screen relative">
@@ -36,7 +36,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Navigate replace to="/home" />} />
               <Route path="/home" element={<Schedule />} />
-              <Route path="/draft/:id" element={<Draft />} />
+              <Route path="/event/:id" element={<Event />} />
               <Route path="/players" element={<Players />} />
               <Route path="/profile/:id" element={<Profile />} />
               <Route path="*" element={<Navigate replace to="/home" />} />

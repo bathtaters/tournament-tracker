@@ -41,17 +41,17 @@ describe('toStats', () => {
   })
 
   // Full Tests
-  it('1 draft, 1 match', () => {
+  it('1 event, 1 match', () => {
     const res = { p1: ['1a0'], p2: ['1a1'], p3: ['1b0'], p4: ['1b1'] }
     const result = stats({ d1 }, null, oppos)
     Object.keys(res).forEach(p => expect(result[p]).toEqual(res[p]))
   })
-  it('1 draft, 2 matches', () => {
+  it('1 event, 2 matches', () => {
     const res = { p1:['2a0','2c0'], p2:['2a1','2c1'], p3:['2b0','2d0'], p4:['2b1','2d1'] }
     const result = stats({ d2 }, null, oppos)
     Object.keys(res).forEach(p => expect(result[p]).toEqual(res[p]))
   })
-  it('2 drafts, 3 matches', () => {
+  it('2 events, 3 matches', () => {
     const res = {
       p1: ['1a0','2a0','2c0'], p2: ['1a1','2a1','2c1'],
       p3: ['1b0','2b0','2d0'], p4: ['1b1','2b1','2d1'],

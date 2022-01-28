@@ -6,15 +6,15 @@ import Modal from "./Modal";
 import Stats from "./Stats";
 
 import { usePlayerQuery } from "../../models/playerApi";
-import { useDraftQuery, useStatsQuery } from "../../models/draftApi";
+import { useEventQuery, useStatsQuery } from "../../models/eventApi";
 
 import { formatQueryError, formatRecord } from '../../assets/strings';
 
 
-function DraftStats({ draftId }) {
+function EventStats({ eventId }) {
   const modal = useRef(null);
-  const { data,          isLoading,                 error              } = useStatsQuery(draftId);
-  const { data: draft,   isLoading: loadingDraft,   error: draftError  } = useDraftQuery(draftId);
+  const { data,          isLoading,                 error              } = useStatsQuery(eventId);
+  const { data: event,   isLoading: loadingEvent,   error: eventError  } = useEventQuery(eventId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
   const isRanking = data && Array.isArray(data.ranking) && data.ranking.length;
   
@@ -22,14 +22,14 @@ function DraftStats({ draftId }) {
     <div className="m-4">
       <h3 className="font-light text-center">{isRanking ? 'Standings' : 'Players'}</h3>
 
-      { isLoading || loadingDraft || loadingPlayers ?
+      { isLoading || loadingEvent || loadingPlayers ?
         <div className="italic text-xs text-center font-thin block mb-2">
           {isLoading ? 'Loading...' : 'N/A'}
         </div>
 
-      : error || draftError || playerError  ?
+      : error || eventError || playerError  ?
         <div className="italic text-xs text-center font-thin block mb-2">
-          {formatQueryError(error || draftError || playerError)}
+          {formatQueryError(error || eventError || playerError)}
         </div>
 
       : <div>
@@ -41,10 +41,10 @@ function DraftStats({ draftId }) {
         </div>
         <div className="grid grid-flow-row grid-cols-5 gap-x-2 gap-y-1 items-center dim-color">
 
-          { (isRanking ? data.ranking : draft.players).map((pid,idx) => 
+          { (isRanking ? data.ranking : event.players).map((pid,idx) => 
             <Fragment key={pid}>
               <span
-                className={'font-light text-right ' + (draft.drops && draft.drops.includes(pid) ? 'neg-color' : '')}
+                className={'font-light text-right ' + (event.drops && event.drops.includes(pid) ? 'neg-color' : '')}
               >
                 {isRanking ? (idx + 1)+')' : '• '}
               </span>
@@ -70,15 +70,15 @@ function DraftStats({ draftId }) {
       </div> }
 
       <Modal ref={modal}>
-        <h3 className="font-light max-color text-center mb-4">{draft.title+' Stats'}</h3>
-        <Stats draftId={draftId} playerList={data && data.ranking} players={players} />
+        <h3 className="font-light max-color text-center mb-4">{event.title+' Stats'}</h3>
+        <Stats eventId={eventId} playerList={data && data.ranking} players={players} />
       </Modal>
     </div>
   );
 }
 
-DraftStats.propTypes = {
-  draftId: PropTypes.string.isRequired,
+EventStats.propTypes = {
+  eventId: PropTypes.string.isRequired,
 };
 
-export default DraftStats;
+export default EventStats;

@@ -7,17 +7,17 @@ import PlayerEditor from "./PlayerEditor";
 import RawData from "./RawData";
 
 import { 
-  useDraftQuery, useCreateDraftMutation,
-  useDeleteDraftMutation, useUpdateDraftMutation,
-} from "../../models/draftApi";
+  useEventQuery, useCreateEventMutation,
+  useDeleteEventMutation, useUpdateEventMutation,
+} from "../../models/eventApi";
 
-import { formatQueryError, statusInfo, deleteDraftMsg } from "../../assets/strings";
+import { formatQueryError, statusInfo, deleteEventMsg } from "../../assets/strings";
 
-import { limits, defaultValues } from "../../controllers/draftHelpers";
+import { limits, defaultValues } from "../../controllers/eventHelpers";
 
 
 // Settings Window Layout/Validation
-const lockAt = (statusVal = defaultValues.lockat) => (_,base) => base.draftStatus != null && base.draftStatus >= statusVal;
+const lockAt = (statusVal = defaultValues.lockat) => (_,base) => base.eventStatus != null && base.eventStatus >= statusVal;
 
 const settingsRows = [ 'custom', [
   {
@@ -39,38 +39,38 @@ const settingsRows = [ 'custom', [
 
 
 // Component
-function EditDraft({ draftId, hideModal, lockModal }) {
+function EditEvent({ eventId, hideModal, lockModal }) {
   // Init state
   const playerList = useRef(null);
-  const { data, isLoading, error } = useDraftQuery(draftId, { skip: !draftId });
-  const draftStatus = data ? data.status : 0;
+  const { data, isLoading, error } = useEventQuery(eventId, { skip: !eventId });
+  const eventStatus = data ? data.status : 0;
   
   // Delete (& navigate to home page)
   let navigate = useNavigate();
-  const [ deleteDraft ] = useDeleteDraftMutation();
+  const [ deleteEvent ] = useDeleteEventMutation();
   const clickDelete = () => {
-    if (!window.confirm(deleteDraftMsg(data && data.title))) return;
-    if (draftId) deleteDraft(draftId);
+    if (!window.confirm(deleteEventMsg(data && data.title))) return;
+    if (eventId) deleteEvent(eventId);
     hideModal(true);
     navigate("/home");
   };
   
-  // Submit draft
-  const [ createDraft ] = useCreateDraftMutation();
-  const [ updateDraft ] = useUpdateDraftMutation();
-  const submitDraft = draftData => {
+  // Submit event
+  const [ createEvent ] = useCreateEventMutation();
+  const [ updateEvent ] = useUpdateEventMutation();
+  const submitEvent = eventData => {
     // Retrieve list from component
     const savedPlayers = playerList.current.getList();
     if (!savedPlayers) return;
     
-    // Build draft object
-    if (!draftData.title.trim() && !savedPlayers.length) return hideModal(true);
-    if (draftId) draftData.id = draftId;
-    draftData.players = savedPlayers;
+    // Build event object
+    if (!eventData.title.trim() && !savedPlayers.length) return hideModal(true);
+    if (eventId) eventData.id = eventId;
+    eventData.players = savedPlayers;
 
     // Add to DB
-    if (!draftId) createDraft(draftData);
-    else updateDraft(draftData);
+    if (!eventId) createEvent(eventData);
+    else updateEvent(eventData);
     hideModal(true);
   };
 
@@ -86,7 +86,7 @@ function EditDraft({ draftId, hideModal, lockModal }) {
     </div>);
 
   // Button info - TO MEMOIZE
-  const buttons =  draftId ? [
+  const buttons =  eventId ? [
     {
       label: "Delete", onClick: clickDelete,
       className: "font-normal base-color-inv neg-bgd w-14 h-8 mx-1 sm:w-20 sm:h-11 sm:mx-4 opacity-80"
@@ -96,25 +96,25 @@ function EditDraft({ draftId, hideModal, lockModal }) {
 
   return (
     <div>
-      <h3 className="font-light max-color text-center mb-2">{data ? 'Edit Draft' : 'New Draft'}</h3>
-      { draftStatus ?
+      <h3 className="font-light max-color text-center mb-2">{data ? 'Edit Event' : 'New Event'}</h3>
+      { eventStatus ?
         <h5 className="text-center mb-2">
           <span className="mr-1">Status:</span>
-          <span className={"font-thin "+statusInfo[draftStatus].class}>{statusInfo[draftStatus].label}</span>
+          <span className={"font-thin "+statusInfo[eventStatus].class}>{statusInfo[eventStatus].label}</span>
         </h5>
       : null }
       <InputForm
         rows={settingsRows}
         data={data}
-        baseData={{defaultValues, limits, draftStatus}}
-        onSubmit={submitDraft}
+        baseData={{defaultValues, limits, eventStatus}}
+        onSubmit={submitEvent}
         onEdit={lockModal}
         buttons={buttons}
         rowFirst={true}
       >
         <PlayerEditor 
           players={data && data.players}
-          status={draftStatus}
+          status={eventStatus}
           onEdit={lockModal}
           ref={playerList}
         />
@@ -124,10 +124,10 @@ function EditDraft({ draftId, hideModal, lockModal }) {
   );
 }
 
-EditDraft.propTypes = {
-  draftId: PropTypes.string,
+EditEvent.propTypes = {
+  eventId: PropTypes.string,
   hideModal: PropTypes.func,
   lockModal: PropTypes.func,
 };
 
-export default EditDraft;
+export default EditEvent;

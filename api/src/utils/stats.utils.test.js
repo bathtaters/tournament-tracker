@@ -90,17 +90,17 @@ describe('calcBase', () => {
       wins: [0,3,1],
       draws: 2,
       totalwins: 4,
-    // draftId
+    // eventId
     }, 'd1',
   ];
   const playerA = calcBase(0, ...calcData)
   const playerB = calcBase(1, ...calcData)
   const playerC = calcBase(2, ...calcData)
 
-  it('draftIds', () => {
-    expect(playerA).toHaveProperty('draftIds',['d1'])
-    expect(playerB).toHaveProperty('draftIds',['d1'])
-    expect(playerC).toHaveProperty('draftIds',['d1'])
+  it('eventIds', () => {
+    expect(playerA).toHaveProperty('eventIds',['d1'])
+    expect(playerB).toHaveProperty('eventIds',['d1'])
+    expect(playerC).toHaveProperty('eventIds',['d1'])
   })
   it('matchRecord', () => {
     expect(playerA).toHaveProperty('matchRecord',[0,1,0])
@@ -225,8 +225,8 @@ describe('combineFinal', () => {
   
   beforeEach(() => {
     comboSpy.mockImplementationOnce(a => a)
-    dataA = { draftIds: ['d1','d2'], oppMatch: [2, 4], oppGame: [11, 12], passthrough: true }
-    dataB = { draftIds: ['d3'],      oppMatch: [6],    oppGame: [ NaN ]  }
+    dataA = { eventIds: ['d1','d2'], oppMatch: [2, 4], oppGame: [11, 12], passthrough: true }
+    dataB = { eventIds: ['d3'],      oppMatch: [6],    oppGame: [ NaN ]  }
 
     combined = combineFinal(dataA, dataB)
   })
@@ -242,7 +242,7 @@ describe('combineFinal', () => {
     expect(comboSpy).toBeCalledWith(dataA,dataB)
   })
   
-  it('draftIds', () => expect(combined).toHaveProperty('draftIds', ['d1','d2','d3']))
+  it('eventIds', () => expect(combined).toHaveProperty('eventIds', ['d1','d2','d3']))
   it('oppMatch', () => expect(combined).toHaveProperty('oppMatch', [2, 4, 6]))
   it('oppGame',  () => expect(combined).toHaveProperty('oppGame',  [11, 12, NaN]))
 })
@@ -256,7 +256,7 @@ describe('finalize', () => {
   let comboResult, finalized;
   beforeEach(() => {
     comboResult = {
-      draftIds: ['d1'], passthrough: true,
+      eventIds: ['d1'], passthrough: true,
       oppMatch: [0.0, 0.5, NaN], oppGame: [0.75, 0.25, NaN],
     }
     finalized = finalize(comboResult)
@@ -268,12 +268,12 @@ describe('finalize', () => {
     comboResult.other = 'input';
     expect(finalized).toHaveProperty('other','input')
   })
-  it('skip finalize rates if only 1 draft', () => {
+  it('skip finalize rates if only 1 event', () => {
     expect(rateSpy).toBeCalledTimes(0)
   })
   it('finalizes rates using calcRates', () => {
     rateSpy.mockImplementationOnce(r => r)
-    comboResult = { draftIds: ['d1','d2','d3'], oppMatch: [1], oppGame: [1] }
+    comboResult = { eventIds: ['d1','d2','d3'], oppMatch: [1], oppGame: [1] }
     finalize(comboResult)
     expect(rateSpy).toBeCalledTimes(1)
     expect(rateSpy).toBeCalledWith(comboResult)

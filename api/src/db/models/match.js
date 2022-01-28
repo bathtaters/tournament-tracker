@@ -16,10 +16,10 @@ const getMulti = (matchIds, detail = false, fields = null) => db.operation(clien
 );
 
 // Get list of IDs only
-const listByDraft = draftId => db.query(strings.list, [draftId]);
+const listByEvent = eventId => db.query(strings.list, [eventId]);
 
 // Get detail from each match
-const getByDraft = draftId => db.getRow('matchDetail', draftId, null, { idCol: 'draftId', getOne: false });
+const getByEvent = eventId => db.getRow('matchDetail', eventId, null, { idCol: 'eventId', getOne: false });
 
 // Get all match details for stats
 const getAll = (completed = true) => db.getRows(
@@ -29,9 +29,9 @@ const getAll = (completed = true) => db.getRows(
 );
 
 // Update match data (Providing match.player will overwrite entire object)
-const update = (id, newData) => db.updateRow('match', id, newData, { returning: 'draftId' });
+const update = (id, newData) => db.updateRow('match', id, newData, { returning: 'eventId' });
 
-const updateMulti = (dataArray, returning = 'draftid') => db.operation(client =>
+const updateMulti = (dataArray, returning = 'eventid') => db.operation(client =>
     Promise.all(dataArray.map(data => 
         data.id ? db.updateRow('match', data.id, filtering(data, ['id']), { returning, client })
         : { ...data, error: 'No ID provided' }
@@ -43,6 +43,6 @@ const updatePlayer = (id, player) => db.query([strings.setPlayer], [id, player],
 
 
 module.exports = {
-    get, getMulti, listByDraft, getByDraft, getAll,
+    get, getMulti, listByEvent, getByEvent, getAll,
     update, updateMulti, updatePlayer,
 }

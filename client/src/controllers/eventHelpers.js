@@ -1,6 +1,6 @@
 // Import
 import { useRef, useEffect } from "react";
-import { defaultDraftTitle, roundButtonText } from "../assets/strings";
+import { defaultEventTitle, roundButtonText } from "../assets/strings";
 import { equalArrays } from "./misc";
 
 // Base settings
@@ -12,7 +12,7 @@ export const limits = {
   clocklimit: {min: 1, max: 24*60*60},
 };
 export const defaultValues = {
-  title: defaultDraftTitle, day: null,
+  title: defaultEventTitle, day: null,
   players: [], wincount: 2,
   playerspermatch: 2,
   roundcount: 3, clocklimit: 3600,
@@ -23,19 +23,19 @@ export const defaultValues = {
 export const emptyNewPlayer = { visible: false, name: "", id: null };
 
 
-// Draft status
-// [0: N/A, 1: Pre-Draft, 2: Active, 3: Complete]
-export const getStatus = draft => 
-  !draft ? 0 : !draft.roundactive ? 1 : 
-  draft.roundactive > draft.roundcount ? 3 : 2;
+// Event status
+// [0: N/A, 1: Pre-Event, 2: Active, 3: Complete]
+export const getStatus = event => 
+  !event ? 0 : !event.roundactive ? 1 : 
+  event.roundactive > event.roundcount ? 3 : 2;
 
 // Round Button label
 // [0: N/A, 1: Start, 2: Not Reported, 3: Next, 4: End, 5: Complete]
-export const getRoundButton = draft => roundButtonText[
-  !draft ? 0 : draft.roundactive === 0 ? 1 :
-  draft.roundactive > draft.roundcount ? 5 :
-  draft.canadvance === false ? 2 :
-  draft.roundactive === draft.roundcount ? 4 : 3
+export const getRoundButton = event => roundButtonText[
+  !event ? 0 : event.roundactive === 0 ? 1 :
+  event.roundactive > event.roundcount ? 5 :
+  event.canadvance === false ? 2 :
+  event.roundactive === event.roundcount ? 4 : 3
 ];
 
 
@@ -52,11 +52,11 @@ export const orderPlayers = statsData => (a,b) => {
 
 
 // Generate temp round
-export const fakeRound = (draftData) => {
+export const fakeRound = (eventData) => {
   const playerCount = 
-    (draftData.players ? draftData.players.length : 0) -
-    (draftData.drops ? draftData.drops.length : 0);
-  let round = [], size = draftData.playerspermatch ? Math.ceil(playerCount/draftData.playerspermatch) : 0;
+    (eventData.players ? eventData.players.length : 0) -
+    (eventData.drops ? eventData.drops.length : 0);
+  let round = [], size = eventData.playerspermatch ? Math.ceil(playerCount/eventData.playerspermatch) : 0;
   for (let i=0; i<size; i++) {
     round.push('TBD-'+i);
   }
@@ -69,15 +69,15 @@ export const fakeRound = (draftData) => {
 export function swapToDay(schedule, id, newDay) {
   // Remove old
   for (const day in schedule) {
-    const idx = (schedule[day].drafts || []).indexOf(id);
+    const idx = (schedule[day].events || []).indexOf(id);
     if (idx >= 0) { 
-      schedule[day].drafts.splice(idx,1); break;
+      schedule[day].events.splice(idx,1); break;
     }
   }
   // Add new
-  if (!schedule[newDay]) schedule[newDay] = { drafts: [id] };
-  else if (!schedule[newDay].drafts) schedule[newDay].drafts = [id];
-  else schedule[newDay].drafts.push(id);
+  if (!schedule[newDay]) schedule[newDay] = { events: [id] };
+  else if (!schedule[newDay].events) schedule[newDay].events = [id];
+  else schedule[newDay].events.push(id);
 }
 
 

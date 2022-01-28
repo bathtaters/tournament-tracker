@@ -2,28 +2,28 @@ import React, { useState, useRef, useCallback } from "react";
 
 import Modal from "./Components/Modal";
 import Day from "./Components/Day";
-import EditDraft from "./Components/EditDraft";
+import EditEvent from "./Components/EditEvent";
 import RawData from "./Components/RawData";
 
 import { useScheduleQuery, useSettingsQuery } from "../models/baseApi";
-import { useDraftQuery } from "../models/draftApi";
+import { useEventQuery } from "../models/eventApi";
 
 import { formatQueryError } from "../assets/strings";
-import { noDate, getMissingDrafts } from "../controllers/getDays";
+import { noDate, getMissingEvents } from "../controllers/getDays";
 
 function Schedule() {
   // Global state
   const { data: settings } = useSettingsQuery();
   const { data, isLoading, error } = useScheduleQuery();
   
-  const { data: draftData } = useDraftQuery();
-  const otherDrafts = getMissingDrafts(data,settings.dateRange);
+  const { data: eventData } = useEventQuery();
+  const otherEvents = getMissingEvents(data,settings.dateRange);
 
   // Local state
   const modal = useRef(null);
   const [isEditing, setEdit] = useState(false);
-  const [currentDraft, setCurrentDraft] = useState(null);
-  const openDraftModal = useCallback(draftId => { setCurrentDraft(draftId); modal.current.open(); }, [modal]);
+  const [currentEvent, setCurrentEvent] = useState(null);
+  const openEventModal = useCallback(eventId => { setCurrentEvent(eventId); modal.current.open(); }, [modal]);
 
   return (
     <div>
@@ -31,7 +31,7 @@ function Schedule() {
         <input
           className="sm:w-20 sm:h-11"
           disabled={isLoading}
-          onClick={()=>openDraftModal()}
+          onClick={()=>openEventModal()}
           type="button"
           value="+"
         />
@@ -52,21 +52,21 @@ function Schedule() {
           settings.dateRange && settings.dateRange.map(day => 
             <Day
               day={day}
-              drafts={day === noDate ? otherDrafts : data[day] && data[day].drafts}
+              events={day === noDate ? otherEvents : data[day] && data[day].events}
               isEditing={isEditing}
               key={day}
-              setDraftModal={openDraftModal}
+              setEventModal={openEventModal}
             />
           )
         }
       </div>
 
       <RawData data={data} />
-      <RawData className="text-xs" data={draftData} />
+      <RawData className="text-xs" data={eventData} />
 
       <Modal ref={modal}>
-        <EditDraft
-          draftId={currentDraft}
+        <EditEvent
+          eventId={currentEvent}
           hideModal={force=>modal.current.close(force)}
           lockModal={()=>modal.current.lock()}
         />

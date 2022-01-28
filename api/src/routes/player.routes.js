@@ -9,7 +9,7 @@ const controller = require('../controllers/player.controllers');
 // Gets
 router.get('/all', catcher(controller.getAllPlayers));
 router.get('/:id', catcher(controller.getPlayer));
-router.get('/:id/drafts', catcher(controller.getPlayerDrafts));
+router.get('/:id/events', catcher(controller.getPlayerEvents));
 
 // Sets
 router.post('/', catcher(controller.createPlayer));

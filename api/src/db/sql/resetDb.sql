@@ -30,7 +30,7 @@ CREATE TABLE player (
     INVERTED INDEX member_idx (members) WHERE isTeam IS TRUE
 );
 
-CREATE TABLE draft (
+CREATE TABLE event (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     title STRING NULL,
@@ -55,7 +55,7 @@ CREATE TABLE draft (
 CREATE TABLE match (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
-    draftId UUID REFERENCES draft(id) ON DELETE CASCADE,
+    eventId UUID REFERENCES event(id) ON DELETE CASCADE,
     round SMALLINT NOT NULL,
     players UUID[] NOT NULL,
     wins SMALLINT[] NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE match (
     reported BOOLEAN NOT NULL DEFAULT FALSE,
 
     -- Indexes
-    INDEX draft_idx (draftId, round) STORING (players, draws, reported),
+    INDEX event_idx (eventId, round) STORING (players, draws, reported),
     INVERTED INDEX player_idx (players)
 );
 
@@ -77,30 +77,30 @@ GRANT SELECT ON TABLE * TO db_read;
 
 -- COMBO VIEWS --
 
-CREATE VIEW draftDetail (
+CREATE VIEW eventDetail (
     id, title, players, playersPerMatch,
     day, slot, roundActive, roundCount, winCount,
     canAdvance,
     byes,
     drops
 ) AS SELECT
-    draft.id, draft.title, draft.players, playersPerMatch,
+    event.id, event.title, event.players, playersPerMatch,
     day, slot, roundActive, roundCount, winCount,
     bool_and(reported),
     array_agg(match.players[1]) FILTER(WHERE array_length(match.players,1) = 1),
     json_agg(drops)
-FROM draft
-LEFT JOIN match ON draft.id = match.draftId
-GROUP BY draft.id;
+FROM event
+LEFT JOIN match ON event.id = match.eventId
+GROUP BY event.id;
 
 
 CREATE VIEW matchDetail (
-    id, draftId, round, reported,
+    id, eventId, round, reported,
     draws, drops,
     maxWins, totalWins,
     players, wins
 ) AS SELECT
-    match.id, draftId, round, reported,
+    match.id, eventId, round, reported,
     draws, drops,
     MAX(player.win), SUM(player.win),
     players, wins
@@ -110,16 +110,16 @@ GROUP BY match.id ORDER BY match.id;
 
 -- INVERTED INDEX QUERIES --
 
-CREATE VIEW draftOpps (playerId, draftId, oppIds)
-AS SELECT playerId, draftId, array_agg(oppId)
+CREATE VIEW eventOpps (playerId, eventId, oppIds)
+AS SELECT playerId, eventId, array_agg(oppId)
 FROM match,
     unnest(match.players) playerId,
     unnest(match.players) oppId
-WHERE oppId != playerId GROUP BY draftId, playerId;
+WHERE oppId != playerId GROUP BY eventId, playerId;
 
 
-CREATE VIEW schedule (day, draftSlots)
+CREATE VIEW schedule (day, eventSlots)
 AS SELECT
     COALESCE(to_char(day), 'none'),
     json_object_agg(id::STRING, slot)
-FROM draft@date_idx GROUP BY day;
+FROM event@date_idx GROUP BY day;

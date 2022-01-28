@@ -19,18 +19,18 @@ import {
   useUpdateMatchMutation, 
   useSwapPlayersMutation,
 } from "../../models/matchApi";
-import { useStatsQuery } from "../../models/draftApi";
+import { useStatsQuery } from "../../models/eventApi";
 
 
-function Match({ draftId, matchId, wincount, isEditing }) {
+function Match({ eventId, matchId, wincount, isEditing }) {
   // Init
   const reportModal = useRef(null);
   const canSwap = useCallback((types, a, b) => a !== b && types.includes("json/matchplayer"),[]);
   
   // Global State
   const { data: settings } = useSettingsQuery();
-  const { data, isLoading, error } = useMatchQuery(draftId);
-  const { data: rankings, isLoading: loadingRank, error: rankError } = useStatsQuery(draftId);
+  const { data, isLoading, error } = useMatchQuery(eventId);
+  const { data: rankings, isLoading: loadingRank, error: rankError } = useStatsQuery(eventId);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
   const matchData = data && data[matchId];
   const title = isLoading || loadingPlayers || !matchData || !players ? 'Loading' :
@@ -40,13 +40,13 @@ function Match({ draftId, matchId, wincount, isEditing }) {
   // Change reported values
   const [ update ] = useUpdateMatchMutation();
   const setVal = (baseKey, innerKey=null) => val =>
-    update({ id: matchData.id, draftId, [baseKey]: innerKey ? {[innerKey]: val} : val });
+    update({ id: matchData.id, eventId, [baseKey]: innerKey ? {[innerKey]: val} : val });
   
   // Report match
   const [ report, { isLoading: isReporting } ] = useReportMutation();
   const clearReport = () => {
     if (window.confirm(`Are you sure you want to delete the records for ${title}?`)) {
-      report({ id: matchData.id, draftId, clear: true });
+      report({ id: matchData.id, eventId, clear: true });
     }
   };
 
@@ -55,7 +55,7 @@ function Match({ draftId, matchId, wincount, isEditing }) {
   const handleSwap = (playerA, playerB) => {
     if (playerA.id === playerB.id) return;
     if ((playerA.reported || playerB.reported) && !window.confirm(swapPlayerMsg())) return;
-    swapPlayers({draftId, swap: [ playerA, playerB ] });
+    swapPlayers({eventId, swap: [ playerA, playerB ] });
   };
   
   
@@ -198,7 +198,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
 
       <Modal ref={reportModal}>
         <Report
-          draftId={draftId}
+          eventId={eventId}
           hideModal={()=>reportModal.current.close(true)}
           lockModal={()=>reportModal.current.lock()}
           match={matchData}
@@ -213,7 +213,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
 
 Match.propTypes = {
   matchId: PropTypes.string,
-  draftId: PropTypes.string,
+  eventId: PropTypes.string,
   wincount: PropTypes.number,
   isEditing: PropTypes.bool.isRequired,
 };

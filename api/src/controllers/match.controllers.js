@@ -16,8 +16,8 @@ const emptyReport = {
 /* GET match database. */
 const getAllMatches = (_, res) => match.get().then(res.sendAndLog);
 
-async function getDraftMatches(req, res) {
-  const matchData = await match.getByDraft(req.params.draftId).then(arrToObj('id', {delKey:0}));
+async function getEventMatches(req, res) {
+  const matchData = await match.getByEvent(req.params.eventId).then(arrToObj('id', {delKey:0}));
   matchData && Object.values(matchData).forEach(m => m.isDraw = m.wins.filter(w => w == m.maxwins).length !== 1);
   return res.sendAndLog(matchData || {});
 }
@@ -28,13 +28,13 @@ async function getDraftMatches(req, res) {
 //   { players: {playerId: winCount, ...} , draws: drawCount, drops: [droppedPlayers] }
 async function reportMatch(req, res) {
   const ret = await match.update(req.params.id, { ...emptyReport, ...req.body });
-  return res.sendAndLog({ id: req.params.id, draftId: ret && ret.draftid, });
+  return res.sendAndLog({ id: req.params.id, eventId: ret && ret.eventid, });
 } 
 
 // Clear report
 async function unreportMatch(req, res) {
   // Get player names
-  const matches = await match.get(req.params.id, false, 'players, draftId');
+  const matches = await match.get(req.params.id, false, 'players, eventId');
   if (!matches) throw new Error("Match not found or invalid.");
 
   // zero out wins, set reported
@@ -44,7 +44,7 @@ async function unreportMatch(req, res) {
     reported: false
   });
 
-  return res.sendAndLog({ id: req.params.id, draftId: matches.draftid, });
+  return res.sendAndLog({ id: req.params.id, eventId: matches.eventid, });
 }
 
 // Update partial report data
@@ -61,12 +61,12 @@ async function updateMatch(req, res) {
   if (Object.keys(req.body).length)
     ret = await match.update(req.params.id, req.body);
   
-  // Return match & draft IDs
-  return res.sendAndLog({ id: req.params.id, draftId: ret && ret.draftid, });
+  // Return match & event IDs
+  return res.sendAndLog({ id: req.params.id, eventId: ret && ret.eventid, });
 }
 
 
 module.exports = {
-  getAllMatches, getDraftMatches,
+  getAllMatches, getEventMatches,
   reportMatch, unreportMatch, updateMatch,
 };

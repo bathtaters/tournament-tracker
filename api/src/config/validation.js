@@ -31,7 +31,7 @@ const validateConfig = {
       isteam: false,
       members: null,
     },
-    draft: {
+    event: {
       title: "New Game",
       day: null,
       slot: 0,
@@ -64,7 +64,7 @@ const validateConfig = {
       name: sharedLimits.title,
       members: { min: 2, max: 12 },
     },
-    draft: {
+    event: {
       title: sharedLimits.title,
       players: sharedLimits.player,
       roundactive: activeRoundLimit,
@@ -97,7 +97,7 @@ const validateConfig = {
       isteam: "boolean",
       members: "array:uuid?"
     },
-    draft: {
+    event: {
       id: "uuid",
       title: "string",
       day: "date?",
@@ -112,7 +112,7 @@ const validateConfig = {
     },
     match: {
       id: "uuid",
-      draftid: "uuid",
+      eventid: "uuid",
       round: "int",
       players: "array:uuid",
       wins: "array:int",

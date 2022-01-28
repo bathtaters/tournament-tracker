@@ -24,7 +24,7 @@ function Players() {
     if (!canDelete) return; // Pass click
     e.preventDefault();
     // Check player can be deleted
-    if (playerData.draftIds && playerData.draftIds.length)
+    if (playerData.eventIds && playerData.eventIds.length)
       return window.alert(cantDeletePlayerMsg(playerData.name));
     // Delete player
     if (!window.confirm(deletePlayerMsg(playerData.name))) return;

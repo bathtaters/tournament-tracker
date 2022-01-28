@@ -1,9 +1,9 @@
 import { baseApi } from './baseApi';
-import { draftApi } from './draftApi';
+import { eventApi } from './eventApi';
 
 import getTags from '../services/getTags';
 import { nextTempId } from '../controllers/misc';
-import { getStatus } from '../controllers/draftHelpers';
+import { getStatus } from '../controllers/eventHelpers';
 
 
 export const playerApi = baseApi.injectEndpoints({
@@ -14,9 +14,9 @@ export const playerApi = baseApi.injectEndpoints({
       transformResponse: res => console.log('PLAYER',res) || res,
       providesTags: getTags('Player'),
     }),
-    playerDrafts:  build.query({
-      query: (id) => `player/${id}/drafts`,
-      transformResponse: res => console.log('PLAYER_DRAFTS',res) || res,
+    playerEvents:  build.query({
+      query: (id) => `player/${id}/events`,
+      transformResponse: res => console.log('PLAYER_EVENTS',res) || res,
       providesTags: getTags('PlayerDetail',{ all: false }),
     }),
 
@@ -29,7 +29,7 @@ export const playerApi = baseApi.injectEndpoints({
         const stats = getState().dbApi.queries['stats(undefined)'];
         const id = nextTempId('PLAYER', stats && stats.data && stats.data.ranking);
         dispatch(playerApi.util.updateQueryData('player', undefined, draft => { draft[id] = body; }));
-        dispatch(draftApi.util.updateQueryData('stats', undefined, draft => { draft.ranking.push(id); }));
+        dispatch(eventApi.util.updateQueryData('stats', undefined, draft => { draft.ranking.push(id); }));
       },
     }),
     deletePlayer: build.mutation({
@@ -38,7 +38,7 @@ export const playerApi = baseApi.injectEndpoints({
       invalidatesTags: getTags('Player', { addAll:['Stats'] }),
       onQueryStarted(id, { dispatch }) {
         dispatch(playerApi.util.updateQueryData('player', undefined, draft => { delete draft[id]; }));
-        dispatch(draftApi.util.updateQueryData('stats', undefined, draft => {
+        dispatch(eventApi.util.updateQueryData('stats', undefined, draft => {
           const idx = draft.ranking ? draft.ranking.indexOf(id) : -1;
           if (idx > -1) draft.ranking.splice(idx,1);
           delete draft[id];
@@ -63,6 +63,6 @@ export const playerApi = baseApi.injectEndpoints({
 });
 
 export const {
-  usePlayerQuery, usePlayerDraftsQuery, useCreatePlayerMutation,
+  usePlayerQuery, usePlayerEventsQuery, useCreatePlayerMutation,
   useDeletePlayerMutation, useUpdatePlayerMutation,
 } = playerApi;

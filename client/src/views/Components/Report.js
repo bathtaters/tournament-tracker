@@ -10,7 +10,7 @@ import { formatQueryError } from "../../assets/strings";
 
 const maxDraws = 9; // TEMP
 
-function Report({ title, match, hideModal, lockModal, wincount, draftId }) {
+function Report({ title, match, hideModal, lockModal, wincount, eventId }) {
   // Global
   const { data: players, isLoading, error } = usePlayerQuery();
 
@@ -18,7 +18,7 @@ function Report({ title, match, hideModal, lockModal, wincount, draftId }) {
   const [ report ] = useReportMutation();
   const submitReport = reportData => {
     reportData.drops = Object.keys(reportData.drops).reduce((d,p) => reportData.drops[p] ?  d.concat(p) : d,[]);
-    report({ ...reportData, draftId, id: match.id });
+    report({ ...reportData, eventId, id: match.id });
     hideModal();
   };
 
@@ -72,7 +72,7 @@ Report.propTypes = {
   wincount: PropTypes.number,
   hideModal: PropTypes.func,
   lockModal: PropTypes.func,
-  draftId: PropTypes.string,
+  eventId: PropTypes.string,
 };
 
 export default Report;

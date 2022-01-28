@@ -1,6 +1,6 @@
 // Get matchups for new round using Swiss Monrad Alogrithm
 // => Match Table: (2D ID Array) [ [ playerIds in match1 ], [ match2 ], ...  ]
-const defs = require('../../config/validation').config.defaults.draft;
+const defs = require('../../config/validation').config.defaults.event;
 const { unflat, splicing, anyElements, revReplace2dIndex } = require('./matchGen.utils');
 
 // -- Generate Match Table: Swiss Monrad Alogrithm -- //

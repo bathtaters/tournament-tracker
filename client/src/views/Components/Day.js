@@ -9,24 +9,24 @@ import { isTempId } from "../../controllers/misc";
 import { formatQueryError, weekdays, statusInfo } from '../../assets/strings';
 
 import { usePrefetch, } from "../../models/baseApi";
-import { useDraftQuery, useUpdateDraftMutation, } from "../../models/draftApi";
+import { useEventQuery, useUpdateEventMutation, } from "../../models/eventApi";
 
 // Component
-function Day({ drafts, isEditing, setDraftModal, day }) {
+function Day({ events, isEditing, setEventModal, day }) {
   // Definitions (memoize?)
   const { titleCls, borderCls } = dayClasses(day);
   const date = toDateObj(day);
-  const canDrop = useCallback(types => types.includes("json/draftday"), []);
+  const canDrop = useCallback(types => types.includes("json/eventday"), []);
 
   // Global state
-  const { data, isLoading, error } = useDraftQuery();
-  const [ updateDraft ] = useUpdateDraftMutation();
+  const { data, isLoading, error } = useEventQuery();
+  const [ updateEvent ] = useUpdateEventMutation();
   
   // Actions
   const dropHandler = (a,b) => {
     [a.day, b.day] = [b.day, a.day].map(d => d === noDate ? null : d);
-    updateDraft(a);
-    if (b.id) updateDraft(b);
+    updateEvent(a);
+    if (b.id) updateEvent(b);
   }
 
   return (
@@ -36,7 +36,7 @@ function Day({ drafts, isEditing, setDraftModal, day }) {
       canDrop={canDrop}
       className="p-2 m-1 rounded-md w-40 min-h-32"
       borderClass={{disabledColor:borderCls, disabledOpacity:'100', baseOpacity:'100'}}
-      dataType="json/draftday"
+      dataType="json/eventday"
       disabled={!isEditing}
       draggable={false}
     >
@@ -56,23 +56,23 @@ function Day({ drafts, isEditing, setDraftModal, day }) {
           {formatQueryError(error)}
         </div>
 
-      : drafts && drafts.length ?
-        drafts.map(draftId => 
+      : events && events.length ?
+        events.map(eventId => 
           <DayEntry
             day={day}
-            id={draftId}
-            data={data && data[draftId]}
+            id={eventId}
+            data={data && data[eventId]}
             canDrop={canDrop}
             isEditing={isEditing}
             dropHandler={dropHandler}
-            editDraft={()=>setDraftModal(draftId)}
-            key={draftId}
+            editEvent={()=>setEventModal(eventId)}
+            key={eventId}
           />
         )
 
       : !isEditing &&
         <div className="text-center text-sm font-light dim-color italic pointer-events-none opacity-60">
-          No drafts
+          No events
         </div>
       }
     </DragBlock>
@@ -80,12 +80,12 @@ function Day({ drafts, isEditing, setDraftModal, day }) {
 }
 
 
-function DayEntry({ day, id, data, isEditing, canDrop, dropHandler, editDraft }) {
+function DayEntry({ day, id, data, isEditing, canDrop, dropHandler, editEvent }) {
   // Setup prefetching
-  const prefetchDraft = usePrefetch('draft');
+  const prefetchEvent = usePrefetch('event');
   const prefetchMatch = usePrefetch('match');
   const prefetchStats = usePrefetch('stats');
-  const loadDraft = id => { prefetchDraft(id); prefetchMatch(id); prefetchStats(id); };
+  const loadEvent = id => { prefetchEvent(id); prefetchMatch(id); prefetchStats(id); };
 
   if (!data || isTempId(id))
     return <div className="text-sm font-thin text-center dim-color pointer-events-none">...</div>
@@ -96,9 +96,9 @@ function DayEntry({ day, id, data, isEditing, canDrop, dropHandler, editDraft })
       onDrop={dropHandler}
       canDrop={canDrop}
       className="relative p-1 m-1 rounded-xl text-center"
-      dataType="json/draftday"
+      dataType="json/eventday"
       disabled={!isEditing}
-      onHover={()=>loadDraft(id)}
+      onHover={()=>loadEvent(id)}
     >
       { isEditing ? <>
         <div
@@ -116,7 +116,7 @@ function DayEntry({ day, id, data, isEditing, canDrop, dropHandler, editDraft })
               'absolute top-0 right-1 text-sm font-normal cursor-pointer hover:' +
               statusInfo[data.status].class
             }
-            onClick={editDraft}
+            onClick={editEvent}
           >{"✐"}</div>
         }
       </>:
@@ -125,7 +125,7 @@ function DayEntry({ day, id, data, isEditing, canDrop, dropHandler, editDraft })
             'text-sm font-normal block ' + 
             (data.status === 1 ? '' : statusInfo[data.status + 1].class)
           }
-          to={'/draft/'+id}
+          to={'/event/'+id}
         >
           {data.title}
         </Link>
@@ -141,13 +141,13 @@ DayEntry.propTypes = {
   isEditing: PropTypes.bool,
   canDrop: PropTypes.func,
   dropHandler: PropTypes.func,
-  editDraft: PropTypes.func,
+  editEvent: PropTypes.func,
 };
 
 Day.propTypes = {
-  drafts: PropTypes.arrayOf(PropTypes.string),
+  events: PropTypes.arrayOf(PropTypes.string),
   isEditing: PropTypes.bool,
-  setDraftModal: PropTypes.func,
+  setEventModal: PropTypes.func,
   day: PropTypes.string,
 };
 

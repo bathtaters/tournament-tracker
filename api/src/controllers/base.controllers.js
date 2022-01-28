@@ -1,5 +1,5 @@
 // Models
-const draft = require('../db/models/draft');
+const event = require('../db/models/event');
 const match = require('../db/models/match');
 const player = require('../db/models/player');
 const setting = require('../db/models/settings');
@@ -14,16 +14,16 @@ const logger = require('../utils/log.adapter');
 // All data
 async function getAll(_, res) {
   const settings = await setting.getAll();
-  const schedule = await draft.getSchedule().then(arrToObj('day'));
-  const drafts = await draft.get().then(arrToObj('id'));
+  const schedule = await event.getSchedule().then(arrToObj('day'));
+  const events = await event.get().then(arrToObj('id'));
   const players = await player.get().then(arrToObj('id'));
-  const matches = await match.listByDraft();
+  const matches = await match.listByEvent();
   matches.forEach(d => {
-    if (!drafts[d]) return logger.error('Match is missing draft', d);
-    drafts[d].matches = matches[d];
+    if (!events[d]) return logger.error('Match is missing event', d);
+    events[d].matches = matches[d];
   });
 
-  return res.sendAndLog({ settings, schedule, drafts, players });
+  return res.sendAndLog({ settings, schedule, events, players });
 }
 
 // Settings
@@ -53,7 +53,7 @@ async function setSettings(req,res) {
 
 // Schedule data
 const getSchedule = async function(_, res) {
-  const schedule = await draft.getSchedule().then(sortSlots).then(arrToObj('day'));
+  const schedule = await event.getSchedule().then(sortSlots).then(arrToObj('day'));
   
   return res.sendAndLog(schedule);
 }
@@ -77,14 +77,14 @@ module.exports = { getAll, getSetting, getSettings, setSettings, getSchedule, re
 // HELPER - Sort schedule to daily slots, appending unslotted to the end
 function sortSlots(schedArray) {
   return schedArray.map(entry => {
-    entry.drafts = []; entry.slots = [];
+    entry.events = []; entry.slots = [];
     
-    for (const [draft,slot] of Object.entries(entry.draftslots)) {
-      if (slot && !entry.slots[slot - 1]) entry.slots[slot - 1] = draft;
-      else entry.drafts.push(draft);
+    for (const [event,slot] of Object.entries(entry.eventslots)) {
+      if (slot && !entry.slots[slot - 1]) entry.slots[slot - 1] = event;
+      else entry.events.push(event);
     }
     
-    delete entry.draftslots;
+    delete entry.eventslots;
     return entry;
   });
 }

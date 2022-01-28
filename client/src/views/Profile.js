@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import PlayerDrafts from "./Components/PlayerDrafts";
+import PlayerEvents from "./Components/PlayerEvents";
 import RawData from "./Components/RawData";
 
 import { usePlayerQuery, useUpdatePlayerMutation } from "../models/playerApi";
@@ -105,7 +105,7 @@ function Profile() {
 
       <RawData data={data} />
       
-      <PlayerDrafts id={id} />
+      <PlayerEvents id={id} />
     </div>
   );
 }

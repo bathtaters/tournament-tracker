@@ -6,7 +6,7 @@ import SuggestText from "./SuggestText";
 import { usePlayerQuery, useCreatePlayerMutation, } from "../../models/playerApi";
 
 import { equalArrays, randomArray } from "../../controllers/misc";
-import { emptyNewPlayer, usePreviousArray, updateArrayWithChanges } from "../../controllers/draftHelpers";
+import { emptyNewPlayer, usePreviousArray, updateArrayWithChanges } from "../../controllers/eventHelpers";
 import { 
   formatQueryError,
   createPlayerMsg,

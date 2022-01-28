@@ -2,26 +2,26 @@ import React, { useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import Round from "./Components/Round";
-import DraftStats from "./Components/DraftStats";
-import EditDraft from "./Components/EditDraft";
+import EventStats from "./Components/EventStats";
+import EditEvent from "./Components/EditEvent";
 import Modal from "./Components/Modal";
 import RawData from "./Components/RawData";
 
 import {
-  useDraftQuery, useNextRoundMutation, useClearRoundMutation, 
-} from "../models/draftApi";
+  useEventQuery, useNextRoundMutation, useClearRoundMutation, 
+} from "../models/eventApi";
 import { usePrefetch } from "../models/baseApi";
 
 import { deleteRoundMsg, formatQueryError } from "../assets/strings";
-import { getRoundButton } from "../controllers/draftHelpers";
+import { getRoundButton } from "../controllers/eventHelpers";
 
-function Draft() {
+function Event() {
   // Local
   let { id } = useParams();
   const modal = useRef(null);
 
   // Global
-  const { data, isLoading, error, isFetching } = useDraftQuery(id);
+  const { data, isLoading, error, isFetching } = useEventQuery(id);
   const matches = (data && data.matches) || [];
 
   // Get Match data
@@ -43,7 +43,7 @@ function Draft() {
     return <h3 className="italic text-center font-thin">{formatQueryError(error || data.error)}</h3>;
   
   else if (!data)
-    return <h3 className="italic text-center font-thin">Draft not found</h3>;
+    return <h3 className="italic text-center font-thin">Event not found</h3>;
   
   // Load Round boxes
   let rounds = [];
@@ -51,7 +51,7 @@ function Draft() {
     rounds.push(
       <Round
         key={id+'.'+roundNum}
-        draftId={id}
+        eventId={id}
         round={roundNum - 1}
         deleteRound={roundNum === matches.length ? handleDelete : null}
       />
@@ -94,7 +94,7 @@ function Draft() {
               value="Edit Settings"
             />
           </form>
-          { data.players && data.players.length ? <DraftStats draftId={id} /> : null }
+          { data.players && data.players.length ? <EventStats eventId={id} /> : null }
         </div>
         {rounds}
       </div>
@@ -102,8 +102,8 @@ function Draft() {
       <RawData data={data} />
 
       <Modal ref={modal}>
-        <EditDraft
-          draftId={id}
+        <EditEvent
+          eventId={id}
           hideModal={force=>modal.current.close(force)}
           lockModal={()=>modal.current.lock()}
         />
@@ -112,4 +112,4 @@ function Draft() {
   );
 }
 
-export default Draft;
+export default Event;

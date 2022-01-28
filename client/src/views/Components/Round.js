@@ -4,14 +4,14 @@ import PropTypes from 'prop-types';
 import Match from './Match';
 
 import { useSettingsQuery } from "../../models/baseApi";
-import { useDraftQuery } from "../../models/draftApi";
+import { useEventQuery } from "../../models/eventApi";
 
 import { formatQueryError } from "../../assets/strings";
 
-function Round({ draftId, round, deleteRound }) {
+function Round({ eventId, round, deleteRound }) {
   // Global
   const { data: settings } = useSettingsQuery();
-  const { data, isLoading, error } = useDraftQuery(draftId);
+  const { data, isLoading, error } = useEventQuery(eventId);
 
   // Local
   const [isEditing, setEditing] = useState(false);
@@ -29,7 +29,7 @@ function Round({ draftId, round, deleteRound }) {
           { data.matches[round].map((matchId, idx) => 
             <Match
               wincount={data.wincount}
-              draftId={draftId}
+              eventId={eventId}
               isEditing={isEditing}
               key={matchId}
               matchId={matchId}
@@ -63,7 +63,7 @@ function Round({ draftId, round, deleteRound }) {
 }
 
 Round.propTypes = {
-  draftId: PropTypes.string.isRequired,
+  eventId: PropTypes.string.isRequired,
   round: PropTypes.number.isRequired,
   deleteRound: PropTypes.func,
 };

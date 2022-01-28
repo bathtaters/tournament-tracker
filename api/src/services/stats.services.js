@@ -10,17 +10,17 @@ const logger = require('../utils/log.adapter');
 
 /**
  * Get Player Stats & Determine Rankings
- * @param {object} matchData - { draftId: [{ reported, players, wins, draws, maxwins, totalwins }, ...], ... }
+ * @param {object} matchData - { eventId: [{ reported, players, wins, draws, maxwins, totalwins }, ...], ... }
  * @param {string[]} originalOrder - [ playerIds, ... ]
- * @param {object} oppData - { draftId: { playerId: [ oppIds, ... ], ... }, ... }
- * @param {boolean} [useMatchScore=true] - use matchScore (Within same draft) vs percent (Comparing apples to oranges)
+ * @param {object} oppData - { eventId: { playerId: [ oppIds, ... ], ... }, ... }
+ * @param {boolean} [useMatchScore=true] - use matchScore (Within same event) vs percent (Comparing apples to oranges)
  * @returns - { ranking: [ playerIds... ], playerId: { ...playerStats }, ... }
  */
 function stats(matchData, originalOrder, oppData, useMatchScore = true) {
     let final = {};
 
-    // Each draft
-    Object.entries(matchData).forEach(([draft, matches]) => {
+    // Each event
+    Object.entries(matchData).forEach(([event, matches]) => {
         let current = {};
 
         // Each match (skip if not reported)
@@ -36,9 +36,9 @@ function stats(matchData, originalOrder, oppData, useMatchScore = true) {
                         // Combine entry
                         ? combineStats(
                             current[player],
-                            calcBase(playerIdx, results, match, draft)
+                            calcBase(playerIdx, results, match, event)
                         // New entry
-                        ) : calcBase(playerIdx, results, match, draft);
+                        ) : calcBase(playerIdx, results, match, event);
                 });
             }
         });
@@ -52,9 +52,9 @@ function stats(matchData, originalOrder, oppData, useMatchScore = true) {
                 // Combine entry
                 ? combineFinal(
                     final[player],
-                    calcOpps(current[player], current, oppData[draft][player]) 
+                    calcOpps(current[player], current, oppData[event][player]) 
                 // New entry
-                ) : calcOpps(current[player], current, oppData[draft][player]);
+                ) : calcOpps(current[player], current, oppData[event][player]);
         });
     });
 

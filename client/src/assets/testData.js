@@ -5,14 +5,14 @@ const testData = {
     dateRange: [ (new Date(Date.now() - 1000*60*60*24*2)).getTime(), (new Date(Date.now() + 1000*60*60*24*4)).getTime() ],
   },
   schedule: [
-    { day: null, drafts: [ 'd8','d9' ] },
-    { day: (new Date(Date.now() - 1000*60*60*24)).getTime(), drafts: ['d1','d2'] },
-    { day: (new Date()).getTime(), drafts: ['d3','d4','d6'] },
-    { day: (new Date(Date.now() + 1000*60*60*24)).getTime(), drafts: ['d5'] },
+    { day: null, events: [ 'd8','d9' ] },
+    { day: (new Date(Date.now() - 1000*60*60*24)).getTime(), events: ['d1','d2'] },
+    { day: (new Date()).getTime(), events: ['d3','d4','d6'] },
+    { day: (new Date(Date.now() + 1000*60*60*24)).getTime(), events: ['d5'] },
   ],
-  drafts: {
+  events: {
     d1: {
-      title: 'KLD Draft', isDone: false,
+      title: 'KLD Event', isDone: false,
       matches: [
         [
           {
@@ -46,10 +46,10 @@ const testData = {
       ],
       ranking: playerList,
     },
-    d2: {title: 'CPY Draft',   ranking: playerList, isDone: true }, d5: {title: 'CKY Draft',  ranking: playerList, isDone: false},
-    d3: {title: 'MM2 Draft',   ranking: playerList, isDone: true }, d4: {title: 'AKH Draft',  ranking: playerList, isDone: false},
-    d6: {title: 'GRN Draft',   ranking: playerList, isDone: false},
-    d8: {title: 'Party Draft', ranking: playerList, isDone: false}, d9: {title: 'Cube Draft', ranking: playerList, isDone: false},
+    d2: {title: 'CPY Event',   ranking: playerList, isDone: true }, d5: {title: 'CKY Event',  ranking: playerList, isDone: false},
+    d3: {title: 'MM2 Event',   ranking: playerList, isDone: true }, d4: {title: 'AKH Event',  ranking: playerList, isDone: false},
+    d6: {title: 'GRN Event',   ranking: playerList, isDone: false},
+    d8: {title: 'Party Event', ranking: playerList, isDone: false}, d9: {title: 'Cube Event', ranking: playerList, isDone: false},
   },
   players: {
     mr1: { name: 'Matt', record: [1,0,0] },

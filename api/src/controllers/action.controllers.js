@@ -1,5 +1,5 @@
 // Models
-const draft = require('../db/models/draft');
+const event = require('../db/models/event');
 const match = require('../db/models/match');
 
 // Lookup Settings
@@ -18,35 +18,35 @@ async function swapPlayers(req, res) {
   // Get data
   let matchData = await match.getMulti(
     req.body.swap.map(s => s.id), false,
-    ['id', 'draftid','players','wins','drops']
+    ['id', 'eventid','players','wins','drops']
   );
 
   // Error check
   if (matchData.length !== 2 || matchData.some(m => !m || !m.players))
     throw new Error("Matches not found or are invalid.");
 
-  const draftId = matchData[0].draftid;
-  if (draftId !== matchData[1].draftid)
-    throw new Error("Cannot swap players from different drafts.");
+  const eventId = matchData[0].eventid;
+  if (eventId !== matchData[1].eventid)
+    throw new Error("Cannot swap players from different events.");
   
   // Mutate match data
   matchData = swapService(matchData, req.body.swap);
 
   // Write changes
-  const result = await match.updateMulti(matchData, 'draftid');
-  if (!result || result.some(r => r.draftid !== draftId))
+  const result = await match.updateMulti(matchData, 'eventid');
+  if (!result || result.some(r => r.eventid !== eventId))
     throw new Error("Error writing swap to database.");
 
-  return res.sendAndLog({ draftId });
+  return res.sendAndLog({ eventId });
 } 
 
 
 // Create round matches
 async function nextRound(req, res) {
-  const data = await draft.get(req.params.id, true);
+  const data = await event.get(req.params.id, true);
 
   // Error check
-  if (!data) throw new Error("Draft not found: "+req.params.id);
+  if (!data) throw new Error("Event not found: "+req.params.id);
 
   if (
     !data.players ||
@@ -56,23 +56,23 @@ async function nextRound(req, res) {
     throw new Error("No active players are registered");
 
   if (data.roundactive > data.roundcount)
-    throw new Error("Draft is over");
+    throw new Error("Event is over");
 
   if (data.roundactive && !data.canadvance)
     throw new Error("All matches have not been reported");
 
   // Get additional data
   const [matchData, oppData, autoByes] = await Promise.all([
-    match.getByDraft(req.params.id),
-    draft.getOpponents(req.params.id).then(arrToObj('playerid',{ valKey: 'oppids' })),
+    match.getByEvent(req.params.id),
+    event.getOpponents(req.params.id).then(arrToObj('playerid',{ valKey: 'oppids' })),
     settings.get('autobyes')
   ]);
 
   // Build round
-  const { draftId, round, matches } = roundService(data, matchData, oppData, autoByes ? asType(autoByes) : autoByesDef);
+  const { eventId, round, matches } = roundService(data, matchData, oppData, autoByes ? asType(autoByes) : autoByesDef);
   
   // Create matches
-  const ret = await draft.pushRound(draftId, round, matches);
+  const ret = await event.pushRound(eventId, round, matches);
   if (!Array.isArray(ret) || !ret[0]) throw new Error("Error adding round to database");
 
   return res.sendAndLog({
@@ -85,10 +85,10 @@ async function nextRound(req, res) {
 
 // Delete round matches
 async function prevRound(req, res) {
-  const round = await draft.getRound(req.params.id); // Get latest round num
+  const round = await event.getRound(req.params.id); // Get latest round num
   if (round == null) throw new Error("No matches found.");
 
-  await draft.popRound(req.params.id, round);
+  await event.popRound(req.params.id, round);
 
   return res.sendAndLog({ id: req.params.id, round });
 }

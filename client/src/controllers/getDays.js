@@ -4,7 +4,7 @@
 // One day in ms
 export const oneDay = 24*60*60*1000;
 
-// Key for Unscheduled drafts
+// Key for Unscheduled events
 export const noDate = 'none';
 
 // Get Date string
@@ -38,8 +38,8 @@ export const dayClasses = day => {
     { titleCls: "base-color",    borderCls: "base-border" };
 }
 
-// Get drafts w/o date or w/ date outside range
-export const getMissingDrafts = (sched, range) => !sched || !range ? [] :
+// Get events w/o date or w/ date outside range
+export const getMissingEvents = (sched, range) => !sched || !range ? [] :
   Object.keys(sched)
     .filter(d => d === noDate || !range.includes(d))
-    .reduce((list,d)=>list.concat(sched[d].drafts || []),[]);
+    .reduce((list,d)=>list.concat(sched[d].events || []),[]);

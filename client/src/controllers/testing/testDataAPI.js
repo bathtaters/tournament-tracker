@@ -19,19 +19,19 @@ export const getPlayer = (playerInfo,existingPlayers) => {
   return [playerId, playerInfo];
 };
 
-export const newDraft = (id, players) => ({
+export const newEvent = (id, players) => ({
   id, draws: 0, reported: false,
   players: players.reduce((p,pid)=>({...p, [pid]: 0}),{}),
 });
 
-export const newRound = (playerIds, draftId, roundNum) => {
+export const newRound = (playerIds, eventId, roundNum) => {
   let round = [];
   const e = Math.ceil(playerIds.length / 2);
   for (let i = 0; i < e; i++) {
-    round.push(newDraft(draftId+'m'+roundNum+(i+1), playerIds.slice(i * 2, i * 2 + 2)));
+    round.push(newEvent(eventId+'m'+roundNum+(i+1), playerIds.slice(i * 2, i * 2 + 2)));
   }
   return round;
 };
 
 
-export const draftStatus = draft => !draft ? 0 : draft.isDone ? 3 : draft.matches && draft.matches.length ? 2 : 1;
+export const eventStatus = event => !event ? 0 : event.isDone ? 3 : event.matches && event.matches.length ? 2 : 1;
