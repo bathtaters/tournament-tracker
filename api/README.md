@@ -89,10 +89,11 @@ event:
 	id UUID = random
 	title STRING
 	day DATE = NULL
+	slot SMALLINT = 0
 	players [player.id] = []
 	roundActive SMALLINT = 0
 	roundCount SMALLINT = 3
-	bestOf SMALLINT = 3,
+	winCount SMALLINT = 2,
 	playersPerMatch SMALLINT = 2
 	
 	(clock:)
@@ -104,7 +105,8 @@ match:
 	id UUID = random
 	eventId event.id
 	round SMALLINT
-	players { playerId: playerWins, ... }
+	players [player.id]
+	wins [SMALLINT]
 	draws SMALLINT = 0
 	drops UUID[] = []
 	reported BOOLEAN = FALSE
