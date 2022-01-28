@@ -49,17 +49,16 @@ async function unreportMatch(req, res) {
 
 // Update partial report data
 async function updateMatch(req, res) {
-  if (!req.body) throw new Error("No match data provided to update.");
+  if (!req.body || !req.body.key || !('value' in req.body))
+    throw new Error("No match data provided to update.");
 
-  // Update players object
+  // Update wins array
   let ret;
-  if (req.body.players && Object.keys(req.body.players).length)
-    ret = await match.updatePlayer(req.params.id, req.body.players);
+  const idx = req.body.key.match(/^wins\.(\d+)$/);
+  if (idx) ret = await match.updateWins(req.params.id, +idx[1], req.body.value);
     
-  // Update remaining data
-  delete req.body.players;
-  if (Object.keys(req.body).length)
-    ret = await match.update(req.params.id, req.body);
+  // Update other data
+  else ret = await match.update(req.params.id, { [req.body.key]: req.body.value });
   
   // Return match & event IDs
   return res.sendAndLog({ id: req.params.id, eventId: ret && ret.eventid, });

@@ -39,8 +39,7 @@ function Match({ eventId, matchId, wincount, isEditing }) {
   
   // Change reported values
   const [ update ] = useUpdateMatchMutation();
-  const setVal = (baseKey, innerKey=null) => val =>
-    update({ id: matchData.id, eventId, [baseKey]: innerKey ? {[innerKey]: val} : val });
+  const setVal = key => value => update({ id: matchData.id, eventId, key, value });
   
   // Report match
   const [ report, { isLoading: isReporting } ] = useReportMutation();
@@ -136,7 +135,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
       <Counter
         isEditing={isEditing}
         maxVal={wincount}
-        setVal={setVal('players', playerId)}
+        setVal={setVal('wins.'+index)}
         val={
           matchData.wins && isNaN(matchData.wins[index]) ?
           matchData.wins[index] : matchData.wins ? +matchData.wins[index] : '-'

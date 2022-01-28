@@ -34,8 +34,9 @@ export const matchApi = baseApi.injectEndpoints({
       invalidatesTags: getTags(['Match','Event','Stats'],{key:'eventId',addBase:['PlayerDetail'],all:0}),
       onQueryStarted({ id, eventId, clear = false, ...body }, { dispatch }) {
         dispatch(matchApi.util.updateQueryData('match', eventId, draft => { 
-          if ('draws' in body) draft[id].draws = body.draws;
-          if ('players' in body) Object.assign(draft[id].players, body.players);
+          const idx = body.key.match(/^wins\.(\d+)$/);
+          if (idx) draft[id].wins[+idx[1]] = body.value;
+          else if (body.key === 'draws') draft[id].draws = body.value;
         }));
       },
     }),

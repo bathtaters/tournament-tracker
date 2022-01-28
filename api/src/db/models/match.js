@@ -38,11 +38,20 @@ const updateMulti = (dataArray, returning = 'eventid') => db.operation(client =>
     ))
 );
 
-// Update match.player only
-const updatePlayer = (id, player) => db.query([strings.setPlayer], [id, player], false).then(r=>r&&r[0]);
+// Update match.wins only
+const updateWins = async (id, index, wins) => {
+    // Get
+    const data = await db.getRow('match', id, 'eventid, wins');
+    if (!data || !data.wins) return data;
+    // Set
+    data.wins[index] = wins;
+    return db.updateRow('match', id, { wins: data.wins }).then(() => data);
+}
+// This can replace the above function but doesn't work in CockroachDB:
+// db.updateRow('match', id, { [`wins[${index+1}]`]: wins }, { returning: 'eventid' });
 
 
 module.exports = {
     get, getMulti, listByEvent, getByEvent, getAll,
-    update, updateMulti, updatePlayer,
+    update, updateMulti, updateWins,
 }
