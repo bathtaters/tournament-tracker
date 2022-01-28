@@ -1,4 +1,4 @@
-# tournament-tracker API
+# Tournament Tracker API
 
 ### Current Major Version: v0
 _Represented below by api/v[n]_
@@ -23,23 +23,23 @@ _Represented below by api/v[n]_
 
 | URL | Method | Body | Return | Description |
 |------|------|------|------|------|
-|/all|GET| |{settings,schedule,s,players}|All objects in DB|
-|/schedule|GET| |{ YYYY-MM-DD: [ Ids ], ... }|All Ids by date|
+|/all|GET| |{settings,schedule,events,players}|All objects in DB|
+|/schedule|GET| |{ YYYY-MM-DD: [ eventIds ], ... }|All eventIds by date|
 |/settings|GET| |{ setting: value, ... }|All stored settings|
 |/settings|PATCH|{ setting: value }|{ success, set: [setting] }|Update setting(s)|
 
 ---
 
-### __ - [Domain]/api/v[n]//...
+### _Event_ - [Domain]/api/v[n]/event/...
 
 | URL | Method | Body | Return | Description |
 |------|------|------|------|------|
-|/all|GET| |{ id: { Data }, ... }|Data from all s by ID|
-|/[id]|GET| |{ Data }|Data from a |
-|/[id]/stats|GET| |{ playerId: { stats }, ..., ranking: [ids] }|Player stats from a |
-|/|POST|{ Data }|{ id }|Create a new |
-|/[id]|DELETE| |{ id }|Deletes  from database|
-|/[id]|PATCH|{ newData }|{ id, newData }|Update  data|
+|/all|GET| |{ id: { eventData }, ... }|Data from all events by ID|
+|/[id]|GET| |{ eventData }|Data from a event|
+|/[id]/stats|GET| |{ playerId: { stats }, ..., ranking: [ids] }|Player stats from a event|
+|/|POST|{ eventData }|{ id }|Create a new event|
+|/[id]|DELETE| |{ id }|Deletes event from database|
+|/[id]|PATCH|{ newData }|{ id, newData }|Update event data|
 |/[id]/round|POST| |{ id, round: #, matches: [ ids ] }|Add a round of matches|
 |/[id]/round|DELETE| |{ id, round: # }|Delete the last round|
 
@@ -51,10 +51,10 @@ _Represented below by api/v[n]_
 |------|------|------|------|------|
 |/all|GET| |{ id: { matchData }, ... }|Data from all matches by ID|
 |/[id]|GET| |{ matchData }|Data from a match|
-|/[id]|POST|{ players, draws, drops }|{ Id, id }|Report match result|
-|/[id]|DELETE| |{ Id, id }|Clears match result|
-|/[id]|PATCH|{ newResult }|{ Id, id }|Update results|
-|/swap|POST|{ playerA: {id,playerId}, playerB } |{ Id }|Swap players between matches|
+|/[id]|POST|{ players, draws, drops }|{ eventId, id }|Report match result|
+|/[id]|DELETE| |{ eventId, id }|Clears match result|
+|/[id]|PATCH|{ newResult }|{ eventId, id }|Update results|
+|/swap|POST|{ playerA: {id,playerId}, playerB } |{ eventId }|Swap players between matches|
 
 ---
 
@@ -85,7 +85,7 @@ player:
 	isTeam BOOLEAN = 0
 	members [player.id] = NULL
 
-:
+event:
 	id UUID = random
 	title STRING
 	day DATE = NULL
@@ -102,7 +102,7 @@ player:
 
 match:
 	id UUID = random
-	Id .id
+	eventId event.id
 	round SMALLINT
 	players { playerId: playerWins, ... }
 	draws SMALLINT = 0
