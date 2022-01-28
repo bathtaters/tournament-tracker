@@ -2,7 +2,8 @@
 // Returns function that will work as either property
 
 // Constants
-const ALL_ID = '_LIST', DEF_KEY = 'id';
+const DEF_KEY = 'id';
+export const ALL_ID = '_LIST'; 
 export const tagTypes = ['Settings', 'Schedule', 'Event', 'Match', 'Player', 'PlayerDetail', 'Stats'];
 
 // Helper, gets value from key string (keyStr='propA.propB.0' would get <obj>.propA.propB[0])
