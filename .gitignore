@@ -14,6 +14,9 @@ dbServer.json
 # production
 /client/build
 
+# generated
+/client/src/assets/validation.json
+
 # misc
 .DS_Store
 .env*.local
