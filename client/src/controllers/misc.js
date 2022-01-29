@@ -13,6 +13,12 @@ export const deepFilter = (array, predicate) => array.reduce((res,elem,idx) => {
   return res
 }, [])
 
+// Returns properties from 'base' that are changed from 'compare'
+export const getUnqiue = (base, compare = {}) => Object.keys(base).reduce((obj,key) => {
+  if (base[key] !== compare[key]) obj[key] = base[key]
+  return obj
+}, {})
+
 // Checks that 2 arrays are equal (Must be 1D arrays, 2 falsy vars will also be equal)
 export const equalArrays = (a,b) =>
   (!a && !b) || (a && b && 
