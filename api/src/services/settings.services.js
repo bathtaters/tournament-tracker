@@ -18,19 +18,18 @@ const toType = (value, type) => {
     case 'string': return value;
     case 'bigint':
     case 'number': return value.toString();
-    case 'date': 
-      if (typeof value.toISOString === 'function')
-        return value.toISOString();
-      else logger.warn('non-date passed as date',value);
     case 'boolean':
       return !value || value === 'false' ? 'false' : 'true';
+    case 'date': 
+      if (value.toISOString) return value.toISOString();
+      else logger.warn('non-date passed as date',value);
     case 'object': 
     default: return value && JSON.stringify(value);
   }
 };
 const getType = (value,forceType) => {
   let type = forceType || typeof value;
-  if (type === 'object' && value && typeof value.getMonth === 'function')
+  if (type === 'object' && value && typeof value.toISOString === 'function')
     type = 'date';
   return { value: toType(value, type), type, };
 }
