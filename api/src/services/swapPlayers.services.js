@@ -16,7 +16,7 @@ function swapPlayersService(matchData, swapData) {
     data.idx = data.players.indexOf(playerId)
     if (data.idx === -1)
       throw new Error("Player is not registered for match: "+playerId)
-    data.dropIdx = data.drops ? data.drops.indexOf(playerId) : -1
+    data.dropIdx = data.drops.indexOf(playerId)
   });
 
   // Swap players
