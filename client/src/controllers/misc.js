@@ -6,6 +6,13 @@ export const findObj = (obj, value, innerkey = null) => {
   return Object.keys(obj).find(k => (innerkey ? obj[k][innerkey] : obj[k]).toLowerCase() === value);
 }
 
+// Runs array.filter on nested arrays (Only calls predicate on non-array elements)
+export const deepFilter = (array, predicate) => array.reduce((res,elem,idx) => {
+  if (Array.isArray(elem)) res.push(deepFilter(elem, predicate))
+  else if (predicate(elem,idx,array)) res.push(elem)
+  return res
+}, [])
+
 // Checks that 2 arrays are equal (Must be 1D arrays, 2 falsy vars will also be equal)
 export const equalArrays = (a,b) =>
   (!a && !b) || (a && b && 
