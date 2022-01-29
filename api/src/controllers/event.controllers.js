@@ -1,7 +1,7 @@
 // Models
 const event = require('../db/models/event');
 const match = require('../db/models/match');
-const defs = require('../config/validation').config.defaults.event;
+const defs = require('../config/validation').defaults.event;
 
 // Services/Utils
 const logger = require('../utils/log.adapter');

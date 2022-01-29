@@ -1,7 +1,7 @@
 /* *** PLAYER Object *** */
 const db = require('../admin/interface');
 const strings = require('../sql/strings').player;
-const defs = require('../../config/validation').config.defaults.player;
+const defs = require('../../config/validation').defaults.player;
 
 
 // Player Table Operations //

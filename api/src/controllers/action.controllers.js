@@ -5,7 +5,7 @@ const match = require('../db/models/match');
 // Lookup Settings
 const settings = require('../db/models/settings');
 const { asType } = require('../services/settings.services');
-const autoByesDef = require('../config/validation').config.defaults.settings.autobyes;
+const autoByesDef = require('../config/validation').defaults.settings.autobyes;
 
 // Services
 const roundService = require('../services/round.services');

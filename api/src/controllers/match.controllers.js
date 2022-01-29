@@ -1,6 +1,6 @@
 // Model
 const match = require('../db/models/match');
-const defs = require('../config/validation').config.defaults.match;
+const defs = require('../config/validation').defaults.match;
 
 // Imports
 const { arrToObj } = require('../utils/shared.utils');

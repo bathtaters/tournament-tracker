@@ -10,7 +10,7 @@ const { arrToObj } = require('../utils/shared.utils');
 // Get settings
 const settings = require('../db/models/settings');
 const { asType } = require('../services/settings.services');
-const incompleteDef = require('../config/validation').config.defaults.settings.includeincomplete;
+const incompleteDef = require('../config/validation').defaults.settings.includeincomplete;
 
 
 
