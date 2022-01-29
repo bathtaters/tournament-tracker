@@ -15,7 +15,7 @@ const tomorrow = (new Date(Date.now() + (24*60*60*1000))).toISOString().slice(0,
 
 
 // Validation Config Vars
-const validateConfig = {
+module.exports = {
   defaults: {
     settings: {
       title: "Tournament Tracker",
@@ -123,11 +123,3 @@ const validateConfig = {
     }
   }
 };
-
-// Save JSON of validation to client assets
-const join = require('path').join;
-const fs = require('fs/promises');
-const defaultClientPath = join(require('./meta').rootPath,'..','client','src','assets','validation.json')
-const exportToClient = (path = defaultClientPath) => fs.writeFile(path, JSON.stringify(valConfig));
-
-module.exports = { config: validateConfig, exportToClient }
