@@ -130,6 +130,10 @@ describe('insertSorted', () => {
     const res = insertSorted(testArray, 5, (a,b) => a < b);
     expect(res).toBe(testArray);
   });
+
+  it('uses default sort algo', () => {
+    expect(insertSorted(testArray, 5)).toEqual([2, 4, 5, 6, 8]);
+  });
 });
 
 describe('filtering', () => {
