@@ -367,4 +367,19 @@ describe('rankSort', () => {
     expect(unsortedKeys.sort(rankSort(sampleData, ['b2','b3'], true)))
       .toEqual(['b1','b2','b3','a1','a2','a3'])
   })
+
+  it('missing data', () => {
+    expect(rankSort()('b2','b3')).toBeGreaterThan(0)
+    expect(rankSort()('b3','b2')).toBeLessThan(0)
+    expect(rankSort({b2:{},b3:{}},0,0)('b2','b3')).toBeGreaterThan(0)
+    expect(rankSort({b2:{},b3:{}},0,1)('b3','b2')).toBeLessThan(0)
+    expect(rankSort({b2:{}})('b2','b3')).toBeLessThan(0)
+    expect(rankSort({b3:{}})('b2','b3')).toBeGreaterThan(0)
+  })
+  it('players missing from originalOrder', () => {
+    expect(rankSort(0,[])('b2','b3')).toBeGreaterThan(0)
+    expect(rankSort(0,[])('b3','b2')).toBeLessThan(0)
+    expect(rankSort(0,['b3'])('b2','b3')).toBeGreaterThan(0)
+    expect(rankSort(0,['b2'])('b2','b3')).toBeLessThan(0)
+  })
 })
