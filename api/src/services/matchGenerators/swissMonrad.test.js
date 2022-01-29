@@ -28,7 +28,7 @@ describe('generateMatchups', () => {
     expect( normArr(
       generateMatchups(ranking, {
         playerspermatch: 2,
-        allOpps: { a : { oppids: ['d','b'] } }
+        allOpps: { a : { oppids: ['d','b'] }, b : { oppids: ['a'] } }
       })
     )).toEqual( normArr([['a','c'], ['b','d']]));
   });
