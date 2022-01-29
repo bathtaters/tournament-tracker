@@ -6,7 +6,7 @@ import RawData from "./RawData";
 
 import { useSettingsQuery, useUpdateSettingsMutation, useResetDbMutation } from "../../models/baseApi";
 
-import { deepFilter } from "../../controllers/misc";
+import { deepFilter, getUnqiue } from "../../controllers/misc";
 import {
   defaultTournamentTitle,
   formatQueryError,
@@ -44,7 +44,9 @@ function Settings({ hideModal, lockModal }) {
   const [ resetDb ] = useResetDbMutation();
   const [ updateSettings ] = useUpdateSettingsMutation();
   const submitSettings = formData => {
-    updateSettings(formData);
+    const newSettings = getUnqiue(formData,data);
+    console.log('NewSettings',newSettings)
+    if (newSettings && Object.keys(newSettings).length) updateSettings(newSettings);
     hideModal(true);
   };
 
