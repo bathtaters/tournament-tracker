@@ -83,37 +83,47 @@ exports.finalize = result => {
 
 exports.rankSort = (data, originalOrder, useMatchScore) => (a,b) => {
     // Same player
-    if (a === b) return 0;
+    if (a === b) return 0
 
-    // MTG rules:
-    // 1. Match points (useMatchScore ? matchScore : matchRate)
-    let val = useMatchScore ? 
-        (data[b].matchScore || 0) - (data[a].matchScore || 0) :
-        (data[b].matchRate  || 0) - (data[a].matchRate  || 0);
-    if (val) return val;
-    
-    // 2. Opponents’ match-win percentage
-    val = ((data[b].oppMatch || 0) - (data[a].oppMatch || 0))
-    if (val) return val;
-    
-    // 3. Game-win percentage
-    val = ((data[b].gameRate || 0) - (data[a].gameRate || 0))
-    if (val) return val;
-    
-    // 4. Opponents’ game-win percentage
-    val = ((data[b].oppGame  || 0) - (data[a].oppGame  || 0))
-    if (val) return val;
+    if (data) {
+        if (data[a] && data[b]) {
+
+            // MTG rules:
+            // 1. Match points (useMatchScore ? matchScore : matchRate)
+            let val = useMatchScore ? 
+                (data[b].matchScore || 0) - (data[a].matchScore || 0) :
+                (data[b].matchRate  || 0) - (data[a].matchRate  || 0) ;
+            if (val) return val
+            
+            // 2. Opponents’ match-win percentage
+            val = ((data[b].oppMatch || 0) - (data[a].oppMatch || 0))
+            if (val) return val
+            
+            // 3. Game-win percentage
+            val = ((data[b].gameRate || 0) - (data[a].gameRate || 0))
+            if (val) return val
+            
+            // 4. Opponents’ game-win percentage
+            val = ((data[b].oppGame  || 0) - (data[a].oppGame  || 0))
+            if (val) return val
+        }
+
+        // If data exists but only 1 player
+        else if (data[b]) return  1
+        else if (data[a]) return -1
+    }
 
     // 5. Original player order
     if (originalOrder) {
-        if (!originalOrder.includes(a)) {
-            if (originalOrder.includes(b)) return originalOrder.length;
-        } else if (!originalOrder.includes(b)) return -originalOrder.length;
-        val = originalOrder.indexOf(a) - originalOrder.indexOf(b);
-        if (val) return val;
+        const aIdx = originalOrder.indexOf(a),
+            bIdx = originalOrder.indexOf(b);
+
+        if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+        else if (bIdx !== -1) return  originalOrder.length;
+        else if (aIdx !== -1) return -originalOrder.length;
     }
 
-    // Use UUIDs to settle otherwise
+    // Use UUIDs to settle otherwise (Reverse order)
     return a < b ? 1 : -1;
 };
 
