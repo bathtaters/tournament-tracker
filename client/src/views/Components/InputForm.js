@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 // Static Classes
 const baseClass = {
   button: "font-light base-color w-14 h-8 mx-1 sm:w-20 sm:h-11 sm:mx-4",
-  element: "text-sm sm:text-lg font-light m-1",
-  label: "mx-2 w-max",
+  element: "text-sm sm:text-lg font-light m-1 flex items-baseline",
+  label: "mx-2 w-max whitespace-nowrap",
   input: "max-color pt-1 px-2",
   row: isRow => "m-2 flex justify-start items-baseline flex-"+(isRow ? "row flex-wrap-reverse" : "col"),
   buttonContainer: "mt-4 w-full flex justify-center items-baseline flex-wrap",
@@ -66,18 +66,18 @@ const transformFunction = (transformObj, oldData, baseData) => data => {
 
 
 // Row Map
-function formRow(row, data, baseData, isFragment, register, onChange, custom, depth = 0, idx = 0) {
+function formRow(row, data, baseData, isFragment, register, onChange, custom, depth = 0, keySuff = ':0') {
 
   if (!row || React.isValidElement(row)) return row || null;
 
   else if (Array.isArray(row))
     return isFragment ? (
-      <Fragment key={'Container'+depth+'.'+idx}>
-        {row.map((r,idx) => formRow(r,data,baseData,isFragment,register,onChange,custom,depth+1,idx+1))}
+      <Fragment key={'Container'+keySuff}>
+        {row.map((r,i) => formRow(r,data,baseData,isFragment,register,onChange,custom,depth+1,keySuff+':'+i))}
       </Fragment>
     ) : (
-      <div className={baseClass.row(depth % 2)} key={'Container'+depth}>
-        {row.map(r => formRow(r,data,baseData,isFragment,register,onChange,custom,depth+1))}
+      <div className={baseClass.row(depth % 2)} key={'Container'+keySuff}>
+        {row.map((r,i) => formRow(r,data,baseData,isFragment,register,onChange,custom,depth+1,keySuff+':'+i))}
       </div>
     );
 
@@ -85,7 +85,7 @@ function formRow(row, data, baseData, isFragment, register, onChange, custom, de
 
   else if (typeof row === 'string') row = {type: row};
   
-  if (row.type === 'spacer') return <div key={'Spacer'+depth+'.'+idx} className={row.className} />;
+  if (row.type === 'spacer') return <div key={'Spacer'+keySuff} className={row.className} />;
 
   if (!('defaultValue' in row) && baseData.defaultValues && row.id && row.id in baseData.defaultValues)
     row.defaultValue = baseData.defaultValues[row.id];
