@@ -1,13 +1,12 @@
 // Get matchups for new round using Swiss Monrad Alogrithm
 // => Match Table: (2D ID Array) [ [ playerIds in match1 ], [ match2 ], ...  ]
-const defs = require('../../config/validation').config.defaults.event;
 const { unflat, splicing, anyElements, revReplace2dIndex } = require('./matchGen.utils');
 
 // -- Generate Match Table: Swiss Monrad Alogrithm -- //
 
 function generateMatchups(ranking, { playerspermatch, byes, allOpps }) {
     // Generate simple matchups (w/o drops)
-    let matches = unflat(ranking, playerspermatch || defs.playerspermatch);
+    let matches = unflat(ranking, playerspermatch);
     
     // Don't allow players to have multiple byes
     if (byes) {
@@ -66,10 +65,10 @@ const isUniqueMatchup = (playerOpps, allOpps, matchMinusPlayer) => (testId, test
         splicing(testMatch, testIdx),   // test player's current opponents
         playerOpps                      // current player's prior opponents
     ) && (                          // AND
-        !allOpps[testId] ||         // test player doesn't have prior opponents
-        !anyElements(               // OR No overlap between:
-            matchMinusPlayer,           // current player's current opponents
-            allOpps[testId].oppids      // test player's prior opponents
+        !allOpps[testId] ||             // test player doesn't have prior opponents
+        !anyElements(                   // OR No overlap between:
+            matchMinusPlayer,               // current player's current opponents
+            allOpps[testId].oppids          // test player's prior opponents
         )
     );
 
