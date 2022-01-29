@@ -7,7 +7,8 @@ const defaultRawClass = "text-center font-thin m-2 dim-color ";
 // Display raw data
 function RawData({ data, className = "" }) {
   const { data: settings, isLoading, error } = useSettingsQuery();
-  if (isLoading || error || !settings || !settings.showrawjson) return null;
+  if (isLoading || error || !settings || !settings.showadvanced || !settings.showrawjson)
+    return null;
   
   return <div className={defaultRawClass + className}>{JSON.stringify(data)}</div>
 }

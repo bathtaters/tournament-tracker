@@ -60,7 +60,7 @@ function Match({ eventId, matchId, wincount, isEditing }) {
   
 // Render
 const outerClass = 'm-1 border dim-border rounded-md flex justify-evenly ' + 
-  (settings && settings.showrawjson ? 'h-64' : 'h-32');
+  (settings && settings.showadvanced && settings.showrawjson ? 'h-64' : 'h-32');
 
 if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankError || playerError)
   return (
