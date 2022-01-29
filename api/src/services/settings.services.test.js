@@ -5,6 +5,7 @@ describe('asType', () => {
     expect(asType({ value: 'test', type: 'string' })).toBe('test');
   });
   it('boolean', () => {
+    expect(asType({ value: 'true', type: 'boolean' })).toBe(true);
     expect(asType({ value: 'false', type: 'boolean' })).toBe(false);
   });
   it('date', () => {
@@ -29,6 +30,8 @@ describe('toObjArray', () => {
       .toEqual([{ id: 'test', value: 'testStr', type: 'string' }]);
   });
   it('boolean', () => {
+    expect(toObjArray({ test: true }))
+      .toEqual([{ id: 'test', value: 'true', type: 'boolean' }]);
     expect(toObjArray({ test: false }))
       .toEqual([{ id: 'test', value: 'false', type: 'boolean' }]);
   });
@@ -39,6 +42,8 @@ describe('toObjArray', () => {
   it('number', () => {
     expect(toObjArray({ test: 12 }))
       .toEqual([{ id: 'test', value: '12', type: 'number' }]);
+    expect(toObjArray({ test: 12n }))
+      .toEqual([{ id: 'test', value: '12', type: 'bigint' }]);
   });
   it('object', () => {
     expect(toObjArray({ test: { a: 1 } }))
