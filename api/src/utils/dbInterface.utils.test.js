@@ -56,7 +56,9 @@ describe('lineCount', () => {
   });
   
   it('falsy qry returns 0', () => {
+    expect(lineCount(undefined)).toBe(0);
     expect(lineCount('')).toBe(0);
+    expect(lineCount(' ')).toBe(0);
   });
 });
 
@@ -168,12 +170,16 @@ describe('getReturn', () => {
   });
   it('passes result if no/falsy rows', () => {
     expect(getReturn('result')).toBe('result');
+    expect(getReturn(['result'])).toEqual(['result']);
     expect(getReturn({other: 'result', rows: null}))
       .toEqual({other: 'result', rows: null});
+    expect(getReturn([{other: 'result', rows: null}]))
+      .toEqual([{other: 'result', rows: null}]);
   });
   it('passes result if no/falsy result', () => {
     expect(getReturn()).toBeUndefined();
     expect(getReturn(false)).toBe(false);
+    expect(getReturn([false,null])).toEqual([false,null]);
   });
 });
 
