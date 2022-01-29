@@ -135,6 +135,12 @@ describe('retryBlock', () => {
     return expect(connectUtils.retryBlock(mockFunc, [], 1)).rejects
       .toThrowError('Max retries reached');
   });
+
+  it('works without args', async () => {
+    await connectUtils.retryBlock(mockFunc, undefined, 1);
+    expect(mockFunc).toBeCalledTimes(1);
+    expect(mockFunc).toBeCalledWith();
+  });
 });
 
 describe('replaceFromObj', () => {
