@@ -29,7 +29,7 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
 
   // Get type from typeStr
   const type = (typeStr || '').match(typeRegex)
-  if (!type || !type[0]) throw new Error(missingErr(key, type))
+  if (!type || !type[0]) throw new Error(missingErr(key, typeStr))
   if (forceOptional) type[3] = '?'
 
   // Initialize ptr & static values (errMsg/in)
