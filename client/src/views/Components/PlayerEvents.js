@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
@@ -25,7 +25,7 @@ const scheduleRows = [
     class: ({status}) => statusInfo[status || 0].class,
   },
   { title: 'Wins', value: ({wins}) => wins, hideBelow: 2 },
-  { title: 'Losses', value: d => d.count - d.wins - d.draws, hideBelow: 2 },
+  { title: 'Losses', value: d => d.count == null ? null : d.count - (d.wins || 0) - (d.draws || 0), hideBelow: 2 },
   { title: 'Draws', value: ({draws}) => draws, hideBelow: 2 },
 ]
 const scheduleGridClass = `grid-cols-${scheduleRows.reduce((c,r) => c + (r.span || 1),0)}`;
@@ -53,7 +53,7 @@ function PlayerEvents({ id }) {
           ) }
 
           { 
-            data && data.length ? data.map(eventid => <EventRow eventid={eventid}/>) : 
+            data && data.length ? data.map(eventid => <EventRow eventid={eventid} key={eventid} />) : 
             <div className={"dim-color italic font-thin text-center my-2 "+scheduleGridSpan}>– None –</div> 
           }
         </div>
@@ -81,11 +81,10 @@ function EventRow({ eventid }) {
       error ? formatQueryError(error) : 'Not found'
     }</div>);
 
-  return scheduleRows.map(row => 
-    !row.hideBelow || row.hideBelow <= data.status ?
+  return scheduleRows.map(row => (<Fragment key={eventid+'_'+row.title}>
+    {!row.hideBelow || row.hideBelow <= data.status ?
       <h4
         className={'font-thin base-color ' + (row.span ? ' col-span-'+row.span : '')}
-        key={eventid+'_'+row.title}
       >
         { row.link ?
           <Link
@@ -100,8 +99,8 @@ function EventRow({ eventid }) {
         }
       </h4>
     : 
-    <div className={row.span ? 'col-span-'+row.span : ''} key={eventid+'_'+row.title} />
-  );
+    <div className={row.span ? 'col-span-'+row.span : ''} />}
+  </Fragment>));
 }
 
 
