@@ -8,7 +8,7 @@
     "test": "jest",
     "inspect": "node --inspect ./src/server.js",
     "bg-start": "[[ $(redis-cli ping) != \"PONG\" ]] && brew services start redis",
-    "bg-stop":  "[[ $(redis-cli ping) == \"PONG\" ]] && brew services stop redis"
+    "bg-stop": "[[ $(redis-cli ping) == \"PONG\" ]] && brew services stop redis"
   },
   "config": {
     "port": "9090"
@@ -31,6 +31,7 @@
     "express-validator": "^6.12.1",
     "pg": "latest",
     "pg-connection-string": "latest",
+    "postgres-interval": "^4.0.0",
     "prompt": "latest",
     "uuid": "latest",
     "validator": "^13.6.0"
