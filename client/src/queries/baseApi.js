@@ -1,7 +1,7 @@
 // React-specific createApi from RTK Query
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import getDays from '../controllers/getDays';
+import getDays from '../services/schedule.services';
 import { tagTypes, ALL_ID } from '../services/tags.services';
 
 const apiVersion = 'v0';

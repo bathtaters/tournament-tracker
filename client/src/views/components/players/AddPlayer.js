@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import InputForm from "../InputForm";
+import InputForm from "../shared/InputForm";
 
-import { useCreatePlayerMutation } from "../../../models/playerApi";
+import { useCreatePlayerMutation } from "../../../queries/playerApi";
 
 import { defaultPlayerName } from "../../../assets/strings";
 

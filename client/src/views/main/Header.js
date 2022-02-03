@@ -2,9 +2,9 @@ import React, { useRef } from "react";
 import PropTypes from 'prop-types';
 import { NavLink } from "react-router-dom";
 
-import ReloadButton from "./Components/ReloadButton";
-import Modal from "./Components/Modal";
-import Settings from "./Components/Settings";
+import Settings from "../components/header/Settings";
+import ReloadButton from "../components/header/ReloadButton";
+import Modal from "../components/shared/Modal";
 
 const defaultTitle = "Tournament Tracker";
 

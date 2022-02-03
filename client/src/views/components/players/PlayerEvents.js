@@ -2,14 +2,14 @@ import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
-import RawData from "../RawData";
+import RawData from "../shared/RawData";
 
-import { usePlayerEventsQuery } from "../../../models/playerApi";
-import { useEventQuery } from "../../../models/eventApi";
-import { usePrefetch, } from "../../../models/baseApi";
+import { usePlayerEventsQuery } from "../../../queries/playerApi";
+import { useEventQuery } from "../../../queries/eventApi";
+import { usePrefetch, } from "../../../queries/baseApi";
 
 import { formatQueryError, statusInfo } from "../../../assets/strings";
-import { dayClasses } from "../../controllers/getDays";
+import { dayClasses } from "../../../services/schedule.services";
 
 // Component layout
 const scheduleRows = [

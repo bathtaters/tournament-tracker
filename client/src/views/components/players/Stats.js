@@ -2,15 +2,15 @@ import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-import RawData from "./RawData";
+import RawData from "../shared/RawData";
 
 import { 
   formatQueryError, formatNum, formatPercent
-} from '../../assets/strings';
-import { getPlayerList } from "../../controllers/misc";
+} from '../../../assets/strings';
+import { getPlayerList } from "../../../services/shared.services";
 
-import { useStatsQuery } from "../../models/eventApi";
-import { usePlayerQuery } from "../../models/playerApi";
+import { useStatsQuery } from "../../../queries/eventApi";
+import { usePlayerQuery } from "../../../queries/playerApi";
 
 
 // Component Layout

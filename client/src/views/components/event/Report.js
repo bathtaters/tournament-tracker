@@ -1,12 +1,12 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import InputForm from "./InputForm";
+import InputForm from "../shared/InputForm";
 
-import { usePlayerQuery } from "../../models/playerApi";
-import { useReportMutation } from "../../models/matchApi";
+import { usePlayerQuery } from "../../../queries/playerApi";
+import { useReportMutation } from "../../../queries/matchApi";
 
-import { formatQueryError } from "../../assets/strings";
+import { formatQueryError } from "../../../assets/strings";
 
 const maxDraws = 9; // TEMP
 

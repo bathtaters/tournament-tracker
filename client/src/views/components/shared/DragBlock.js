@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import dragHandle, { preventDef } from '../../controllers/dragAndDrop';
+import dragHandle, { preventDef } from '../../../services/dragAndDrop.services';
 
 
 // Create new array w/ elements common to all arrays

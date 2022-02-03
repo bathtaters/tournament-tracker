@@ -1,15 +1,15 @@
 import React, { Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import PlayerEvents from "./Components/PlayerEvents";
-import RawData from "./Components/RawData";
+import PlayerEvents from "../components/players/PlayerEvents";
+import RawData from "../components/shared/RawData";
 
-import { usePlayerQuery, useUpdatePlayerMutation } from "../models/playerApi";
+import { usePlayerQuery, useUpdatePlayerMutation } from "../../queries/playerApi";
 
-import { formatQueryError } from "../assets/strings";
+import { formatQueryError } from "../../assets/strings";
 
 // Default Picture
-import {ReactComponent as ProfilePic} from "../assets/blank-user.svg";
+import {ReactComponent as ProfilePic} from "../../assets/images/blank-user.svg";
 
 // Component layout
 const profileRows = [

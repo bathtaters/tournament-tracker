@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 
 import Match from './Match';
 
-import { useSettingsQuery } from "../../models/baseApi";
-import { useEventQuery } from "../../models/eventApi";
+import { useSettingsQuery } from "../../../queries/baseApi";
+import { useEventQuery } from "../../../queries/eventApi";
 
-import { formatQueryError } from "../../assets/strings";
+import { formatQueryError } from "../../../assets/strings";
 
 function Round({ eventid, round, deleteRound }) {
   // Global

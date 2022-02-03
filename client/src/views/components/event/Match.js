@@ -4,22 +4,22 @@ import PropTypes from 'prop-types';
 
 import {
   formatQueryError, formatMatchTitle, formatRecord, swapPlayerMsg, maxDrawsCounter
-} from '../../assets/strings';
+} from '../../../assets/strings';
 
-import Modal from "./Modal";
-import DragBlock from "./DragBlock";
 import Report from "./Report";
-import Counter from "./Counter";
-import RawData from "./RawData";
+import Modal from "../shared/Modal";
+import DragBlock from "../shared/DragBlock";
+import Counter from "../shared/Counter";
+import RawData from "../shared/RawData";
 
-import { useSettingsQuery } from "../../models/baseApi";
-import { usePlayerQuery } from "../../models/playerApi";
+import { useSettingsQuery } from "../../../queries/baseApi";
+import { usePlayerQuery } from "../../../queries/playerApi";
 import { 
   useMatchQuery, useReportMutation,
   useUpdateMatchMutation, 
   useSwapPlayersMutation,
-} from "../../models/matchApi";
-import { useStatsQuery } from "../../models/eventApi";
+} from "../../../queries/matchApi";
+import { useStatsQuery } from "../../../queries/eventApi";
 
 
 function Match({ eventid, matchId, wincount, isEditing }) {

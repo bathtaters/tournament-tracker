@@ -1,13 +1,13 @@
 import React, { useState, useRef, useCallback } from "react";
 
-import Modal from "./Components/Modal";
-import Stats from "./Components/Stats";
-import NewPlayer from "./Components/AddPlayer";
+import AddPlayer from "../components/players/AddPlayer";
+import Stats from "../components/players/Stats";
+import Modal from "../components/shared/Modal";
 
-import { deletePlayerMsg, cantDeletePlayerMsg } from "../assets/strings";
+import { deletePlayerMsg, cantDeletePlayerMsg } from "../../assets/strings";
 
-import { useSettingsQuery } from "../models/baseApi";
-import { useDeletePlayerMutation } from "../models/playerApi";
+import { useSettingsQuery } from "../../queries/baseApi";
+import { useDeletePlayerMutation } from "../../queries/playerApi";
 
 function Players() {
   // Init view
@@ -60,7 +60,7 @@ function Players() {
         : null }
       </h4>
       <Modal ref={modal}>
-        <NewPlayer hideModal={force=>modal.current.close(force)} lockModal={()=>modal.current.lock()} />
+        <AddPlayer hideModal={force=>modal.current.close(force)} lockModal={()=>modal.current.lock()} />
       </Modal>
     </div>
   );

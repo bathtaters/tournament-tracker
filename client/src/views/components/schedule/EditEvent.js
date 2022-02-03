@@ -2,18 +2,18 @@ import React, { useRef } from "react";
 import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 
-import InputForm from "./InputForm";
 import PlayerEditor from "./PlayerEditor";
-import RawData from "./RawData";
+import InputForm from "../shared/InputForm";
+import RawData from "../shared/RawData";
 
 import { 
   useEventQuery, useCreateEventMutation,
   useDeleteEventMutation, useUpdateEventMutation,
-} from "../../models/eventApi";
+} from "../../../queries/eventApi";
 
-import { formatQueryError, statusInfo, deleteEventMsg } from "../../assets/strings";
+import { formatQueryError, statusInfo, deleteEventMsg } from "../../../assets/strings";
 
-import { limits, defaultValues } from "../../controllers/eventHelpers";
+import { limits, defaultValues } from "../../../services/event.services";
 
 
 // Settings Window Layout/Validation

@@ -1,6 +1,7 @@
 import { baseApi } from './baseApi';
-import { swapPlayerArrays, moveDrops } from '../services/playerSwappers';
-import getTags from '../services/getTags';
+
+import { swapPlayerArrays, moveDrops } from '../services/swap.services';
+import getTags from '../services/tags.services';
 
 
 export const matchApi = baseApi.injectEndpoints({

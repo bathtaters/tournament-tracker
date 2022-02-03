@@ -1,19 +1,19 @@
 import React, { useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import Round from "../components/Round";
-import EventStats from "../components/EventStats";
-import EditEvent from "../components/EditEvent";
-import Modal from "../components/Modal";
-import RawData from "../components/RawData";
+import Round from "../components/event/Round";
+import EventStats from "../components/event/EventStats";
+import EditEvent from "../components/schedule/EditEvent";
+import Modal from "../components/shared/Modal";
+import RawData from "../components/shared/RawData";
 
 import {
   useEventQuery, useNextRoundMutation, useClearRoundMutation, 
-} from "../../models/eventApi";
-import { usePrefetch } from "../../models/baseApi";
+} from "../../queries/eventApi";
+import { usePrefetch } from "../../queries/baseApi";
 
 import { deleteRoundMsg, formatQueryError } from "../../assets/strings";
-import { getRoundButton } from "../controllers/eventHelpers";
+import { getRoundButton } from "../../services/event.services";
 
 function Event() {
   // Local

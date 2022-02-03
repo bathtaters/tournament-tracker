@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
-import Header from "./Header";
-import Schedule from "./Schedule";
-import Event from "./Event";
-import Players from "./Players";
-import Profile from "./Profile";
-import RawData from "./Components/RawData";
+import Header from "./main/Header";
+import Schedule from "./main/Schedule";
+import Event from "./main/Event";
+import Players from "./main/Players";
+import Profile from "./main/Profile";
+import RawData from "./components/shared/RawData";
 
-import { useSettingsQuery, usePrefetch } from "../models/baseApi";
+import { useSettingsQuery, usePrefetch } from "../queries/baseApi";
 import { formatQueryError } from "../assets/strings";
 
 function App() {

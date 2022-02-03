@@ -1,15 +1,15 @@
 import React, { useState, useRef, useCallback } from "react";
 
-import Modal from "./Components/Modal";
-import Day from "./Components/Day";
-import EditEvent from "./Components/EditEvent";
-import RawData from "./Components/RawData";
+import Day from "../components/schedule/Day";
+import EditEvent from "../components/schedule/EditEvent";
+import Modal from "../components/shared/Modal";
+import RawData from "../components/shared/RawData";
 
-import { useScheduleQuery, useSettingsQuery } from "../models/baseApi";
-import { useEventQuery } from "../models/eventApi";
+import { useScheduleQuery, useSettingsQuery } from "../../queries/baseApi";
+import { useEventQuery } from "../../queries/eventApi";
 
-import { formatQueryError } from "../assets/strings";
-import { noDate, getMissingEvents } from "../controllers/getDays";
+import { formatQueryError } from "../../assets/strings";
+import { noDate, getMissingEvents } from "../../services/schedule.services";
 
 function Schedule() {
   // Global state

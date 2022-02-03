@@ -2,14 +2,14 @@ import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-import DragBlock from '../DragBlock';
+import DragBlock from '../shared/DragBlock';
 
-import { noDate, toDateObj, dayClasses } from '../../controllers/getDays';
-import { isTempId } from "../../controllers/misc";
+import { noDate, toDateObj, dayClasses } from '../../../services/schedule.services';
+import { isTempId } from "../../../services/shared.services";
 import { formatQueryError, weekdays, statusInfo } from '../../../assets/strings';
 
-import { usePrefetch, } from "../../../models/baseApi";
-import { useEventQuery, useUpdateEventMutation, } from "../../../models/eventApi";
+import { usePrefetch, } from "../../../queries/baseApi";
+import { useEventQuery, useUpdateEventMutation, } from "../../../queries/eventApi";
 
 // Component
 function Day({ events, isEditing, setEventModal, day }) {

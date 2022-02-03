@@ -2,13 +2,13 @@ import React, { useRef, Fragment } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-import Modal from "./Modal";
-import Stats from "./Stats";
+import Modal from "../shared/Modal";
+import Stats from "../players/Stats";
 
-import { usePlayerQuery } from "../../models/playerApi";
-import { useEventQuery, useStatsQuery } from "../../models/eventApi";
+import { usePlayerQuery } from "../../../queries/playerApi";
+import { useEventQuery, useStatsQuery } from "../../../queries/eventApi";
 
-import { formatQueryError, formatRecord } from '../../assets/strings';
+import { formatQueryError, formatRecord } from '../../../assets/strings';
 
 
 function EventStats({ eventid }) {

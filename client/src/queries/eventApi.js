@@ -1,8 +1,8 @@
 import { baseApi } from './baseApi';
 
-import getTags from '../services/getTags';
-import { fakeRound, swapToDay, getStatus } from '../controllers/eventHelpers';
-import { nextTempId } from '../controllers/misc';
+import getTags from '../services/tags.services';
+import { fakeRound, swapToDay, getStatus } from '../services/event.services';
+import { nextTempId } from '../services/shared.services';
 
 
 export const eventApi = baseApi.injectEndpoints({

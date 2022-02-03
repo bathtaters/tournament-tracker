@@ -1,9 +1,8 @@
 import { baseApi } from './baseApi';
 import { eventApi } from './eventApi';
 
-import getTags from '../services/getTags';
-import { nextTempId } from '../controllers/misc';
-import { getStatus } from '../controllers/eventHelpers';
+import getTags from '../services/tags.services';
+import { nextTempId } from '../services/shared.services';
 
 
 export const playerApi = baseApi.injectEndpoints({

@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef, useCallback } from "react";
 import PropTypes from 'prop-types';
 
-import SuggestText from "./SuggestText";
+import SuggestText from "../shared/SuggestText";
 
-import { usePlayerQuery, useCreatePlayerMutation, } from "../../models/playerApi";
+import { usePlayerQuery, useCreatePlayerMutation, } from "../../../queries/playerApi";
 
-import { equalArrays, randomArray } from "../../controllers/misc";
-import { emptyNewPlayer, usePreviousArray, updateArrayWithChanges } from "../../controllers/eventHelpers";
+import { equalArrays, randomArray } from "../../../services/shared.services";
+import { emptyNewPlayer, usePreviousArray, updateArrayWithChanges } from "../../../services/event.services";
 import { 
   formatQueryError,
   createPlayerMsg,
   duplicatePlayerMsg,
   unsavedPlayerMsg,
   unaddedPlayerMsg
-} from "../../assets/strings";
+} from "../../../assets/strings";
 
 const autofillSize = 8;
 
