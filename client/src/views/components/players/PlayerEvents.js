@@ -2,13 +2,13 @@ import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
-import RawData from "./RawData";
+import RawData from "../RawData";
 
-import { usePlayerEventsQuery } from "../../models/playerApi";
-import { useEventQuery } from "../../models/eventApi";
-import { usePrefetch, } from "../../models/baseApi";
+import { usePlayerEventsQuery } from "../../../models/playerApi";
+import { useEventQuery } from "../../../models/eventApi";
+import { usePrefetch, } from "../../../models/baseApi";
 
-import { formatQueryError, statusInfo } from "../../assets/strings";
+import { formatQueryError, statusInfo } from "../../../assets/strings";
 import { dayClasses } from "../../controllers/getDays";
 
 // Component layout

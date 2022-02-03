@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import InputForm from "./InputForm";
+import InputForm from "../InputForm";
 
-import { useCreatePlayerMutation } from "../../models/playerApi";
+import { useCreatePlayerMutation } from "../../../models/playerApi";
 
-import { defaultPlayerName } from "../../assets/strings";
+import { defaultPlayerName } from "../../../assets/strings";
 
 // Compenent settings
 const settingsRows = [

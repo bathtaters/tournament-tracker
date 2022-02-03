@@ -1,16 +1,16 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import InputForm from "./InputForm";
-import RawData from "./RawData";
+import InputForm from "../InputForm";
+import RawData from "../RawData";
 
-import { useSettingsQuery, useUpdateSettingsMutation, useResetDbMutation } from "../../models/baseApi";
+import { useSettingsQuery, useUpdateSettingsMutation, useResetDbMutation } from "../../../models/baseApi";
 
 import { deepFilter, getUnqiue } from "../../controllers/misc";
 import {
   defaultTournamentTitle,
   formatQueryError,
-} from "../../assets/strings";
+} from "../../../assets/strings";
 
 
 const settingsRows = [

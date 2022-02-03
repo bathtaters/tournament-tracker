@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 
 import { useSelector, useDispatch } from "react-redux";
-import { baseApi } from "../../models/baseApi";
+import { baseApi } from "../../../models/baseApi";
 import { tagTypes } from '../../services/getTags';
 
 function ReloadButton({ size = 8, weight = 4, force = null, hideBgd = false, color = '#3498db', className }) {

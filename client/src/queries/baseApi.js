@@ -2,7 +2,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 import getDays from '../controllers/getDays';
-import { tagTypes, ALL_ID } from '../services/getTags';
+import { tagTypes, ALL_ID } from '../services/tags.services';
 
 const apiVersion = 'v0';
 

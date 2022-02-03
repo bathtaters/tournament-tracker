@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import devToolsEnhancer from 'remote-redux-devtools';
-import { baseApi } from '../models/baseApi'
+import { baseApi } from './baseApi'
 
 export default configureStore({
   reducer: {
