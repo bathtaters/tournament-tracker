@@ -1,14 +1,17 @@
 // Define Shared Vars
 const sharedLimits = {
-  title: { min: 1, max: 50 },
+  title:  { min: 1, max: 50 },
   player: { min: 0, max: 32 },
   rounds: { min: 1, max: 20 },
+  wins:   { min: 0, max: 10 },
 };
 
-const activeRoundLimit = { 
+sharedLimits.activeRounds = { 
   min: sharedLimits.rounds.min - 1,
   max: sharedLimits.rounds.max + 1,
 };
+
+sharedLimits.winCount = { min: 1, max: sharedLimits.wins.max };
 
 const today = (new Date()).toISOString().slice(0,10);
 const tomorrow = (new Date(Date.now() + (24*60*60*1000))).toISOString().slice(0,10);
@@ -68,58 +71,68 @@ module.exports = {
     event: {
       title: sharedLimits.title,
       players: sharedLimits.player,
-      roundactive: activeRoundLimit,
+      roundactive: sharedLimits.activeRounds,
       roundcount: sharedLimits.rounds,
-      wincount: { min: 1, max: 10 },
+      wincount: sharedLimits.winCount,
       playerspermatch: { min: 1, max: 4 },
     },
     match: {
       round:   sharedLimits.rounds,
       players: sharedLimits.player,
-      wins:    sharedLimits.player,
-      draws:   { min: 1, max: 99 },
+      wins:    { array: sharedLimits.player, elem: sharedLimits.wins, },
+      draws:   { min: 0, max: 99 },
       drops:   sharedLimits.player,
-    }
+      setDrawsMax: 3,
+    },
+    swap: {
+      swap: { min: 2, max: 2 },
+    },
   },
 
   types: {
     settings: {
+      setting: "string",
       title: "string",
       showadvanced: "boolean",
       showrawjson: "boolean",
       autobyes: "boolean",
       dayslots: "int",
-      datestart: "string",
-      dateend: "string"
+      datestart: "date",
+      dateend: "date"
     },
     player: {
       id: "uuid",
       name: "string",
       isteam: "boolean",
-      members: "array:uuid?"
+      members: "uuid[]?"
     },
     event: {
       id: "uuid",
       title: "string",
       day: "date?",
-      players: "array:uuid",
+      players: "uuid[]",
       roundactive: "int",
       roundcount: "int",
       wincount: "int",
       playerspermatch: "int",
       clocklimit: "interval",
-      clockstart: "date?",
+      clockstart: "datetime?",
       clockmod: "interval?"
     },
     match: {
       id: "uuid",
       eventid: "uuid",
       round: "int",
-      players: "array:uuid",
-      wins: "array:int",
+      players: "uuid[]",
+      wins: "int[]",
       draws: "int",
-      drops: "array:uuid",
+      drops: "uuid[]?",
       reported: "boolean"
+    },
+    swap: {
+      swap: "object[]",
+      "swap.*.id": "uuid",
+      "swap.*.playerId": "uuid",
     }
   }
 };
