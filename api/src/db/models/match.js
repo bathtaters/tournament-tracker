@@ -16,10 +16,10 @@ const getMulti = (matchIds, detail = false, fields = null) => db.operation(clien
 );
 
 // Get list of IDs only
-const listByEvent = eventId => db.query(strings.list, [eventId]);
+const listByEvent = eventid => db.query(strings.list, [eventid]);
 
 // Get detail from each match
-const getByEvent = eventId => db.getRow('matchDetail', eventId, null, { idCol: 'eventId', getOne: false });
+const getByEvent = eventid => db.getRow('matchDetail', eventid, null, { idCol: 'eventid', getOne: false });
 
 // Get all match details for stats
 const getAll = (completed = true) => db.getRows(
@@ -29,7 +29,7 @@ const getAll = (completed = true) => db.getRows(
 );
 
 // Update match data (Providing match.player will overwrite entire object)
-const update = (id, newData) => db.updateRow('match', id, newData, { returning: 'eventId' });
+const update = (id, newData) => db.updateRow('match', id, newData, { returning: 'eventid' });
 
 const updateMulti = (dataArray, returning = 'eventid') => db.operation(client =>
     Promise.all(dataArray.map(data => 

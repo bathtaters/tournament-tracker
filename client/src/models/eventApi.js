@@ -19,9 +19,9 @@ export const eventApi = baseApi.injectEndpoints({
       providesTags: getTags('Event'),
     }),
     stats: build.query({
-      query: (eventId) => `event/${eventId || 'all'}/stats`,
+      query: (eventid) => `event/${eventid || 'all'}/stats`,
       transformResponse: res => console.log('BRKRS',res) || res,
-      providesTags: getTags({Stats: (r,i,a)=> (r && r.eventIds && r.eventIds[0]) || a},{limit:1}),
+      providesTags: getTags({Stats: (r,i,a)=> (r && r.eventids && r.eventids[0]) || a},{limit:1}),
     }),
 
     // Mutations

@@ -24,7 +24,7 @@ _Represented below by api/v[n]_
 | URL | Method | Body | Return | Description |
 |------|------|------|------|------|
 |/all|GET| |{settings,schedule,events,players}|All objects in DB|
-|/schedule|GET| |{ YYYY-MM-DD: [ eventIds ], ... }|All eventIds by date|
+|/schedule|GET| |{ YYYY-MM-DD: [ eventids ], ... }|All eventids by date|
 |/settings|GET| |{ setting: value, ... }|All stored settings|
 |/settings|PATCH|{ setting: value }|{ success, set: [setting] }|Update setting(s)|
 
@@ -36,7 +36,7 @@ _Represented below by api/v[n]_
 |------|------|------|------|------|
 |/all|GET| |{ id: { eventData }, ... }|Data from all events by ID|
 |/[id]|GET| |{ eventData }|Data from a event|
-|/[id]/stats|GET| |{ playerId: { stats }, ..., ranking: [ids] }|Player stats from a event|
+|/[id]/stats|GET| |{ playerid: { stats }, ..., ranking: [ids] }|Player stats from a event|
 |/|POST|{ eventData }|{ id }|Create a new event|
 |/[id]|DELETE| |{ id }|Deletes event from database|
 |/[id]|PATCH|{ newData }|{ id, newData }|Update event data|
@@ -51,10 +51,10 @@ _Represented below by api/v[n]_
 |------|------|------|------|------|
 |/all|GET| |{ id: { matchData }, ... }|Data from all matches by ID|
 |/[id]|GET| |{ matchData }|Data from a match|
-|/[id]|POST|{ players, draws, drops }|{ eventId, id }|Report match result|
-|/[id]|DELETE| |{ eventId, id }|Clears match result|
-|/[id]|PATCH|{ newResult }|{ eventId, id }|Update results|
-|/swap|POST|{ playerA: {id,playerId}, playerB } |{ eventId }|Swap players between matches|
+|/[id]|POST|{ players, draws, drops }|{ eventid, id }|Report match result|
+|/[id]|DELETE| |{ eventid, id }|Clears match result|
+|/[id]|PATCH|{ newResult }|{ eventid, id }|Update results|
+|/swap|POST|{ playerA: {id,playerid}, playerB } |{ eventid }|Swap players between matches|
 
 ---
 
@@ -82,7 +82,7 @@ settings:
 player:
 	id UUID = random
 	name STRING
-	isTeam BOOLEAN = 0
+	isteam BOOLEAN = 0
 	members [player.id] = NULL
 
 event:
@@ -91,19 +91,19 @@ event:
 	day DATE = NULL
 	slot SMALLINT = 0
 	players [player.id] = []
-	roundActive SMALLINT = 0
-	roundCount SMALLINT = 3
-	winCount SMALLINT = 2,
-	playersPerMatch SMALLINT = 2
+	roundactive SMALLINT = 0
+	roundcount SMALLINT = 3
+	wincount SMALLINT = 2,
+	playerspermatch SMALLINT = 2
 	
 	(clock:)
-	clockLimit INTERVAL = 60min
-	clockStart TIMESTAMP = NULL
-	clockMod INTERVAL = NULL
+	clocklimit INTERVAL = 60min
+	clockstart TIMESTAMP = NULL
+	clockmod INTERVAL = NULL
 
 match:
 	id UUID = random
-	eventId event.id
+	eventid event.id
 	round SMALLINT
 	players [player.id]
 	wins [SMALLINT]

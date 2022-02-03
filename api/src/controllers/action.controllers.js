@@ -25,8 +25,8 @@ async function swapPlayers(req, res) {
   if (matchData.length !== 2 || matchData.some(m => !m || !m.players))
     throw new Error("Matches not found or are invalid.");
 
-  const eventId = matchData[0].eventid;
-  if (eventId !== matchData[1].eventid)
+  const eventid = matchData[0].eventid;
+  if (eventid !== matchData[1].eventid)
     throw new Error("Cannot swap players from different events.");
   
   // Mutate match data
@@ -34,10 +34,10 @@ async function swapPlayers(req, res) {
 
   // Write changes
   const result = await match.updateMulti(matchData, 'eventid');
-  if (!result || result.some(r => r.eventid !== eventId))
+  if (!result || result.some(r => r.eventid !== eventid))
     throw new Error("Error writing swap to database.");
 
-  return res.sendAndLog({ eventId });
+  return res.sendAndLog({ eventid });
 } 
 
 
@@ -69,10 +69,10 @@ async function nextRound(req, res) {
   ]);
 
   // Build round
-  const { eventId, round, matches } = roundService(data, matchData, oppData, autoByes ? asType(autoByes) : autoByesDef);
+  const { eventid, round, matches } = roundService(data, matchData, oppData, autoByes ? asType(autoByes) : autoByesDef);
   
   // Create matches
-  const ret = await event.pushRound(eventId, round, matches);
+  const ret = await event.pushRound(eventid, round, matches);
   if (!Array.isArray(ret) || !ret[0]) throw new Error("Error adding round to database");
 
   return res.sendAndLog({

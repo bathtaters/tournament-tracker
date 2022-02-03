@@ -57,16 +57,16 @@ function Day({ events, isEditing, setEventModal, day }) {
         </div>
 
       : events && events.length ?
-        events.map(eventId => 
+        events.map(eventid => 
           <DayEntry
             day={day}
-            id={eventId}
-            data={data && data[eventId]}
+            id={eventid}
+            data={data && data[eventid]}
             canDrop={canDrop}
             isEditing={isEditing}
             dropHandler={dropHandler}
-            editEvent={()=>setEventModal(eventId)}
-            key={eventId}
+            editEvent={()=>setEventModal(eventid)}
+            key={eventid}
           />
         )
 

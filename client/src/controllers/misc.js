@@ -49,7 +49,7 @@ export const nextTempId = (type, exists) => {
   } return id;
 }
 
-// Build a playerId list from rank (Include missing players if listAll=true)
+// Build a playerid list from rank (Include missing players if listAll=true)
 export const getPlayerList = (ranking, players, listAll=false, hideTeams=false) => {
   if (!players) return ranking || [];
   let list = [];

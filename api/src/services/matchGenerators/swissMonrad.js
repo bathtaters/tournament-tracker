@@ -1,5 +1,5 @@
 // Get matchups for new round using Swiss Monrad Alogrithm
-// => Match Table: (2D ID Array) [ [ playerIds in match1 ], [ match2 ], ...  ]
+// => Match Table: (2D ID Array) [ [ playerids in match1 ], [ match2 ], ...  ]
 const { unflat, splicing, anyElements, revReplace2dIndex } = require('./matchGen.utils');
 
 // -- Generate Match Table: Swiss Monrad Alogrithm -- //
@@ -32,8 +32,8 @@ function generateMatchups(ranking, { playerspermatch, byes, allOpps }) {
     if (allOpps) {
         for (let i = matches.length; i-- > 0; ) {
             for (let j = matches[i].length; j-- > 0; ) {
-                const playerId = matches[i][j];
-                const playerOpps = allOpps[playerId] && allOpps[playerId].oppids;
+                const playerid = matches[i][j];
+                const playerOpps = allOpps[playerid] && allOpps[playerid].oppids;
 
                 if (playerOpps && anyElements(matches[i], playerOpps)) {
                     // Find a swap who won't cause another rematch
@@ -47,7 +47,7 @@ function generateMatchups(ranking, { playerspermatch, byes, allOpps }) {
                             matches[idx[0]][idx[1]]
                         ] = [
                             matches[idx[0]][idx[1]],
-                            playerId
+                            playerid
                         ];
                     }
                     // If no replacement is found, rematch will happen

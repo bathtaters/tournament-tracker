@@ -22,15 +22,15 @@ import {
 import { useStatsQuery } from "../../models/eventApi";
 
 
-function Match({ eventId, matchId, wincount, isEditing }) {
+function Match({ eventid, matchId, wincount, isEditing }) {
   // Init
   const reportModal = useRef(null);
   const canSwap = useCallback((types, a, b) => a !== b && types.includes("json/matchplayer"),[]);
   
   // Global State
   const { data: settings } = useSettingsQuery();
-  const { data, isLoading, error } = useMatchQuery(eventId);
-  const { data: rankings, isLoading: loadingRank, error: rankError } = useStatsQuery(eventId);
+  const { data, isLoading, error } = useMatchQuery(eventid);
+  const { data: rankings, isLoading: loadingRank, error: rankError } = useStatsQuery(eventid);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
   const matchData = data && data[matchId];
   const title = isLoading || loadingPlayers || !matchData || !players ? 'Loading' :
@@ -39,13 +39,13 @@ function Match({ eventId, matchId, wincount, isEditing }) {
   
   // Change reported values
   const [ update ] = useUpdateMatchMutation();
-  const setVal = key => value => update({ id: matchData.id, eventId, key, value });
+  const setVal = key => value => update({ id: matchData.id, eventid, key, value });
   
   // Report match
   const [ report, { isLoading: isReporting } ] = useReportMutation();
   const clearReport = () => {
     if (window.confirm(`Are you sure you want to delete the records for ${title}?`)) {
-      report({ id: matchData.id, eventId, clear: true });
+      report({ id: matchData.id, eventid, clear: true });
     }
   };
 
@@ -54,7 +54,7 @@ function Match({ eventId, matchId, wincount, isEditing }) {
   const handleSwap = (playerA, playerB) => {
     if (playerA.id === playerB.id) return;
     if ((playerA.reported || playerB.reported) && !window.confirm(swapPlayerMsg())) return;
-    swapPlayers({eventId, swap: [ playerA, playerB ] });
+    swapPlayers({eventid, swap: [ playerA, playerB ] });
   };
   
   
@@ -74,7 +74,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
   );
 
   // Player's name box
-  const playerBox = (playerId, index) => (<Fragment key={playerId+'.n'}>
+  const playerBox = (playerid, index) => (<Fragment key={playerid+'.n'}>
     { index ?
       <div className="inline-block shrink font-thin text-sm dim-color p-2 align-middle pointer-events-none">
         vs.
@@ -82,7 +82,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
     : null }
 
     <DragBlock
-      storeData={{ id: matchData.id, playerId, reported: matchData.reported }}
+      storeData={{ id: matchData.id, playerid, reported: matchData.reported }}
       onDrop={handleSwap}
       canDrop={canSwap}
       storeTestData={matchData.id}
@@ -96,25 +96,25 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
         
         { isEditing ?
           <span className="link-color font-light">
-            {(players[playerId] && players[playerId].name) || '?'}
+            {(players[playerid] && players[playerid].name) || '?'}
           </span>
 
-        : players[playerId] ?
-          <Link className="font-light" to={'/profile/'+playerId}>
-            {players[playerId].name || '?'}
+        : players[playerid] ?
+          <Link className="font-light" to={'/profile/'+playerid}>
+            {players[playerid].name || '?'}
           </Link>
         :
-          <div className="font-light link-color" playerid={playerId}>?</div>
+          <div className="font-light link-color" playerid={playerid}>?</div>
         }
       </h4>
       
       {/* Player Info */}
       <div className="text-xs font-thin mt-0 pt-0 pointer-events-none mb-1">
-        { matchData.drops.includes(playerId) ?
+        { matchData.drops.includes(playerid) ?
           <div className="neg-color">Dropped</div>
         :
           <div className="dim-color">
-            {formatRecord(rankings && rankings[playerId] && rankings[playerId].matchRecord)}
+            {formatRecord(rankings && rankings[playerid] && rankings[playerid].matchRecord)}
           </div>
         }
 
@@ -124,7 +124,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
 
 
   // Player's win counter
-  const winsBox = (playerId, index) => (<Fragment key={playerId+'.w'}>
+  const winsBox = (playerid, index) => (<Fragment key={playerid+'.w'}>
     {/* Divider */}
     { index ? <span className="inline-block">{' – '}</span> : null }
 
@@ -197,7 +197,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
 
       <Modal ref={reportModal}>
         <Report
-          eventId={eventId}
+          eventid={eventid}
           hideModal={()=>reportModal.current.close(true)}
           lockModal={()=>reportModal.current.lock()}
           match={matchData}
@@ -212,7 +212,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
 
 Match.propTypes = {
   matchId: PropTypes.string,
-  eventId: PropTypes.string,
+  eventid: PropTypes.string,
   wincount: PropTypes.number,
   isEditing: PropTypes.bool.isRequired,
 };

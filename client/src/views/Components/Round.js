@@ -8,10 +8,10 @@ import { useEventQuery } from "../../models/eventApi";
 
 import { formatQueryError } from "../../assets/strings";
 
-function Round({ eventId, round, deleteRound }) {
+function Round({ eventid, round, deleteRound }) {
   // Global
   const { data: settings } = useSettingsQuery();
-  const { data, isLoading, error } = useEventQuery(eventId);
+  const { data, isLoading, error } = useEventQuery(eventid);
 
   // Local
   const [isEditing, setEditing] = useState(false);
@@ -29,7 +29,7 @@ function Round({ eventId, round, deleteRound }) {
           { data.matches[round].map((matchId, idx) => 
             <Match
               wincount={data.wincount}
-              eventId={eventId}
+              eventid={eventid}
               isEditing={isEditing}
               key={matchId}
               matchId={matchId}
@@ -63,7 +63,7 @@ function Round({ eventId, round, deleteRound }) {
 }
 
 Round.propTypes = {
-  eventId: PropTypes.string.isRequired,
+  eventid: PropTypes.string.isRequired,
   round: PropTypes.number.isRequired,
   deleteRound: PropTypes.func,
 };

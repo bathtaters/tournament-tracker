@@ -30,11 +30,11 @@ describe('new round', () => {
   // EventId & Round
   it('always returns event/round', () => {
     const full = round(eventData);
-    expect(full).toHaveProperty('eventId', 'd1')
+    expect(full).toHaveProperty('eventid', 'd1')
     expect(full).toHaveProperty('round')
     
     const part = round({...eventData, roundactive:4});
-    expect(part).toHaveProperty('eventId', 'd1')
+    expect(part).toHaveProperty('eventid', 'd1')
     expect(part).toHaveProperty('round')
   })
   it('always increment round', () => {
@@ -60,10 +60,10 @@ describe('new round', () => {
     matchGen.mockImplementationOnce(() => [[],[],[],[],[]])
     expect(round(eventData).matches.length).toBe(5)
   })
-  it('each match has round & eventId', () => {
+  it('each match has round & eventid', () => {
     const result = round(eventData);
     result.matches.forEach(match => {
-      expect(match).toHaveProperty('eventId', 'd1')
+      expect(match).toHaveProperty('eventid', 'd1')
       expect(match).toHaveProperty('round', result.round)
     })
   })

@@ -26,11 +26,11 @@ const statsHeader = [
 
 
 // Main Component
-function Stats({ eventId, onPlayerClick, className, highlightClass, hideTeams }) {
+function Stats({ eventid, onPlayerClick, className, highlightClass, hideTeams }) {
   // Global state
-  const { data, isLoading, error } = useStatsQuery(eventId);
+  const { data, isLoading, error } = useStatsQuery(eventid);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
-  const playerList = getPlayerList(data && data.ranking, players, !eventId, hideTeams);
+  const playerList = getPlayerList(data && data.ranking, players, !eventid, hideTeams);
 
   // Pass clicks to onPlayerClick
   const clickHandler = pid => event => {
@@ -104,7 +104,7 @@ function Stats({ eventId, onPlayerClick, className, highlightClass, hideTeams })
 }
 
 Stats.propTypes = {
-  eventId: PropTypes.string,
+  eventid: PropTypes.string,
   onPlayerClick: PropTypes.func,
   className: PropTypes.string,
   highlightClass: PropTypes.string,

@@ -7,7 +7,7 @@ function round(eventData, matchData, oppData, autoReportByes) {
     // Increment round number & create return object
     const matchBase = { 
         round: Math.min(eventData.roundactive, eventData.roundcount) + 1,
-        eventId: eventData.id,
+        eventid: eventData.id,
     };
 
     // Event has ended

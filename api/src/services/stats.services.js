@@ -10,11 +10,11 @@ const logger = require('../utils/log.adapter');
 
 /**
  * Get Player Stats & Determine Rankings
- * @param {object} matchData - { eventId: [{ reported, players, wins, draws, maxwins, totalwins }, ...], ... }
- * @param {string[]} originalOrder - [ playerIds, ... ]
- * @param {object} oppData - { eventId: { playerId: [ oppIds, ... ], ... }, ... }
+ * @param {object} matchData - { eventid: [{ reported, players, wins, draws, maxwins, totalwins }, ...], ... }
+ * @param {string[]} originalOrder - [ playerids, ... ]
+ * @param {object} oppData - { eventid: { playerid: [ oppids, ... ], ... }, ... }
  * @param {boolean} [useMatchScore=true] - use matchScore (Within same event) vs percent (Comparing apples to oranges)
- * @returns - { ranking: [ playerIds... ], playerId: { ...playerStats }, ... }
+ * @returns - { ranking: [ playerids... ], playerid: { ...playerStats }, ... }
  */
 function stats(matchData, originalOrder, oppData, useMatchScore = true) {
     let final = {};
@@ -31,14 +31,14 @@ function stats(matchData, originalOrder, oppData, useMatchScore = true) {
                 const results = getWLD(match);
 
                 // Each player 
-                match.players.forEach((player, playerIdx) => {
+                match.players.forEach((player, playeridx) => {
                     current[player] = current[player]
                         // Combine entry
                         ? combineStats(
                             current[player],
-                            calcBase(playerIdx, results, match, event)
+                            calcBase(playeridx, results, match, event)
                         // New entry
-                        ) : calcBase(playerIdx, results, match, event);
+                        ) : calcBase(playeridx, results, match, event);
                 });
             }
         });

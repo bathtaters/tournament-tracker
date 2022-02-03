@@ -68,14 +68,14 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
   const autofill = () => setPlayerList(randomArray(remainingPlayers, autofillSize));
 
   // Add player to list (If valid)
-  const pushPlayer = useCallback(playerId => {
-    if (!playerId) throw new Error("Add player is missing playerId!");
+  const pushPlayer = useCallback(playerid => {
+    if (!playerid) throw new Error("Add player is missing playerid!");
 
     let res = true;
-    if (playerList.includes(playerId)) {
-      window.alert(duplicatePlayerMsg(data[playerId] && data[playerId].name));
+    if (playerList.includes(playerid)) {
+      window.alert(duplicatePlayerMsg(data[playerid] && data[playerid].name));
       res = false;
-    } else setPlayerList(playerList.concat(playerId));
+    } else setPlayerList(playerList.concat(playerid));
 
     setNewPlayer(emptyNewPlayer);
     return res;

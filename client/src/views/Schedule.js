@@ -23,7 +23,7 @@ function Schedule() {
   const modal = useRef(null);
   const [isEditing, setEdit] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
-  const openEventModal = useCallback(eventId => { setCurrentEvent(eventId); modal.current.open(); }, [modal]);
+  const openEventModal = useCallback(eventid => { setCurrentEvent(eventid); modal.current.open(); }, [modal]);
 
   return (
     <div>
@@ -66,7 +66,7 @@ function Schedule() {
 
       <Modal ref={modal}>
         <EditEvent
-          eventId={currentEvent}
+          eventid={currentEvent}
           hideModal={force=>modal.current.close(force)}
           lockModal={()=>modal.current.lock()}
         />

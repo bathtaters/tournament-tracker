@@ -15,49 +15,49 @@ const { set, swap } = require('./player');
 
 // Team Queries
 const teamQueries = {
-    addMember:  "UPDATE player SET members = members || $1 WHERE isTeam = TRUE AND id = $2;",
-    rmvMember:  "UPDATE player SET members = array_remove(members, $1) WHERE isTeam = TRUE AND id = $2;",
-    replMember: "UPDATE player SET members = array_replace(members, $1, $2) WHERE isTeam = TRUE AND id = $3;",
-    replMember2: " UPDATE player SET members = array_replace(members, $2, $1) WHERE isTeam = TRUE AND id = $4;",
+    addMember:  "UPDATE player SET members = members || $1 WHERE isteam = TRUE AND id = $2;",
+    rmvMember:  "UPDATE player SET members = array_remove(members, $1) WHERE isteam = TRUE AND id = $2;",
+    replMember: "UPDATE player SET members = array_replace(members, $1, $2) WHERE isteam = TRUE AND id = $3;",
+    replMember2: " UPDATE player SET members = array_replace(members, $2, $1) WHERE isteam = TRUE AND id = $4;",
 }
 
 
 // Team Table Operations //
 
-const list = playerId => playerId ?
+const list = playerid => playerid ?
     db.query("SELECT team.* FROM player "+
-        "JOIN team USING (id) WHERE player.isTeam IS TRUE "+
-        "AND player.members @> ($1)::UUID[];", [[playerId]]) :
+        "JOIN team USING (id) WHERE player.isteam IS TRUE "+
+        "AND player.members @> ($1)::UUID[];", [[playerid]]) :
     db.query("SELECT * FROM team WHERE members IS NOT NULL;");
 
 const add = (members, withName=null) => db.operation(async cl => {
     const memberArr = await cl.query(
-        "SELECT id, isTeam FROM player WHERE id = ANY($1)::UUID[];", [members]
+        "SELECT id, isteam FROM player WHERE id = ANY($1)::UUID[];", [members]
     ).then(r => (r && r.rows) || []);
     if (
         !memberArr || memberArr.length !== members.length ||
-        memberArr.some(mem => mem.isTeam)
+        memberArr.some(mem => mem.isteam)
     ) throw new Error("Team members must be players: "+memberArr);
     return cl.query(
         withName ?
-        "INSERT INTO player(isTeam, members, name) "+
+        "INSERT INTO player(isteam, members, name) "+
         "VALUES(TRUE, ($1)::UUID[], $2) RETURNING id;":
-        "INSERT INTO player(isTeam, members) "+
+        "INSERT INTO player(isteam, members) "+
         "VALUES(TRUE, ($1)::UUID[]) RETURNING id;",
         withName ? [members, withName] : [members]
     );
 }).then(r => r[0]);
 
 const rmv = teamId => db.query(
-    "DELETE FROM player WHERE isTeam = TRUE AND id = $1 RETURNING members;",
+    "DELETE FROM player WHERE isteam = TRUE AND id = $1 RETURNING members;",
     [teamId]
 ).then(r => r.members);
 
 // Switch in/out members
-const addMember = (teamId, playerId) => 
+const addMember = (teamId, playerid) => 
     // Add checks that members aren't teams
     db.query(teamQueries.addMember, [
-        Array.isArray(playerId) ? playerId : [playerId],
+        Array.isArray(playerid) ? playerid : [playerid],
         teamId
     ]);
 
@@ -65,13 +65,13 @@ const replaceMember = (teamId, oldPlayerId, newPlayerId) => db.query(
     // Add checks that newPlayer isn't team
     teamQueries.replMember, [oldPlayerId, newPlayerId, teamId]);
 
-const rmvMember = (teamId, playerId) => db.query(
-    teamQueries.rmvMember, [playerId, teamId]);
+const rmvMember = (teamId, playerid) => db.query(
+    teamQueries.rmvMember, [playerid, teamId]);
 
 
-const swapMembers = (playerIdL, teamIdL, playerIdR, teamIdR) => db.query(
+const swapMembers = (playeridL, teamIdL, playeridR, teamIdR) => db.query(
     teamQueries.replMember + teamQueries.replMember2,
-    [playerIdL, playerIdR, teamIdL, teamIdR || teamIdL]
+    [playeridL, playeridR, teamIdL, teamIdR || teamIdL]
 );
 
 // Views

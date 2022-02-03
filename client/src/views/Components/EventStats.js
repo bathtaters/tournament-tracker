@@ -11,10 +11,10 @@ import { useEventQuery, useStatsQuery } from "../../models/eventApi";
 import { formatQueryError, formatRecord } from '../../assets/strings';
 
 
-function EventStats({ eventId }) {
+function EventStats({ eventid }) {
   const modal = useRef(null);
-  const { data,          isLoading,                 error              } = useStatsQuery(eventId);
-  const { data: event,   isLoading: loadingEvent,   error: eventError  } = useEventQuery(eventId);
+  const { data,          isLoading,                 error              } = useStatsQuery(eventid);
+  const { data: event,   isLoading: loadingEvent,   error: eventError  } = useEventQuery(eventid);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
   const isRanking = data && Array.isArray(data.ranking) && data.ranking.length;
   
@@ -71,14 +71,14 @@ function EventStats({ eventId }) {
 
       <Modal ref={modal}>
         <h3 className="font-light max-color text-center mb-4">{event.title+' Stats'}</h3>
-        <Stats eventId={eventId} playerList={data && data.ranking} players={players} />
+        <Stats eventid={eventid} playerList={data && data.ranking} players={players} />
       </Modal>
     </div>
   );
 }
 
 EventStats.propTypes = {
-  eventId: PropTypes.string.isRequired,
+  eventid: PropTypes.string.isRequired,
 };
 
 export default EventStats;

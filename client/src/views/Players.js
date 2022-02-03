@@ -20,15 +20,15 @@ function Players() {
   const toggleDelete = () => setDeleteMode(!canDelete);
   
   // Actions
-  const handlePlayerClick = useCallback((playerId, e, playerData) => {
+  const handlePlayerClick = useCallback((playerid, e, playerData) => {
     if (!canDelete) return; // Pass click
     e.preventDefault();
     // Check player can be deleted
-    if (playerData.eventIds && playerData.eventIds.length)
+    if (playerData.eventids && playerData.eventids.length)
       return window.alert(cantDeletePlayerMsg(playerData.name));
     // Delete player
     if (!window.confirm(deletePlayerMsg(playerData.name))) return;
-    deletePlayer(playerId);
+    deletePlayer(playerid);
   }, [canDelete, deletePlayer]);
 
   return (

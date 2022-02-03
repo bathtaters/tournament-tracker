@@ -11,7 +11,7 @@ const get = id => db.getRow('player', id);
 const list = () => db.getRow('player',null,'id').then(r => r && r.map(p => p.id));
 
 // Get Event detail for player
-const getPlayerEvents = playerId => db.getRows('event', strings.eventFilter, [playerId], 'id');
+const getPlayerEvents = playerid => db.getRows('event', strings.eventFilter, [playerid], 'id');
 
 // Add new player
 const add = playerData => db.addRow('player', { ...defs, ...playerData });

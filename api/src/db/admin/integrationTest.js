@@ -43,7 +43,7 @@ async function dbCheck() {
     
     /* TEST VIEWS
     console.log('Getting player/teamView...');
-    const t = await db.query("SELECT * FROM player WHERE isTeam IS TRUE LIMIT 1;")
+    const t = await db.query("SELECT * FROM player WHERE isteam IS TRUE LIMIT 1;")
     .then(r => console.log(r) || r);
     const p = await db.query("SELECT * FROM player WHERE id = $1;",[t.members[0]])
     .then(r => console.log(r) || r);
@@ -58,7 +58,7 @@ async function dbCheck() {
 
     console.log('Getting match...');
     const m = await db.query(
-        "SELECT * FROM match WHERE eventId = $1 AND round = 1 AND players ? $2::STRING;",
+        "SELECT * FROM match WHERE eventid = $1 AND round = 1 AND players ? $2::STRING;",
         [useEvent.id, p.id]
         ).then(r => console.log(r) || r);
         
@@ -70,25 +70,25 @@ async function dbCheck() {
         
         console.log('Getting eventPlayerView...');
         const res = await db.query(
-            "SELECT * FROM eventPlayer WHERE eventId = $1 AND playerId = $2;",
+            "SELECT * FROM eventPlayer WHERE eventid = $1 AND playerid = $2;",
             [useEvent.id, p.id]
     ).then(r => console.log(r) || r);
 
     console.log('Getting matchPlayerView...');
     for (const mId of res.matches) {
         await db.query(
-            "SELECT * FROM matchPlayer JOIN match ON matchId = match.id WHERE matchId = $1 AND playerId = $2;",
+            "SELECT * FROM matchPlayer JOIN match ON matchId = match.id WHERE matchId = $1 AND playerid = $2;",
             [mId, p.id]
         ).then(console.log);
     }
     
     console.log('Getting breakersView...');
     await db.query(
-            "SELECT * FROM breakers WHERE eventId = $1 AND playerId = $2;",
+            "SELECT * FROM breakers WHERE eventid = $1 AND playerid = $2;",
             [useEvent.id, p.id]
     ).then(r => console.log(r) || r);
     await db.query(
-            "SELECT * FROM breakers WHERE eventId = $1;",
+            "SELECT * FROM breakers WHERE eventid = $1;",
             [useEvent.id]
     ).then(r => console.log(r) || r);
     //*/
@@ -137,7 +137,7 @@ async function dbCheck() {
     console.log('NewEvent.id:',temp);
     await event.list().then(console.log);
     await event.dayList().then(console.log);
-    await event.set(temp,{title:'EditEvent', clockLimit: '0:0:1800', playerspermatch: 4});
+    await event.set(temp,{title:'EditEvent', clocklimit: '0:0:1800', playerspermatch: 4});
     await event.list().then(console.log);
     await event.get(temp).then(console.log);
     await event.rmv(temp);
@@ -161,7 +161,7 @@ async function dbCheck() {
     
     /* CLOCKS: TEST SUCCESS!
     console.log('\nClocks... *******************************');
-    temp = await event.add({title: 'ClockTest', day: new Date(), clockLimit: 10});
+    temp = await event.add({title: 'ClockTest', day: new Date(), clocklimit: 10});
     await event.get(temp).then(console.log);
     await clock.getClock(temp).then(console.log);
     await clock.getAll(temp).then(console.log);
@@ -249,13 +249,13 @@ async function dbCheck() {
         await event.getRecord().then(console.log);
     } catch (e) { console.error('ERROR getRecord():',e); }
     console.log('PLAYER',playIds[0],'EVENT',useEvent.title);
-    await event.getRecord({eventId: useEvent.id, playerId: playIds[0]},{asScore:1,ofGames:0}).then(console.log);
-    await event.getRecord({eventId: useEvent.id, playerId: playIds[0]},{asScore:0,ofGames:0}).then(console.log);
-    await event.getRecord({eventId: useEvent.id, playerId: playIds[0]},{asScore:1,ofGames:1}).then(console.log);
-    await event.getRecord({eventId: useEvent.id, playerId: playIds[0]},{asScore:0,ofGames:1}).then(console.log);
-    await event.getRecord({playerId: playIds[0]}).then(console.log);
-    await event.getRecord({playerId: playIds[0]},{sortByEvent:1}).then(console.log);
-    await event.getRecord({eventId: useEvent.id}).then(console.log);
+    await event.getRecord({eventid: useEvent.id, playerid: playIds[0]},{asScore:1,ofGames:0}).then(console.log);
+    await event.getRecord({eventid: useEvent.id, playerid: playIds[0]},{asScore:0,ofGames:0}).then(console.log);
+    await event.getRecord({eventid: useEvent.id, playerid: playIds[0]},{asScore:1,ofGames:1}).then(console.log);
+    await event.getRecord({eventid: useEvent.id, playerid: playIds[0]},{asScore:0,ofGames:1}).then(console.log);
+    await event.getRecord({playerid: playIds[0]}).then(console.log);
+    await event.getRecord({playerid: playIds[0]},{sortByEvent:1}).then(console.log);
+    await event.getRecord({eventid: useEvent.id}).then(console.log);
     await event.getBreakers(useEvent.id, playIds.slice(1,4)).then(console.log);
     await event.getBreakers(useEvent.id).then(console.log);
     //*/

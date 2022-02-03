@@ -12,11 +12,11 @@ const updateFilter = ({ id, players, wins, drops, saveDrops }) =>
 function swapPlayersService(matchData, swapData) {
   // Get data
   matchData.forEach((data, i) => {
-    const playerId = swapData[i].playerId
-    data.idx = data.players.indexOf(playerId)
+    const playerid = swapData[i].playerid
+    data.idx = data.players.indexOf(playerid)
     if (data.idx === -1)
-      throw new Error("Player is not registered for match: "+playerId)
-    data.dropIdx = data.drops.indexOf(playerId)
+      throw new Error("Player is not registered for match: "+playerid)
+    data.dropIdx = data.drops.indexOf(playerid)
   });
 
   // Swap players

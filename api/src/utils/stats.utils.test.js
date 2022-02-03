@@ -69,13 +69,13 @@ describe('getWLD', () => {
     expect(getWLD({ wins: [0,0,0], maxwins: 5 })).toEqual([1,1,1])
     expect(getWLD({ wins: [3,3,3], maxwins: 5 })).toEqual([1,1,1])
   })
-  it('throws on win > maxWins', () => {
+  it('throws on win > maxwins', () => {
     expect.assertions(5)
-    expect(() => getWLD({ wins: [5], maxwins: 0 })).toThrowError("Invalid maxWins: 0 => [5]")
-    expect(() => getWLD({ wins: [5], maxwins: 3 })).toThrowError("Invalid maxWins: 3 => [5]")
-    expect(() => getWLD({ wins: [0,5], maxwins: 0 })).toThrowError("Invalid maxWins: 0 => [0,5]")
-    expect(() => getWLD({ wins: [0,5], maxwins: 3 })).toThrowError("Invalid maxWins: 3 => [0,5]")
-    expect(() => getWLD({ wins: [3,5], maxwins: 3 })).toThrowError("Invalid maxWins: 3 => [3,5]")
+    expect(() => getWLD({ wins: [5], maxwins: 0 })).toThrowError("Invalid maxwins: 0 => [5]")
+    expect(() => getWLD({ wins: [5], maxwins: 3 })).toThrowError("Invalid maxwins: 3 => [5]")
+    expect(() => getWLD({ wins: [0,5], maxwins: 0 })).toThrowError("Invalid maxwins: 0 => [0,5]")
+    expect(() => getWLD({ wins: [0,5], maxwins: 3 })).toThrowError("Invalid maxwins: 3 => [0,5]")
+    expect(() => getWLD({ wins: [3,5], maxwins: 3 })).toThrowError("Invalid maxwins: 3 => [3,5]")
   })
 })
 
@@ -90,17 +90,17 @@ describe('calcBase', () => {
       wins: [0,3,1],
       draws: 2,
       totalwins: 4,
-    // eventId
+    // eventid
     }, 'd1',
   ];
   const playerA = calcBase(0, ...calcData)
   const playerB = calcBase(1, ...calcData)
   const playerC = calcBase(2, ...calcData)
 
-  it('eventIds', () => {
-    expect(playerA).toHaveProperty('eventIds',['d1'])
-    expect(playerB).toHaveProperty('eventIds',['d1'])
-    expect(playerC).toHaveProperty('eventIds',['d1'])
+  it('eventids', () => {
+    expect(playerA).toHaveProperty('eventids',['d1'])
+    expect(playerB).toHaveProperty('eventids',['d1'])
+    expect(playerC).toHaveProperty('eventids',['d1'])
   })
   it('matchRecord', () => {
     expect(playerA).toHaveProperty('matchRecord',[0,1,0])
@@ -225,8 +225,8 @@ describe('combineFinal', () => {
   
   beforeEach(() => {
     comboSpy.mockImplementationOnce(a => a)
-    dataA = { eventIds: ['d1','d2'], oppMatch: [2, 4], oppGame: [11, 12], passthrough: true }
-    dataB = { eventIds: ['d3'],      oppMatch: [6],    oppGame: [ NaN ]  }
+    dataA = { eventids: ['d1','d2'], oppMatch: [2, 4], oppGame: [11, 12], passthrough: true }
+    dataB = { eventids: ['d3'],      oppMatch: [6],    oppGame: [ NaN ]  }
 
     combined = combineFinal(dataA, dataB)
   })
@@ -242,7 +242,7 @@ describe('combineFinal', () => {
     expect(comboSpy).toBeCalledWith(dataA,dataB)
   })
   
-  it('eventIds', () => expect(combined).toHaveProperty('eventIds', ['d1','d2','d3']))
+  it('eventids', () => expect(combined).toHaveProperty('eventids', ['d1','d2','d3']))
   it('oppMatch', () => expect(combined).toHaveProperty('oppMatch', [2, 4, 6]))
   it('oppGame',  () => expect(combined).toHaveProperty('oppGame',  [11, 12, NaN]))
 })
@@ -256,7 +256,7 @@ describe('finalize', () => {
   let comboResult, finalized;
   beforeEach(() => {
     comboResult = {
-      eventIds: ['d1'], passthrough: true,
+      eventids: ['d1'], passthrough: true,
       oppMatch: [0.0, 0.5, NaN], oppGame: [0.75, 0.25, NaN],
     }
     finalized = finalize(comboResult)
@@ -273,7 +273,7 @@ describe('finalize', () => {
   })
   it('finalizes rates using calcRates', () => {
     rateSpy.mockImplementationOnce(r => r)
-    comboResult = { eventIds: ['d1','d2','d3'], oppMatch: [1], oppGame: [1] }
+    comboResult = { eventids: ['d1','d2','d3'], oppMatch: [1], oppGame: [1] }
     finalize(comboResult)
     expect(rateSpy).toBeCalledTimes(1)
     expect(rateSpy).toBeCalledWith(comboResult)

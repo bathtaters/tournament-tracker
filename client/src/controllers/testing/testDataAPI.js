@@ -11,12 +11,12 @@ export const newId = (prefix, existing = null) => {
 };
 
 export const getPlayer = (playerInfo,existingPlayers) => {
-  const playerId = newId(
+  const playerid = newId(
     (playerInfo.name ? playerInfo.name.trim().charAt(0).toLowerCase() : 'x') + 'x',
     existingPlayers
   );
   if (!playerInfo.record) playerInfo.record = [0,0,0];
-  return [playerId, playerInfo];
+  return [playerid, playerInfo];
 };
 
 export const newEvent = (id, players) => ({
@@ -24,11 +24,11 @@ export const newEvent = (id, players) => ({
   players: players.reduce((p,pid)=>({...p, [pid]: 0}),{}),
 });
 
-export const newRound = (playerIds, eventId, roundNum) => {
+export const newRound = (playerids, eventid, roundNum) => {
   let round = [];
-  const e = Math.ceil(playerIds.length / 2);
+  const e = Math.ceil(playerids.length / 2);
   for (let i = 0; i < e; i++) {
-    round.push(newEvent(eventId+'m'+roundNum+(i+1), playerIds.slice(i * 2, i * 2 + 2)));
+    round.push(newEvent(eventid+'m'+roundNum+(i+1), playerids.slice(i * 2, i * 2 + 2)));
   }
   return round;
 };

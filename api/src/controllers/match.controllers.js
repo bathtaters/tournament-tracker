@@ -17,7 +17,7 @@ const emptyReport = {
 const getAllMatches = (_, res) => match.get().then(res.sendAndLog);
 
 async function getEventMatches(req, res) {
-  const matchData = await match.getByEvent(req.params.eventId).then(arrToObj('id', {delKey:0}));
+  const matchData = await match.getByEvent(req.params.eventid).then(arrToObj('id', {delKey:0}));
   matchData && Object.values(matchData).forEach(m => m.isDraw = m.wins.filter(w => w == m.maxwins).length !== 1);
   return res.sendAndLog(matchData || {});
 }
@@ -25,16 +25,16 @@ async function getEventMatches(req, res) {
 /* SET match database. */
 
 // Report match
-//   { players: {playerId: winCount, ...} , draws: drawCount, drops: [droppedPlayers] }
+//   { players: {playerid: wincount, ...} , draws: drawCount, drops: [droppedPlayers] }
 async function reportMatch(req, res) {
   const ret = await match.update(req.params.id, { ...emptyReport, ...req.body });
-  return res.sendAndLog({ id: req.params.id, eventId: ret && ret.eventid, });
+  return res.sendAndLog({ id: req.params.id, eventid: ret && ret.eventid, });
 } 
 
 // Clear report
 async function unreportMatch(req, res) {
   // Get player names
-  const matches = await match.get(req.params.id, false, 'players, eventId');
+  const matches = await match.get(req.params.id, false, 'players, eventid');
   if (!matches) throw new Error("Match not found or invalid.");
 
   // zero out wins, set reported
@@ -44,7 +44,7 @@ async function unreportMatch(req, res) {
     reported: false
   });
 
-  return res.sendAndLog({ id: req.params.id, eventId: matches.eventid, });
+  return res.sendAndLog({ id: req.params.id, eventid: matches.eventid, });
 }
 
 // Update partial report data
@@ -61,7 +61,7 @@ async function updateMatch(req, res) {
   else ret = await match.update(req.params.id, { [req.body.key]: req.body.value });
   
   // Return match & event IDs
-  return res.sendAndLog({ id: req.params.id, eventId: ret && ret.eventid, });
+  return res.sendAndLog({ id: req.params.id, eventid: ret && ret.eventid, });
 }
 
 

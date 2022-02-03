@@ -15,7 +15,7 @@ exports.getWLD = ({ wins, maxwins }) =>
         if (w === maxwins) return true;
         if (w < maxwins) return false;
         // Catch invalid state
-        throw new Error("Invalid maxWins: "+maxwins+" => "+JSON.stringify(wins))
+        throw new Error("Invalid maxwins: "+maxwins+" => "+JSON.stringify(wins))
     }).length === 1 ?
         wins.map(w => +(w !== maxwins)) :
         wins.map(w => w === maxwins ? 2 : 1);
@@ -24,12 +24,12 @@ exports.getWLD = ({ wins, maxwins }) =>
 
 // Calculate Stat Values //
 
-exports.calcBase = (playerIdx, wldArr, { wins, draws, totalwins }, event) => ({
-    eventIds:    [event], // In array for combineFinal
-    matchRecord: Object.assign([0,0,0], { [wldArr[playerIdx]]: 1 }),
-    gameRecord:  [ wins[playerIdx], totalwins - wins[playerIdx], draws ],
-    matchScore:  [ points.win, 0, points.draw ][ wldArr[playerIdx] ],
-    gameScore:   ( wins[playerIdx] * points.win ) + ( draws * points.draw ),
+exports.calcBase = (playeridx, wldArr, { wins, draws, totalwins }, event) => ({
+    eventids:    [event], // In array for combineFinal
+    matchRecord: Object.assign([0,0,0], { [wldArr[playeridx]]: 1 }),
+    gameRecord:  [ wins[playeridx], totalwins - wins[playeridx], draws ],
+    matchScore:  [ points.win, 0, points.draw ][ wldArr[playeridx] ],
+    gameScore:   ( wins[playeridx] * points.win ) + ( draws * points.draw ),
 });
 
 exports.calcRates = result => Object.assign(result, {
@@ -63,14 +63,14 @@ exports.combineStats = (a,b) => Object.assign(a, {
 });
 
 exports.combineFinal = (final,curr) => Object.assign( exports.combineStats(final,curr), {
-    eventIds: final.eventIds.concat(curr.eventIds),
+    eventids: final.eventids.concat(curr.eventids),
     oppMatch: final.oppMatch.concat(curr.oppMatch),
     oppGame:  final.oppGame.concat(curr.oppGame),
 });
 
 exports.finalize = result => {
     // If more than 1 event, recalc rates
-    if (result.eventIds.length > 1) result = exports.calcRates(result);
+    if (result.eventids.length > 1) result = exports.calcRates(result);
 
     // Average oppRates (Ignoring NaNs)
     result.oppMatch = avgArr(result.oppMatch.filter(n => !isNaN(n)));

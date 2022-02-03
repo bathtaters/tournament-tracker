@@ -51,7 +51,7 @@ function Event() {
     rounds.push(
       <Round
         key={id+'.'+roundNum}
-        eventId={id}
+        eventid={id}
         round={roundNum - 1}
         deleteRound={roundNum === matches.length ? handleDelete : null}
       />
@@ -94,7 +94,7 @@ function Event() {
               value="Edit Settings"
             />
           </form>
-          { data.players && data.players.length ? <EventStats eventId={id} /> : null }
+          { data.players && data.players.length ? <EventStats eventid={id} /> : null }
         </div>
         {rounds}
       </div>
@@ -103,7 +103,7 @@ function Event() {
 
       <Modal ref={modal}>
         <EditEvent
-          eventId={id}
+          eventid={id}
           hideModal={force=>modal.current.close(force)}
           lockModal={()=>modal.current.lock()}
         />

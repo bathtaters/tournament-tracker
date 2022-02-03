@@ -14,8 +14,8 @@ async function get(id, detail=false) {
 
 const getSchedule = () => db.getRows('schedule');
 
-const getOpponents = (eventId, completed=true) => eventId ?
-    db.getRow('eventOpps', eventId, null, { idCol: 'eventId', getOne: false }) :
+const getOpponents = (eventid, completed=true) => eventid ?
+    db.getRow('eventOpps', eventid, null, { idCol: 'eventid', getOne: false }) :
     db.getRows('eventOpps', completed && strings.complete);
 
 const getPlayers = id => db.getRow('event', id, 'players');
@@ -30,10 +30,10 @@ const add = eventData => {
 }
 
 
-const pushRound = (eventId, round, matchData) => db.operation(client => Promise.all([
+const pushRound = (eventid, round, matchData) => db.operation(client => Promise.all([
     // Increase active round counter
     db.updateRow(
-        'event', eventId,
+        'event', eventid,
         { roundactive: round },
         { returning: 'roundactive', client }
     ),
@@ -42,12 +42,12 @@ const pushRound = (eventId, round, matchData) => db.operation(client => Promise.
 ]));
 
 
-const popRound = (eventId, round) => db.operation(client => Promise.all([
+const popRound = (eventid, round) => db.operation(client => Promise.all([
     // Delete matches
-    client.query(strings.deleteRound, [eventId, round]),
+    client.query(strings.deleteRound, [eventid, round]),
     // Decrease active round counter
     db.updateRow(
-        'event', eventId,
+        'event', eventid,
         { roundactive: round - 1 },
         { returning: 'roundactive', client }
     ),

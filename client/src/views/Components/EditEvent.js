@@ -39,10 +39,10 @@ const settingsRows = [ 'custom', [
 
 
 // Component
-function EditEvent({ eventId, hideModal, lockModal }) {
+function EditEvent({ eventid, hideModal, lockModal }) {
   // Init state
   const playerList = useRef(null);
-  const { data, isLoading, error } = useEventQuery(eventId, { skip: !eventId });
+  const { data, isLoading, error } = useEventQuery(eventid, { skip: !eventid });
   const eventStatus = data ? data.status : 0;
   
   // Delete (& navigate to home page)
@@ -50,7 +50,7 @@ function EditEvent({ eventId, hideModal, lockModal }) {
   const [ deleteEvent ] = useDeleteEventMutation();
   const clickDelete = () => {
     if (!window.confirm(deleteEventMsg(data && data.title))) return;
-    if (eventId) deleteEvent(eventId);
+    if (eventid) deleteEvent(eventid);
     hideModal(true);
     navigate("/home");
   };
@@ -65,11 +65,11 @@ function EditEvent({ eventId, hideModal, lockModal }) {
     
     // Build event object
     if (!eventData.title.trim() && !savedPlayers.length) return hideModal(true);
-    if (eventId) eventData.id = eventId;
+    if (eventid) eventData.id = eventid;
     eventData.players = savedPlayers;
 
     // Add to DB
-    if (!eventId) createEvent(eventData);
+    if (!eventid) createEvent(eventData);
     else updateEvent(eventData);
     hideModal(true);
   };
@@ -86,7 +86,7 @@ function EditEvent({ eventId, hideModal, lockModal }) {
     </div>);
 
   // Button info - TO MEMOIZE
-  const buttons =  eventId ? [
+  const buttons =  eventid ? [
     {
       label: "Delete", onClick: clickDelete,
       className: "font-normal base-color-inv neg-bgd w-14 h-8 mx-1 sm:w-20 sm:h-11 sm:mx-4 opacity-80"
@@ -125,7 +125,7 @@ function EditEvent({ eventId, hideModal, lockModal }) {
 }
 
 EditEvent.propTypes = {
-  eventId: PropTypes.string,
+  eventid: PropTypes.string,
   hideModal: PropTypes.func,
   lockModal: PropTypes.func,
 };

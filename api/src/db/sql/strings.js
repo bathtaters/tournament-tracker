@@ -6,10 +6,10 @@ exports.clock = {
 }
 
 exports.event = {
-    byEventId: "WHERE eventId = $1",
-    maxRound: "SELECT round FROM match WHERE eventId = $1 ORDER BY round DESC LIMIT 1;",
-    deleteRound: "DELETE FROM match WHERE eventId = $1 AND round = $2;",
-    complete: "LEFT JOIN event ON event.id = eventId WHERE event.roundActive > event.roundCount",
+    byEventId: "WHERE eventid = $1",
+    maxRound: "SELECT round FROM match WHERE eventid = $1 ORDER BY round DESC LIMIT 1;",
+    deleteRound: "DELETE FROM match WHERE eventid = $1 AND round = $2;",
+    complete: "LEFT JOIN event ON event.id = eventid WHERE event.roundactive > event.roundcount",
 }
 
 exports.player = {
@@ -17,6 +17,6 @@ exports.player = {
 }
 
 exports.match = {
-    list: "SELECT round, array_agg(id) matches FROM match WHERE eventId = $1 GROUP BY round;",
+    list: "SELECT round, array_agg(id) matches FROM match WHERE eventid = $1 GROUP BY round;",
     complete: exports.event.complete,
 }

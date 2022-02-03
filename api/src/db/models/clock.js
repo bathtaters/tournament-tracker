@@ -6,24 +6,24 @@ const sqlStrings = require('../sql/strings').clock;
 
 // Event Clock Operations //
 
-const get = eventId => db.getRow(
-    'event', eventId,
+const get = eventid => db.getRow(
+    'event', eventid,
     ['id','clocklimit','clockstart','clockmod']
 );
 
-const start = eventId => db.updateRow(
-    'event', eventId,
+const start = eventid => db.updateRow(
+    'event', eventid,
     { clockstart: RawPG('now()') }
 );
 
-const pause = eventId => db.updateRow(
-    'event', eventId, {
+const pause = eventid => db.updateRow(
+    'event', eventid, {
         clockmod: sqlStrings.modPause,
         clockstart: null,
     }
 );
 
-const reset = eventId => db.updateRow('event', eventId, {
+const reset = eventid => db.updateRow('event', eventid, {
     clockstart: null, clockmod: null
 });
 

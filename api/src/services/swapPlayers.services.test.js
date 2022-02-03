@@ -5,7 +5,7 @@ describe('swapPlayersService', () => {
   let swaps, matches
 
   beforeEach(() => {
-    swaps = [ { playerId: 'c' }, { playerId: 'b' } ]
+    swaps = [ { playerid: 'c' }, { playerid: 'b' } ]
     matches = [
       { id: 'm1', players: ['a','c'], wins: [1, 3], drops: ['a'] },
       { id: 'm2', players: ['b','d'], wins: [2, 4], drops: ['b'] },
@@ -42,7 +42,7 @@ describe('swapPlayersService', () => {
   })
 
   it('throws error for missing player', () => {
-    swaps[1].playerId = 'a'
+    swaps[1].playerid = 'a'
     expect(() => swapPlayers(matches, swaps))
       .toThrowError("Player is not registered for match: a")
   })

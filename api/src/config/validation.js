@@ -11,7 +11,7 @@ sharedLimits.activeRounds = {
   max: sharedLimits.rounds.max + 1,
 };
 
-sharedLimits.winCount = { min: 1, max: sharedLimits.wins.max };
+sharedLimits.wincount = { min: 1, max: sharedLimits.wins.max };
 
 const today = (new Date()).toISOString().slice(0,10);
 const tomorrow = (new Date(Date.now() + (24*60*60*1000))).toISOString().slice(0,10);
@@ -73,7 +73,7 @@ module.exports = {
       players: sharedLimits.player,
       roundactive: sharedLimits.activeRounds,
       roundcount: sharedLimits.rounds,
-      wincount: sharedLimits.winCount,
+      wincount: sharedLimits.wincount,
       playerspermatch: { min: 1, max: 4 },
     },
     match: {
@@ -132,7 +132,7 @@ module.exports = {
     swap: {
       swap: "object[]",
       "swap.*.id": "uuid",
-      "swap.*.playerId": "uuid",
+      "swap.*.playerid": "uuid",
     }
   }
 };

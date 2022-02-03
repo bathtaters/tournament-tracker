@@ -53,7 +53,7 @@ function PlayerEvents({ id }) {
           ) }
 
           { 
-            data && data.length ? data.map(eventId => <EventRow eventId={eventId}/>) : 
+            data && data.length ? data.map(eventid => <EventRow eventid={eventid}/>) : 
             <div className={"dim-color italic font-thin text-center my-2 "+scheduleGridSpan}>– None –</div> 
           }
         </div>
@@ -66,8 +66,8 @@ function PlayerEvents({ id }) {
 
 // Row w/ event info
 
-function EventRow({ eventId }) {
-  const { data, isLoading, error } = useEventQuery(eventId);
+function EventRow({ eventid }) {
+  const { data, isLoading, error } = useEventQuery(eventid);
 
   // Setup pre-fetching
   const prefetchMatch = usePrefetch('match');
@@ -85,12 +85,12 @@ function EventRow({ eventId }) {
     !row.hideBelow || row.hideBelow <= data.status ?
       <h4
         className={'font-thin base-color ' + (row.span ? ' col-span-'+row.span : '')}
-        key={eventId+'_'+row.title}
+        key={eventid+'_'+row.title}
       >
         { row.link ?
           <Link
             className={row.class ? row.class(data): ''}
-            onMouseEnter={()=>loadEvent(eventId)}
+            onMouseEnter={()=>loadEvent(eventid)}
             to={row.link(data)}
           >
             {row.value(data)}
@@ -100,12 +100,12 @@ function EventRow({ eventId }) {
         }
       </h4>
     : 
-    <div className={row.span ? 'col-span-'+row.span : ''} key={eventId+'_'+row.title} />
+    <div className={row.span ? 'col-span-'+row.span : ''} key={eventid+'_'+row.title} />
   );
 }
 
 
 PlayerEvents.propTypes = { id: PropTypes.string };
-EventRow.propTypes = { eventId: PropTypes.string };
+EventRow.propTypes = { eventid: PropTypes.string };
 
 export default PlayerEvents;
