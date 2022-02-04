@@ -366,11 +366,11 @@ describe('getSchema', () => {
   describe('errors', () => {
     it('errorMessage on key', () => {
       expect(services.getSchema('test','any',null,['isIn'],false).test)
-        .toHaveProperty('errorMessage', 'test failed validation for <any>')
+        .toHaveProperty('errorMessage', 'failed validation for <any>')
     })
     it('errorMessage on key.*', () => {
       expect(services.getSchema('test','any[]',null,['isIn'],false)['test.*'])
-        .toHaveProperty('errorMessage', 'test entry failed validation for <any>')
+        .toHaveProperty('errorMessage', 'failed validation for <any>')
     })
     it('throws on missing/invalid typeStr', () => {
       expect(() => services.getSchema('test',undefined,null,['isIn'],false))
