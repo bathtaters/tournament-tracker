@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import PlayerEvents from "./components/PlayerEvents";
 import RawData from "../shared/RawData";
 
-import { usePlayerQuery, useUpdatePlayerMutation } from "../players/playerApi";
+import { usePlayerQuery, useUpdatePlayerMutation } from "./profile.fetch";
 
 import { formatQueryError } from "../../assets/strings";
 
@@ -84,11 +84,11 @@ function Profile() {
 
   return (
     <div>
-      <h3 className="font-thin">{data.isteam ? 'Team' : 'User'} Profile</h3>
+      <h3 className="font-thin">{data && data.isteam ? 'Team' : 'User'} Profile</h3>
       { isLoading ?
         <h4 className="base-color font-thin">Loading...</h4>
-      : error ?
-        <h4 className="base-color font-thin italic">{formatQueryError(error)}</h4>
+      : error || !data ?
+        <h4 className="base-color font-thin italic">{error ? formatQueryError(error) : 'Missing player'}</h4>
       :
         <div className="flex flex-wrap">
           <div>
