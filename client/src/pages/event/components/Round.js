@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 
 import Match from './Match';
 
-import { useEventQuery } from "../eventApi";
-import { useSettingsQuery } from "../../schedule/baseApi";
+import { useEventQuery, useSettingsQuery } from "../event.fetch";
 
 import { formatQueryError } from "../../../assets/strings";
 

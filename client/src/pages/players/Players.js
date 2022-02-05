@@ -6,8 +6,7 @@ import Modal from "../shared/Modal";
 
 import { deletePlayerMsg, cantDeletePlayerMsg } from "../../assets/strings";
 
-import { useDeletePlayerMutation } from "./playerApi";
-import { useSettingsQuery } from "../schedule/baseApi";
+import { useSettingsQuery, useDeletePlayerMutation } from "./player.fetch";
 
 function Players() {
   // Init view

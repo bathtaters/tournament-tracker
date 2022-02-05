@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import InputForm from "../../shared/InputForm";
 
-import { useCreatePlayerMutation } from "../playerApi";
+import { useCreatePlayerMutation } from "../player.fetch";
 
 import { defaultPlayerName } from "../../../assets/strings";
 

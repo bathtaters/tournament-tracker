@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 
 import InputForm from "../../shared/InputForm";
 
-import { useReportMutation } from "../matchApi";
-import { usePlayerQuery } from "../../players/playerApi";
+import { usePlayerQuery, useReportMutation } from "../event.fetch";
 
 import { formatQueryError } from "../../../assets/strings";
 

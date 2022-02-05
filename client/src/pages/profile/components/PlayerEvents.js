@@ -4,9 +4,7 @@ import PropTypes from "prop-types";
 
 import RawData from "../../shared/RawData";
 
-import { usePlayerEventsQuery } from "../../players/playerApi";
-import { useEventQuery } from "../../event/eventApi";
-import { usePrefetch } from "../../schedule/baseApi";
+import { useEventQuery, usePlayerEventsQuery, usePrefetch } from "../profile.fetch";
 
 import { formatQueryError, statusInfo } from "../../../assets/strings";
 import { dayClasses } from "../../schedule/services/schedule.services";

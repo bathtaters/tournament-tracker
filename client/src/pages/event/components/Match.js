@@ -16,10 +16,9 @@ import {
   useMatchQuery, useReportMutation,
   useUpdateMatchMutation, 
   useSwapPlayersMutation,
-} from "../matchApi";
-import { useStatsQuery } from "../eventApi";
-import { useSettingsQuery } from "../../schedule/baseApi";
-import { usePlayerQuery } from "../../players/playerApi";
+  useStatsQuery, useSettingsQuery,
+  usePlayerQuery
+} from "../event.fetch";
 
 function Match({ eventid, matchId, wincount, isEditing }) {
   // Init
@@ -142,7 +141,7 @@ if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankErr
         className={
           'text-base ' + 
           (isEditing || !matchData.isbye ? '' : 'invisible ') + 
-          (matchData.wins && matchData.wins[index] && matchData.wins[index] == matchData.maxwins ? 'pos-color' : '')
+          (matchData.wins && matchData.wins[index] && matchData.wins[index] === matchData.maxwins ? 'pos-color' : '')
         }
       />
     }

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import InputForm from "../../shared/InputForm";
 import RawData from "../../shared/RawData";
 
-import { useSettingsQuery, useUpdateSettingsMutation, useResetDbMutation } from "../../schedule/baseApi";
+import { useSettingsQuery, useUpdateSettingsMutation, useResetDbMutation } from "../header.fetch";
 
 import { deepFilter, getUnqiue } from "../../../core/services/shared.services";
 import {

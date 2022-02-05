@@ -5,8 +5,7 @@ import PropTypes from 'prop-types';
 import Modal from "../../shared/Modal";
 import Stats from "../../stats/Stats";
 
-import { useEventQuery, useStatsQuery } from "../eventApi";
-import { usePlayerQuery } from "../../players/playerApi";
+import { useEventQuery, useStatsQuery, usePlayerQuery } from "../event.fetch";
 
 import { formatQueryError, formatRecord } from '../../../assets/strings';
 

@@ -4,10 +4,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import ErrorBoundary from "./pages/shared/ErrorBoundary";
 
 // Prefetch API data (Load in all calls to allow lazy loading)
-import { usePrefetch } from "./pages/schedule/baseApi";
-import { } from "./pages/event/eventApi";
-import { } from "./pages/event/matchApi";
-import { } from "./pages/players/playerApi";
+import { usePrefetch } from "./pages/shared/shared.fetch";
+import { } from "./pages/schedule/schedule.fetch";
+import { } from "./pages/event/event.fetch";
 
 // Lazy load each main route
 const Schedule = lazy(() => import("./pages/schedule/Schedule"));
@@ -31,9 +30,9 @@ function Routing() {
         <Routes>
           <Route path="/"            element={<Navigate replace to="/home" />} />
           <Route path="/home"        element={<Schedule />} />
-          <Route path="/event/:id"   element={<Event />} />
-          <Route path="/players"     element={<Players />} />
-          <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/event/:id"   element={<Event    />} />
+          <Route path="/players"     element={<Players  />} />
+          <Route path="/profile/:id" element={<Profile  />} />
           <Route path="*"            element={<Navigate replace to="/home" />} />
         </Routes>
       </Suspense>

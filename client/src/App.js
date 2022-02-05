@@ -5,7 +5,7 @@ import Header from "./pages/header/Header";
 import Routing from "./Routing";
 import RawData from "./pages/shared/RawData";
 
-import { useSettingsQuery } from "./pages/schedule/baseApi";
+import { useSettingsQuery } from "./pages/shared/shared.fetch";
 
 import { formatQueryError } from "./assets/strings";
 

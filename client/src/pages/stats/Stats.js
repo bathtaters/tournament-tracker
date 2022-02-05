@@ -9,8 +9,7 @@ import {
 } from '../../assets/strings';
 import { getPlayerList } from "../../core/services/shared.services";
 
-import { useStatsQuery } from "../event/eventApi";
-import { usePlayerQuery } from "../players/playerApi";
+import { useStatsQuery, usePlayerQuery } from "../shared/shared.fetch";
 
 
 // Component Layout

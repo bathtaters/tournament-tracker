@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import SuggestText from "../../shared/SuggestText";
 
-import { usePlayerQuery, useCreatePlayerMutation, } from "../../players/playerApi";
+import { usePlayerQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
 
 import { equalArrays, randomArray } from "../../../core/services/shared.services";
 import { emptyNewPlayer, usePreviousArray, updateArrayWithChanges } from "../../event/services/event.services";

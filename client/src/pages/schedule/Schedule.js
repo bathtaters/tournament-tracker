@@ -5,8 +5,7 @@ import EditEvent from "../eventEditor/EditEvent";
 import Modal from "../shared/Modal";
 import RawData from "../shared/RawData";
 
-import { useScheduleQuery, useSettingsQuery } from "./baseApi";
-import { useEventQuery } from "../event/eventApi";
+import { useScheduleQuery, useSettingsQuery, useEventQuery } from "./schedule.fetch";
 
 import { formatQueryError } from "../../assets/strings";
 import { noDate, getMissingEvents } from "./services/schedule.services";

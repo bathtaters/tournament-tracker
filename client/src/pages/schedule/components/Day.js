@@ -8,8 +8,7 @@ import { noDate, toDateObj, dayClasses } from '../services/schedule.services';
 import { isTempId } from "../../../core/services/shared.services";
 import { formatQueryError, weekdays, statusInfo } from '../../../assets/strings';
 
-import { usePrefetch, } from "../baseApi";
-import { useEventQuery, useUpdateEventMutation, } from "../../event/eventApi";
+import { useEventQuery, useUpdateEventMutation, usePrefetch } from "../schedule.fetch";
 
 // Component
 function Day({ events, isEditing, setEventModal, day }) {

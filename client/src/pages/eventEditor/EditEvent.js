@@ -8,8 +8,8 @@ import RawData from "../shared/RawData";
 
 import { 
   useEventQuery, useCreateEventMutation,
-  useDeleteEventMutation, useUpdateEventMutation,
-} from "../event/eventApi";
+  useDeleteEventMutation, useUpdateEventMutation
+} from "./eventEditor.fetch";
 
 import { formatQueryError, statusInfo, deleteEventMsg } from "../../assets/strings";
 
