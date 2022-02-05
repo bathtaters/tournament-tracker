@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { useParams } from "react-router-dom";
 
 import Round from "./components/Round";
@@ -9,8 +9,7 @@ import RawData from "../shared/RawData";
 
 import {
   useEventQuery, useNextRoundMutation, useClearRoundMutation, 
-} from "./eventApi";
-import { usePrefetch } from "../schedule/baseApi";
+} from "./event.fetch";
 
 import { deleteRoundMsg, formatQueryError } from "../../assets/strings";
 import { getRoundButton } from "./services/event.services";
@@ -23,10 +22,6 @@ function Event() {
   // Global
   const { data, isLoading, error, isFetching } = useEventQuery(id);
   const matches = (data && data.matches) || [];
-
-  // Get Match data
-  const prefetchMatch = usePrefetch('match');
-  useEffect(() => { prefetchMatch(id); }, [id]);
   
   // Actions
   const [ nextRound ] = useNextRoundMutation();
