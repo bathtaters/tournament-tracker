@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
-import devToolsEnhancer from 'remote-redux-devtools';
-import { baseApi } from '../../pages/schedule/baseApi'
+import devToolsEnhancer from 'remote-redux-devtools'
+import { fetchApi } from './fetchApi'
 
 export default configureStore({
   reducer: {
-    [baseApi.reducerPath]: baseApi.reducer,
+    [fetchApi.reducerPath]: fetchApi.reducer,
   },
   devTools: false,
   enhancers: [devToolsEnhancer({
@@ -14,5 +14,5 @@ export default configureStore({
     realtime: true, 
   })],
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(baseApi.middleware),
+    getDefaultMiddleware().concat(fetchApi.middleware),
 })

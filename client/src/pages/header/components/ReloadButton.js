@@ -1,9 +1,8 @@
 import React from "react";
 import PropTypes from 'prop-types';
-
 import { useSelector, useDispatch } from "react-redux";
-import { baseApi } from "../../schedule/baseApi";
-import { tagTypes } from '../../../core/services/tags.services';
+
+import { fetchApi, tagTypes } from "../header.fetch";
 
 function ReloadButton({ size = 8, weight = 4, force = null, hideBgd = false, color = '#3498db', className }) {
   const dispatch = useDispatch();
@@ -13,7 +12,7 @@ function ReloadButton({ size = 8, weight = 4, force = null, hideBgd = false, col
     `h-${size} w-${size} sm:h-${size+2} sm:w-${size+2}`;
     // sm:border-${weight} sm:border-t-${weight}
   
-  const forceRefetch = () => dispatch(baseApi.util.invalidateTags(tagTypes));
+  const forceRefetch = () => dispatch(fetchApi.util.invalidateTags(tagTypes));
 
   if (!display)
     return <h4 className={'link '+className} onClick={forceRefetch}>↻</h4>;
