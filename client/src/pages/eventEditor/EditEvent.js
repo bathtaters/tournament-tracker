@@ -11,9 +11,23 @@ import {
   useDeleteEventMutation, useUpdateEventMutation
 } from "./eventEditor.fetch";
 
-import { formatQueryError, statusInfo, deleteEventMsg } from "../../assets/strings";
+import { defaultEventTitle, formatQueryError, statusInfo, deleteEventMsg } from "../../assets/strings";
 
-import { limits, defaultValues } from "../event/services/event.services";
+// Base settings
+const limits = {
+  title: {min: 0, max: 50},
+  wincount: {min: 1, max: 7},
+  playerspermatch: {min: 2, max: 8},
+  roundcount: {min: 1, max: 10},
+  clocklimit: {min: 1, max: 24*60*60},
+};
+const defaultValues = {
+  title: defaultEventTitle, day: null,
+  players: [], wincount: 2,
+  playerspermatch: 2,
+  roundcount: 3, clocklimit: 3600,
+  lockat: 2
+};
 
 
 // Settings Window Layout/Validation

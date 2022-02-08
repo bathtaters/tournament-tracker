@@ -1,5 +1,10 @@
 import { getDays } from '../../schedule/services/day.services';
-import { getStatus } from '../../event/services/event.services';
+
+// Event status
+// [0: N/A, 1: Pre-Event, 2: Active, 3: Complete]
+const getStatus = event => 
+  !event ? 0 : !event.roundactive ? 1 : 
+  event.roundactive > event.roundcount ? 3 : 2;
 
 export const getSettings = (data) => {
   data.dateRange = getDays(data.datestart, data.dateend);

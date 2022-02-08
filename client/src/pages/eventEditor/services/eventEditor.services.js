@@ -1,4 +1,33 @@
-import { equalArrays, nextTempId } from "../../common/services/basic.services"
+import { useRef, useEffect } from "react";
+import { equalArrays, nextTempId } from "../../common/services/basic.services";
+
+// For local render of playerList
+export const emptyNewPlayer = { visible: false, name: "", id: null };
+
+// Save history of 1D array
+export function usePreviousArray(newValue) {
+  const prevRef = useRef([]);
+  useEffect(() => { 
+    if (newValue && !equalArrays(prevRef.current, newValue))
+      prevRef.current = newValue;
+  }, [newValue]);
+  return prevRef.current || [];
+}
+
+// Apply only new changes to existing cache (For concurrent write-while-editing)
+export function updateArrayWithChanges(before, after, arrToChange) {
+  let result = [...arrToChange];
+  before.forEach(v => { 
+    if (!after.includes(v)) {
+      const idx = result.indexOf(v);
+      if (idx !== -1) result.splice(idx,1);
+    } 
+  });
+  after.forEach((v,i) => { 
+    if (!before.includes(v)) result.splice(i,0,v);
+  });
+  return result || [];
+}
 
 // Radomizes an array, optionally trimming it to a specific size
 export const randomArray = (arr, size) => {
@@ -10,4 +39,4 @@ export const randomArray = (arr, size) => {
   return res;
 };
 
-export { equalArrays, nextTempId }
+export { equalArrays, nextTempId };

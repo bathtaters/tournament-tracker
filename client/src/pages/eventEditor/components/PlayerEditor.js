@@ -5,8 +5,12 @@ import SuggestText from "../../common/SuggestText";
 
 import { usePlayerQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
 
-import { equalArrays, randomArray } from "../services/eventEditor.services";
-import { emptyNewPlayer, usePreviousArray, updateArrayWithChanges } from "../../event/services/event.services";
+import { 
+  equalArrays, randomArray,
+  emptyNewPlayer, usePreviousArray,
+  updateArrayWithChanges
+} from "../services/eventEditor.services";
+
 import { 
   formatQueryError,
   createPlayerMsg,
