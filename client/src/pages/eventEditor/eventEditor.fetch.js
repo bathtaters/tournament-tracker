@@ -2,7 +2,7 @@ import { fetchApi, getTags, useEventQuery, usePlayerQuery, useSettingsQuery } fr
 import { useCreatePlayerMutation } from '../players/player.fetch'
 
 import { swapToDay } from '../event/services/event.services';
-import { nextTempId } from '../../core/services/shared.services';
+import { nextTempId } from './services/eventEditor.services';
 
 export const eventEditorApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({

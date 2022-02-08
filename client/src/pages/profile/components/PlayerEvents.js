@@ -7,7 +7,7 @@ import RawData from "../../common/RawData";
 import { useEventQuery, usePlayerEventsQuery, usePrefetch } from "../profile.fetch";
 
 import { formatQueryError, statusInfo } from "../../../assets/strings";
-import { dayClasses } from "../../schedule/services/schedule.services";
+import { dayClasses } from "../../schedule/services/day.services";
 
 // Component layout
 const scheduleRows = [

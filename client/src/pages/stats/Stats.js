@@ -7,7 +7,7 @@ import RawData from "../common/RawData";
 import { 
   formatQueryError, formatNum, formatPercent
 } from '../../assets/strings';
-import { getPlayerList } from "../../core/services/shared.services";
+import { getPlayerList } from "./services/stats.services";
 
 import { useStatsQuery, usePlayerQuery } from "../common/common.fetch";
 

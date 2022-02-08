@@ -1,7 +1,7 @@
 // Import
 import { useRef, useEffect } from "react";
 import { defaultEventTitle, roundButtonText } from "../../../assets/strings";
-import { equalArrays } from "../../../core/services/shared.services";
+import { equalArrays } from "../../common/services/basic.services";
 
 // Base settings
 export const limits = {

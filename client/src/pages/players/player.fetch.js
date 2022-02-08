@@ -1,6 +1,6 @@
 import { fetchApi, getTags, usePlayerQuery, useSettingsQuery } from '../common/common.fetch';
 
-import { nextTempId } from '../../core/services/shared.services';
+import { nextTempId } from './services/player.services';
 
 export const playerApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({

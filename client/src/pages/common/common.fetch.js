@@ -1,6 +1,6 @@
 import { fetchApi, getTags, tagTypes, ALL_ID } from '../../core/store/fetchApi';
 
-import getDays from '../schedule/services/schedule.services';
+import { getDays } from '../schedule/services/day.services';
 import { getStatus } from '../event/services/event.services';
 
 export const commonApi = fetchApi.injectEndpoints({

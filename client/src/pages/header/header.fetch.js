@@ -1,6 +1,6 @@
 import { fetchApi, tagTypes, ALL_ID, useSettingsQuery } from '../common/common.fetch';
 
-import getDays from '../schedule/services/schedule.services';
+import { getDays } from '../schedule/services/day.services';
 
 export const headerApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({

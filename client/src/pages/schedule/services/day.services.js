@@ -1,8 +1,5 @@
-// Convert date info to date array
-// Eventually move to API
-
-// One day in ms
-export const oneDay = 24*60*60*1000;
+import { isTempId } from "../../common/services/basic.services";
+export { isTempId };
 
 // Key for Unscheduled events
 export const noDate = 'none';
@@ -11,20 +8,12 @@ export const noDate = 'none';
 export const toDate = dt => dt ? dt.toISOString().slice(0,10) : noDate;
 export const toDateObj = dt => dt === noDate ? null : new Date(dt+'T00:00');
 
-// Compare dates (ignoring time)
-export const sameDay = (dateA, dateB = (new Date()).getTime()) => {
-  if (!dateA || !dateB) return false;
-  if ((dateA > dateB ? dateA - dateB : dateB - dateA) > oneDay) return false;
-  return (new Date(dateA)).getDate() === (new Date(dateB)).getDate();
-}
-
 // Build array of days from start/end dates
-export default function getDays(start, end) {
+export function getDays(start, end) {
   let arr = [noDate];
-  start = toDateObj(start).getTime();
-  end = toDateObj(end).getTime();
-  for (let d = start; d <= end; d += oneDay) {
-    arr.push(toDate(new Date(d)));
+  end = toDateObj(end);
+  for (let d = toDateObj(start); d <= end; d.setDate(d.getDate() + 1)) {
+    arr.push(toDate(d));
   }
   return arr;
 }

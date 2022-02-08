@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 
 import DragBlock from '../../common/DragBlock';
 
-import { noDate, toDateObj, dayClasses } from '../services/schedule.services';
-import { isTempId } from "../../../core/services/shared.services";
+import { noDate, toDateObj, dayClasses } from '../services/day.services';
+import { isTempId } from "../services/day.services";
 import { formatQueryError, weekdays, statusInfo } from '../../../assets/strings';
 
 import { useEventQuery, useUpdateEventMutation, usePrefetch } from "../schedule.fetch";

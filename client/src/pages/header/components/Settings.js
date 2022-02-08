@@ -6,7 +6,7 @@ import RawData from "../../common/RawData";
 
 import { useSettingsQuery, useUpdateSettingsMutation, useResetDbMutation } from "../header.fetch";
 
-import { deepFilter, getUnqiue } from "../../../core/services/shared.services";
+import { deepFilter, getUnqiue } from "../services/settings.services";
 import {
   defaultTournamentTitle,
   formatQueryError,

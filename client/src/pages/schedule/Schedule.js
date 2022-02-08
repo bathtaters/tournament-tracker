@@ -8,7 +8,7 @@ import RawData from "../common/RawData";
 import { useScheduleQuery, useSettingsQuery, useEventQuery } from "./schedule.fetch";
 
 import { formatQueryError } from "../../assets/strings";
-import { noDate, getMissingEvents } from "./services/schedule.services";
+import { noDate, getMissingEvents } from "./services/day.services";
 
 function Schedule() {
   // Global state
