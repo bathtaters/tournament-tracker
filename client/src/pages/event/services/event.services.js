@@ -64,23 +64,6 @@ export const fakeRound = (eventData) => {
 };
 
 
-// Cache swap
-
-export function swapToDay(schedule, id, newDay) {
-  // Remove old
-  for (const day in schedule) {
-    const idx = (schedule[day].events || []).indexOf(id);
-    if (idx >= 0) { 
-      schedule[day].events.splice(idx,1); break;
-    }
-  }
-  // Add new
-  if (!schedule[newDay]) schedule[newDay] = { events: [id] };
-  else if (!schedule[newDay].events) schedule[newDay].events = [id];
-  else schedule[newDay].events.push(id);
-}
-
-
 // Save history of 1D array
 
 export function usePreviousArray(newValue) {

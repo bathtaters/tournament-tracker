@@ -1,29 +1,18 @@
 import { fetchApi, getTags, tagTypes, ALL_ID } from '../../core/store/fetchApi';
-
-import { getDays } from '../schedule/services/day.services';
-import { getStatus } from '../event/services/event.services';
+import { getSettings, getEvent } from './services/fetch.services';
 
 export const commonApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
 
     settings: build.query({
       query: () => 'settings',
-      transformResponse: data => {
-        data.dateRange = getDays(data.datestart, data.dateend);
-        console.log('SETTINGS',data)
-        return data;
-      },
+      transformResponse: getSettings,
       providesTags: ['Settings'],
     }),
 
     event:   build.query({
       query: (id=null) => `event/${id || 'all'}`,
-      transformResponse: (res) => {
-        if (res.id) res.status = getStatus(res);
-        else Object.keys(res).forEach(id => res[id].status = getStatus(res[id]));
-        console.log('EVENT',res);
-        return res;
-      },
+      transformResponse: getEvent,
       providesTags: getTags('Event'),
     }),
 

@@ -2,6 +2,7 @@ import {
   fetchApi, getTags, usePrefetch,
   usePlayerQuery, useEventQuery, useSettingsQuery
 } from '../common/common.fetch';
+import { playerUpdate } from './services/profile.services';
 
 
 export const profileApi = fetchApi.injectEndpoints({
@@ -17,14 +18,7 @@ export const profileApi = fetchApi.injectEndpoints({
       query: ({ id, ...body }) => ({ url: `player/${id}`, method: 'PATCH', body }),
       transformResponse: res => console.log('UPD_PLAYER',res) || res,
       invalidatesTags: getTags('Player',{all:0}),
-      onQueryStarted({ id, ...body }, { dispatch }) {
-        dispatch(fetchApi.util.updateQueryData('player', undefined, draft => { 
-          Object.assign(draft[id], body); 
-        }));
-        dispatch(fetchApi.util.updateQueryData('player', id, draft => { 
-          Object.assign(draft, body); 
-        }));
-      },
+      onQueryStarted: playerUpdate,
     }),
     
   }),
