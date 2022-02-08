@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 
 import PlayerEditor from "./components/PlayerEditor";
-import InputForm from "../shared/InputForm";
-import RawData from "../shared/RawData";
+import InputForm from "../common/InputForm";
+import RawData from "../common/RawData";
 
 import { 
   useEventQuery, useCreateEventMutation,

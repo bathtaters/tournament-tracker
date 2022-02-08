@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import Round from "./components/Round";
 import EventStats from "./components/EventStats";
 import EditEvent from "../eventEditor/EditEvent";
-import Modal from "../shared/Modal";
-import RawData from "../shared/RawData";
+import Modal from "../common/Modal";
+import RawData from "../common/RawData";
 
 import {
   useEventQuery, useNextRoundMutation, useClearRoundMutation, 

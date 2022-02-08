@@ -1,9 +1,9 @@
 import { fetchApi, getTags, tagTypes, ALL_ID } from '../../core/store/fetchApi';
 
-import getDays from '../../pages/schedule/services/schedule.services';
+import getDays from '../schedule/services/schedule.services';
 import { getStatus } from '../event/services/event.services';
 
-export const sharedApi = fetchApi.injectEndpoints({
+export const commonApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
 
     settings: build.query({
@@ -46,4 +46,4 @@ export const sharedApi = fetchApi.injectEndpoints({
 export { fetchApi, tagTypes, ALL_ID, getTags };
 export const {
   usePlayerQuery, useSettingsQuery, useEventQuery, useStatsQuery, usePrefetch,
-} = sharedApi;
+} = commonApi;

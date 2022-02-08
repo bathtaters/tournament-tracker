@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types';
-import { useSettingsQuery } from "./shared.fetch";
+import { useSettingsQuery } from "./common.fetch";
 
 const defaultRawClass = "text-center font-thin m-2 dim-color ";
 

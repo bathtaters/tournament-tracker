@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from "react";
 
 import AddPlayer from "./components/AddPlayer";
 import Stats from "../stats/Stats";
-import Modal from "../shared/Modal";
+import Modal from "../common/Modal";
 
 import { deletePlayerMsg, cantDeletePlayerMsg } from "../../assets/strings";
 

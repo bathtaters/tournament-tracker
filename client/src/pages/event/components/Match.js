@@ -7,10 +7,10 @@ import {
 } from '../../../assets/strings';
 
 import Report from "./Report";
-import Modal from "../../shared/Modal";
-import DragBlock from "../../shared/DragBlock";
-import Counter from "../../shared/Counter";
-import RawData from "../../shared/RawData";
+import Modal from "../../common/Modal";
+import DragBlock from "../../common/DragBlock";
+import Counter from "../../common/Counter";
+import RawData from "../../common/RawData";
 
 import { 
   useMatchQuery, useReportMutation,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef, useCallback } from "react";
 import PropTypes from 'prop-types';
 
-import SuggestText from "../../shared/SuggestText";
+import SuggestText from "../../common/SuggestText";
 
 import { usePlayerQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
 

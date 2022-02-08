@@ -1,10 +1,10 @@
 import React, { Suspense, lazy, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import ErrorBoundary from "./pages/shared/ErrorBoundary";
+import ErrorBoundary from "./pages/common/ErrorBoundary";
 
 // Prefetch API data (Load in all calls to allow lazy loading)
-import { usePrefetch } from "./pages/shared/shared.fetch";
+import { usePrefetch } from "./pages/common/common.fetch";
 import { } from "./pages/schedule/schedule.fetch";
 import { } from "./pages/event/event.fetch";
 

@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import PlayerEvents from "./components/PlayerEvents";
-import RawData from "../shared/RawData";
+import RawData from "../common/RawData";
 
 import { usePlayerQuery, useUpdatePlayerMutation } from "./profile.fetch";
 

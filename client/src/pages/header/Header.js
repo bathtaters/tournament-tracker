@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 
 import Settings from "./components/Settings";
 import ReloadButton from "./components/ReloadButton";
-import Modal from "../shared/Modal";
+import Modal from "../common/Modal";
 
 const defaultTitle = "Tournament Tracker";
 

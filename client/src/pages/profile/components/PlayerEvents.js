@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
-import RawData from "../../shared/RawData";
+import RawData from "../../common/RawData";
 
 import { useEventQuery, usePlayerEventsQuery, usePrefetch } from "../profile.fetch";
 

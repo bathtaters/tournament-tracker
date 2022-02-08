@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-import DragBlock from '../../shared/DragBlock';
+import DragBlock from '../../common/DragBlock';
 
 import { noDate, toDateObj, dayClasses } from '../services/schedule.services';
 import { isTempId } from "../../../core/services/shared.services";

@@ -1,4 +1,4 @@
-import { fetchApi, getTags, usePlayerQuery, useSettingsQuery } from '../shared/shared.fetch';
+import { fetchApi, getTags, usePlayerQuery, useSettingsQuery } from '../common/common.fetch';
 
 import { nextTempId } from '../../core/services/shared.services';
 

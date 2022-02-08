@@ -1,4 +1,4 @@
-import { fetchApi, useEventQuery, useSettingsQuery, usePrefetch } from '../shared/shared.fetch';
+import { fetchApi, useEventQuery, useSettingsQuery, usePrefetch } from '../common/common.fetch';
 import { useUpdateEventMutation } from '../eventEditor/eventEditor.fetch';
 
 export const scheduleApi = fetchApi.injectEndpoints({

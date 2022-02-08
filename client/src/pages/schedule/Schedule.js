@@ -2,8 +2,8 @@ import React, { useState, useRef, useCallback } from "react";
 
 import Day from "./components/Day";
 import EditEvent from "../eventEditor/EditEvent";
-import Modal from "../shared/Modal";
-import RawData from "../shared/RawData";
+import Modal from "../common/Modal";
+import RawData from "../common/RawData";
 
 import { useScheduleQuery, useSettingsQuery, useEventQuery } from "./schedule.fetch";
 

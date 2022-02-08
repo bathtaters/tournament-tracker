@@ -1,7 +1,7 @@
 import {
   fetchApi, getTags, usePrefetch,
   usePlayerQuery, useEventQuery, useSettingsQuery
-} from '../shared/shared.fetch';
+} from '../common/common.fetch';
 
 
 export const profileApi = fetchApi.injectEndpoints({

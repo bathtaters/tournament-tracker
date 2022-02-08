@@ -2,7 +2,7 @@ import React, { useRef, Fragment } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-import Modal from "../../shared/Modal";
+import Modal from "../../common/Modal";
 import Stats from "../../stats/Stats";
 
 import { useEventQuery, useStatsQuery, usePlayerQuery } from "../event.fetch";

@@ -3,9 +3,9 @@ import { BrowserRouter } from "react-router-dom";
 
 import Header from "./pages/header/Header";
 import Routing from "./Routing";
-import RawData from "./pages/shared/RawData";
+import RawData from "./pages/common/RawData";
 
-import { useSettingsQuery } from "./pages/shared/shared.fetch";
+import { useSettingsQuery } from "./pages/common/common.fetch";
 
 import { formatQueryError } from "./assets/strings";
 

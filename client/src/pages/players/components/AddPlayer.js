@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import InputForm from "../../shared/InputForm";
+import InputForm from "../../common/InputForm";
 
 import { useCreatePlayerMutation } from "../player.fetch";
 

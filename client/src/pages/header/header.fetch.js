@@ -1,4 +1,4 @@
-import { fetchApi, tagTypes, ALL_ID, useSettingsQuery } from '../shared/shared.fetch';
+import { fetchApi, tagTypes, ALL_ID, useSettingsQuery } from '../common/common.fetch';
 
 import getDays from '../schedule/services/schedule.services';
 

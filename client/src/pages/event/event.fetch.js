@@ -2,7 +2,7 @@ import {
   fetchApi, getTags,
   useEventQuery, usePlayerQuery,
   useSettingsQuery, useStatsQuery
-} from '../shared/shared.fetch';
+} from '../common/common.fetch';
 
 import { fakeRound } from './services/event.services';
 import { swapPlayerArrays, moveDrops } from './services/swap.services';

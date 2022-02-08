@@ -2,14 +2,14 @@ import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-import RawData from "../shared/RawData";
+import RawData from "../common/RawData";
 
 import { 
   formatQueryError, formatNum, formatPercent
 } from '../../assets/strings';
 import { getPlayerList } from "../../core/services/shared.services";
 
-import { useStatsQuery, usePlayerQuery } from "../shared/shared.fetch";
+import { useStatsQuery, usePlayerQuery } from "../common/common.fetch";
 
 
 // Component Layout

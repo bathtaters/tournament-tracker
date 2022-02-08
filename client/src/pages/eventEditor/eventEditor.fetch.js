@@ -1,4 +1,4 @@
-import { fetchApi, getTags, useEventQuery, usePlayerQuery, useSettingsQuery } from '../shared/shared.fetch';
+import { fetchApi, getTags, useEventQuery, usePlayerQuery, useSettingsQuery } from '../common/common.fetch';
 import { useCreatePlayerMutation } from '../players/player.fetch'
 
 import { swapToDay } from '../event/services/event.services';

@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import InputForm from "../../shared/InputForm";
-import RawData from "../../shared/RawData";
+import InputForm from "../../common/InputForm";
+import RawData from "../../common/RawData";
 
 import { useSettingsQuery, useUpdateSettingsMutation, useResetDbMutation } from "../header.fetch";
 
