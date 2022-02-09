@@ -21,7 +21,7 @@ async function getEvent(req, res) {
 }
 
 // All events
-const getAllEvents = (_, res) => event.get().then(arrToObj('id')).then(res.sendAndLog);
+const getAllEvents = (_, res) => event.get().then(arrToObj('id',{delKey:0})).then(res.sendAndLog);
 
 
 /* SET event database. */
