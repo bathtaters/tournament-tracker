@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { statsStyle } from "../styles/StatsStyles";
-import { formatRecord } from '../../../assets/strings';
+import { statsStyle } from "../../styles/StatsStyles";
+import { formatRecord } from '../../../../assets/strings';
 
 
 function StatsRow({ rowNum, id, name, isDrop, record }) {

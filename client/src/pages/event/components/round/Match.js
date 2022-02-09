@@ -4,10 +4,11 @@ import PropTypes from 'prop-types';
 import MatchPlayer from "./MatchPlayer";
 import MatchWins from "./MatchWins";
 import Report from "./Report";
-import Modal from "../../common/Modal";
-import Counter from "../../common/Counter";
-import RawData from "../../common/RawData";
-import { MatchStyle, PlayerStyle, DrawsStyle, WinsStyle } from "../styles/MatchStyles";
+import Modal from "../../../common/Modal";
+import Counter from "../../../common/Counter";
+import RawData from "../../../common/RawData";
+import { MatchStyle, PlayerStyle } from "../../styles/MatchStyles";
+import { DrawsStyle, WinsStyle } from "../../styles/CounterStyles";
 
 import { 
   useMatchQuery, useReportMutation,
@@ -15,13 +16,13 @@ import {
   useSwapPlayersMutation,
   useStatsQuery, useSettingsQuery,
   usePlayerQuery
-} from "../event.fetch";
+} from "../../event.fetch";
 
 import {
   formatQueryError, swapPlayerMsg
-} from '../../../assets/strings';
-import { getMatchTitle } from "../services/event.services";
-import valid from "../../../assets/validation.json";
+} from '../../../../assets/strings';
+import { getMatchTitle } from "../../services/event.services";
+import valid from "../../../../assets/validation.json";
 
 
 

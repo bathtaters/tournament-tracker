@@ -1,10 +1,10 @@
 import React from "react";
 
-import Counter from "../../common/Counter";
-import { winClass, ByeStyle } from "../styles/MatchStyles";
-import { ReportButton, ClearReportButton } from "../styles/EventButtons";
+import Counter from "../../../common/Counter";
+import { winClass, ByeStyle } from "../../styles/CounterStyles";
+import { ReportButton, ClearReportButton } from "../../styles/ButtonStyles";
 
-import { winValue } from "../services/event.services";
+import { winValue } from "../../services/event.services";
 
 // Main
 function MatchWins({ matchData, wincount, isEditing, clearReport, setVal, openReport }) {

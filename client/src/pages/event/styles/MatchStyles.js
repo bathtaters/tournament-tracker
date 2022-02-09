@@ -10,14 +10,14 @@ export function MatchStyle({ children, settings }) {
   );
 }
 
+// Style to pass to DragBlock in PlayerBox
+export const playerBoxStyle = "inline-block grow rounded-2xl p-2 mx-1 mb-1";
+
 export function PlayerStyle({ children }) {
   return (
     <div className="flex justify-evenly items-center text-center">{children}</div>
   );
 }
-
-// Style to pass to DragBlock in PlayerBox
-export const playerBoxStyle = "inline-block grow rounded-2xl p-2 mx-1 mb-1";
 
 export function NameStyle({ linkTo, children }) {
   return (
@@ -45,43 +45,4 @@ export function PlayerInfoStyle({ isDrop, children }) {
       </div>
     </div>
   );
-}
-
-export function DrawsStyle({ children, hidden }) {
-  return (
-    <div className={'text-center w-full font-light text-xs base-color -mt-1'+(hidden ? ' invisible' : '')}>
-      {children}
-    </div>
-  );
-}
-
-export function WinsStyle({ children }) {
-  return (
-    <div className="flex justify-evenly text-center base-color mb-2">{children}</div>
-  );
-}
-
-export function ByeStyle({ children }) {
-  return <div className="pos-color italic font-thin">{children}</div>
-}
-
-// Get Win Counter class from matchData
-export const winClass = (wins, isEditing, {maxwins, isbye}) => 
-  'text-base'+
-  (isEditing || !isbye ? '' : ' invisible')+
-  (wins && wins === maxwins ? ' pos-color' : '');
-
-
-export function ReportTitleStyle({ children }) {
-  return (
-    <h3 className="font-light max-color text-center mb-4">{children}</h3>
-  );
-}
-
-export const reportStyles = {
-  form: "grid grid-cols-3 grid-flow-row gap-2 items-center my-8",
-  wins: "text-base sm:text-xl font-medium mx-2 text-right",
-  drop: "ml-1 dim-color",
-  draw: "text-base sm:text-xl font-light mx-2 text-right",
-  dropInput: "text-xs sm:text-base font-thin mx-2",
 }

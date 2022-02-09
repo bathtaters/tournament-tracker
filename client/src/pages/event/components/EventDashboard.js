@@ -1,44 +1,37 @@
 import React from "react";
 
-import EventStats from "./EventStats";
+import EventStats from "./dashboard/EventStats";
+import { EditEventButton } from "../styles/ButtonStyles"; 
 import { 
-  DashContainerStyle, DashStatusStyle,
-  DashDetailStyle, DashButtonStyle, 
-  dashText, 
-} from "../styles/EventStyles";
+  ContainerStyle, StatusStyle,
+  DetailStyle, textStyle, 
+} from "../styles/DashboardStyles";
 
 
 function EventDashboard({ data, openStats }) {
   return (
-    <DashContainerStyle>
-      <DashStatusStyle>{
+    <ContainerStyle>
+      <StatusStyle>{
         data.status === 2 ? (<>
-          <span className={dashText.base}>Round</span>
-          <span className={dashText.both()}>{data.roundactive}</span>
-          <span className={dashText.base}>of</span>
-          <span className={dashText.dynamic}>{data.roundcount}</span>
+          <span className={textStyle.base}>Round</span>
+          <span className={textStyle.both()}>{data.roundactive}</span>
+          <span className={textStyle.base}>of</span>
+          <span className={textStyle.dynamic}>{data.roundcount}</span>
         </>) :
 
         data.status && (
           <span>{data.status === 1 ? 'Not started' : 'Complete'}</span>
         ) 
-      }</DashStatusStyle>
+      }</StatusStyle>
 
       {data.playerspermatch && data.wincount && (
-        <DashDetailStyle>{data.playerspermatch}-player, first to {data.wincount}</DashDetailStyle>
+        <DetailStyle>{data.playerspermatch}-player, first to {data.wincount}</DetailStyle>
       )}
 
-      <DashButtonStyle>
-        <input
-          className="dim-color font-light"
-          onClick={openStats}
-          type="button"
-          value="Edit Settings"
-        />
-      </DashButtonStyle>
+      <EditEventButton onClick={openStats} />
 
       { data.players && data.players.length ? <EventStats event={data} /> : null }
-    </DashContainerStyle>
+    </ContainerStyle>
   );
 }
 

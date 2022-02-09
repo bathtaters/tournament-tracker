@@ -1,7 +1,7 @@
-import { NameStyle, PlayerInfoStyle, VsStyle, playerBoxStyle } from "../styles/MatchStyles";
-import DragBlock from "../../common/DragBlock";
+import DragBlock from "../../../common/DragBlock";
+import { NameStyle, PlayerInfoStyle, VsStyle, playerBoxStyle } from "../../styles/MatchStyles";
 
-import { formatRecord } from '../../../assets/strings';
+import { formatRecord } from '../../../../assets/strings';
 
 
 function MatchPlayer({ id, playerData, matchData, handleSwap, canSwap, isEditing, index, record }) {

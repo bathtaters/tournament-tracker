@@ -1,12 +1,12 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import { reportStyles, ReportTitleStyle } from "../styles/MatchStyles";
-import InputForm from "../../common/InputForm";
+import InputForm from "../../../common/InputForm";
+import { ReportTitleStyle, reportStyles } from "../../styles/ReportStyles";
 
-import { useReportMutation } from "../event.fetch";
-import { reportAdapter } from "../services/event.services";
-import valid from "../../../assets/validation.json";
+import { useReportMutation } from "../../event.fetch";
+import { reportAdapter } from "../../services/event.services";
+import valid from "../../../../assets/validation.json";
 
 
 function Report({ title, match, players, wincount, eventid, modal }) {

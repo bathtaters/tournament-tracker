@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 import Modal from "../common/Modal";
 import RawData from "../common/RawData";
 
-import { TitleStyle, DashboardStyle } from "./styles/EventStyles";
+import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 import EditEvent from "../eventEditor/EditEvent";
 import Round from "./components/Round";
-import RoundButton from "./components/RoundButton";
+import EventHeader from "./components/dashboard/EventHeader";
 import EventDashboard from "./components/EventDashboard";
 
 import { useEventQuery, useClearRoundMutation } from "./event.fetch";
@@ -53,7 +53,7 @@ function Event() {
     <div>
       <TitleStyle>{data.title}</TitleStyle>
 
-      <RoundButton data={data} disabled={isFetching} />
+      <EventHeader data={data} disabled={isFetching} />
 
       <DashboardStyle>
         <EventDashboard data={data} openStats={()=>modal.current.open()} />

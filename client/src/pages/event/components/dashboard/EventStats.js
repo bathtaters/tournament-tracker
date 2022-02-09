@@ -2,13 +2,13 @@ import React, { useRef } from "react";
 import PropTypes from 'prop-types';
 
 import StatsRow from "./StatsRow";
-import { EventStatsStyle, ViewStatsStyle, StatsRowStyle } from "../styles/StatsStyles";
-import Modal from "../../common/Modal";
-import Stats from "../../stats/Stats";
+import { EventStatsStyle, ViewStatsStyle, StatsRowStyle } from "../../styles/StatsStyles";
+import Modal from "../../../common/Modal";
+import Stats from "../../../stats/Stats";
 
-import { useStatsQuery, usePlayerQuery } from "../event.fetch";
+import { useStatsQuery, usePlayerQuery } from "../../event.fetch";
 
-import { formatQueryError } from '../../../assets/strings';
+import { formatQueryError } from '../../../../assets/strings';
 
 
 function EventStats({ event }) {
