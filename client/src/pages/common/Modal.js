@@ -2,13 +2,14 @@ import React, { useState, useEffect, useImperativeHandle, forwardRef, useCallbac
 import { createPortal } from "react-dom";
 import FocusTrap from "focus-trap-react";
 
+import OverlayContainer from "./styles/OverlayContainer";
+
 // Where to render
 const modalElement = document.getElementById('modal-root');
 
 // Constants
 const defaultLockMsg = "Are you sure you want to close? Unsaved changes will be lost.";
-const containerClasses = "fixed top-0 left-0 z-40 w-screen h-screen p-8 flex justify-center items-center";
-const overlayClasses = "absolute w-full h-full base-bgd bg-opacity-50";
+const containerClasses = "p-8 flex justify-center items-center";
 const modalClasses = "relative max-h-full overflow-auto p-8 alt-bgd shadow-lg rounded-lg";
 
 // Modal base component
@@ -49,15 +50,15 @@ export function Modal({ children, className = '', bgdClose = true, startOpen = f
 
   // Render
   return createPortal(
-    isOpen ? (<div className={containerClasses}>
-      <div className={overlayClasses}  onClick={bgdClose ? () => close() : null} />
+    isOpen && (
+    <OverlayContainer className={containerClasses} z={4} onClick={bgdClose ? () => close() : null}>
       <FocusTrap active={isOpen}>
         <div className={`${modalClasses} ${className}`}>
           <input type="button" className="absolute top-0 right-0 m-1" aria-label="Close" value="x" onClick={closeWithMsg} />
           {children}
         </div>
       </FocusTrap>
-    </div>) : null,
+    </OverlayContainer>),
     modalElement
   )
 }
