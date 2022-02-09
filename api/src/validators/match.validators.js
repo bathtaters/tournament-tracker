@@ -33,7 +33,7 @@ async function validateMatchUpdate(req, res, next) {
 
     // Check value
     if (updateKeyRegEx.test(req.body.key)) {
-      await usingKey('value', 'event', 'wincount').run(req) // wins
+      await usingKey('value', 'match', 'draws').run(req) // wins
     } else if (updateDropRegEx.test(req.body.key)) {
       await usingKey('value', 'player', 'id').run(req) // drops
     } else {
