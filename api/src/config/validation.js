@@ -80,9 +80,9 @@ module.exports = {
       round:   sharedLimits.rounds,
       players: sharedLimits.player,
       wins:    { array: sharedLimits.player, elem: sharedLimits.wins, },
-      draws:   { min: 0, max: 99 },
+      draws:   sharedLimits.wins,
       drops:   sharedLimits.player,
-      setDrawsMax: 3,
+      setDrawsMax: 1,
     },
     swap: {
       swap: { min: 2, max: 2 },
