@@ -3,14 +3,15 @@ import { useParams } from "react-router-dom";
 import Modal from "../common/Modal";
 import RawData from "../common/RawData";
 
-import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
-import EditEvent from "../eventEditor/EditEvent";
-import Round from "./components/Round";
 import EventHeader from "./components/dashboard/EventHeader";
 import EventDashboard from "./components/EventDashboard";
+import EditEvent from "../eventEditor/EditEvent";
+import Round from "./components/Round";
+import Loading from "../common/Loading";
+import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 
 import { useEventQuery, useClearRoundMutation } from "./event.fetch";
-import { deleteRoundMsg, formatQueryError } from "../../assets/strings";
+import { deleteRoundMsg } from "../../assets/strings";
 
 
 function Event() {
@@ -26,13 +27,9 @@ function Event() {
     prevRound(id)
   }
   
-  // Loading screen
+  // Loading/Error catcher
   if (isLoading || error || !data)
-    return <h3 className="italic text-center font-thin">{
-      isLoading ? 'Loading...' :
-      !error ? 'Event not found' :
-      formatQueryError(error)
-    }</h3>;
+    return <Loading loading={isLoading} error={error} altMsg="Event not found" TagName="h3" />;
   
   // Build Round boxes
   let rounds = [];

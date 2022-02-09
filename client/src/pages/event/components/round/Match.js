@@ -4,9 +4,12 @@ import PropTypes from 'prop-types';
 import MatchPlayer from "./MatchPlayer";
 import MatchWins from "./MatchWins";
 import Report from "./Report";
+
 import Modal from "../../../common/Modal";
 import Counter from "../../../common/Counter";
 import RawData from "../../../common/RawData";
+import Loading from "../../../common/Loading";
+
 import { MatchStyle, PlayerStyle } from "../../styles/MatchStyles";
 import { DrawsStyle, WinsStyle } from "../../styles/CounterStyles";
 
@@ -18,10 +21,8 @@ import {
   usePlayerQuery
 } from "../../event.fetch";
 
-import {
-  formatQueryError, swapPlayerMsg
-} from '../../../../assets/strings';
 import { getMatchTitle } from "../../services/event.services";
+import { swapPlayerMsg } from '../../../../assets/strings';
 import valid from "../../../../assets/validation.json";
 
 
@@ -60,20 +61,14 @@ function Match({ eventid, matchId, wincount, isEditing }) {
   const canSwap = useCallback((types, a, b) => a !== b && types.includes("json/matchplayer"),[]);
   
   
-  // Render
+  // Loading/Error catcher
   if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankError || playerError)
-    return (
-      <MatchStyle>
-        <div className="m-auto">{
-            error || rankError || playerError ?
-            formatQueryError(error || rankError || playerError)
-            : '. . .'
-        }</div>
-      </MatchStyle>
-    );
+    return (<MatchStyle>
+      <Loading error={error || rankError || playerError} altMsg=". . ." className="m-auto text-xs" />
+    </MatchStyle>);
   
-
-  // Main
+  
+  // Render
   return (
     <MatchStyle settings={settings}>
       <PlayerStyle>

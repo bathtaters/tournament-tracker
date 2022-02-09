@@ -1,14 +1,14 @@
 import React, { useRef } from "react";
 import PropTypes from 'prop-types';
 
+import Stats from "../../../stats/Stats";
 import StatsRow from "./StatsRow";
 import { EventStatsStyle, ViewStatsStyle, StatsRowStyle } from "../../styles/StatsStyles";
+
 import Modal from "../../../common/Modal";
-import Stats from "../../../stats/Stats";
+import Loading from "../../../common/Loading";
 
 import { useStatsQuery, usePlayerQuery } from "../../event.fetch";
-
-import { formatQueryError } from '../../../../assets/strings';
 
 
 function EventStats({ event }) {
@@ -18,12 +18,9 @@ function EventStats({ event }) {
   const { data,          isLoading,                 error              } = useStatsQuery(event.id);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
 
-  // Loading screen
-  if (isLoading || loadingPlayers || error || playerError) return (
-    <div className="italic text-xs text-center font-thin block mb-2">
-      {isLoading || loadingPlayers ? 'Loading...' : formatQueryError(error || playerError)}
-    </div>
-  );
+  // Loading/Error catcher
+  if (isLoading || loadingPlayers || error || playerError)
+    return <Loading loading={isLoading || loadingPlayers} error={error || playerError} className="text-xs mb-2" />;
 
   const isRanked = data && data.ranking && data.ranking.length;
   
