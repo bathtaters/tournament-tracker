@@ -53,7 +53,7 @@ const settingsRows = [ 'custom', [
 
 
 // Component
-function EditEvent({ eventid, hideModal, lockModal }) {
+function EditEvent({ eventid, modal }) {
   // Init state
   const playerList = useRef(null);
   const { data, isLoading, error } = useEventQuery(eventid, { skip: !eventid });
@@ -65,7 +65,7 @@ function EditEvent({ eventid, hideModal, lockModal }) {
   const clickDelete = () => {
     if (!window.confirm(deleteEventMsg(data && data.title))) return;
     if (eventid) deleteEvent(eventid);
-    hideModal(true);
+    modal.current.close(true);
     navigate("/home");
   };
   
@@ -78,14 +78,14 @@ function EditEvent({ eventid, hideModal, lockModal }) {
     if (!savedPlayers) return;
     
     // Build event object
-    if (!eventData.title.trim() && !savedPlayers.length) return hideModal(true);
+    if (!eventData.title.trim() && !savedPlayers.length) return modal.current.close(true);
     if (eventid) eventData.id = eventid;
     eventData.players = savedPlayers;
 
     // Add to DB
     if (!eventid) createEvent(eventData);
     else updateEvent(eventData);
-    hideModal(true);
+    modal.current.close(true);
   };
 
 
@@ -94,9 +94,9 @@ function EditEvent({ eventid, hideModal, lockModal }) {
   if (isLoading)
     return (<div><h3 className="font-light max-color text-center">Loading...</h3></div>);
   
-  else if (error)
+  else if (error || !modal)
     return (<div>
-      <h3 className="font-light max-color text-center">{formatQueryError(error)}</h3>
+      <h3 className="font-light max-color text-center">{formatQueryError(error || 'Error loading popup')}</h3>
     </div>);
 
   // Button info - TO MEMOIZE
@@ -105,8 +105,8 @@ function EditEvent({ eventid, hideModal, lockModal }) {
       label: "Delete", onClick: clickDelete,
       className: "font-normal base-color-inv neg-bgd w-14 h-8 mx-1 sm:w-20 sm:h-11 sm:mx-4 opacity-80"
     },
-    { label: "Cancel", onClick: hideModal }
-  ] : [{ label: "Cancel", onClick: hideModal }];
+    { label: "Cancel", onClick: modal.current.close }
+  ] : [{ label: "Cancel", onClick: modal.current.close }];
 
   return (
     <div>
@@ -122,14 +122,14 @@ function EditEvent({ eventid, hideModal, lockModal }) {
         data={data}
         baseData={{defaultValues, limits, eventStatus}}
         onSubmit={submitEvent}
-        onEdit={lockModal}
+        onEdit={modal.current.lock}
         buttons={buttons}
         rowFirst={true}
       >
         <PlayerEditor 
           players={data && data.players}
           status={eventStatus}
-          onEdit={lockModal}
+          onEdit={modal.current.lock}
           ref={playerList}
         />
       </InputForm>
@@ -140,8 +140,7 @@ function EditEvent({ eventid, hideModal, lockModal }) {
 
 EditEvent.propTypes = {
   eventid: PropTypes.string,
-  hideModal: PropTypes.func,
-  lockModal: PropTypes.func,
+  modal: PropTypes.object,
 };
 
 export default EditEvent;
