@@ -66,8 +66,7 @@ function Schedule() {
       <Modal ref={modal}>
         <EditEvent
           eventid={currentEvent}
-          hideModal={force=>modal.current.close(force)}
-          lockModal={()=>modal.current.lock()}
+          modal={modal}
         />
       </Modal>
     </div>
