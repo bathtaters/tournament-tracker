@@ -1,18 +1,17 @@
 import React, { useRef } from "react";
 import { useParams } from "react-router-dom";
-
-import Round from "./components/Round";
-import EventStats from "./components/EventStats";
-import EditEvent from "../eventEditor/EditEvent";
 import Modal from "../common/Modal";
 import RawData from "../common/RawData";
 
-import {
-  useEventQuery, useNextRoundMutation, useClearRoundMutation, 
-} from "./event.fetch";
+import { TitleStyle, DashboardStyle } from "./styles/EventStyles";
+import EditEvent from "../eventEditor/EditEvent";
+import Round from "./components/Round";
+import RoundButton from "./components/RoundButton";
+import EventDashboard from "./components/EventDashboard";
 
+import { useEventQuery, useClearRoundMutation } from "./event.fetch";
 import { deleteRoundMsg, formatQueryError } from "../../assets/strings";
-import { getRoundButton } from "./services/event.services";
+
 
 function Event() {
   // Local
@@ -21,86 +20,52 @@ function Event() {
 
   // Global
   const { data, isLoading, error, isFetching } = useEventQuery(id);
-  const matches = (data && data.matches) || [];
-  
-  // Actions
-  const [ nextRound ] = useNextRoundMutation();
   const [ prevRound ] = useClearRoundMutation();
   const handleDelete = () => {
     if (!window.confirm(deleteRoundMsg)) return;
     prevRound(id)
   }
   
-  if (isLoading)
-    return <h3 className="italic text-center font-thin">Loading...</h3>;
-
-  else if (error || data.error)
-    return <h3 className="italic text-center font-thin">{formatQueryError(error || data.error)}</h3>;
+  // Loading screen
+  if (isLoading || error || !data)
+    return <h3 className="italic text-center font-thin">{
+      isLoading ? 'Loading...' :
+      !error ? 'Event not found' :
+      formatQueryError(error)
+    }</h3>;
   
-  else if (!data)
-    return <h3 className="italic text-center font-thin">Event not found</h3>;
-  
-  // Load Round boxes
+  // Build Round boxes
   let rounds = [];
-  for (let roundNum = matches.length; roundNum > 0; roundNum--) {
+  const matchCount = data.matches && data.matches.length;
+  for (let roundNum = matchCount || 0; roundNum > 0; roundNum--) {
     rounds.push(
       <Round
         key={id+'.'+roundNum}
-        eventid={id}
+        data={data}
         round={roundNum - 1}
-        deleteRound={roundNum === matches.length ? handleDelete : null}
+        deleteRound={roundNum === matchCount ? handleDelete : null}
       />
     );
   }
 
+  // Render
   return (
     <div>
-      <h2 className="text-center font-thin">{data.title}</h2>
-      <form className="text-center my-4">
-        <input
-          disabled={isFetching || data.canadvance === false || data.status > 2}
-          onClick={()=>nextRound(id)}
-          type="button"
-          value={getRoundButton(data)}
-        />
-      </form>
-      <div className="flex flex-row flex-wrap justify-evenly">
-        <div className="text-center font-light">
-          <h4 className="font-thin max-color">
-            { data.status === 2 ? (<>
-              <span className="mr-2">Round</span>
-              <span className="mr-2 sm:text-2xl">{data.roundactive}</span>
-              <span className="mr-2">of</span>
-              <span className="sm:text-2xl">{data.roundcount}</span>
-            </>) : data.status ? (
-              <span>{data.status === 1 ? 'Not started' : 'Complete'}</span>
-            ) : null }
-          </h4>
-          { data.playerspermatch && data.wincount ? (
-            <h5 className="pt-0 italic dim-color">
-              {data.playerspermatch}-player, first to {data.wincount}
-            </h5>
-          ) : null }
-          <form className="text-center my-6">
-            <input
-              className="dim-color font-light"
-              onClick={()=>modal.current.open()}
-              type="button"
-              value="Edit Settings"
-            />
-          </form>
-          { data.players && data.players.length ? <EventStats eventid={id} /> : null }
-        </div>
+      <TitleStyle>{data.title}</TitleStyle>
+
+      <RoundButton data={data} disabled={isFetching} />
+
+      <DashboardStyle>
+        <EventDashboard data={data} openStats={()=>modal.current.open()} />
         {rounds}
-      </div>
+      </DashboardStyle>
 
       <RawData data={data} />
 
       <Modal ref={modal}>
         <EditEvent
           eventid={id}
-          hideModal={force=>modal.current.close(force)}
-          lockModal={()=>modal.current.lock()}
+          modal={modal}
         />
       </Modal>
     </div>

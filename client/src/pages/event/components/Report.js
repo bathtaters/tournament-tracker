@@ -1,77 +1,73 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
+import { reportStyles, ReportTitleStyle } from "../styles/MatchStyles";
 import InputForm from "../../common/InputForm";
 
-import { usePlayerQuery, useReportMutation } from "../event.fetch";
+import { useReportMutation } from "../event.fetch";
+import { reportAdapter } from "../services/event.services";
+import valid from "../../../assets/validation.json";
 
-import { formatQueryError } from "../../../assets/strings";
 
-const maxDraws = 9; // TEMP
+function Report({ title, match, players, wincount, eventid, modal }) {
 
-function Report({ title, match, hideModal, lockModal, wincount, eventid }) {
-  // Global
-  const { data: players, isLoading, error } = usePlayerQuery();
-
-  // Action
+  // Actions
   const [ report ] = useReportMutation();
   const submitReport = reportData => {
-    reportData.drops = Object.keys(reportData.drops).reduce((d,p) => reportData.drops[p] ?  d.concat(p) : d,[]);
-    report({ ...reportData, eventid, id: match.id });
-    hideModal();
+    report(reportAdapter(reportData, match.id, eventid));
+    modal.current.close(true);
   };
 
-  // Render
-  if (isLoading)
-    return (<div><h3 className="font-light max-color italic text-center">Loading...</h3></div>);
-
-  else if (error)
-    return (<div>
-      <h4 className="font-light dim-color text-center">{formatQueryError(error)}</h4>
-    </div>);
-
-  const playerRows = match.players.map((pid,idx) => [
+  // Build Input Rows
+  const reportRows = match.players.map((pid,idx) => [
     {
       id: 'wins.'+idx, type: 'number',
       label: (players[pid] && players[pid].name) || pid,
-      labelClass: "text-base sm:text-xl font-medium mx-2 text-right",
-      defaultValue: 0, min: 0, max: wincount, isFragment: true,
+      labelClass: reportStyles.wins,
+      defaultValue: valid.defaults.match.draws,
+      min: valid.limits.match.draws.min,
+      max: wincount,
+      isFragment: true,
     },{ 
       label: 'Drop', id: 'drops.'+pid, type: 'checkbox',
-      className: "text-xs sm:text-base font-thin mx-2",
-      labelClass: "ml-1 dim-color", labelIsRight: true,
+      className: reportStyles.dropInput,
+      labelClass: reportStyles.drop,
+      labelIsRight: true,
     },
   ]).concat([[
     {
       label: 'Draws', id: 'draws', type: 'number', 
-      labelClass: "text-base sm:text-xl font-light mx-2 text-right",
-      defaultValue: 0, min: 0, max: maxDraws, isFragment: true,
+      labelClass: reportStyles.draw,
+      defaultValue: valid.defaults.match.draws,
+      min: valid.limits.match.draws.min,
+      max: valid.limits.match.draws.max,
+      isFragment: true,
     }, 'spacer'
   ]]);
 
+  // Render
   return (
     <div>
-      <h3 className="font-light max-color text-center mb-4">Report for {title}</h3>
+      <ReportTitleStyle>Report for {title}</ReportTitleStyle>
       <InputForm
-        rows={playerRows}
+        rows={reportRows}
         submitLabel="Report"
         onSubmit={submitReport}
-        onEdit={lockModal}
+        onEdit={modal.current.lock}
         isGrid={true}
-        className="grid grid-cols-3 grid-flow-row gap-2 items-center my-8"
+        className={reportStyles.form}
       />
     </div>
   );
 }
 
-
 Report.propTypes = {
-  match: PropTypes.object,
   title: PropTypes.string,
+  match: PropTypes.object,
+  players: PropTypes.object,
   wincount: PropTypes.number,
-  hideModal: PropTypes.func,
-  lockModal: PropTypes.func,
   eventid: PropTypes.string,
+  modal: PropTypes.object,
 };
 
 export default Report;
