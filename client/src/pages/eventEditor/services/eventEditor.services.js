@@ -1,17 +1,18 @@
-import { useRef, useEffect } from "react";
 import { equalArrays, nextTempId } from "../../common/services/basic.services";
 
-// For local render of playerList
-export const emptyNewPlayer = { visible: false, name: "", id: null };
+// Create/Update event, return TRUE to close window (FALSE to keep window open)
+export function saveEvent(eventId, eventData, savedPlayers, createEvent, updateEvent) {
+  if (!savedPlayers) return false;
+  
+  // Build event object
+  if (!eventData.title.trim() && !savedPlayers.length) return true;
+  if (eventId) eventData.id = eventId;
+  eventData.players = savedPlayers;
 
-// Save history of 1D array
-export function usePreviousArray(newValue) {
-  const prevRef = useRef([]);
-  useEffect(() => { 
-    if (newValue && !equalArrays(prevRef.current, newValue))
-      prevRef.current = newValue;
-  }, [newValue]);
-  return prevRef.current || [];
+  // Save event
+  if (!eventData.id) createEvent(eventData);
+  else updateEvent(eventData);
+  return true;
 }
 
 // Apply only new changes to existing cache (For concurrent write-while-editing)
@@ -28,15 +29,5 @@ export function updateArrayWithChanges(before, after, arrToChange) {
   });
   return result || [];
 }
-
-// Radomizes an array, optionally trimming it to a specific size
-export const randomArray = (arr, size) => {
-  if (typeof size !== 'number' || size > arr.length) size = arr.length;
-  let res = [], rem = arr.slice();
-  for (let i = 0; i < size; i++) {
-    res.push(rem.splice(Math.floor(Math.random()*rem.length), 1)[0]);
-  }
-  return res;
-};
 
 export { equalArrays, nextTempId };
