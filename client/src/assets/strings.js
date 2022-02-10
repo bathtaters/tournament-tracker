@@ -22,6 +22,9 @@ export const swapPlayerMsg = (nameA,nameB) => "Are you sure you want to swap "+(
 export const deleteRoundMsg = "Are you sure you want to delete this round? Reported matches will be lost for good.";
 export const cantDeletePlayerMsg = name => name+" cannot be deleted while registered for events.";
 
+// Errors
+export const playerCreateError = (playerData) => new Error("Error adding player. ID was not returned upon creation: "+JSON.stringify(playerData))
+
 
 // --- Lists --- \\
 export const statusInfo = [
