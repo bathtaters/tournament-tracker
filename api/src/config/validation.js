@@ -25,6 +25,7 @@ module.exports = {
       showadvanced: false,
       showrawjson: false,
       dayslots: 4,
+      autofillsize: 8,
       datestart: today,
       dateend: tomorrow,
       autobyes: true,
@@ -44,7 +45,7 @@ module.exports = {
       roundcount: 3,
       wincount: 2,
       playerspermatch: 3,
-      clocklimit: '60 mins',
+      clocklimit: '01:00:00',
       clockstart: null,
       clockmod: null,
     },
@@ -63,6 +64,7 @@ module.exports = {
       title: sharedLimits.title,
       daterange: { min: 1, max: 30 },
       dayslots: { min: 0, max: 10 },
+      autofillsize: sharedLimits.player,
     },
     player: {
       name: sharedLimits.title,
@@ -75,6 +77,7 @@ module.exports = {
       roundcount: sharedLimits.rounds,
       wincount: sharedLimits.wincount,
       playerspermatch: { min: 1, max: 4 },
+      clocklimit: {min: '00:01', max: '24:00:00'}
     },
     match: {
       round:   sharedLimits.rounds,
@@ -95,6 +98,7 @@ module.exports = {
       title: "string",
       showadvanced: "boolean",
       showrawjson: "boolean",
+      autofillsize: "int",
       autobyes: "boolean",
       dayslots: "int",
       datestart: "date",
