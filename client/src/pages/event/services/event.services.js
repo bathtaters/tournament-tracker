@@ -10,6 +10,15 @@ export const getRoundButton = event => roundButtonText[
   event.roundactive === event.roundcount ? 4 : 3
 ];
 
+// Build array of round numbers
+export function roundArray(matchCount) {
+  let rounds = [];
+  for (let roundNum = matchCount || 0; roundNum > 0; roundNum--) {
+    rounds.push(roundNum);
+  }
+  return rounds;
+}
+
 // Get Match Title (To use in ErrMsg & Report dialog)
 export const getMatchTitle = (match, players, isLoading=false) =>
   isLoading || !match || !players ? 'Loading' :

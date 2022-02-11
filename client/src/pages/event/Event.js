@@ -11,6 +11,7 @@ import Loading from "../common/Loading";
 import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 
 import { useEventQuery, useClearRoundMutation } from "./event.fetch";
+import { roundArray } from "./services/event.services";
 import { deleteRoundMsg } from "../../assets/strings";
 
 
@@ -30,20 +31,6 @@ function Event() {
   // Loading/Error catcher
   if (isLoading || error || !data)
     return <Loading loading={isLoading} error={error} altMsg="Event not found" TagName="h3" />;
-  
-  // Build Round boxes
-  let rounds = [];
-  const matchCount = data.matches && data.matches.length;
-  for (let roundNum = matchCount || 0; roundNum > 0; roundNum--) {
-    rounds.push(
-      <Round
-        key={id+'.'+roundNum}
-        data={data}
-        round={roundNum - 1}
-        deleteRound={roundNum === matchCount ? handleDelete : null}
-      />
-    );
-  }
 
   // Render
   return (
@@ -54,7 +41,16 @@ function Event() {
 
       <DashboardStyle>
         <EventDashboard data={data} openStats={()=>modal.current.open()} />
-        {rounds}
+
+        {roundArray(data.matches && data.matches.length).map((roundNum, idx) => 
+          <Round
+            key={id+'.'+roundNum}
+            data={data}
+            round={roundNum - 1}
+            deleteRound={!idx ? handleDelete : null}
+          />
+        )}
+
       </DashboardStyle>
 
       <RawData data={data} />
