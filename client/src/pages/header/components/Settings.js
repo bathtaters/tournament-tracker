@@ -1,96 +1,50 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
+import ResetButtons from "./ResetButtons";
 import InputForm from "../../common/InputForm";
 import RawData from "../../common/RawData";
+import Loading from "../../common/Loading";
 
-import { useSettingsQuery, useUpdateSettingsMutation, useResetDbMutation } from "../header.fetch";
+import { TitleStyle } from "../styles/SettingsStyles";
+import settingsLayout from "../settings.layout";
 
-import { deepFilter, getUnqiue } from "../services/settings.services";
-import {
-  defaultTournamentTitle,
-  formatQueryError,
-} from "../../../assets/strings";
-
-
-const settingsRows = [
-  { label: 'Title', id: 'title', type: 'text', defaultValue: '',
-    className: "text-base sm:text-xl font-medium m-2 flex w-full items-baseline",
-    inputClass: "max-color pt-1 px-2 w-full",
-    transform: (title,data) => title.trim() ? title.trim() : (data && data.title) || defaultTournamentTitle
-  },
-  [
-    { label: 'Start Date', id: 'datestart', type: 'date' },
-    { label: 'End Date', id: 'dateend', type: 'date' }
-  ],
-  { label: 'Daily Slots', id: 'dayslots', type: 'number', advanced: true },
-  [
-    [
-      { label: 'Show Advanced', id: 'showadvanced', type: 'checkbox' },
-      { label: 'Show Raw Data', id: 'showrawjson', type: 'checkbox', advanced: true },
-    ],[
-      { label: 'Auto-Report Byes', id: 'autobyes', type: 'checkbox', advanced: true },
-      { label: 'Incomplete Events in Player Stats', id: 'includeincomplete', type: 'checkbox', advanced: true },
-    ],
-  ]
-];
+import { useSettingsQuery, useUpdateSettingsMutation } from "../header.fetch";
+import { updateController } from "../services/settings.services";
 
 
-function Settings({ hideModal, lockModal }) {
+function Settings({ modal }) {
   // Global state
   const { data, isLoading, error } = useSettingsQuery();
-  
-  // Global actions
-  const [ resetDb ] = useResetDbMutation();
   const [ updateSettings ] = useUpdateSettingsMutation();
-  const submitSettings = formData => {
-    const newSettings = getUnqiue(formData,data);
-    console.log('NewSettings',newSettings)
-    if (newSettings && Object.keys(newSettings).length) updateSettings(newSettings);
-    hideModal(true);
-  };
+  
+  // Submit
+  const submitSettings = formData => 
+    updateController(formData, data, updateSettings) || modal.current.close(true);
+
+  // Catch loading/error
+  if (isLoading || error || !data || !modal)
+    return (<div><Loading loading={isLoading} error={error} TagName="h3" /></div>);
 
   // Render
-  if (isLoading)
-    return (<div><h3 className="font-light max-color text-center">Loading...</h3></div>);
-  
-  else if (error || !data)
-    return (<div>
-      <h3 className="font-light max-color text-center">{formatQueryError(error || 'No data.')}</h3>
-    </div>);
+  return (<div>
+    <TitleStyle>Settings</TitleStyle>
 
-  return (
-    <div>
-      <h3 className="font-light max-color text-center mb-2">Settings</h3>
-      <InputForm
-        rows={data.showadvanced ? settingsRows : deepFilter(settingsRows, s => !s.advanced)}
-        data={data}
-        onSubmit={submitSettings}
-        onEdit={lockModal}
-        buttons={[{ label: "Cancel", onClick: hideModal }]}
-      />
-      <RawData className="text-sm mt-4" data={data} />
-      {data.showadvanced ? (<div className="text-center mt-4">
-        <input
-          className="w-20 h-8 mx-1 sm:w-28 sm:h-11 sm:mx-4"
-          type="button"
-          value="Reset Data"
-          onClick={()=>resetDb(false)}
-        />
-        <input
-          className="w-20 h-8 mx-1 sm:w-28 sm:h-11 sm:mx-4"
-          type="button"
-          value="Full Reset"
-          onClick={()=>resetDb(true)}
-        />
-      </div>) : null}
-    </div>
-  );
+    <InputForm
+      rows={settingsLayout[data.showadvanced ? 'basic' : 'advanced']}
+      data={data}
+      onSubmit={submitSettings}
+      onEdit={modal.current.lock}
+      buttons={settingsLayout.buttons(modal.current.close)}
+    />
+
+    <RawData className="text-sm mt-4" data={data} />
+
+    {data.showadvanced && <ResetButtons />}
+  </div>);
 }
 
-Settings.propTypes = {
-  hideModal: PropTypes.func,
-  lockModal: PropTypes.func,
-};
+
+Settings.propTypes = { modal: PropTypes.object };
 
 export default Settings;

@@ -2,36 +2,33 @@ import React from "react";
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from "react-redux";
 
-import { fetchApi, tagTypes } from "../header.fetch";
+import LoadingStyle from "../styles/LoadingStyle"
+import { forceRefetchConstructor, isAnyLoading } from "../services/headerFetch.services";
 
-function ReloadButton({ size = 8, weight = 4, force = null, hideBgd = false, color = '#3498db', className }) {
-  const dispatch = useDispatch();
-  const isLoading = useSelector(state => Object.values(state.dbApi.queries).some(qry => qry.status === 'pending'));
-  const display = force != null ? force : isLoading;
-  const sizeClass = `border-${hideBgd ? 0 : weight} border-t-${weight} ` +
-    `h-${size} w-${size} sm:h-${size+2} sm:w-${size+2}`;
-    // sm:border-${weight} sm:border-t-${weight}
-  
-  const forceRefetch = () => dispatch(fetchApi.util.invalidateTags(tagTypes));
+function ReloadButton(props) {
+  // Force refetch of all data
+  const dispatch = useDispatch();  
+  const forceRefetch = forceRefetchConstructor(dispatch);
 
-  if (!display)
-    return <h4 className={'link '+className} onClick={forceRefetch}>↻</h4>;
+  // Check for active queries
+  const isLoading = useSelector(isAnyLoading);
 
-  return (
-    <div
-      className={`loader ease-linear rounded-full dim-border ${sizeClass} ${className}`}
-      style={{borderTopColor: color}}
-    />
-  );
+  return ('force' in props ? props.force : isLoading) ? 
+    
+    // Loading ring
+    <LoadingStyle {...props} />:
+
+    // Reload button
+    <h4 className={'link '+props.className} onClick={forceRefetch}>↻</h4>;
 }
 
 ReloadButton.propTypes = { 
-  className: PropTypes.string,
-  color: PropTypes.string,
   force: PropTypes.bool,
   size: PropTypes.number,
   weight: PropTypes.number,
   hideBgd: PropTypes.number,
+  color: PropTypes.string,
+  className: PropTypes.string,
 };
 
 export default ReloadButton;

@@ -1,5 +1,5 @@
 import { fetchApi, tagTypes, ALL_ID, useSettingsQuery } from '../common/common.fetch';
-import { settingsUpdate, clearSchedule } from './services/settings.services';
+import { settingsUpdate, clearSchedule } from './services/headerFetch.services';
 
 export const headerApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({

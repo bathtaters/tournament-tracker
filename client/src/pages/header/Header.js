@@ -1,53 +1,33 @@
-import React, { useRef } from "react";
+import React from "react";
 import PropTypes from 'prop-types';
-import { NavLink } from "react-router-dom";
 
-import Settings from "./components/Settings";
+import SettingsButton from "./components/SettingsButton";
 import ReloadButton from "./components/ReloadButton";
-import Modal from "../common/Modal";
+import { HeaderStyle, TitleStyle, LinkStyle, OverlayStyle } from "./styles/HeaderStyles";
 
-const defaultTitle = "Tournament Tracker";
+const defaultTitle = import("../../assets/validation.json")
+  .then(v => v.defaults.settings.title);
 
 function Header({ title }) {
-  const modal = useRef(null);
+  return (
+    <HeaderStyle>
 
-  return (<>
-    <div
-      className="fixed top-0 z-20 w-full alt-bgd bg-opacity-90 h-24 p-2 flex justify-around items-center px-2"
-    >
-      <h4>
-        <NavLink to="/home">Schedule</NavLink>
-      </h4>
+      <LinkStyle to="/home" text="Schedule" />
 
-      <h3
-        className="base-color font-medium text-center px-2 line-clamp-2 text-ellipsis overflow-hidden"
-      >
-        {title || defaultTitle}
-      </h3>
+      <TitleStyle title={title || defaultTitle} />
 
-      <h4>
-        <NavLink to="/players">Players</NavLink>
-      </h4>
+      <LinkStyle to="/players" text="Players" />
 
-      <div className="absolute top-0 left-0 z-30 m-2">
-        <h4 className="link" onClick={()=>modal.current.open()}>⚙</h4>
-      </div>
+      <OverlayStyle edge="left">
+        <SettingsButton />
+      </OverlayStyle>
 
-      <div className="absolute top-0 right-0 z-30 m-2">
-        <ReloadButton className="dimmer-border" size={4} />
-      </div>
+      <OverlayStyle edge="right">
+        <ReloadButton />
+      </OverlayStyle>
 
-    </div>
-
-    <div className="h-28">
-      <Modal ref={modal}>
-        <Settings
-          hideModal={force=>modal.current.close(force)}
-          lockModal={()=>modal.current.lock()}
-        />
-      </Modal>
-    </div>
-  </>);
+    </HeaderStyle>  
+  );
 }
 
 Header.propTypes = { title: PropTypes.string };
