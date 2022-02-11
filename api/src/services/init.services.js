@@ -1,6 +1,7 @@
 // Imports
 const logger = require('../utils/log.adapter');
 const exportToClient = require('../config/exportToClient');
+const meta = require('../config/meta');
 const validation = require('../config/validation');
 const { types } = require("pg");
 const db = require('../db/admin/connect');
@@ -8,7 +9,7 @@ const db = require('../db/admin/connect');
 // To be run when server starts
 async function initServices() {
   // Copy validation params to client
-  exportToClient(validation, 'src', 'assets', 'validation.json')
+  exportToClient({ ...validation, meta }, 'src', 'assets', 'validation.json')
     .then(p => console.log('Validate config copied to client --  '+p));
 
   // Setup integer parsing for pg
