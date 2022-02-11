@@ -3,10 +3,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import ErrorBoundary from "./pages/common/ErrorBoundary";
 
-// Prefetch API data (Load in all calls to allow lazy loading)
+// Prefetch API data
 import { usePrefetch } from "./pages/common/common.fetch";
-import { } from "./pages/schedule/schedule.fetch";
-import { } from "./pages/event/event.fetch";
 
 // Lazy load each main route
 const Schedule = lazy(() => import("./pages/schedule/Schedule"));
