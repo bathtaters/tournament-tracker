@@ -1,3 +1,5 @@
+import { swapPlayerMsg } from '../../../assets/strings';
+
 // Helpers for swapping player arrays during optimistic updates
 
 export const swapPlayerArrays = (baseArr, swapArr, swapIndxes, baseKey = 'players', swapIdKey = 'id') => {
@@ -10,3 +12,13 @@ export const moveDrops = (baseArr, fromId, toId, moveValue, baseKey = 'drops') =
   if (idx !== -1)
     baseArr[toId][baseKey].push(baseArr[fromId][baseKey].splice(idx,1)[0]);
 }
+
+// Construct swap handler
+export const swapController = (swapPlayers, eventid) => (playerA, playerB) => {
+  if (playerA.id === playerB.id) return;
+  if ((playerA.reported || playerB.reported) && !window.confirm(swapPlayerMsg())) return;
+  swapPlayers({eventid, swap: [ playerA, playerB ] });
+};
+
+// Test if swap is allowed
+export const canSwap = (types, a, b) => a !== b && types.includes("json/matchplayer");
