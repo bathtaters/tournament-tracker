@@ -1,5 +1,5 @@
-import { reportStyles } from "./ReportStyles";
-import valid from "../../../assets/validation.json";
+import { reportStyles } from "./styles/ReportStyles";
+import valid from "../../assets/validation.json";
 
 export default function reportLayout(playerList, players, wincount) {
   return playerList.map((pid,idx) => [

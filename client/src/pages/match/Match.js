@@ -1,17 +1,17 @@
 import React, { useRef } from "react";
 import PropTypes from 'prop-types';
 
-import MatchPlayer from "./MatchPlayer";
-import MatchWins from "./MatchWins";
-import Report from "./Report";
+import MatchPlayer from "./components/MatchPlayer";
+import MatchWins from "./components/MatchWins";
+import Report from "./components/Report";
 
-import Modal from "../../../common/Modal";
-import Counter from "../../../common/Counter";
-import RawData from "../../../common/RawData";
-import Loading from "../../../common/Loading";
+import Modal from "../common/Modal";
+import Counter from "../common/Counter";
+import RawData from "../common/RawData";
+import Loading from "../common/Loading";
 
-import { MatchStyle, PlayerStyle } from "../../styles/MatchStyles";
-import { DrawsStyle, WinsStyle } from "../../styles/CounterStyles";
+import { MatchStyle, PlayerStyle } from "./styles/MatchStyles";
+import { DrawsStyle, WinsStyle } from "./styles/CounterStyles";
 
 import { 
   useMatchQuery, useReportMutation,
@@ -19,13 +19,13 @@ import {
   useSwapPlayersMutation,
   useStatsQuery, useSettingsQuery,
   usePlayerQuery
-} from "../../event.fetch";
+} from "./match.fetch";
 
-import reportLayout from "../../styles/report.layout";
-import { getMatchTitle } from "../../services/event.services";
-import { swapController, canSwap } from "../../services/swap.services";
-import { clearReportMsg } from '../../../../assets/strings';
-import valid from "../../../../assets/validation.json";
+import reportLayout from "./report.layout";
+import { getMatchTitle } from "./services/match.services";
+import { swapController, canSwap } from "./services/swap.services";
+import { clearReportMsg } from '../../assets/strings';
+import valid from "../../assets/validation.json";
 
 
 function Match({ eventid, matchId, wincount, isEditing }) {

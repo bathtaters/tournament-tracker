@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
 
+import Match from '../../match/Match';
+import EditRound from './subcomponents/EditRound';
 import { RoundStyle, EditRoundStyle } from '../styles/RoundStyles';
-import Match from './round/Match';
-import EditRound from './round/EditRound';
 import OverlayContainer from '../../common/styles/OverlayContainer';
 
 import { useSettingsQuery } from '../event.fetch';

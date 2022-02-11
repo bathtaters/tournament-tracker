@@ -1,6 +1,6 @@
 import React from "react";
 
-import EventStats from "./dashboard/EventStats";
+import EventStats from "./EventStats";
 import { EditEventButton } from "../styles/ButtonStyles"; 
 import { 
   ContainerStyle, StatusStyle,

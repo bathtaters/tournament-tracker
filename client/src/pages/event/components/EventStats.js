@@ -1,14 +1,14 @@
 import React, { useRef } from "react";
 import PropTypes from 'prop-types';
 
-import Stats from "../../../stats/Stats";
-import StatsRow from "./StatsRow";
-import { EventStatsStyle, ViewStatsStyle, StatsRowStyle } from "../../styles/StatsStyles";
+import Stats from "../../stats/Stats";
+import StatsRow from "./subcomponents/StatsRow";
+import { EventStatsStyle, ViewStatsStyle, StatsRowStyle } from "../styles/StatsStyles";
 
-import Modal from "../../../common/Modal";
-import Loading from "../../../common/Loading";
+import Modal from "../../common/Modal";
+import Loading from "../../common/Loading";
 
-import { useStatsQuery, usePlayerQuery } from "../../event.fetch";
+import { useStatsQuery, usePlayerQuery } from "../event.fetch";
 
 
 function EventStats({ event }) {

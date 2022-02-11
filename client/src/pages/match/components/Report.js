@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import InputForm from "../../../common/InputForm";
-import { ReportTitleStyle, reportStyles } from "../../styles/ReportStyles";
+import InputForm from "../../common/InputForm";
+import { ReportTitleStyle, reportStyles } from "../styles/ReportStyles";
 
-import { useReportMutation } from "../../event.fetch";
-import { reportAdapter } from "../../services/event.services";
+import { useReportMutation } from "../match.fetch";
+import { reportAdapter } from "../services/match.services";
 
 function Report({ title, match, layout, modal }) {
 
