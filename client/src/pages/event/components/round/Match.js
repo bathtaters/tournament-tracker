@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef } from "react";
 import PropTypes from 'prop-types';
 
 import MatchPlayer from "./MatchPlayer";
@@ -21,10 +21,11 @@ import {
   usePlayerQuery
 } from "../../event.fetch";
 
+import reportLayout from "../../styles/report.layout";
 import { getMatchTitle } from "../../services/event.services";
-import { swapPlayerMsg } from '../../../../assets/strings';
+import { swapController, canSwap } from "../../services/swap.services";
+import { clearReportMsg } from '../../../../assets/strings';
 import valid from "../../../../assets/validation.json";
-
 
 
 function Match({ eventid, matchId, wincount, isEditing }) {
@@ -46,20 +47,13 @@ function Match({ eventid, matchId, wincount, isEditing }) {
   // Report match
   const [ report, { isLoading: isReporting } ] = useReportMutation();
   const clearReport = () => {
-    if (window.confirm(`Are you sure you want to delete the records for ${title}?`)) {
-      report({ id: matchData.id, eventid, clear: true });
-    }
+    if (window.confirm(clearReportMsg(title))) report({ id: matchData.id, eventid, clear: true });
   };
 
   // Swap players
   const [ swapPlayers ] = useSwapPlayersMutation();
-  const handleSwap = (playerA, playerB) => {
-    if (playerA.id === playerB.id) return;
-    if ((playerA.reported || playerB.reported) && !window.confirm(swapPlayerMsg())) return;
-    swapPlayers({eventid, swap: [ playerA, playerB ] });
-  };
-  const canSwap = useCallback((types, a, b) => a !== b && types.includes("json/matchplayer"),[]);
-  
+  const handleSwap = swapController(swapPlayers, eventid);
+
   
   // Loading/Error catcher
   if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankError || playerError)
@@ -115,12 +109,10 @@ function Match({ eventid, matchId, wincount, isEditing }) {
 
       <Modal ref={reportModal}>
         <Report
-          eventid={eventid}
-          players={players}
-          modal={reportModal}
-          match={matchData}
-          wincount={wincount}
           title={title}
+          match={matchData}
+          layout={reportLayout(matchData.players, players, wincount)}
+          modal={reportModal}
         />
       </Modal>
 
