@@ -2,38 +2,30 @@ import React from "react";
 import PropTypes from 'prop-types';
 
 import InputForm from "../../common/InputForm";
+import { ModalTitleStyle } from "../styles/PlayerStyles";
+import addPlayerLayout from "../addPlayer.layout";
 
 import { useCreatePlayerMutation } from "../player.fetch";
+import { createPlayerController } from "../services/player.services";
 
-import { defaultPlayerName } from "../../../assets/strings";
-
-// Compenent settings
-const settingsRows = [
-  {
-    label: 'Name', id: 'name', type: 'text',
-    defaultValue: defaultPlayerName,
-    transform: name => name.trim()
-  },
-];
-
-// Component
-function AddPlayer({ hideModal, lockModal }) {
+function AddPlayer({ modal }) {
   const [ createPlayer ] = useCreatePlayerMutation();
 
-  const submitPlayer = playerData => {
-    if (playerData.name) createPlayer(playerData);
-    hideModal(true);
+  const submitPlayer = (playerData) => {
+    createPlayerController(playerData, createPlayer) && modal.current.close(true);
   };
+
+  if (!modal || !modal.current) throw Error('Add Player modal not loaded');
 
   return (
     <div>
-      <h3 className="font-light max-color text-center mb-4">Add Player</h3>
+      <ModalTitleStyle>Add Player</ModalTitleStyle>
       <InputForm
-        rows={settingsRows}
+        rows={addPlayerLayout.basic}
         submitLabel="Create"
         onSubmit={submitPlayer}
-        onEdit={lockModal}
-        buttons={[{ label: "Cancel", onClick: hideModal }]}
+        onEdit={modal.current.lock}
+        buttons={addPlayerLayout.buttons(modal.current.close)}
       />
     </div>
   );
