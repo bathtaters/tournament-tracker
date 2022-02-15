@@ -11,7 +11,10 @@ const commonRows = [
 const playerOnlyRows = [];
 
 const teamOnlyRows = [
-  { title: 'Members', key: 'members', formatString: (r,p) => r.map(m=>p[m].name).join(' & ') },
+  {
+    title: 'Members', key: 'members',
+    formatString: (r,p) => p ? r.map(m => p[m] ? p[m].name : '?').join(' & ') : '',
+  },
 ];
 
 
