@@ -1,64 +1,53 @@
 import React, { useState, useRef, useCallback } from "react";
 
+import ScheduleHeader from "./components/ScheduleHeader";
 import Day from "./components/Day";
 import EditEvent from "../eventEditor/EditEvent";
+import Loading from "../common/Loading";
 import Modal from "../common/Modal";
 import RawData from "../common/RawData";
+import { DaysStyle } from "./styles/ScheduleStyles";
 
+import { noDate, getMissingEvents } from "./services/date.services";
 import { useScheduleQuery, useSettingsQuery, useEventQuery } from "./schedule.fetch";
-
-import { formatQueryError } from "../../assets/strings";
-import { noDate, getMissingEvents } from "./services/day.services";
 
 function Schedule() {
   // Global state
-  const { data: settings } = useSettingsQuery();
-  const { data, isLoading, error } = useScheduleQuery();
+  const { data,            isLoading: schedLoad,    error: schedErr    } = useScheduleQuery();
+  const { data: settings,  isLoading: settingsLoad, error: settingsErr } = useSettingsQuery();
+  const { data: eventData, isLoading: eventsLoad,   error: eventsErr   } = useEventQuery();
   
-  const { data: eventData } = useEventQuery();
-  const otherEvents = getMissingEvents(data,settings.dateRange);
-
   // Local state
   const modal = useRef(null);
   const [isEditing, setEdit] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
   const openEventModal = useCallback(eventid => { setCurrentEvent(eventid); modal.current.open(); }, [modal]);
 
+  // Calculated
+  const isLoading = schedLoad || settingsLoad || eventsLoad, error = schedErr || settingsErr || eventsErr;
+  const notLoaded = isLoading || error || !data || !settings || !eventData;
+  const otherEvents = getMissingEvents(data, settings.dateRange);
+
+  // Render
   return (
     <div>
-      <div className="flex justify-evenly items-center">
-        <input
-          className="sm:w-20 sm:h-11"
-          disabled={isLoading}
-          onClick={()=>openEventModal()}
-          type="button"
-          value="+"
-        />
-        <h2 className="inline-block text-center font-thin">Schedule</h2>
-        <input
-          className="sm:w-20 sm:h-11"
-          disabled={isLoading}
-          onClick={()=>setEdit(!isEditing)}
-          type="button"
-          value={isEditing ? 'Back' : 'Edit'}
-        />
-      </div>
+      <ScheduleHeader isEditing={isEditing} isLoading={notLoaded} setEdit={setEdit} openModal={openEventModal} />
 
-      <div className="flex flex-wrap justify-center mt-4">
-        { isLoading || error || !settings ?
-          <h4 className="text-center">{isLoading ? 'Loading...' : formatQueryError(error || 'Unable to reach server')}</h4>
-        :
-          settings.dateRange && settings.dateRange.map(day => 
-            <Day
-              day={day}
-              events={day === noDate ? otherEvents : data[day] && data[day].events}
-              isEditing={isEditing}
-              key={day}
-              setEventModal={openEventModal}
-            />
-          )
-        }
-      </div>
+      <DaysStyle>
+        { notLoaded ?
+          <Loading loading={isLoading} error={error} altMsg="Unable to reach server"  TagName="h4" />
+
+        : (settings.dateRange || []).map(day => 
+          <Day
+            key={day}
+            day={day}
+            events={day === noDate ? otherEvents : data[day] && data[day].events}
+            eventData={eventData}
+            isEditing={isEditing}
+            setEventModal={openEventModal}
+          />
+        )}
+      </DaysStyle>
 
       <RawData data={data} />
       <RawData className="text-xs" data={eventData} />

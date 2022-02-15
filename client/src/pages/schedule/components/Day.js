@@ -1,147 +1,62 @@
-import React, { useCallback } from "react";
-import { Link } from "react-router-dom";
+import React, { useCallback, useMemo } from "react";
 import PropTypes from 'prop-types';
 
+import DayEntry from "./DayEntry";
 import DragBlock from '../../common/DragBlock';
+import {
+  TitleStyle, SubTitleStyle,
+  MissingDataStyle, dragAndDropClass
+} from "../styles/DayStyles";
 
-import { noDate, toDateObj, dayClasses } from '../services/day.services';
-import { isTempId } from "../services/day.services";
-import { formatQueryError, weekdays, statusInfo } from '../../../assets/strings';
+import { useUpdateEventMutation } from "../schedule.fetch";
+import { toDateObj, dayClasses } from '../services/date.services';
+import { canDrop, dropController } from "../services/day.services";
 
-import { useEventQuery, useUpdateEventMutation, usePrefetch } from "../schedule.fetch";
+import { weekdays } from '../../../assets/strings';
+
 
 // Component
-function Day({ events, isEditing, setEventModal, day }) {
-  // Definitions (memoize?)
-  const { titleCls, borderCls } = dayClasses(day);
-  const date = toDateObj(day);
-  const canDrop = useCallback(types => types.includes("json/eventday"), []);
-
-  // Global state
-  const { data, isLoading, error } = useEventQuery();
-  const [ updateEvent ] = useUpdateEventMutation();
+function Day({ events, isEditing, setEventModal, day, eventData }) {
+  // Classes & date as DateObj
+  const [ { titleCls, borderCls }, date ] = useMemo(() => [ dayClasses(day), toDateObj(day) ], [day]);
   
-  // Actions
-  const dropHandler = (a,b) => {
-    [a.day, b.day] = [b.day, a.day].map(d => d === noDate ? null : d);
-    updateEvent(a);
-    if (b.id) updateEvent(b);
-  }
+  // Drag & Drop action
+  const [ updateEvent ] = useUpdateEventMutation();
+  const dropHandler = useCallback(dropController(updateEvent), [updateEvent]);
 
   return (
     <DragBlock
       storeData={{ id: null, day }}
       onDrop={dropHandler}
       canDrop={canDrop}
-      className="p-2 m-1 rounded-md w-40 min-h-32"
+      className={dragAndDropClass.outer}
       borderClass={{disabledColor:borderCls, disabledOpacity:'100', baseOpacity:'100'}}
       dataType="json/eventday"
       disabled={!isEditing}
       draggable={false}
     >
-      <h4 className={'text-2xl font-light text-center pointer-events-none ' + (titleCls)}>
-        {date ? weekdays[date.getDay()] : 'Unscheduled'}
-      </h4>
-      <h5 className="text-center italic text-sm font-thin mb-2 pointer-events-none">
-        {date ? date.toLocaleDateString() : ''}
-      </h5>
-      { isLoading ?
-        <div className="text-center text-sm font-light dim-color italic pointer-events-none opacity-60">
-          ...
-        </div>
 
-      : error ?
-        <div className="text-center text-sm font-light dim-color italic pointer-events-none opacity-60">
-          {formatQueryError(error)}
-        </div>
+      <TitleStyle className={titleCls}>{date ? weekdays[date.getDay()] : 'Unscheduled'}</TitleStyle>
 
-      : events && events.length ?
+      <SubTitleStyle>{date ? date.toLocaleDateString() : ''}</SubTitleStyle>
+
+      { events && events.length ?
         events.map(eventid => 
           <DayEntry
             day={day}
             id={eventid}
-            data={data && data[eventid]}
-            canDrop={canDrop}
+            data={eventData && eventData[eventid]}
             isEditing={isEditing}
             dropHandler={dropHandler}
             editEvent={()=>setEventModal(eventid)}
             key={eventid}
           />
         )
-
-      : !isEditing &&
-        <div className="text-center text-sm font-light dim-color italic pointer-events-none opacity-60">
-          No events
-        </div>
+      : !isEditing && (<MissingDataStyle>No events</MissingDataStyle>)
       }
     </DragBlock>
   );
 }
-
-
-function DayEntry({ day, id, data, isEditing, canDrop, dropHandler, editEvent }) {
-  // Setup prefetching
-  const prefetchEvent = usePrefetch('event');
-  const prefetchMatch = usePrefetch('match');
-  const prefetchStats = usePrefetch('stats');
-  const loadEvent = id => { prefetchEvent(id); prefetchMatch(id); prefetchStats(id); };
-
-  if (!data || isTempId(id))
-    return <div className="text-sm font-thin text-center dim-color pointer-events-none">...</div>
-
-  return (
-    <DragBlock
-      storeData={{ id, day }}
-      onDrop={dropHandler}
-      canDrop={canDrop}
-      className="relative p-1 m-1 rounded-xl text-center"
-      dataType="json/eventday"
-      disabled={!isEditing}
-      onHover={()=>loadEvent(id)}
-    >
-      { isEditing ? <>
-        <div
-          className={
-            'text-sm font-normal pointer-events-none ' +
-            (data.isDone ? 'dim-color' : 'link-color')
-          }
-        >
-          {data.title}
-        </div>
-        
-        { data.status < 3 &&
-          <div
-            className={
-              'absolute top-0 right-1 text-sm font-normal cursor-pointer hover:' +
-              statusInfo[data.status].class
-            }
-            onClick={editEvent}
-          >{"✐"}</div>
-        }
-      </>:
-        <Link
-          className={
-            'text-sm font-normal block ' + 
-            (data.status === 1 ? '' : statusInfo[data.status + 1].class)
-          }
-          to={'/event/'+id}
-        >
-          {data.title}
-        </Link>
-      }
-      
-    </DragBlock>
-  );
-}
-
-DayEntry.propTypes = {
-  day: PropTypes.string,
-  data: PropTypes.object,
-  isEditing: PropTypes.bool,
-  canDrop: PropTypes.func,
-  dropHandler: PropTypes.func,
-  editEvent: PropTypes.func,
-};
 
 Day.propTypes = {
   events: PropTypes.arrayOf(PropTypes.string),
