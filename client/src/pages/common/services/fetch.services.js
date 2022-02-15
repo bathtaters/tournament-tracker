@@ -1,4 +1,4 @@
-import { getDays } from '../../schedule/services/day.services';
+import { getDays } from '../../schedule/services/date.services';
 
 // Event status
 // [0: N/A, 1: Pre-Event, 2: Active, 3: Complete]

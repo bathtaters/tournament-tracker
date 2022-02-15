@@ -1,3 +1,4 @@
+import { dayClass } from "../styles/ScheduleStyles";
 import { isTempId } from "../../common/services/basic.services";
 export { isTempId };
 
@@ -21,10 +22,9 @@ export function getDays(start, end) {
 // Component class styles
 export const dayClasses = day => {
   const today = new Date();
-  if (day === toDate(today)) return { titleCls: "max-color", borderCls: "pos-border" };
-  return (!day || day === noDate || new Date(day) < today) ?
-    { titleCls: "dim-color-inv", borderCls: "dimmer-border" } :
-    { titleCls: "base-color",    borderCls: "base-border" };
+  return day === toDate(today) ? dayClass.today :
+    (!day || day === noDate || new Date(day) < today) ?
+    dayClass.past : dayClass.future;
 }
 
 // Get events w/o date or w/ date outside range

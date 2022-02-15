@@ -1,5 +1,5 @@
 import { fetchApi, tagTypes } from "../header.fetch";
-import { getDays } from '../../schedule/services/day.services';
+import { getDays } from '../../schedule/services/date.services';
 
 // Check if any queries are currently running
 export const isAnyLoading = (state) =>

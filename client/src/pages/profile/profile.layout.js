@@ -1,5 +1,5 @@
 import { statusInfo } from "../../assets/strings";
-import { dayClasses } from "../schedule/services/day.services";
+import { dayClasses } from "../schedule/services/date.services";
 
 // Layout for InputForm
 
