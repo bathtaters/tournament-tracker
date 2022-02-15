@@ -1,34 +1,23 @@
-import React, { Fragment } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 import PropTypes from 'prop-types';
 
+import StatsHeader from "./components/StatsHeader";
+import StatsRow from "./components/StatsRow";
+import StatsOverlay from "./components/StatsOverlay";
 import RawData from "../common/RawData";
+import Loading from "../common/Loading";
 
-import { 
-  formatQueryError, formatNum, formatPercent
-} from '../../assets/strings';
-import { getPlayerList } from "./services/stats.services";
+import { StatsStyle, GridStyle, OverlayStyle } from "./styles/StatsStyles";
+import statsLayout from "./stats.layout";
 
 import { useStatsQuery, usePlayerQuery } from "../common/common.fetch";
+import { getPlayerList, colCount } from "./services/stats.services";
 
 
-// Component Layout
-const statsHeader = [
-  { label: 'Name', get: 'playerName', },
-  { label: 'W',   get: data => data.matchRecord && data.matchRecord[0], },
-  { label: 'L',   get: data => data.matchRecord && data.matchRecord[1], },
-  { label: 'D',   get: data => data.matchRecord && data.matchRecord[2], },
-  { label: '%',   get: data => formatPercent(data.gameRate), },
-  { label: 'OMW', get: data => formatPercent(data.oppMatch), },
-  { label: 'OGW', get: data => formatPercent(data.oppGame), },
-];
-
-
-// Main Component
-function Stats({ eventid, onPlayerClick, className, highlightClass, hideTeams }) {
+function Stats({ eventid, onPlayerClick, className = '', highlightClass = '', hideTeams }) {
   // Global state
   const { data, isLoading, error } = useStatsQuery(eventid);
-  const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
+  const { data: players, isLoading: playLoad, error: playErr } = usePlayerQuery();
   const playerList = getPlayerList(data && data.ranking, players, !eventid, hideTeams);
 
   // Pass clicks to onPlayerClick
@@ -36,66 +25,32 @@ function Stats({ eventid, onPlayerClick, className, highlightClass, hideTeams })
     if (typeof onPlayerClick === 'function')
       onPlayerClick(pid, event, {...players[pid], ...data[pid]});
   };
+
+  // Loading/Error catcher
+  if (isLoading || playLoad || error || playErr) return (
+    <StatsStyle><GridStyle className={className} layoutArray={statsLayout}>
+      <StatsHeader layoutArray={statsLayout} />
+      <Loading loading={isLoading || playLoad} error={error || playErr} className={'col-span-'+colCount(statsLayout)} />
+    </GridStyle></StatsStyle>
+  );
   
+  // Render
   return (
     <div>
-      <div className="relative">
-        <div className={"grid grid-flow-row grid-cols-stats gap-x-2 gap-y-1 items-center px-4 py-2 "+(className || "")}>
-          { statsHeader.map((col,idx) => 
-            <span
-              className={'font-normal mb-2 text-center ' + ((col.label === 'Name' ? 'col-span-2 ' : 'text-center ') + (col.label.length === 3 ? 'text-xs sm:text-xl' : 'text-xl'))}
-              key={'H'+idx}
-            >
-              {col.label}
-            </span>
+      <StatsStyle>
+        <GridStyle className={className} layoutArray={statsLayout}>
+          <StatsHeader layoutArray={statsLayout} />
+
+          { playerList.map((id, idx) => 
+            <StatsRow key={id+'__S'} playerId={id} index={idx} layoutArray={statsLayout} players={players} stats={data} />
           ) }
+        </GridStyle>
 
-          { isLoading || loadingPlayers ?
-            <div className="col-span-8 text-center font-light dim-color">Loading...</div>
+        <OverlayStyle>
+          <StatsOverlay players={playerList} className={highlightClass} clickHandler={clickHandler} />
+        </OverlayStyle>
 
-          : error || playerError ?
-            <div className="col-span-8 text-center font-thin italic dim-color">
-              {formatQueryError(error || playerError)}
-            </div>
-
-          : playerList.map((pid,idx) => 
-            <Fragment key={pid+'S'}>
-              <span className="font-light text-right">{idx + 1}</span>
-              <Link
-                className="text-lg font-normal text-left"
-                onClick={clickHandler(pid)}
-                to={'/profile/'+pid}
-              >
-                {(players[pid] && players[pid].name) || '-'}
-              </Link>
-
-              { statsHeader.slice(1).map((col,i) => 
-                <span className="text-sm font-thin text-center" key={pid+'C'+i}>
-                  {formatNum(data[pid] && col.get && col.get(data[pid]))}
-                </span>
-                
-              ) }
-            </Fragment>
-          )}
-        </div>
-
-        { !isLoading && !loadingPlayers && !error && !playerError ? 
-          <div
-            className="grid grid-flow-row grid-cols-1 gap-x-2 gap-y-1 py-2 items-center absolute top-0 left-0 right-0 bottom-0 z-0"
-          >
-            <div className="w-full h-full opacity-75 mb-2 bg-none" />
-            { playerList.map((pid, idx) => 
-              <Link
-                className={'w-full h-full px-2 opacity-0 base-bgd-inv ' + (highlightClass+' hover:opacity-25')}
-                key={pid+'_L'}
-                onClick={clickHandler(pid)}
-                to={'/profile/'+pid}
-              />
-            ) }
-          </div>
-
-        : null }
-      </div>
+      </StatsStyle>
 
       <RawData className="text-sm" data={data} />
     </div>
