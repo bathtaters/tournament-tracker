@@ -1,16 +1,17 @@
 import React from "react";
 import PropTypes from 'prop-types';
-import { useSettingsQuery } from "./common.fetch";
 
-const defaultRawClass = "text-center font-thin m-2 dim-color ";
+import RawDataStyle from "./styles/RawDataStyle";
+import { useSettingsQuery } from "./common.fetch";
 
 // Display raw data
 function RawData({ data, className = "" }) {
   const { data: settings, isLoading, error } = useSettingsQuery();
+
   if (isLoading || error || !settings || !settings.showadvanced || !settings.showrawjson)
     return null;
   
-  return <div className={defaultRawClass + className}>{JSON.stringify(data)}</div>
+  return (<RawDataStyle className={className}>{JSON.stringify(data)}</RawDataStyle>);
 }
 
 RawData.propTypes = { data: PropTypes.any, className: PropTypes.string };

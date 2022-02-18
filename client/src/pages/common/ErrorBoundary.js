@@ -1,6 +1,5 @@
 import { Component } from "react";
-
-// Boilerplate code from React
+import ErrorStyle from "./styles/ErrorStyle";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -18,21 +17,17 @@ class ErrorBoundary extends Component {
   }
   
   render() {
-    if (this.state.errorInfo) {
-      // Error path
-      return (
-        <div className="text-center">
-          <h4>Something went wrong.</h4>
-          <details className="whitespace-pre-wrap">
-            {this.state.error && this.state.error.toString()}
-            <br />
-            {this.state.errorInfo.componentStack}
-          </details>
-        </div>
-      );
-    }
     // Normally, just render children
-    return this.props.children;
+    if (!this.state.errorInfo) return this.props.children;
+
+    // Render Error
+    return (
+      <ErrorStyle title="Something went wrong.">
+        {this.state.error && this.state.error.toString()}
+        <br />
+        {this.state.errorInfo.componentStack}
+      </ErrorStyle>
+    );
   }  
 }
 

@@ -1,12 +1,14 @@
 import React from "react";
+
+import LoadingStyle from "./styles/LoadingStyle";
 import { formatQueryError } from "../../assets/strings";
 
-function Loading({ loading = false, error = null, altMsg = 'Missing data', className = '', TagName = 'div' }) {
-  return (<TagName className={"italic text-center font-thin "+className}>{
-      loading ? 'Loading...' :
-      !error ? altMsg :
-      formatQueryError(error)
-    }</TagName>);
+function Loading({ loading = false, error = null, altMsg = 'Missing data', className = '', tagName = 'div' }) {
+  return (
+    <LoadingStyle TagName={tagName} className={className}>
+      {loading ? 'Loading...' : !error ? altMsg : formatQueryError(error)}
+    </LoadingStyle>
+  );
 }
 
 export default Loading;
