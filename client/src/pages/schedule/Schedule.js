@@ -35,7 +35,7 @@ function Schedule() {
 
       <DaysStyle>
         { notLoaded ?
-          <Loading loading={isLoading} error={error} altMsg="Unable to reach server"  TagName="h4" />
+          <Loading loading={isLoading} error={error} altMsg="Unable to reach server"  tagName="h4" />
 
         : (settings.dateRange || []).map(day => 
           <Day

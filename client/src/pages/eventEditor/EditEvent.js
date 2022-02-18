@@ -34,7 +34,7 @@ function EditEvent({ eventid, modal }) {
 
   // Loading/Error catcher
   if (isLoading || error || !modal)
-    return (<Loading loading={isLoading} error={error} altMsg="Error loading popup" TagName="h3" />)
+    return (<Loading loading={isLoading} error={error} altMsg="Error loading popup" tagName="h3" />)
 
   // Actions
   const clickDelete = () => {

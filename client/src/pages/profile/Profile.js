@@ -19,7 +19,7 @@ function Profile() {
 
   if (isLoading || error || !playerData || !playerData[id]) return (
     <WrapperStyle>
-      <Loading loading={isLoading} error={error} altMsg="Player missing." TagName="h4" />
+      <Loading loading={isLoading} error={error} altMsg="Player missing." tagName="h4" />
     </WrapperStyle>
   );
 

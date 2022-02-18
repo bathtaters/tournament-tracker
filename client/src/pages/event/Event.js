@@ -30,7 +30,7 @@ function Event() {
   
   // Loading/Error catcher
   if (isLoading || error || !data)
-    return <Loading loading={isLoading} error={error} altMsg="Event not found" TagName="h3" />;
+    return <Loading loading={isLoading} error={error} altMsg="Event not found" tagName="h3" />;
 
   // Render
   return (

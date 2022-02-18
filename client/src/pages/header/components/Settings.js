@@ -24,7 +24,7 @@ function Settings({ modal }) {
 
   // Catch loading/error
   if (isLoading || error || !data || !modal)
-    return (<div><Loading loading={isLoading} error={error} TagName="h3" /></div>);
+    return (<div><Loading loading={isLoading} error={error} tagName="h3" /></div>);
 
   // Render
   return (<div>
