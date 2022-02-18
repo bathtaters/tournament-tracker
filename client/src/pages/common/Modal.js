@@ -12,29 +12,19 @@ const modalRoot = document.getElementById('modal-root');
 function Modal({ children, className = '', bgdClose = true, startOpen = false, startLocked = false, lockMsg = '' }, ref) {
 
   // Modal actions
-  const [isOpen, setOpen] = useState(startOpen);
-
-  const [closeDisabled, disableClose] = useState(startLocked);
-
-  const close = useCallback(
-    closeController(closeDisabled, setOpen, ()=>disableClose(startLocked)),
-    [closeDisabled, startLocked, setOpen, disableClose]
-  );
-
-  const closeWithMsg = useCallback(msgController(close, closeDisabled, lockMsg), [close, closeDisabled, lockMsg]);
+  const [isOpen, open] = useState(startOpen);
+  const [isLock, lock] = useState(startLocked);
+  const close = useCallback(closeController(isLock, open, ()=>lock(startLocked)), [isLock, startLocked, open, lock]);
+  const closeWithMsg = useCallback(msgController(close, isLock, lockMsg), [close, isLock, lockMsg]);
   
-
   // Setup ref functions
-  useImperativeHandle(ref, refController(setOpen, close, disableClose), [setOpen, close, disableClose]);
+  useImperativeHandle(ref, refController(open, close, lock), [open, close, lock]);
   
-
-  // Setup hotkeys
+  // Link HotKeys -> Functions
   const keystrokeHandler = useCallback(keysController({
     27: close,  // Esc: Close Modal
   }), [close]);
-  
   useEffect(() => listenController(isOpen, keystrokeHandler), [isOpen, keystrokeHandler]);
-
 
   // Render into modalRoot
   return createPortal(isOpen && (
