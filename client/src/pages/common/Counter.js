@@ -1,10 +1,12 @@
 import React from "react";
 import PropTypes from 'prop-types';
+
 import CounterStyle from "./styles/CounterStyle";
+import { getDispVal, incController } from "./services/counter.services";
 
 function Counter({val, setVal, maxVal, isEditing, suff = '', className = ''}) {
-  const incVal = () => setVal((val + 1) % (maxVal + 1));
-  const dispVal = val + (typeof suff === 'function' ? suff(val) : suff || '');
+  const dispVal = getDispVal(val, suff);
+  const incVal = incController(setVal, val, maxVal);
 
   if (!isEditing) return <span className={className}>{dispVal}</span>
 
