@@ -19,3 +19,18 @@ export const nextTempId = (type, exists) => {
   } return id;
 }
 
+// Listen & handle hotkeys
+export const hotkeyListener = (handler, enable = true) => () => {
+  if (enable) document.addEventListener('keydown', handler, false);
+  else document.removeEventListener('keydown', handler, false);
+  return () => document.removeEventListener('keydown', handler, false);
+};
+
+// keyMap = { [keyCode]: () => action(), ... }
+export const hotkeyController = (keyMap) => (e) => {
+  // console.debug(' >> KeyCode: ',e.keyCode); // print keycodes
+  if (!keyMap[e.keyCode]) return;
+  e.preventDefault();
+  if (typeof keyMap[e.keyCode] === 'function') keyMap[e.keyCode]();
+  else console.error('Malformed keyMap for', e.keyCode,keyMap[e.keyCode]);
+};

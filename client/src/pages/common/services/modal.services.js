@@ -22,18 +22,3 @@ export const refController = (open, close, lock) => () => ({
   unlock: () => lock(false),
   lock:   () => lock(true),
 });
-
-
-// Listen & handle hotkeys
-export const listenController = (listen, handler) => () => {
-  if (listen) document.addEventListener('keydown', handler, false);
-  return () => document.removeEventListener('keydown', handler, false);
-};
-
-// keyMap = { [keyCode]: () => action(), ... }
-export const keysController = (keyMap) => (e) => {
-  // console.debug(' >> KeyCode: ',e.keyCode); // print keycodes
-  if (!keyMap[e.keyCode]) return;
-  if (typeof keyMap[e.keyCode] === 'function') keyMap[e.keyCode]();
-  else console.error('Malformed keyMap for', e.keyCode,keyMap[e.keyCode]);
-};
