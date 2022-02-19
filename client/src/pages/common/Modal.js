@@ -4,7 +4,8 @@ import FocusTrap from "focus-trap-react";
 
 import OverlayContainer from "./styles/OverlayContainer";
 import ModalStyle, { CloseButton, overlayClasses } from "./styles/ModalStyle";
-import { closeController, msgController, refController, listenController, keysController } from "./services/modal.services";
+import { closeController, msgController, refController } from "./services/modal.services";
+import { hotkeyListener, hotkeyController } from "./services/basic.services";
 
 const modalRoot = document.getElementById('modal-root');
 
@@ -21,10 +22,10 @@ function Modal({ children, className = '', bgdClose = true, startOpen = false, s
   useImperativeHandle(ref, refController(open, close, lock), [open, close, lock]);
   
   // Link HotKeys -> Functions
-  const keystrokeHandler = useCallback(keysController({
+  const keystrokeHandler = useCallback(hotkeyController({
     27: close,  // Esc: Close Modal
   }), [close]);
-  useEffect(() => listenController(isOpen, keystrokeHandler), [isOpen, keystrokeHandler]);
+  useEffect(hotkeyListener(keystrokeHandler, isOpen && !isLock), [keystrokeHandler, isOpen, isLock]);
 
   // Render into modalRoot
   return createPortal(isOpen && (
