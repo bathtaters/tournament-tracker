@@ -11,12 +11,12 @@ import {
 
 // For local render of playerList
 export const emptyNewPlayer = { visible: false, name: "", id: null };
-
+const filterPlayer = ({ id, name }, includeId) => includeId ? { id, name } : { name };
 
 // ---------- Basic Actions ---------- \\
 
 // Add player to list
-export const pushPlayerController = (playerData, players, setPlayers, setPlayer) => playerId => {
+export const pushPlayerController = (playerData, players, setPlayers, setPlayer) => (playerId) => {
   if (!playerId) throw new Error("Add player is missing playerid!");
 
   let res = true;
@@ -41,15 +41,16 @@ export const popPlayerController = (players, setPlayers) => (pid, idx) => () => 
 // ---------- User Actions ---------- \\
 
 // Click add button
-export const clickAddController = (currPlayer, setPlayer, pushPlayer, handleFirstEdit) => (_, override) => {
+export const clickAddController = (currPlayer, setPlayer, createPlayer, pushPlayer, handleFirstEdit) => (override) => {
   if (!currPlayer.visible) return setPlayer({ ...currPlayer, visible: true });
 
   let playerData = override || {...currPlayer};
-  playerData.name = playerData.name.trim();
+  playerData.name = playerData.name && playerData.name.trim();
   if (!playerData.name) return setPlayer(emptyNewPlayer);
 
   if (handleFirstEdit) handleFirstEdit();
-  return pushPlayer(playerData.id);
+  if (playerData.id) return pushPlayer(playerData.id);
+  return newPlayerController(filterPlayer(playerData), createPlayer, pushPlayer);
 }
 
 // Click autofill cuttom

@@ -85,7 +85,7 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
     handlePlayerChange: newPlayerChange(newPlayer, setNewPlayer),
   
     // Handle + button click
-    handleAdd: clickAddController(newPlayer, setNewPlayer, pushPlayer, !isChanged && handleFirstEdit),
+    handleAdd: clickAddController(newPlayer, setNewPlayer, createPlayer, pushPlayer, !isChanged && handleFirstEdit),
   
     // Handle autofill click
     autofill: autofillController(remainingPlayers, setPlayerList, autofillSize),
