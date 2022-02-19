@@ -9,10 +9,13 @@ function PlayerInput({
   data, newPlayer, remainingPlayers, showAutofill, autofillSize,
   autofill, handleAdd, handlePlayerChange, handleNewPlayer,
 }) {
+
+  const suggestions = remainingPlayers.map(id=>({id, name: data[id].name}));
+
   return (
     <PlayerInputStyle>
 
-      <PlayerAddButton onClick={handleAdd} />
+      <PlayerAddButton onClick={() => handleAdd()} />
       <PlayerFillButton onClick={autofill} size={autofillSize} hidden={showAutofill} />
 
       <SuggestText
@@ -22,7 +25,7 @@ function PlayerInput({
         onChange={handlePlayerChange}
         onEnter={handleAdd}
         onStaticSelect={handleNewPlayer}
-        suggestionList={remainingPlayers.map(id=>({id, name: data[id].name}))}
+        suggestionList={suggestions}
         staticList={["Add Player"]}
       />
       <span className={suggestClass.spacer} />
