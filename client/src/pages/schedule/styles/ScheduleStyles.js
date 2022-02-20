@@ -1,12 +1,11 @@
 import React from "react";
+import { PageTitleStyle } from "../../common/styles/CommonStyles";
 
 export function HeaderStyle({ children }) {
   return (<div className="flex justify-evenly items-center">{children}</div>);
 }
 
-export function TitleStyle({ children }) {
-  return (<h2 className="inline-block text-center font-thin">{children}</h2>);
-}
+export const TitleStyle = ({ children }) => PageTitleStyle({ className: "inline-block", children });
 
 export function DaysStyle({ children }) {
   return (<div className="flex flex-wrap justify-center mt-4">{children}</div>);

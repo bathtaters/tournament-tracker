@@ -1,8 +1,7 @@
 import React from "react";
+import { ModalTitleStyle as TitleStyle } from "../../common/styles/CommonStyles";
 
-export function TitleStyle({ children }) {
-  return (<h3 className="font-light max-color text-center mb-2">{children}</h3>);
-}
+export { TitleStyle };
 
 export function ResetButtonStyle({ children }) {
   return (<div className="text-center mt-4">{children}</div>);

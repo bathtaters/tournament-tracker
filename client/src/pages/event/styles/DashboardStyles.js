@@ -1,8 +1,7 @@
 import React from "react";
+import { PageTitleStyle as TitleStyle } from "../../common/styles/CommonStyles";
 
-export function TitleStyle({ children }) {
-  return <h2 className="text-center font-thin">{children}</h2>
-}
+export { TitleStyle };
 
 export function DashboardStyle({ children }) {
   return (

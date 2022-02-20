@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 
 import PlayerEditor from "./components/PlayerEditor";
-import { EventTitleStyle, EventStatusStyle } from "./styles/EventEditorStyles";
+import { TitleStyle, StatusStyle } from "./styles/EventEditorStyles";
 
 import InputForm from "../common/InputForm";
 import RawData from "../common/RawData";
@@ -53,8 +53,8 @@ function EditEvent({ eventid, modal }) {
   // Render
   return (
     <div>
-      <EventTitleStyle isNew={!data} />
-      { Boolean(eventStatus) && <EventStatusStyle status={eventStatus} /> }
+      <TitleStyle isNew={!data} />
+      { Boolean(eventStatus) && <StatusStyle status={eventStatus} /> }
 
       <InputForm
         rows={editorLayout}

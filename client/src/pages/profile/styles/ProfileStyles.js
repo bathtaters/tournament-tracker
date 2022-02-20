@@ -1,8 +1,9 @@
 import React from "react";
+import { PageTitleStyle } from "../../common/styles/CommonStyles";
 
 export function WrapperStyle({ isTeam, children }) {
   return (<div>
-    <h3 className="font-thin">{isTeam ? 'Team' : 'User'} Profile</h3>
+    <PageTitleStyle className="mb-6">{isTeam ? 'Team' : 'User'} Profile</PageTitleStyle>
     {children}
   </div>)
 }

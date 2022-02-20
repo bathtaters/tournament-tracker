@@ -1,9 +1,8 @@
 import React from "react";
+import { PageTitleStyle, ModalTitleStyle } from "../../common/styles/CommonStyles";
 
 // Player
-export function TitleStyle({ children }) {
-  return (<h2 className="font-thin text-center mb-6">{children}</h2>);
-}
+export const TitleStyle = ({ children }) => PageTitleStyle({ className: "mb-6", children });
 
 export function StatsStyle({ children }) {
   return (<div className="px-6 flex justify-center mb-6">{children}</div>);
@@ -14,9 +13,7 @@ export function FooterStyle({ children }) {
 }
 
 // Add Player
-export function ModalTitleStyle({ children }) {
-  return (<h3 className="font-light max-color text-center mb-4">{children}</h3>);
-}
+export { ModalTitleStyle };
 
 export const statsClass = {
   base: (canDelete) => 'neg-border border-2 rounded-md' + (canDelete ? '' : ' border-opacity-0'),
