@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import ProfilePic from "./components/ProfilePic";
 import PlayerDataRow from "./components/PlayerDataRow";
-import PlayerEvents from "./components/PlayerEvents";
+import PlayerEvents from "../playerEvents/PlayerEvents";
 import RawData from "../common/RawData";
 import Loading from "../common/Loading";
 
