@@ -10,7 +10,7 @@ import {
 
 import { useUpdateEventMutation } from "../schedule.fetch";
 import { toDateObj, dayClasses } from '../services/date.services';
-import { canDrop, dropController } from "../services/day.services";
+import { canDrop, dropController, dataType } from "../services/day.services";
 
 import { weekdays } from '../../../assets/strings';
 
@@ -31,7 +31,7 @@ function Day({ events, isEditing, setEventModal, day, eventData }) {
       canDrop={canDrop}
       className={dragAndDropClass.outer}
       borderClass={{disabledColor:borderCls, disabledOpacity:'100', baseOpacity:'100'}}
-      dataType="json/eventday"
+      dataType={dataType}
       disabled={!isEditing}
       draggable={false}
     >

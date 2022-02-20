@@ -9,7 +9,7 @@ import {
 
 import { usePrefetch } from "../schedule.fetch";
 import { isTempId } from '../services/date.services';
-import { canDrop } from "../services/day.services";
+import { canDrop, dataType } from "../services/day.services";
 
 
 function DayEntry({ day, id, data, isEditing, dropHandler, editEvent }) {
@@ -27,7 +27,7 @@ function DayEntry({ day, id, data, isEditing, dropHandler, editEvent }) {
       onDrop={dropHandler}
       canDrop={canDrop}
       className={dragAndDropClass.inner}
-      dataType="json/eventday"
+      dataType={dataType}
       disabled={!isEditing}
       onHover={()=>loadEvent(id)}
     >

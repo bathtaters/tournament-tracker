@@ -1,8 +1,8 @@
 import DragBlock from "../../common/DragBlock";
 import { NameStyle, PlayerInfoStyle, VsStyle, playerBoxStyle } from "../styles/MatchStyles";
+import { dataType } from "../services/swap.services";
 
 import { formatRecord } from '../../../assets/strings';
-
 
 function MatchPlayer({ id, playerData, matchData, handleSwap, canSwap, isEditing, index, record }) {
   const isDrop = matchData.drops && matchData.drops.includes(id);
@@ -16,7 +16,7 @@ function MatchPlayer({ id, playerData, matchData, handleSwap, canSwap, isEditing
       canDrop={canSwap}
       storeTestData={matchData.id}
       className={playerBoxStyle}
-      dataType="json/matchplayer"
+      dataType={dataType}
       disabled={!isEditing}
     >
 

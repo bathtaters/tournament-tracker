@@ -1,7 +1,9 @@
 import { noDate } from "./date.services";
+import { dragType } from "../../../assets/strings";
+export const dataType = dragType.event;
 
 // Drag & Drop tester
-export const canDrop = types => types.includes("json/eventday");
+export const canDrop = types => types.includes(dataType);
 
 // Drop handler factory
 export const dropController = (updateEvent) => (a,b) => {

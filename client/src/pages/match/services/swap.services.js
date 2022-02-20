@@ -1,4 +1,5 @@
-import { swapPlayerMsg } from '../../../assets/strings';
+import { swapPlayerMsg, dragType } from '../../../assets/strings';
+export const dataType = dragType.player;
 
 // Helpers for swapping player arrays during optimistic updates
 
@@ -21,4 +22,4 @@ export const swapController = (swapPlayers, eventid) => (playerA, playerB) => {
 };
 
 // Test if swap is allowed
-export const canSwap = (types, a, b) => a !== b && types.includes("json/matchplayer");
+export const canSwap = (types, a, b) => a !== b && types.includes(dataType);

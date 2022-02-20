@@ -4,6 +4,7 @@ export const defaultTournamentTitle = "My Tournament";
 export const defaultEventTitle = "New Event";
 export const defaultPlayerName = "New Player";
 export const maxDrawsCounter = 1;
+export const dragType = { event: "json/eventday", player: "json/matchplayer" };
 
 
 
