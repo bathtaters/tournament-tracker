@@ -1,5 +1,5 @@
 const players = require('../db/models/player');
-const { arrToObj, insertSorted } = require('../utils/shared.utils');
+const { arrToObj } = require('../utils/shared.utils');
 
 /* GET player database. */
 
@@ -11,7 +11,14 @@ const getAllPlayers = (_, res) => players.get().then(arrToObj('id')).then(res.se
 
 // Individual player event details
 const getPlayerEvents = (req, res) => players.getPlayerEvents(req.params.id)
-  .then(events => events && events.map(d => d.id)).then(res.sendAndLog);
+.then(events => events && events.map(d => d.id)).then(res.sendAndLog);
+
+// Individual player match details
+async function getPlayerMatches(req, res) {
+  const matchData = await players.getPlayerMatches(req.params.playerid);
+  matchData && matchData.forEach(m => m.isDraw = m.wins.filter(w => w == m.maxwins).length !== 1);
+  return res.sendAndLog(arrToObj('eventid', {delKey:0, combo:1})(matchData || {}));
+}
 
 
 /* SET player database. */
@@ -25,6 +32,6 @@ const updatePlayer = (req, res) => players.set(req.params.id, req.body).then(res
 
 
 module.exports = { 
-  getPlayer, getAllPlayers, getPlayerEvents,
+  getPlayer, getAllPlayers, getPlayerEvents, getPlayerMatches,
   createPlayer, removePlayer, updatePlayer,
 };

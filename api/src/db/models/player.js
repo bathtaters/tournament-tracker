@@ -13,6 +13,9 @@ const list = () => db.getRow('player',null,'id').then(r => r && r.map(p => p.id)
 // Get Event detail for player
 const getPlayerEvents = playerid => db.getRows('event', strings.eventFilter, [playerid], 'id');
 
+// Get Match detail for player
+const getPlayerMatches = playerid => db.getRow('matchDetail', playerid, null, { idCol: 'ANY(players)', getOne: false });
+
 // Add new player
 const add = playerData => db.addRow('player', { ...defs, ...playerData });
 
@@ -20,6 +23,7 @@ const add = playerData => db.addRow('player', { ...defs, ...playerData });
 module.exports = {
     get, list, add,
     getPlayerEvents,
+    getPlayerMatches,
     
     rmv: id => db.rmvRow('player', id),
     set: (id, newParams) => db.updateRow('player', id, newParams),

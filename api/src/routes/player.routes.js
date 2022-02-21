@@ -8,9 +8,10 @@ const controller = require('../controllers/player.controllers');
 // *** Player API commands *** \\
 
 // Gets
-router.get('/all',                           catcher(controller.getAllPlayers));
-router.get('/:id',        validate.playerid, catcher(controller.getPlayer));
-router.get('/:id/events', validate.playerid, catcher(controller.getPlayerEvents));
+router.get('/all',                            catcher(controller.getAllPlayers));
+router.get('/:id',         validate.playerid, catcher(controller.getPlayer));
+router.get('/:id/events',  validate.playerid, catcher(controller.getPlayerEvents));
+router.get('/:id/matches', validate.playerid, catcher(controller.getPlayerMatches));
 
 // Sets
 router.post('/',      validate.createPlayer, catcher(controller.createPlayer));
