@@ -11,12 +11,12 @@ const scheduleRows = [
   { title: 'Event', value: d => d.title, span: 3, link: d => `/event/${d.id}` },
   {
     title: 'Status', span: 2,
-    value: ({isdrop, status}) => statusInfo[status || 0].label + (isdrop ? " (Dropped)" : ""),
+    value: ({isDrop, status}) => statusInfo[status || 0].label + (isDrop ? " (Dropped)" : ""),
     class: ({status}) => statusInfo[status || 0].class,
   },
-  { title: 'Wins', value: ({wins}) => wins, hideBelow: 2 },
-  { title: 'Losses', value: d => d.count == null ? null : d.count - (d.wins || 0) - (d.draws || 0), hideBelow: 2 },
-  { title: 'Draws', value: ({draws}) => draws, hideBelow: 2 },
+  { title: 'Wins',   value: ({ record }) => record[0], hideBelow: 2 },
+  { title: 'Losses', value: ({ record }) => record[1], hideBelow: 2 },
+  { title: 'Draws',  value: ({ record }) => record[2], hideBelow: 2 },
 ];
 
 export default scheduleRows;
