@@ -1,18 +1,28 @@
 import { equalArrays, nextTempId } from "../../common/services/basic.services";
+import { editorButtonLayout } from "../eventEditor.layout";
+import { deleteEventMsg } from "../../../assets/strings";
 
-// Create/Update event, return TRUE to close window (FALSE to keep window open)
-export function saveEvent(eventId, eventData, savedPlayers, createEvent, updateEvent) {
-  if (!savedPlayers) return false;
+// Delete button controller
+const deleteController = (id, data, deleteEvent, closeModal, navigate) => () => {
+  if (!window.confirm(deleteEventMsg(data && data.title))) return;
+  if (id) deleteEvent(id);
+  closeModal(true);
+  navigate("/home");
+};
+
+// Create/Update event & close modal
+export function saveEvent(eventId, eventData, savedPlayers, createEvent, updateEvent, modal) {
+  if (!savedPlayers) return;
   
   // Build event object
-  if (!eventData.title.trim() && !savedPlayers.length) return true;
+  if (!eventData.title.trim() && !savedPlayers.length) return modal.current.close(true);
   if (eventId) eventData.id = eventId;
   eventData.players = savedPlayers;
 
   // Save event
   if (!eventData.id) createEvent(eventData);
   else updateEvent(eventData);
-  return true;
+  modal.current.close(true);
 }
 
 // Apply only new changes to existing cache (For concurrent write-while-editing)
@@ -29,5 +39,12 @@ export function updateArrayWithChanges(before, after, arrToChange) {
   });
   return result || [];
 }
+
+export const getButtonLayout = (id, data, deleteEvent, modal, navigate) => 
+  editorButtonLayout(
+    id,
+    deleteController(id, data, deleteEvent, modal.current.close, navigate),
+    modal.current.close
+  );
 
 export { equalArrays, nextTempId };
