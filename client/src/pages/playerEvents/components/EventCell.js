@@ -2,22 +2,21 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { CellStyle } from "../styles/CellStyle";
+import { getCellData } from "../services/playerEvent.services";
 
-// Each Cell
 function EventCell({ row, data, prefetch }) {
   // Hidden
   if (row.hideBelow && row.hideBelow > data.status) return <CellStyle span={row.span} />;
   
-  const value = row.value(data);
-  const className = row.class ? row.class(data) : '';
+  const { value, className, linkTo, onHover } = getCellData(row, data, prefetch);
   
-  // Not Link
+  // Non-Link
   if (!row.link) return <CellStyle span={row.span} className={className}>{value}</CellStyle>;
 
-  // Is Link
+  // Link
   return (
     <CellStyle span={row.span}>
-      <Link to={row.link(data)} className={className} onMouseEnter={()=>prefetch(data.id)}>
+      <Link to={linkTo} className={className} onMouseEnter={onHover}>
         {value}
       </Link>
     </CellStyle>
