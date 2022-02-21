@@ -30,7 +30,7 @@ function Profile() {
         <ProfilePic />
 
         <PlayerDataStyle>
-          {profileLayout.player(playerData[id].isteam).map(row =>
+          {profileLayout(playerData[id].isteam).map(row =>
             <PlayerDataRow
               key={row.key}
               rowData={row}
