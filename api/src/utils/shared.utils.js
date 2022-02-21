@@ -13,16 +13,18 @@ const logger = require('./log.adapter');
  * @param {String} key - Key of array entry property to use as unique key in result object
  * @param {Object} options - Additional options for conversion
  * @param {Boolean} [options.delKey=true] - Truthy will delete entry['key'] after assigning it to result object['key']
+ * @param {Boolean} [options.combo=false] - Truthy will combine matching keys as array, otherwise throws error
  * @param {String} [options.valKey] - If entered will use entry['valKey'] instead of entry in result object 
  * @returns {convertArray:Object} function to convert input array into result object
  */
-exports.arrToObj = (key, { delKey=true, valKey=null }={}) =>
+exports.arrToObj = (key, { delKey=true, valKey=null, combo=false }={}) =>
   obj => typeof obj !== 'object' ? 
     obj && logger.warn('Expected object:',typeof obj,obj) || obj
     :
     (Array.isArray(obj) ? obj : [obj]).reduce((o,e) => {
       if (!e || !e[key]) logger.warn('Entry is missing key:',key,e);
-      else if (o[e[key]]) throw new Error(`Object has duplicate key: [${key}] = ${e[key]}`);
+      else if (o[e[key]] && !combo) throw new Error(`Object has duplicate key: [${key}] = ${e[key]}`);
+      else if (combo) o[e[key]] = (o[e[key]] || []).concat(valKey ? e[valKey] : e);
       else o[e[key]] = valKey ? e[valKey] : e;
       if (delKey && !valKey) delete e[key];
       return o;
