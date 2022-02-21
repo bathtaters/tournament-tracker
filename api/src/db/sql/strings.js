@@ -13,7 +13,7 @@ exports.event = {
 }
 
 exports.player = {
-    eventFilter: 'WHERE $1::UUID = ANY(players)',
+    eventFilter: 'WHERE $1::UUID = ANY(players) ORDER BY day ASC',
 }
 
 exports.match = {
