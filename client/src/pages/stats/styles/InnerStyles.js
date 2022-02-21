@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 export function HeaderStyle({ label }) {
   const labelSize = label.length === 3 ? 'text-xs sm:text-xl' : 'text-xl';
   return (
-    <span className={'font-normal mb-2 text-center ' + labelSize}>
+    <div className={'font-normal mb-2 text-center ' + labelSize}>
       {label}
-    </span>
+    </div>
   );
 }
 
@@ -19,15 +19,17 @@ export function CellStyle({ indexStyle, titleStyle, children }) {
     // Default
       { size: 'sm',   color: 'base', weight: 'thin',   align: 'center' } ;
 
-  return (<span className={`text-${size} font-${weight} text-${align} ${color}-color`}>
-    {children}
-  </span>);
+  return (
+    <div className={`text-${size} font-${weight} text-${align} ${color}-color`}>
+      {children}
+    </div>
+  );
 }
 
 export function OverlayRowStyle({ to, onClick, className = '' }) {
   return (
     <Link
-      className={`w-full h-full px-2 opacity-0 base-bgd-inv ${className} hover:opacity-25`}
+      className={`w-full h-full px-2 bg-opacity-0 base-bgd-inv ${className} hover:bg-opacity-25`}
       to={to} onClick={onClick}
     />
   );

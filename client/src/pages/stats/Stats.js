@@ -46,7 +46,7 @@ function Stats({ eventid, onPlayerClick, className = '', highlightClass = '', hi
           ) }
         </GridStyle>
 
-        <OverlayStyle>
+        <OverlayStyle className={className}>
           <StatsOverlay players={playerList} className={highlightClass} clickHandler={clickHandler} />
         </OverlayStyle>
 
