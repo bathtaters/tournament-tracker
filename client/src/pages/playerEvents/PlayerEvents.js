@@ -10,8 +10,9 @@ import { HeaderStyle, NoEventsStyle } from "./styles/CellStyle";
 import scheduleRows from "./playerEvents.layout";
 import { useEventQuery, usePlayerEventsQuery, usePrefetch } from "./playerEvents.fetch";
 
-// Main component
+
 function PlayerEvents({ id }) {
+  // Fetch global state
   const { data, isLoading, error } = usePlayerEventsQuery(id);
   const { data: events, isLoading: eventLoad, error: eventErr } = useEventQuery();
 
@@ -20,10 +21,12 @@ function PlayerEvents({ id }) {
   const prefetchStats = usePrefetch('stats');
   const prefetch = id => { prefetchMatch(id); prefetchStats(id); };
 
+  // Handle loading/errors
   if (isLoading || eventLoad || error || eventErr || !events || !Array.isArray(data)) return (
     <Loading loading={isLoading || eventLoad} error={error || eventErr} altMsg="Not found" />
   );
 
+  // Render
   return (
     <WrapperStyle title="Schedule">
       <GridStyle>
