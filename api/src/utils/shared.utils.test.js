@@ -8,12 +8,7 @@ afterAll(() => { warnSpy.mockRestore(); });
 // ---- Array to Object ---- //
 
 describe('arrToObj', () => {
-  let testArray;
-  const expectedResult = {
-    a: { key: 'a', value: 1 },
-    b: { key: 'b', value: 2 },
-    c: { key: 'c', value: 3 },
-  };
+  let testArray, expectedResult;
 
   beforeEach(() => {
     testArray = [
@@ -21,6 +16,11 @@ describe('arrToObj', () => {
       { key: 'b', value: 2 },
       { key: 'c', value: 3 },
     ];
+    expectedResult = {
+      a: { key: 'a', value: 1 },
+      b: { key: 'b', value: 2 },
+      c: { key: 'c', value: 3 },
+    };
   });
 
   it('converts array to object', () => {
@@ -75,6 +75,16 @@ describe('arrToObj', () => {
       b: { value: 2 },
       c: { value: 3 },
     });
+  });
+
+  it('combines duplicate keys if combo set', () => {
+    // Convert results to arrays
+    Object.keys(expectedResult).forEach(k => expectedResult[k] = [expectedResult[k]]);
+    // Include duplicate key
+    testArray.push({ key: 'a', test: 1 });
+    expectedResult.a.push({ key: 'a', test: 1 });
+    // Check
+    expect(arrToObj('key',{delKey:0, combo:1})(testArray)).toEqual(expectedResult);
   });
 });
 

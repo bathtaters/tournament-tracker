@@ -24,8 +24,8 @@ exports.arrToObj = (key, { delKey=true, valKey=null, combo=false }={}) =>
     (Array.isArray(obj) ? obj : [obj]).reduce((o,e) => {
       if (!e || !e[key]) logger.warn('Entry is missing key:',key,e);
       else if (o[e[key]] && !combo) throw new Error(`Object has duplicate key: [${key}] = ${e[key]}`);
-      else if (combo) o[e[key]] = (o[e[key]] || []).concat(valKey ? e[valKey] : e);
-      else o[e[key]] = valKey ? e[valKey] : e;
+      else if (!combo) o[e[key]] = valKey ? e[valKey] : e;
+      else o[e[key]] = (o[e[key]] || []).concat(valKey ? e[valKey] : e);
       if (delKey && !valKey) delete e[key];
       return o;
     }, {});
