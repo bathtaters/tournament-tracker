@@ -8,13 +8,14 @@ import { WrapperStyle, GridStyle } from "./styles/PlayerEventStyles";
 import { HeaderStyle, NoEventsStyle } from "./styles/CellStyle";
 
 import scheduleRows from "./playerEvents.layout";
-import { useEventQuery, usePlayerEventsQuery, usePrefetch } from "./playerEvents.fetch";
+import { useEventQuery, usePlayerEventsQuery, usePlayerMatchesQuery, usePrefetch } from "./playerEvents.fetch";
 
 
 function PlayerEvents({ id }) {
   // Fetch global state
   const { data, isLoading, error } = usePlayerEventsQuery(id);
-  const { data: events, isLoading: eventLoad, error: eventErr } = useEventQuery();
+  const { data: matches, isLoading: matchLoad, error: matchErr } = usePlayerMatchesQuery(id);
+  const { data: events,  isLoading: eventLoad, error: eventErr } = useEventQuery();
 
   // Setup pre-fetching
   const prefetchMatch = usePrefetch('match');
@@ -22,9 +23,8 @@ function PlayerEvents({ id }) {
   const prefetch = id => { prefetchMatch(id); prefetchStats(id); };
 
   // Handle loading/errors
-  if (isLoading || eventLoad || error || eventErr || !events || !Array.isArray(data)) return (
-    <Loading loading={isLoading || eventLoad} error={error || eventErr} altMsg="Not found" />
-  );
+  const [ loading, err ] = [ isLoading || matchLoad || eventLoad,  error || matchErr || eventErr ];
+  if (loading || err || !events || !Array.isArray(data)) return <Loading loading={loading} error={err} altMsg="Not found" />;
 
   // Render
   return (
@@ -32,7 +32,11 @@ function PlayerEvents({ id }) {
       <GridStyle>
         { scheduleRows.map(row => <HeaderStyle span={row.span} key={row.title}>{row.title}</HeaderStyle>) }
 
-        { data.length ? data.map(eventId => <EventRow data={events[eventId]} prefetch={prefetch} key={eventId} />) : <NoEventsStyle /> }
+        { data.length ?
+            data.map(eventId => <EventRow data={events[eventId]} results={matches[eventId]} prefetch={prefetch} key={eventId} />)
+            :
+            <NoEventsStyle />
+        }
       </GridStyle>
       
       <RawData className="mt-6" data={data} />
