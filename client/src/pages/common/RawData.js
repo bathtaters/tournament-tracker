@@ -8,10 +8,12 @@ import { useSettingsQuery } from "./common.fetch";
 function RawData({ data, className = "" }) {
   const { data: settings, isLoading, error } = useSettingsQuery();
 
-  if (isLoading || error || !settings || !settings.showadvanced || !settings.showrawjson)
+  if (isLoading || error || !settings || !settings.showadvanced || !settings.showrawjson || !data)
     return null;
+
+  const styleData = JSON.stringify(data).replace(/:/g,': ').replace(/,/g,', ');
   
-  return (<RawDataStyle className={className}>{JSON.stringify(data)}</RawDataStyle>);
+  return (<RawDataStyle className={className}>{styleData}</RawDataStyle>);
 }
 
 RawData.propTypes = { data: PropTypes.any, className: PropTypes.string };
