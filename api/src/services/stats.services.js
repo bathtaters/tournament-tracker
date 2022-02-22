@@ -62,7 +62,7 @@ function stats(matchData, originalOrder, oppData, useMatchScore = true) {
     Object.keys(final).forEach(player => final[player] = finalize(final[player]));
 
     // Rank players
-    final.ranking = Object.keys(final).sort(rankSort(final, originalOrder, useMatchScore));
+    final.ranking = (originalOrder || Object.keys(final)).sort(rankSort(final, originalOrder, useMatchScore));
     
     return final;
 }
