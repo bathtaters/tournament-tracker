@@ -42,7 +42,7 @@ const getFormData = (elementId, type, register, onChange) =>
   register ? register(elementId, {onChange, valueAsNumber: type === 'number'}) : {};
 
 const getInitValue = (defaultValue, id, type, stored, transform) => {
-  const initalValue = id && id in stored[0] ? stored[0][id] : defaultValue || '';
+  const initalValue = id && id in stored[0] ? stored[0][id] : defaultValue ?? '';
   return {
     [type === 'checkbox' ? "defaultChecked" : "defaultValue"]:
     transform ? transform(initalValue, ...stored) : initalValue
