@@ -64,6 +64,8 @@ _Represented below by api/v[n]_
 |------|------|------|------|------|
 |/all|GET| |{ id: { playerData }, ... }|Data from all players by ID|
 |/[id]|GET| |{ playerData }|Data from a player|
+|/[id]/events|GET| |[ eventids ]|List of player's events|
+|/[id]/matches|GET| |{ eventid: [{ matchData }, ...] }|Data for player's matches|
 |/|POST|{ playerData }|{ id }|Create new player|
 |/[id]|DELETE| |{ id }|Remove a player|
 |/[id]|PATCH|{ newData }|{ id }|Update player data|
