@@ -27,8 +27,16 @@ function swapPlayersService(matchData, swapData) {
   matchData.forEach((data, i) => {
     if (data.dropIdx !== -1) {
       const to = getOtherIdx(i)
-      moveArrays(data, matchData[to], 'drops', 'dropIdx')
-      matchData[to].saveDrops = true
+
+      if (matchData[to].reported !== false) {
+        // If reported, move drop to destination
+        moveArrays(data, matchData[to], 'drops', 'dropIdx')
+        matchData[to].saveDrops = true
+      }
+      // If not-reported, remove drop from source
+      else data.drops.splice(data.dropIdx,1)
+        
+      data.saveDrops = true
     }
   });
 

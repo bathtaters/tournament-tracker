@@ -18,7 +18,7 @@ async function swapPlayers(req, res) {
   // Get data
   let matchData = await match.getMulti(
     req.body.swap.map(s => s.id), false,
-    ['id', 'eventid','players','wins','drops']
+    ['id', 'eventid','players','wins','drops','reported']
   );
 
   // Error check
