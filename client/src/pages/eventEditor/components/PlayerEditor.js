@@ -50,7 +50,10 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
   );
   
   // Load data needed for PlayerInput (Only if it's needed)
-  const inputData = status < 2 ? playerEditorController(data, playerList, newPlayer, setNewPlayer, setPlayerList, createPlayer, pushPlayer, !isChanged && handleFirstEdit) : {};
+  const inputData = status < 2 ? playerEditorController({
+    data, playerList, newPlayer, setNewPlayer, setPlayerList, createPlayer, pushPlayer,
+    onEdit: !isChanged && handleFirstEdit,
+  }) : {};
 
   // Render
   return (
