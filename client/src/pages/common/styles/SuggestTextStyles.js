@@ -6,8 +6,8 @@ export function WrapperStyle({ children }) {
 
 export function BoxStyle({ children }) {
   return (
-    <div className="absolute left-0 z-50 right-0 top-auto max-h-screen bg-red-500">
-      <div className="fixed border dim-border shadow-lg overflow-auto max-h-24 w-full">
+    <div className="absolute left-0 z-50 right-0 top-auto max-h-screen">
+      <div className="fixed border dim-border shadow-lg max-w-xs max-h-32 overflow-y-auto overflow-x-hidden">
         <ul>{children}</ul>
       </div>
     </div>
