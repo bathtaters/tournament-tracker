@@ -6,5 +6,5 @@ export const getCellData = (row, data, prefetch) => ({
   value: row.value(data),
   className: row.class ? row.class(data) : '',
   linkTo: row.link && row.link(data),
-  onHover: row.link && prefetch(data.id),
+  onHover: row.link && (() => prefetch(data.id)),
 });
