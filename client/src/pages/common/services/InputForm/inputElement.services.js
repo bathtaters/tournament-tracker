@@ -28,7 +28,7 @@ export default function getProps({
   return Object.assign(
     props,
     getInitValue(defaultValue, id, type, stored, transform),
-    getFormData(elementId, type, register, onChange),
+    getFormData(id || elementId, type, register, onChange),
   );
 }
 
