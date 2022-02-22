@@ -7,7 +7,7 @@ const autofillSize = valid.defaults.settings.autofillsize;
 
 
 // Click add button
-const clickAddController = (currPlayer, setPlayer, createPlayer, pushPlayer, handleFirstEdit) =>
+const clickAddController = (currPlayer, setPlayer, createPlayer, pushPlayer, onEdit) =>
   function clickAdd(override) {
     if (!currPlayer.visible) return setPlayer({ ...currPlayer, visible: true });
 
@@ -15,13 +15,16 @@ const clickAddController = (currPlayer, setPlayer, createPlayer, pushPlayer, han
     playerData.name = playerData.name && playerData.name.trim();
     if (!playerData.name) return setPlayer(emptyNewPlayer);
 
-    if (handleFirstEdit) handleFirstEdit();
+    onEdit && onEdit();
     if (playerData.id) return pushPlayer(playerData.id);
     return newPlayerController(filterPlayer(playerData), createPlayer, pushPlayer);
   }
 
 // Click autofill cuttom
-const autofillController = (players, setPlayers, size) => () => setPlayers(randomArray(players, size));
+const autofillController = (players, setPlayers, size, onEdit) => () => {
+  setPlayers(randomArray(players, size));
+  onEdit && onEdit();
+}
 
 // Add new player to DB
 async function newPlayerController(playerData, createPlayer, addPlayer) {
@@ -39,8 +42,8 @@ const newPlayerChange = (newPlayer, setNewPlayer) => (e) => e.target.value !== u
 
 // ---------- Combine & adapt to PlayerInput ---------- \\
 
-export default function playerEditorController(data, playerList, newPlayer, setNewPlayer, setPlayerList, createPlayer, pushPlayer, onEdit) {
-  const remainingPlayers =getRemaining(data, playerList);
+export default function playerEditorController({ data, playerList, newPlayer, setNewPlayer, setPlayerList, createPlayer, pushPlayer, onEdit }) {
+  const remainingPlayers = getRemaining(data, playerList);
 
   return {
     // Args
@@ -54,7 +57,7 @@ export default function playerEditorController(data, playerList, newPlayer, setN
     handleAdd: clickAddController(newPlayer, setNewPlayer, createPlayer, pushPlayer, onEdit),
 
     // Handle autofill click
-    autofill: autofillController(remainingPlayers, setPlayerList, autofillSize),
+    autofill: autofillController(remainingPlayers, setPlayerList, autofillSize, onEdit),
 
     // Handle adding a new player
     handleNewPlayer: name => newPlayerController({ name }, createPlayer, pushPlayer),
