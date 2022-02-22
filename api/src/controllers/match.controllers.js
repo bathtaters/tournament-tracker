@@ -39,8 +39,8 @@ async function unreportMatch(req, res) {
 
   // zero out wins, set reported
   await match.update(req.params.id, {
-    ...emptyReport,
-    wins: (matches.wins || []).map(() => 0),
+  ...emptyReport,
+    wins: (matches.players || []).map(() => 0),
     reported: false
   });
 

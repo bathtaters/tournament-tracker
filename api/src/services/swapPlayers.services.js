@@ -33,13 +33,13 @@ function swapPlayersService(matchData, swapData) {
   });
 
   // Filter out unneeded data
-  return matchData.map(data => updateFilter(data))
+  return matchData.map(updateFilter)
 }
 
 
 // HELPER - get index that item will be swapped with (0=1, 1=0, 2=3, 3=2, ...)
-// const getOtherIdx = idx => idx + (idx % 2 ? -1 : 1)
-const getOtherIdx = idx => idx ? 0 : 1 // QUICK METHOD
+// const getOtherIdx = idx => idx + (idx % 2 ? -1 : 1) // (If swapping w/ more than 2 inputs)
+const getOtherIdx = idx => idx ? 0 : 1 // QUICK METHOD (For swapping w/ 2 inputs)
 
 // HELPER - Swaps item from baseArr[0][swapkey] to baseArr[1][swapkey] using indexes: baseArr[n][idxKey]
 const swapArrays = (baseArr, swapKey, idxKey = 'idx', idxA = 0) => {
@@ -48,8 +48,8 @@ const swapArrays = (baseArr, swapKey, idxKey = 'idx', idxA = 0) => {
     baseArr[idxA][swapKey][baseArr[idxA][idxKey]],
     baseArr[idxB][swapKey][baseArr[idxB][idxKey]],
   ] = [
-    baseArr[idxB][swapKey][baseArr[idxB][idxKey]],
-    baseArr[idxA][swapKey][baseArr[idxA][idxKey]],
+    baseArr[idxB][swapKey][baseArr[idxB][idxKey]] || 0,
+    baseArr[idxA][swapKey][baseArr[idxA][idxKey]] || 0,
   ]
 }
 
