@@ -1,21 +1,23 @@
 import React from "react";
 
 import { EntryStyle } from "../../styles/SuggestTextStyles";
-import { getId, getVal } from "../../services/SuggestText/suggestText.utils"
+import { getId } from "../../services/SuggestText/suggestText.utils"
 
-function SuggestList({ list, className, selected, choose, setSelected, offset = 0 }) {
-  if (!list) return null;
+function SuggestList({ list, className, selected, pick, setSelected }) {
+  // Catch no list
+  if (!Array.isArray(list)) return null;
 
-  const isSelected  = (idx) => selected === idx + offset;
+  // Handlers
   const handleHover = (idx) => () => setSelected(idx);
-  const handleClick = (val) => () => choose(val);
+  const handleClick = (val) => () => pick(val);
 
+  // Render list
   return list.map((entry, idx) => (
-    <EntryStyle className={className} isSelected={isSelected(idx)} key={getId(entry, '_')}>
+    <EntryStyle className={`${className} ${entry.className || ''}`} isSelected={selected === idx} key={getId(entry)}>
 
-      <div onMouseDown={handleClick(entry)} onMouseEnter={handleHover(idx + offset)}>
+      <div onMouseDown={handleClick(entry)} onMouseEnter={handleHover(idx)}>
 
-        {getVal(entry)}
+        {entry.value}
 
       </div>
     </EntryStyle>

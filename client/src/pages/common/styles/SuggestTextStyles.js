@@ -4,7 +4,7 @@ export function WrapperStyle({ children }) {
   return (<span className="inline-block relative p-1">{children}</span>);
 }
 
-export function BoxStyle({ children }) {
+export function ListStyle({ children }) {
   return (
     <div className="absolute left-0 z-50 right-0 top-auto max-h-screen">
       <div className="fixed border dim-border shadow-lg max-w-xs max-h-32 overflow-y-auto overflow-x-hidden">

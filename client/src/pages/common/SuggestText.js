@@ -1,83 +1,69 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo, useImperativeHandle, forwardRef } from "react";
 import PropTypes from 'prop-types';
 
 import SuggestList from "./components/SuggestText/SuggestList";
 import SuggestTextBox from "./components/SuggestText/SuggestTextBox";
-import { WrapperStyle, BoxStyle } from "./styles/SuggestTextStyles";
+import { WrapperStyle, ListStyle } from "./styles/SuggestTextStyles";
 
+import actionHandlers from "./services/SuggestText/suggestText.controller";
+import { getSuggestions, autoSelect, autoShow } from "./services/SuggestText/suggestText.services"
+import { getNext, getPrev, validList } from "./services/SuggestText/suggestText.utils"
 import { hotkeyListener, hotkeyController } from "./services/basic.services";
-import { getSuggestions, chooseController } from "./services/SuggestText/suggestText.services"
-import { getSelected, autoSelect, getNext, getPrev, enterHandler } from "./services/SuggestText/suggestText.utils"
 
-
-function SuggestText({
-  value,
-  suggestionList = [],
-  staticList = [],
-  onChange,
-  onEnter,
-  onStaticSelect,
-  className = "",
-  suggestClass = "",
-  staticClass = "dim-color italic",
-  isHidden = false,
-}) {
+// list format: [ { value: "display/filter", id: "uniqueId", isStatic: true/false, className: "class"  }, ... ]
+const SuggestText = forwardRef(function SuggestText({ list = [], className = "", listClass = "", onChange, onSubmit, isHidden }, ref) {
 
   // Local State
-  const [listIsVisible, setListVisible] = useState(false);
-  const [selected, setSelected] = useState(-1);
   const textbox = useRef(null);
+  const [value, setValue] = useState("");
+  const [selected, setSelected] = useState(-1);
+  const [picked, setPick] = useState(null);
+  const [listIsVisible, setListVisible] = useState(false);
 
-  // Get base list
-  const { suggestions, isSolo } = getSuggestions(suggestionList, value);
-  const listCount = suggestions.length + staticList.length;
+  // Filter list
+  const suggestions = useMemo(() => getSuggestions(list, value), [list, value]);
+  
+  // Automatically modify state
+  useEffect(autoSelect(selected, suggestions, setSelected),   [selected, suggestions]);
+  useEffect(autoShow(listIsVisible, textbox, setListVisible), [listIsVisible, textbox]);
 
-  // Auto-select rules
-  useEffect(autoSelect(selected, listCount, suggestions.length === 1, setSelected), [selected, listCount, suggestions]);
+  // Build handlers
+  const { pick, submit, change, submitOnPicked } = actionHandlers({
+    value, selected, picked, suggestions, onSubmit, onChange, setPick, setValue, setListVisible
+  });
 
-  // Select list item handlers
-  const getCurrent = () => isSolo || getSelected(selected, suggestions, staticList);
-  const chooseStatic = onStaticSelect && ((select) => onStaticSelect(value, select));
-  const choose = chooseController(getCurrent, chooseStatic, onChange, setSelected);
+  // Allow parent to Submit
+  useImperativeHandle(ref, () => ({ submit, getValue: () => !isHidden && (picked, {value}) }));
 
   // Keyboard UI
   const keystrokeHandler = hotkeyController({
-    /* Enter */ 13: () => enterHandler(isSolo, onEnter, choose),
-    /* Esc   */ 27: () => selected === -1 ? textbox.current.blur() : setSelected(-1),
-    /* Up    */ 38: () => setSelected(getPrev(selected, listCount)), 
-    /* Down  */ 40: () => setSelected(getNext(selected, listCount)),
+    /* Enter */ 13: () => submitOnPicked(),
+    // /* Esc   */ 27: () => selected === -1 ? textbox.current.blur() : setSelected(-1), // Already cap'd by modal
+    /* Up    */ 38: () => setSelected(getPrev(selected, suggestions?.length || 0)), 
+    /* Down  */ 40: () => setSelected(getNext(selected, suggestions?.length || 0)),
   });
   useEffect(hotkeyListener(keystrokeHandler));
 
   // Render
   return (
     <WrapperStyle>
-      <SuggestTextBox {...{value, isHidden, className, setListVisible, onChange}} ref={textbox} />
+      <SuggestTextBox {...{value, isHidden, className, setListVisible, change, setValue}} ref={textbox} />
       
-      { listIsVisible && !isSolo && Boolean(listCount) && 
-        <BoxStyle>
-          <SuggestList list={suggestions} className={suggestClass} {...{selected, choose, setSelected}} />
-
-          { Boolean(value) && 
-            <SuggestList list={staticList} className={staticClass} offset={suggestions.length} {...{selected, choose, setSelected}} />
-          }
-        </BoxStyle>
+      { listIsVisible && validList(suggestions) && 
+        <ListStyle>
+          <SuggestList list={suggestions} className={listClass} {...{selected, pick, setSelected}} />
+        </ListStyle>
       }
     </WrapperStyle>
   );
-}
-
+});
 
 SuggestText.propTypes = {
-  suggestionList: PropTypes.arrayOf(PropTypes.object),
-  staticList: PropTypes.arrayOf(PropTypes.string),
-  value: PropTypes.string,
+  list: PropTypes.arrayOf(PropTypes.object),
   className: PropTypes.string,
-  suggestClass: PropTypes.string,
-  staticClass: PropTypes.string,
+  listClass: PropTypes.string,
   onChange: PropTypes.func,
-  onEnter: PropTypes.func,
-  onStaticSelect: PropTypes.func,
+  onSubmit: PropTypes.func,
   isHidden: PropTypes.bool,
 }
 

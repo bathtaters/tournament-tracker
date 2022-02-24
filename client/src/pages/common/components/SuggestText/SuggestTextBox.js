@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 
-function SuggestTextBox({ value, className, isHidden, setListVisible, onChange}, ref) {
+function SuggestTextBox({ value, className, isHidden, setListVisible, change }, ref) {
   return (
     <input
       type="text"
@@ -8,11 +8,10 @@ function SuggestTextBox({ value, className, isHidden, setListVisible, onChange},
       className={className + (isHidden ? ' hidden' : '')}
       onBlur={() => setListVisible(false)}
       onFocus={() => setListVisible(true)}
-      onChange={onChange}
+      onChange={change}
       ref={ref}
     />
   );
 }
-
 
 export default forwardRef(SuggestTextBox);
