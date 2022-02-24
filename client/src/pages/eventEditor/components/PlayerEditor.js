@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useImperativeHandle, forwardRef, useCallback, useRef } from "react";
 import PropTypes from 'prop-types';
 
 import PlayerRow from "./PlayerRow";
@@ -7,9 +7,9 @@ import { PlayerEditorStyle } from "../styles/PlayerEditorStyles";
 import Loading from "../../common/Loading";
 
 import { usePlayerQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
-import { emptyNewPlayer, usePreviousArray } from "../services/playerEditor.utils";
+import playerInputController from "../services/playerEditor.services";
 import playerListController, { updateState, retrieveList } from "../services/playerList.services";
-import playerEditorController from "../services/playerEditor.services";
+import { usePreviousArray } from "../services/playerEditor.utils";
 
 
 const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit = null }, ref) {
@@ -19,26 +19,24 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
   const [ createPlayer, { isLoading: playersUpdating } ] = useCreatePlayerMutation();
   
   // Local State
+  const suggestRef = useRef(null);
   const [playerList, setPlayerList] = useState([]);
   const [isChanged, setChanged] = useState(!onEdit);
-  const [newPlayer, setNewPlayer] = useState(emptyNewPlayer);
 
-  // Get previous data
+  // Push remote updates to local state - UNTESTED
   const prevPlayers = usePreviousArray(players);
+  useEffect(() => { updateState(prevPlayers, players, setPlayerList) }, [prevPlayers, players, setPlayerList]);
 
   // Add/Remove player to/from list
-  const { pushPlayer, popPlayer } = playerListController(data, playerList, setPlayerList, setNewPlayer);
+  const { pushPlayer, popPlayer } = playerListController(data, playerList, setPlayerList);
   
-  // Run onEdit when first edit is made
-  const handleFirstEdit = useCallback(() => { if (!isChanged) { onEdit(); setChanged(true); } }, [isChanged, setChanged, onEdit]);
-
-  // Push remote updates to local state
-  useEffect(() => { updateState(prevPlayers, players, setPlayerList) }, [prevPlayers, players, setPlayerList]);
+  // Run onEdit once, when first edit is made
+  const onFirstEdit = useCallback(isChanged ? null : () => { onEdit(); setChanged(true); }, [isChanged, setChanged, onEdit]);
 
   // Assign getList function to ref
   useImperativeHandle(ref,
-    () => ({ getList: retrieveList(playerList, newPlayer, pushPlayer, setNewPlayer) }),
-    [playerList, newPlayer, pushPlayer, setNewPlayer]
+    () => ({ getList: retrieveList(playerList, suggestRef) }),
+    [playerList]
   );
 
 
@@ -50,10 +48,7 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
   );
   
   // Load data needed for PlayerInput (Only if it's needed)
-  const inputData = status < 2 ? playerEditorController({
-    data, playerList, newPlayer, setNewPlayer, setPlayerList, createPlayer, pushPlayer,
-    onEdit: !isChanged && handleFirstEdit,
-  }) : {};
+  const inputData = status < 2 ? playerInputController({ data, playerList, setPlayerList, createPlayer, pushPlayer, onFirstEdit }) : {};
 
   // Render
   return (
@@ -68,7 +63,7 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
         />
       )}
 
-      {status < 2 &&  <PlayerInput {...inputData} />}
+      {status < 2 &&  <PlayerInput {...inputData} ref={suggestRef} />}
 
     </PlayerEditorStyle>
   );

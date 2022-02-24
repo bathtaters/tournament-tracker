@@ -1,37 +1,44 @@
-import React from "react";
+import React, { useState, forwardRef } from "react";
 
 import SuggestText from "../../common/SuggestText";
-
 import { PlayerInputStyle, suggestClass } from "../styles/PlayerEditorStyles"
 import { PlayerAddButton, PlayerFillButton } from "../styles/PlayerEditorButtons"
 
-function PlayerInput({
-  data, newPlayer, remainingPlayers, showAutofill, autofillSize,
-  autofill, handleAdd, handlePlayerChange, handleNewPlayer,
-}) {
+import { suggestListLayout } from "../eventEditor.layout";
+import { onSubmitController } from "../services/playerEditor.services";
 
-  const suggestions = remainingPlayers.map(id=>({id, name: data[id].name}));
+const PlayerInput = forwardRef(function PlayerInput({
+  data, remainingPlayers, autofillSize, onFirstEdit, hideAutofill,
+  pushPlayer, autofill, handlePlayerChange, handleNewPlayer,
+}, ref) {
 
+  // Local state
+  const [hideSuggest, setHide] = useState(true);
+
+  // Build list
+  const suggestions = suggestListLayout(remainingPlayers, data);
+
+  // OnSubmit handler
+  const submitHandler = onSubmitController(hideSuggest, setHide, handleNewPlayer, pushPlayer, onFirstEdit);
+  
   return (
     <PlayerInputStyle>
 
-      <PlayerAddButton onClick={() => handleAdd()} />
-      <PlayerFillButton onClick={autofill} size={autofillSize} hidden={showAutofill} />
+      <PlayerAddButton onClick={() => hideSuggest ? setHide(false) : ref.current.submit()} />
+      <PlayerFillButton onClick={autofill} size={autofillSize} hidden={hideAutofill || !hideSuggest} />
 
       <SuggestText
+        list={suggestions}
         className={suggestClass.box}
-        isHidden={!newPlayer.visible}
-        value={newPlayer.name}
+        isHidden={hideSuggest}
         onChange={handlePlayerChange}
-        onEnter={handleAdd}
-        onStaticSelect={handleNewPlayer}
-        suggestionList={suggestions}
-        staticList={["Add Player"]}
+        onSubmit={submitHandler}
+        ref={ref}
       />
       <span className={suggestClass.spacer} />
 
     </PlayerInputStyle>
   );
-}
+});
 
 export default PlayerInput;

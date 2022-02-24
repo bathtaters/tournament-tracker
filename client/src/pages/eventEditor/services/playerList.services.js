@@ -1,10 +1,9 @@
 import { equalArrays, updateArrayWithChanges } from "./eventEditor.services";
-import { emptyNewPlayer } from "./playerEditor.utils";
-import { duplicatePlayerMsg, unsavedPlayerMsg, unaddedPlayerMsg } from "../../../assets/strings";
+import { duplicatePlayerMsg, unsavedPlayerMsg } from "../../../assets/strings";
 
 
 // Add player to list
-const pushPlayerController = (playerData, players, setPlayers, setPlayer) => function pushPlayer(playerId) {
+const pushPlayerController = (playerData, players, setPlayers) => function pushPlayer(playerId) {
   if (!playerId) throw new Error("Add player is missing playerid!");
 
   let res = true;
@@ -13,7 +12,6 @@ const pushPlayerController = (playerData, players, setPlayers, setPlayer) => fun
     res = false;
   } else setPlayers(players.concat(playerId));
 
-  setPlayer(emptyNewPlayer);
   return res;
 };
 
@@ -26,13 +24,12 @@ const popPlayerController = (players, setPlayers) => (pid, idx) => function popP
 };
 
 // Combined
-export default function playerListController (playerData, players, setPlayers, setPlayer) {
+export default function playerListController (playerData, players, setPlayers) {
   return {
-    pushPlayer: pushPlayerController(playerData, players, setPlayers, setPlayer),
+    pushPlayer: pushPlayerController(playerData, players, setPlayers),
     popPlayer: popPlayerController(players, setPlayers),
   };
 }
-
 
 
 // Push global updates to state
@@ -41,21 +38,24 @@ export const updateState = (prevState, currState, setCurrState) => {
     setCurrState(s => updateArrayWithChanges(prevState, currState || [], s));
 };
 
-// Get list for parent components
-export const retrieveList = (playerList, newPlayer, pushPlayer, setNewPlayer) => () => {
+
+// Get player list (Run via ref)
+export const retrieveList = (playerList, suggestRef) => async () => {
   let savedPlayers = playerList.slice();
 
   // Handle leftover text in player box
-  if (newPlayer.visible && newPlayer.name.trim()) {
-    if (newPlayer.id) {
-      // Add player if they exist
-      if (window.confirm(unsavedPlayerMsg(newPlayer.name)) && pushPlayer(newPlayer.id))
-        savedPlayers.push(newPlayer.id);
-      else return setNewPlayer(emptyNewPlayer);
-      // Exit if player does not exist
-    } else if (!window.confirm(unaddedPlayerMsg(newPlayer.name))) return; // Abort
+  const textbox = suggestRef.current.getValue();
+  if ((textbox?.value || '').trim()) {
+
+    // Add player to list
+    if (!window.confirm(unsavedPlayerMsg(textbox.value))) return; // user cancel
+    const newPlayer = suggestRef.current.submit();
+
+    // Get player ID to include in savedPlayers
+    const newId = newPlayer && (newPlayer.id || await newPlayer.result);
+    if (!newId) return; // failed to add player
+    savedPlayers.push(newId); // add new player
   }
   
-  setNewPlayer(emptyNewPlayer)
   return savedPlayers;
 };

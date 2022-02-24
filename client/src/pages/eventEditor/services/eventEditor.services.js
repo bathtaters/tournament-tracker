@@ -10,8 +10,10 @@ const deleteController = (id, data, deleteEvent, closeModal, navigate) => () => 
   navigate("/home");
 };
 
+
 // Create/Update event & close modal
-export function saveEvent(eventId, eventData, savedPlayers, createEvent, updateEvent, modal) {
+export async function saveEvent(eventId, eventData, playerList, createEvent, updateEvent, modal) {
+  const savedPlayers = await playerList.current.getList();
   if (!savedPlayers) return;
   
   // Build event object
@@ -24,6 +26,7 @@ export function saveEvent(eventId, eventData, savedPlayers, createEvent, updateE
   else updateEvent(eventData);
   modal.current.close(true);
 }
+
 
 // Apply only new changes to existing cache (For concurrent write-while-editing)
 export function updateArrayWithChanges(before, after, arrToChange) {
@@ -39,6 +42,7 @@ export function updateArrayWithChanges(before, after, arrToChange) {
   });
   return result || [];
 }
+
 
 export const getButtonLayout = (id, data, deleteEvent, modal, navigate) => 
   editorButtonLayout(

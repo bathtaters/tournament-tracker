@@ -31,7 +31,7 @@ function EditEvent({ eventid, modal }) {
   if (isLoading || error || !modal) return <Loading loading={isLoading} error={error} altMsg="Popup not initialized" tagName="h3" />;
 
   // Actions
-  const submitHandler = (event) => saveEvent(eventid, event, playerList.current.getList(), createEvent, updateEvent, modal);
+  const submitHandler = (event) => saveEvent(eventid, event, playerList, createEvent, updateEvent, modal);
 
   // Button layout
   const buttons = getButtonLayout(eventid, data, deleteEvent, modal, navigate);

@@ -1,11 +1,18 @@
 import { useRef, useEffect } from "react";
 import { equalArrays } from "./eventEditor.services";
 
-// Base for newPlayer
-export const emptyNewPlayer = { visible: false, name: "", id: null };
+// Advanced Settings
+const checkTeamsForDupe = true;
 
-// Filter player data for player editor
-export const filterPlayer = ({ id, name }, includeId) => includeId ? { id, name } : { name };
+
+// Check if player already exists in list
+export const playerExists = (player, allPlayers) => {
+  const lower = player.toLowerCase();
+  return Object.values(allPlayers).some(p =>
+    (checkTeamsForDupe || !p.isteam) && p.name.toLowerCase() === lower
+  );
+}
+
 
 // Radomizes an array, optionally trimming it to a specific size
 export const randomArray = (arr, size) => {
@@ -17,9 +24,11 @@ export const randomArray = (arr, size) => {
   return res;
 };
 
+
 // Get list of players who are not already selected
 export const getRemaining = (players, playerList) => players ? Object.keys(players)
   .filter(p => !players[p].isteam && !playerList.includes(p)) : [];
+
 
 // Save history of 1D array
 export function usePreviousArray(newValue) {
