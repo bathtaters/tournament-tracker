@@ -28,7 +28,7 @@ export default function getProps({
   return Object.assign(
     props,
     getInitValue(defaultValue, id, type, stored, transform),
-    getFormData(id || elementId, type, register, onChange),
+    getFormData(id || elementId, props, register, onChange),
   );
 }
 
@@ -38,8 +38,9 @@ const getElementId = (id, label) => (id || label || '').replace(/\W/g,'');
 
 const getDisabled = (disabled, stored) => typeof disabled === 'function' ? disabled(...stored) : disabled;
 
-const getFormData = (elementId, type, register, onChange) => 
-  register ? register(elementId, {onChange, valueAsNumber: type === 'number'}) : {};
+const getFormData = (elementId, props, register, onChange) =>
+  props.disabled || !register ? {} :
+    register(elementId, {onChange, valueAsNumber: props.type === 'number'});
 
 const getInitValue = (defaultValue, id, type, stored, transform) => {
   const initalValue = id && id in stored[0] ? stored[0][id] : defaultValue ?? '';
