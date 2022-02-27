@@ -42,6 +42,7 @@ export const updateState = (prevState, currState, setCurrState) => {
 // Get player list (Run via ref)
 export const retrieveList = (playerList, suggestRef) => async () => {
   let savedPlayers = playerList.slice();
+  if (!suggestRef?.current) return savedPlayers;
 
   // Handle leftover text in player box
   const textbox = suggestRef.current.getValue();
