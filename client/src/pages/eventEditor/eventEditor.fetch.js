@@ -1,15 +1,17 @@
 import { fetchApi, getTags, useEventQuery, usePlayerQuery, useSettingsQuery } from '../common/common.fetch';
-import { createUpdate, deleteUpdate, eventUpdate } from './services/eventEditorFetch.services'
+import { deleteUpdate, eventSet } from './services/eventEditorFetch.services'
 import { useCreatePlayerMutation } from '../players/player.fetch'
 
 export const eventEditorApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
 
-    createEvent: build.mutation({
-      query: body => ({ url: `event`, method: 'POST', body }),
-      transformResponse: res => console.log('NEW_EVENT',res) || res,
+    setEvent: build.mutation({
+      query: ({ id, ...body }) => id ?
+        ({ url: `event/${id}`, method: 'PATCH', body }) :
+        ({ url: `event`,       method: 'POST',  body }),
+      transformResponse: res => console.log('SET_EVENT',res) || res,
       invalidatesTags: getTags('Event',{addBase:['Schedule','PlayerDetail']}),
-      onQueryStarted: createUpdate,
+      onQueryStarted: eventSet,
     }),
 
     deleteEvent: build.mutation({
@@ -19,18 +21,11 @@ export const eventEditorApi = fetchApi.injectEndpoints({
       onQueryStarted: deleteUpdate,
     }),
 
-    updateEvent: build.mutation({
-      query: ({ id, ...body }) => ({ url: `event/${id}`, method: 'PATCH', body }),
-      transformResponse: res => console.log('UPD_EVENT',res) || res,
-      invalidatesTags: getTags('Event',{addBase:['Schedule','PlayerDetail'], all:0}),
-      onQueryStarted: eventUpdate,
-    }),
-
   }),
   overrideExisting: true
 });
 
 export { useEventQuery, usePlayerQuery, useSettingsQuery, useCreatePlayerMutation };
 export const {
-  useCreateEventMutation, useDeleteEventMutation, useUpdateEventMutation,
+  useSetEventMutation, useDeleteEventMutation,
 } = eventEditorApi;

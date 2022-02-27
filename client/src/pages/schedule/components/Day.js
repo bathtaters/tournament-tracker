@@ -8,7 +8,7 @@ import {
   MissingDataStyle, dragAndDropClass
 } from "../styles/DayStyles";
 
-import { useUpdateEventMutation } from "../schedule.fetch";
+import { useSetEventMutation } from "../schedule.fetch";
 import { toDateObj, dayClasses } from '../services/date.services';
 import { canDrop, dropController, dataType } from "../services/day.services";
 
@@ -21,7 +21,7 @@ function Day({ events, isEditing, setEventModal, day, eventData }) {
   const [ { titleCls, borderCls }, date ] = useMemo(() => [ dayClasses(day), toDateObj(day) ], [day]);
   
   // Drag & Drop action
-  const [ updateEvent ] = useUpdateEventMutation();
+  const [ updateEvent ] = useSetEventMutation();
   const dropHandler = useCallback(dropController(updateEvent), [updateEvent]);
 
   return (

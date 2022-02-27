@@ -11,7 +11,7 @@ import Loading from "../common/Loading";
 
 import { editorLayout } from "./eventEditor.layout";
 import { saveEvent, getButtonLayout } from "./services/eventEditor.services";
-import { useEventQuery, useCreateEventMutation, useDeleteEventMutation, useUpdateEventMutation } from "./eventEditor.fetch";
+import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "./eventEditor.fetch";
 
 import valid from "../../assets/validation.json";
 const baseData = { defaultValues: valid.defaults.event, limits: valid.limits.event };
@@ -23,15 +23,14 @@ function EditEvent({ eventid, modal }) {
   
   // Init mutators
   let navigate = useNavigate();
+  const [ setEvent ] = useSetEventMutation();
   const [ deleteEvent ] = useDeleteEventMutation();
-  const [ createEvent ] = useCreateEventMutation();
-  const [ updateEvent ] = useUpdateEventMutation();
 
   // Loading/Error catcher
   if (isLoading || error || !modal) return <Loading loading={isLoading} error={error} altMsg="Popup not initialized" tagName="h3" />;
 
   // Actions
-  const submitHandler = (event) => saveEvent(eventid, event, playerList, createEvent, updateEvent, modal);
+  const submitHandler = (event) => saveEvent(eventid, event, playerList, setEvent, modal);
 
   // Button layout
   const buttons = getButtonLayout(eventid, data, deleteEvent, modal, navigate);

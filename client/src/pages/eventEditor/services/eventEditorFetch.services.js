@@ -16,7 +16,8 @@ function swapToDay(schedule, id, newDay) {
   else schedule[newDay].events.push(id);
 }
 
-export function createUpdate(body, { dispatch, getState }) {
+// Update cache for new event
+function createUpdate(body, { dispatch, getState }) {
   const events = getState().dbApi.queries['event(undefined)'];
   const id = nextTempId('EVENT', events && Object.keys(events));
   dispatch(fetchApi.util.updateQueryData('event', undefined, draft => { draft[id] = body; }));
@@ -27,19 +28,9 @@ export function createUpdate(body, { dispatch, getState }) {
   }));
 };
 
-export function deleteUpdate(id, { dispatch }) {
-  dispatch(fetchApi.util.updateQueryData('schedule', undefined, draft => { 
-    Object.keys(draft).forEach(day => {
-      if (draft[day] && draft[day].events && draft[day].events.includes(id))
-        draft[day].events.splice(draft[day].events.indexOf(id),1);
-    });
-  }));
-  dispatch(fetchApi.util.updateQueryData('event', undefined, draft => { 
-    delete draft[id]; 
-  }));
-};
-
-export function eventUpdate({ id, ...body }, { dispatch }) {
+// Update cache for existing event
+function eventUpdate({ id, ...body }, { dispatch }) {
+  console.log('~*UPD_EVENT*~', id, body);
   dispatch(fetchApi.util.updateQueryData('event', undefined, draft => { 
     Object.assign(draft[id], body);
   }));
@@ -52,3 +43,19 @@ export function eventUpdate({ id, ...body }, { dispatch }) {
     }));
   }
 };
+
+// Remove event from cache
+export function deleteUpdate(id, { dispatch }) {
+  dispatch(fetchApi.util.updateQueryData('schedule', undefined, draft => { 
+    for (const day in draft) {
+      const idx = draft[day]?.events?.indexOf(id) ?? -1;
+      if (idx !== -1) draft[day].events.splice(idx, 1);
+    }
+  }));
+  dispatch(fetchApi.util.updateQueryData('event', undefined, draft => { 
+    delete draft[id]; 
+  }));
+};
+
+// Pick create/update function based on body
+export const eventSet = (body, meta) => body.id ? eventUpdate(body, meta) : createUpdate(body, meta);

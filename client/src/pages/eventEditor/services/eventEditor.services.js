@@ -12,7 +12,7 @@ const deleteController = (id, data, deleteEvent, closeModal, navigate) => () => 
 
 
 // Create/Update event & close modal
-export async function saveEvent(eventId, eventData, playerList, createEvent, updateEvent, modal) {
+export async function saveEvent(eventId, eventData, playerList, setEvent, modal) {
   const savedPlayers = await playerList.current.getList();
   if (!savedPlayers) return;
   
@@ -21,9 +21,8 @@ export async function saveEvent(eventId, eventData, playerList, createEvent, upd
   if (eventId) eventData.id = eventId;
   eventData.players = savedPlayers;
 
-  // Save event
-  if (!eventData.id) createEvent(eventData);
-  else updateEvent(eventData);
+  // Push event to server (Create/Update)
+  setEvent(eventData);
   modal.current.close(true);
 }
 

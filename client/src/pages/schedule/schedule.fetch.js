@@ -1,5 +1,5 @@
 import { fetchApi, useEventQuery, useSettingsQuery, usePrefetch } from '../common/common.fetch';
-import { useUpdateEventMutation } from '../eventEditor/eventEditor.fetch';
+import { useSetEventMutation } from '../eventEditor/eventEditor.fetch';
 
 export const scheduleApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
@@ -14,5 +14,5 @@ export const scheduleApi = fetchApi.injectEndpoints({
   overrideExisting: true
 });
 
-export { useEventQuery, useSettingsQuery, useUpdateEventMutation, usePrefetch };
+export { useEventQuery, useSettingsQuery, useSetEventMutation, usePrefetch };
 export const { useScheduleQuery } = scheduleApi;
