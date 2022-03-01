@@ -93,9 +93,13 @@ describe('toStats', () => {
     expect(util.rankSort).toBeCalledTimes(2)
   })
   it('passes correct args rankSort', () => {
-    const res = stats({ d1 }, 'arg2', oppos, 'arg3')
+    const res = stats({ d1 }, ['arg2'], oppos, 'arg3')
     expect(util.rankSort).toBeCalledTimes(1)
-    expect(util.rankSort).toBeCalledWith(res, 'arg2', 'arg3')
+    expect(util.rankSort).toBeCalledWith(res, ['arg2'], 'arg3')
+  })
+  it('includes players w/o stats in ranking', () => {
+    expect(stats({ d1 }, ['p1','p2','p3','p4','p5','p6'], oppos).ranking)
+      .toEqual(['p1','p2','p3','p4','p5','p6'])
   })
 
   // Combining
