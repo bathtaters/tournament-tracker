@@ -20,11 +20,11 @@ function suggestTextController({ value, selected, picked, suggestions, onSubmit,
 
 
   // Submit handler
-  const submit = (forcePick) => {
+  const submit = async (forcePick) => {
     const newPick = forcePick || picked || exact;
 
     // Submit
-    const result = onSubmit && onSubmit(newPick, value);
+    const result = await (onSubmit && onSubmit(newPick, value));
 
     // Reset form
     setListVisible(false);
