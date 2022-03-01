@@ -1,7 +1,7 @@
 // Import
 const swapPlayers = require('./swapPlayers.services')
 
-describe('swapPlayersService', () => {
+describe('swapPlayersService + Utils', () => {
   let swaps, matches
 
   beforeEach(() => {
