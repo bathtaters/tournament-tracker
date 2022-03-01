@@ -30,7 +30,6 @@ function createUpdate(body, { dispatch, getState }) {
 
 // Update cache for existing event
 function eventUpdate({ id, ...body }, { dispatch }) {
-  console.log('~*UPD_EVENT*~', id, body);
   dispatch(fetchApi.util.updateQueryData('event', undefined, draft => { 
     Object.assign(draft[id], body);
   }));
