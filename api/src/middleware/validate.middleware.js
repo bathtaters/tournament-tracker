@@ -7,8 +7,11 @@ const checkValidation = (req, _, next) => {
   const validErrors = validationResult(req)
   if (!validErrors.isEmpty())
     next({ 
-      message: 'Validation failed',
-      stack: 'Validation failed:\n\t'+validErrors.formatWith(errorFormatter).array().join('\n\t'),
+      message: validErrors.formatWith(errorFormatter).array().join(', '),
+      stack:
+        'Request data:\n\tURL: '+req.originalUrl + '\n\tMethod: '+req.method +
+          '\n\tParams: '+JSON.stringify(req.params) + '\n\tBody: '+JSON.stringify(req.body) +
+        'Validation errors:\n\t' + validErrors.formatWith(errorFormatter).array().join('\n\t'),
       status: 400,
     })
   next()
