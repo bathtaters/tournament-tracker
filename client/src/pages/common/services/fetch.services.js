@@ -12,7 +12,8 @@ export const getSettings = (data) => {
   return data;
 };
 
-export const getEvent = (res) => {
+export const getEvent = (res, meta, args) => {
+  if (meta.response.status === 204) return console.warn(`EVENT <${args}> does not exist`);
   if (res.id) res.status = getStatus(res);
   else Object.keys(res).forEach(id => res[id].status = getStatus(res[id]));
   console.log('EVENT',res);

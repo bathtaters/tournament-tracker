@@ -13,7 +13,7 @@ const { arrToObj } = require('../utils/shared.utils');
 // Specific event
 async function getEvent(req, res) {
   const eventData = await event.get(req.params.id, true);
-  if (!eventData || eventData.length === 0) throw new Error('Event does not exist <'+ req.params.id+'>');
+  if (!eventData || eventData.length === 0) return res.sendStatus(204);
 
   const matches = await match.listByEvent(req.params.id).then(sortMatchResult);
 
