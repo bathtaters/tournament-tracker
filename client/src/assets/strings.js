@@ -25,7 +25,7 @@ export const cantDeletePlayerMsg = name => name+" cannot be deleted while regist
 export const clearReportMsg = (title) => `Are you sure you want to delete the records for ${title}?`;
 
 // Errors
-export const playerCreateError = ({ name }) => (new Error('"'+name+'" was not able to be added.'))
+export const playerCreateError = ({ error }, { name }) => new Error(error?.data?.error ? error.data.error : '"'+name+'" was not able to be added.')
 
 
 // --- Lists --- \\
