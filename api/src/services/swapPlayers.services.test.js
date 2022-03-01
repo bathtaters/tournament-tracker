@@ -7,8 +7,8 @@ describe('swapPlayersService', () => {
   beforeEach(() => {
     swaps = [ { playerid: 'c' }, { playerid: 'b' } ]
     matches = [
-      { id: 'm1', players: ['a','c'], wins: [1, 3], drops: ['a'] },
-      { id: 'm2', players: ['b','d'], wins: [2, 4], drops: ['b'] },
+      { id: 'm1', players: ['a','c'], wins: [1, 3], drops: ['a'], reported: true },
+      { id: 'm2', players: ['b','d'], wins: [2, 4], drops: ['b'], reported: true },
     ]
   })
 
@@ -37,8 +37,9 @@ describe('swapPlayersService', () => {
     ])
   })
 
-  it('leave off drops when not needed', () => {
-    expect(swapPlayers(matches, swaps)[1]).not.toHaveProperty('drops')
+  it('clear drops from unreported match', () => {
+    matches[1].reported = false
+    expect(swapPlayers(matches, swaps)[1]).toHaveProperty('drops', [])
   })
 
   it('throws error for missing player', () => {
