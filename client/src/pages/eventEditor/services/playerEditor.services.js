@@ -11,7 +11,7 @@ async function newPlayerController(playerData, players, createPlayer, pushPlayer
   if (!window.confirm(createPlayerMsg(playerData.name))) return false;
 
   // Create & Push player
-  const id = await createPlayer(playerData).then(r => r.data.id);
+  const id = await createPlayer(playerData).then(r => r?.data?.id);
   if (!id) throw playerCreateError(playerData);
   return pushPlayer(id) && id;
 }
