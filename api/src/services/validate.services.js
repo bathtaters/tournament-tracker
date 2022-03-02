@@ -59,7 +59,7 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
       arrLimit = limits
       limits = null
     }
-    ptr.isArray = !arrLimit || { options: arrLimit, errorMessage: limitErr(arrLimit, false) }
+    ptr.isArray = arrLimit ? { options: arrLimit, errorMessage: limitErr(arrLimit, false) } : { errorMessage: errMsg('array') }
     
     // Create entry & update ptr
     valid[key+'.*'] = {}
