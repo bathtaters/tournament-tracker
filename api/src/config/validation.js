@@ -44,7 +44,7 @@ module.exports = {
       roundactive: 0,
       roundcount: 3,
       wincount: 2,
-      playerspermatch: 3,
+      playerspermatch: 2,
       clocklimit: '01:00:00',
       clockstart: null,
       clockmod: null,
