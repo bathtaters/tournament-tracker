@@ -1,65 +1,106 @@
 // --- SHARED UTILITES FOR GENERATING MATCHES --- \\
+const { randomInt } = require('crypto');
+
+// Basic math
+exports.count = (item, array) => array ? array.filter(elem => elem === item).length : 0
+exports.sum = (array) => array.reduce((tot,n) => tot + n, 0)
+exports.avg = (array) => array.length ? exports.sum(array) / array.length : 0
+exports.diff = (a,b) => a > b ? a - b : b - a
+
+// Test equality in array
+exports.deepEqual = (a,b) => !Array.isArray(a) || !Array.isArray(b) ? a === b :
+  a.length === b.length && a.every((ai,i) => exports.deepEqual(ai, b[i]))
+
+// Swap out keys in dict for values (Runs recursively on arrays)
+exports.deepSwap = (input, dict) => Array.isArray(input) ?
+  input.map(i => exports.deepSwap(i, dict)) : input in dict ? dict[input] : input
+
+// Remove duplicate elements from a sorted array (Using deepEqual)
+exports.removeDupes = (sortedArray) => sortedArray.reduce(
+  (res,elem) => (exports.deepEqual(elem, res[res.length - 1]) || res.push(elem)) && res
+, [])
+
+
+
+// Generate all unique combinations of given width from array
+exports.getCombos = (array, width = 2) => {
+
+  function recurCombos(remaining, current) {
+    const isFinal = current.length + 1 >= width, len = remaining.length
+    
+    let result = []
+    for (let i = 0; i < len; i++) {
+
+      if (isFinal)
+        result.push(current.concat(remaining[i]))
+
+      else
+        recurCombos(remaining.slice(i+1), current.concat(remaining[i]))
+          .forEach(r => result.push(r))
+
+    }
+    return result
+  }
+
+  return recurCombos(array, [])
+}
+
+
+
+// Generate all unique groups of given width from array
+exports.getGroups = (array, width) => {
+
+  function recurGroups(remaining, current) {
+    if (remaining.length < 1) return [current.sort()]
+  
+    let result = []
+    for (const match of exports.getCombos(remaining, Math.min(remaining.length, width))) {
+
+      recurGroups(remaining.filter(elem => !match.includes(elem)), current.concat([match]))
+        .forEach(r => result.push(r))
+    }
+  
+    return result.sort()
+  }
+
+  const indexGroups = exports.removeDupes(recurGroups(array.map((_,i) => i), []))
+  return exports.deepSwap(indexGroups, array)
+}
+
+
+
+// Fischer-Yates shuffle algo
+function shuffle(array) {
+  let currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    randomIndex = randomInt(currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
 
 /**
- * Copy array except for deleted elements (Similar to splice command).
- * Doesn't modify input array & returns resulting array
- * @param {Any[]} array - Input array
- * @param {Number} index - Index to start removing elements
- * @param {Number} count - Number of elements to remove
- * @returns {Any[]} Spliced copy of array
- */
-exports.splicing = (array, start, delCount = 1) => 
-  array.slice(0,start).concat(array.slice(start + delCount));
-
-/**
- * Check if any elements are common to both arrays
- * @param {Any[]} arrA - Array
- * @param {Any[]} arrB - Array
- * @returns {Boolean} True if any element in 'arrA' exists in 'arrB'
- */
-exports.anyElements = (arrA, arrB) => arrA.some(elem => arrB.includes(elem));
-
-
-/**
- * "Un-flatten" array
- * Create 2-D array, grouping every 'elemSize' elements
+ * Randomize & Un-flatten array
+ * Create 2-D array, randomly grouping every 'elemSize' elements
  * @param {Any[]} array - Input array
  * @param {Number} elemSize - Size of innerArrays in result
  * @returns {Any[][]} 2-D result array
  */
-exports.unflat = (array, elemSize) => {
-  if (elemSize < 1) return array.slice();
+ exports.randomGroup = (array, groupSize) => {
+  array = shuffle(array.slice());
+  if (groupSize < 1) return array;
   let newArr = [];
-  for(let i=0; i < array.length; i += elemSize) {
-    newArr.push(array.slice(i, i + elemSize));
+  for(let i=0; i < array.length; i += groupSize) {
+    newArr.push(array.slice(i, i + groupSize));
   }
   return newArr;
 }
-
-
-/**
- * Check if element is a valid replacement
- * @callback isReplaceCb
- * @param {*} element - Element to test
- * @param {Any[]} innerArray - Inner array containing element
- * @param {Number} innerIndex - Element's index in innerArray
- * @returns {Boolean} Truthy if element is valid replacement
- */
-/**
- * Reverse-search 2D Array for a replacement
- * (loops around when it reaches the start of the array)
- * @param {Any[][]} arr2d - 2-D Array of elements to search
- * @param {Number} startIdx - Outer-index to begin backwards search
- * @param {isReplaceCb} isReplace - Function that checks if element is a valid replacement
- * @returns {Number[]} Array containing [outer, inner] index of replacement (or void if no replacement)
- */
-exports.revReplace2dIndex = (arr2d, startIdx, isReplace) => {
-  const start = (startIdx || arr2d.length) - 1; // ignores itself
-  const end = startIdx % arr2d.length; // ensure end is in arr2d
-  
-  for (let i = start; i !== end; i = (i || arr2d.length) - 1) {
-    for (let j = arr2d[i].length; j-- > 0; ) {
-      if (isReplace(arr2d[i][j], arr2d[i], j)) return [i,j];
-    }
-  }
-};
