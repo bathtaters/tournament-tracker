@@ -14,14 +14,14 @@ function round(eventData, matchData, oppData, autoReportByes) {
     if (matchBase.round == eventData.roundcount + 1) return matchBase;
 
     // Collect data for match generator
-    let playerList = eventData.roundactive ?
-        toStats({ solo: matchData }, eventData.players, { solo: oppData }, true).ranking :
-        eventData.players;
-    if (!playerList) playerList = [];
-    if (eventData.drops) playerList = playerList.filter(p => !eventData.drops.includes(p));
+    let stats = eventData.roundactive ?
+        toStats({ solo: matchData }, eventData.players, { solo: oppData }, true) :
+        { ranking: eventData.players, noStats: true };
+    if (!stats.ranking) stats.ranking = [];
+    if (eventData.drops) stats.ranking = stats.ranking.filter(p => !eventData.drops.includes(p));
 
     // Generate match table (Can add more alogrithms later)
-    const matchTable = matchGen(playerList, {...eventData, oppData});
+    const matchTable = matchGen(stats, {...eventData, oppData});
 
     // Format for DB write (auto-reporting byes)
     const byeWins = autoReportByes ? eventData.wincount : 0;
