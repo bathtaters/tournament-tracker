@@ -1,7 +1,7 @@
 import React, { useState, forwardRef } from "react";
 
 import SuggestText from "../../common/SuggestText";
-import { PlayerInputStyle, suggestClass } from "../styles/PlayerEditorStyles"
+import { PlayerRowStyle, suggestClass } from "../styles/PlayerEditorStyles"
 import { PlayerAddButton, PlayerFillButton } from "../styles/PlayerEditorButtons"
 
 import { suggestListLayout } from "../eventEditor.layout";
@@ -22,7 +22,7 @@ const PlayerInput = forwardRef(function PlayerInput({
   const submitHandler = onSubmitController(hideSuggest, setHide, handleNewPlayer, pushPlayer, onFirstEdit);
   
   return (
-    <PlayerInputStyle>
+    <PlayerRowStyle>
 
       <PlayerAddButton onClick={() => hideSuggest ? setHide(false) : ref.current.submit()} />
       <PlayerFillButton onClick={autofill} size={autofillSize} hidden={hideAutofill || !hideSuggest} />
@@ -37,7 +37,7 @@ const PlayerInput = forwardRef(function PlayerInput({
       />
       <span className={suggestClass.spacer} />
 
-    </PlayerInputStyle>
+    </PlayerRowStyle>
   );
 });
 

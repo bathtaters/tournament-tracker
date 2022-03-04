@@ -10,11 +10,7 @@ export function PlayerEditorStyle({ playerCount, children }) {
 }
 
 export function PlayerRowStyle({ children }) {
-  return (
-    <div className="min-w-48">
-      { children }
-    </div>
-  );
+  return (<div className="min-w-48">{ children }</div>);
 }
 
 export function PlayerNameStyle({ isMissing, children }) {
@@ -23,10 +19,6 @@ export function PlayerNameStyle({ isMissing, children }) {
       { children }
     </span>
   );
-}
-
-export function PlayerInputStyle({ children }) {
-  return (<div>{children}</div>);
 }
 
 // Classes to send to SuggestText
