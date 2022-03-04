@@ -1,5 +1,5 @@
 // Import
-const swapPlayers = require('./swapPlayers.services')
+const { swapPlayersService } = require('./swapPlayers.services')
 
 describe('swapPlayersService + Utils', () => {
   let swaps, matches
@@ -13,25 +13,32 @@ describe('swapPlayersService + Utils', () => {
   })
 
   it('swaps players', () => {
-    expect(swapPlayers(matches, swaps)).toEqual([
+    expect(swapPlayersService(matches, swaps)).toEqual([
       expect.objectContaining({ players: ['a','b'] }),
       expect.objectContaining({ players: ['c','d'] }),
     ])
   })
+  it('same match', () => {
+    swaps[1] = { playerid: 'a' }
+    matches = [matches[0]]
+    expect(swapPlayersService(matches, swaps)).toEqual([
+      expect.objectContaining({ players: ['c','a'], wins: [3, 1] }),
+    ])
+  })
   it('swaps wins', () => {
-    expect(swapPlayers(matches, swaps)).toEqual([
+    expect(swapPlayersService(matches, swaps)).toEqual([
       expect.objectContaining({ wins: [1,2] }),
       expect.objectContaining({ wins: [3,4] }),
     ])
   })
   it('swaps drops', () => {
-    expect(swapPlayers(matches, swaps)).toEqual([
+    expect(swapPlayersService(matches, swaps)).toEqual([
       expect.objectContaining({ drops: ['a','b'] }),
       expect.anything(),
     ])
   })
   it('passes idx', () => {
-    expect(swapPlayers(matches, swaps)).toEqual([
+    expect(swapPlayersService(matches, swaps)).toEqual([
       expect.objectContaining({ id: 'm1' }),
       expect.objectContaining({ id: 'm2' }),
     ])
@@ -39,12 +46,12 @@ describe('swapPlayersService + Utils', () => {
 
   it('clear drops from unreported match', () => {
     matches[1].reported = false
-    expect(swapPlayers(matches, swaps)[1]).toHaveProperty('drops', [])
+    expect(swapPlayersService(matches, swaps)[1]).toHaveProperty('drops', [])
   })
 
   it('throws error for missing player', () => {
     swaps[1].playerid = 'a'
-    expect(() => swapPlayers(matches, swaps))
+    expect(() => swapPlayersService(matches, swaps))
       .toThrowError("Player is not registered for match: a")
   })
 })

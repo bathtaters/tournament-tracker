@@ -9,7 +9,7 @@ const autoByesDef = require('../config/validation').defaults.settings.autobyes;
 
 // Services
 const roundService = require('../services/round.services');
-const swapService = require('../services/swapPlayers.services');
+const { swapPlayersService, getUnique } = require('../services/swapPlayers.services');
 const { arrToObj } = require('../utils/shared.utils');
 
 
@@ -17,20 +17,20 @@ const { arrToObj } = require('../utils/shared.utils');
 async function swapPlayers(req, res) {
   // Get data
   let matchData = await match.getMulti(
-    req.body.swap.map(s => s.id), false,
+    getUnique(req.body.swap, 'id'), false,
     ['id', 'eventid','players','wins','drops','reported']
   );
 
   // Error check
-  if (matchData.length !== 2 || matchData.some(m => !m || !m.players))
+  if (!matchData?.length || matchData.some(m => !m || !m.players))
     throw new Error("Matches not found or are invalid.");
-
+  
   const eventid = matchData[0].eventid;
-  if (eventid !== matchData[1].eventid)
+  if (matchData.some(m => eventid !== m.eventid))
     throw new Error("Cannot swap players from different events.");
   
   // Mutate match data
-  matchData = swapService(matchData, req.body.swap);
+  matchData = swapPlayersService(matchData, req.body.swap);
 
   // Write changes
   const result = await match.updateMulti(matchData, 'eventid');

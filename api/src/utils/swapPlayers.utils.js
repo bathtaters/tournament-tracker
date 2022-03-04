@@ -7,8 +7,8 @@
  * @param {Number} idx - Index of item
  * @returns {Number} Index of pair to swap with
  */
-// exports.getOtherIdx = idx => idx + (idx % 2 ? -1 : 1) // (If swapping w/ more than 2 inputs)
-exports.getOtherIdx = idx => +!idx // QUICK METHOD (For swapping w/ 2 inputs)
+// exports.getOtherIdx = (idx) => idx + (idx % 2 ? -1 : 1) // (If swapping w/ more than 2 inputs)
+exports.getOtherIdx = (idx) => +!idx // QUICK METHOD (For swapping w/ 2 inputs)
 
 
 /**
@@ -24,30 +24,33 @@ exports.updateFilter = ({ id, players, wins, drops, saveDrops }) =>
 
 /**
  * Swaps item from baseArr[0][swapkey] to baseArr[1][swapkey] using indexes: baseArr[n][idxKey]
+ * @param {Object[]} dataArr - Object Array containing swap data (ie swapData)
  * @param {Object[]} baseArr – Object Array to use for swap (ie matchData)
  * @param {String} swapKey - Property of baseArr[idx] containing data to be swapped (ex 'players'/'wins')
- * @param {String} [idxKey='idx'] - Property of baseArr[idx] containing index to be swapped (ex 'idx')
- * @param {Number} [idxA=0] - Index of first Object in baseArr to use (Auto-determine second object as odd-even pair, def: 0)
+ * @param {String} baseIdxKey - Property of dataArr[idx] containing index of baseArr (ex 'matchidx')
+ * @param {String} swapIdxKey - Property of dataArr[idx] containing index of swapArr (ex 'playeridx')
+ * @param {Number} [idxA=0] - Index of first Object in dataArr to use (Auto-determine second object as odd-even pair, def: 0)
  */
-exports.swapArrays = (baseArr, swapKey, idxKey = 'idx', idxA = 0) => {
+exports.swapArrays = (dataArr, baseArr, swapKey, baseIdxKey, swapIdxKey, idxA = 0) => {
   const idxB = exports.getOtherIdx(idxA);
   [ 
-    baseArr[idxA][swapKey][baseArr[idxA][idxKey]],
-    baseArr[idxB][swapKey][baseArr[idxB][idxKey]],
+    baseArr[dataArr[idxA][baseIdxKey]][swapKey][dataArr[idxA][swapIdxKey]],
+    baseArr[dataArr[idxB][baseIdxKey]][swapKey][dataArr[idxB][swapIdxKey]],
   ] = [
-    baseArr[idxB][swapKey][baseArr[idxB][idxKey]] || 0,
-    baseArr[idxA][swapKey][baseArr[idxA][idxKey]] || 0,
+    baseArr[dataArr[idxB][baseIdxKey]][swapKey][dataArr[idxB][swapIdxKey]] || 0,
+    baseArr[dataArr[idxA][baseIdxKey]][swapKey][dataArr[idxA][swapIdxKey]] || 0,
   ]
 }
 
 
 /**
  * Moves item in fromArr[moveKey][fromArr[idxKey]] to end of toArr[moveKey]
- * @param {Object} fromArr - Object w/ array to move from (ex matchData[from])
- * @param {Object} toArr - Object w/ array to move to (ex matchData[to])
- * @param {String} [moveKey='drops'] - Key of Array in objects (Same key for from/toArr, ex 'drops')
- * @param {String} [idxKey='dropIdx'] - Key of Index of entry to move in fromArr[moveKey] (ex 'dropIdx')
- * @returns {Number} 1 on success (Result of push operation w/ single arg)
+ * @param {Object[]} baseArr - Base array to use for move (ex matchData)
+ * @param {Number} from - BaseArr index to move from (ex 0)
+ * @param {Number} to - BaseArr index to move to (ex 1)
+ * @param {String} moveKey - Key of Array in objects (Same key for from/toArr, ex 'drops')
+ * @param {Number} moveIdx - Index of entry to move in baseArr[from][moveKey] (ex 'data.dropIdx')
+ * @returns {Number} ToArray size on success (Result of push operation)
  */
- exports.moveArrays = (fromArr, toArr, moveKey = 'drops', idxKey = 'dropIdx') =>
-  toArr[moveKey].push(fromArr[moveKey].splice(fromArr[idxKey],1)[0])
+ exports.moveArrays = (baseArr, from, to, moveKey, moveIdx) =>
+  baseArr[to][moveKey].push(baseArr[from][moveKey].splice(moveIdx,1)[0])
