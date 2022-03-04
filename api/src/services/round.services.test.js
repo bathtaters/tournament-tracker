@@ -88,7 +88,16 @@ describe('new round', () => {
     round(eventData)
     expect(matchGen).toBeCalledTimes(1)
     expect(matchGen).toBeCalledWith(
-      eventData.players,
+      { ranking: eventData.players },
+      {...eventData, oppData: undefined}
+    )
+  })
+  it('passes noStats to matchGen on first round', () => {
+    eventData.roundactive = 0
+    round(eventData)
+    expect(matchGen).toBeCalledTimes(1)
+    expect(matchGen).toBeCalledWith(
+      { ranking: eventData.players, noStats: true },
       {...eventData, oppData: undefined}
     )
   })
@@ -98,21 +107,21 @@ describe('new round', () => {
     matchGen.mockImplementationOnce(() => []).mockImplementationOnce(() => [])
 
     expect(round({...eventData, players: null, round: 0})).toHaveProperty('matches',[])
-    expect(matchGen).toHaveBeenNthCalledWith(1, [], expect.anything())
+    expect(matchGen).toHaveBeenNthCalledWith(1, {ranking: []}, expect.anything())
     
     expect(round({...eventData, players: null })).toHaveProperty('matches',[])
-    expect(matchGen).toHaveBeenNthCalledWith(2, [], expect.anything())
+    expect(matchGen).toHaveBeenNthCalledWith(2, {ranking: []}, expect.anything())
     expect(matchGen).toBeCalledTimes(2)
   })
 
   // Drops
   it('drops players in drops array', () => {
     round({...eventData, drops: ['d','b']})
-    expect(matchGen).toBeCalledWith([
-      expect.stringMatching(/[ace]/),
-      expect.stringMatching(/[ace]/),
-      expect.stringMatching(/[ace]/),
-    ], expect.anything())
+    expect(matchGen).toBeCalledWith({ ranking: [
+      expect.stringMatching(/^[ace]$/),
+      expect.stringMatching(/^[ace]$/),
+      expect.stringMatching(/^[ace]$/),
+    ] }, expect.anything())
   })
 
   // toStats
