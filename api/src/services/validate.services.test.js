@@ -173,8 +173,8 @@ describe('getSchema', () => {
     })
     it('non-optional fields', () => {
       const result = services.getSchema('test','any',null,['isIn'],false)
-      expect(result.test).toHaveProperty('exists', true)
-      expect(result.test).toHaveProperty('notEmpty', true)
+      expect(result.test.exists).toHaveProperty('errorMessage')
+      expect(result.test.notEmpty).toHaveProperty('errorMessage')
     })
     it('optional fields', () => {
       expect(services.getSchema('test','any',null,['isIn'],true).test)
@@ -185,18 +185,18 @@ describe('getSchema', () => {
         .toHaveProperty('optional', {options: {nullable: true}})
     })
     it('limits for string/float/int', () => {
-      expect(services.getSchema('test','string','lims',['isIn'],false).test)
-        .toHaveProperty('isLength', {options: 'lims'})
-      expect(services.getSchema('test','float','lims',['isIn'],false).test)
-        .toHaveProperty('isFloat', {options: 'lims'})
-      expect(services.getSchema('test','int','lims',['isIn'],false).test)
-        .toHaveProperty('isInt', {options: 'lims'})
+      expect(services.getSchema('test','string','lims',['isIn'],false).test.isLength)
+        .toEqual({ options: 'lims', errorMessage: expect.any(String) })
+      expect(services.getSchema('test','float','lims',['isIn'],false).test.isFloat)
+        .toEqual({ options: 'lims', errorMessage: expect.any(String) })
+      expect(services.getSchema('test','int','lims',['isIn'],false).test.isInt)
+        .toEqual({ options: 'lims', errorMessage: expect.any(String) })
     })
-    it('uses "true" if missing limits', () => {
-      expect(services.getSchema('test','float',null,['isIn'],false).test)
-        .toHaveProperty('isFloat', true)
-      expect(services.getSchema('test','int',null,['isIn'],false).test)
-        .toHaveProperty('isInt', true)
+    it('just uses isType = { errorMsg } if missing limits', () => {
+      expect(services.getSchema('test','float',null,['isIn'],false).test.isFloat)
+        .toEqual({ errorMessage: expect.any(String) })
+      expect(services.getSchema('test','int',null,['isIn'],false).test.isInt)
+        .toEqual({ errorMessage: expect.any(String) })
     })
   })
 
@@ -209,54 +209,57 @@ describe('getSchema', () => {
 
     it('UUID', () => {
       const result = services.getSchema('test','uuid',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isUUID', {options: 4})
-      expect(result.test).toHaveProperty('isAscii', true)
+      expect(result.test).toHaveProperty('isUUID', {options: 4, errorMessage: expect.any(String)})
+      expect(result.test).toHaveProperty('isAscii', {errorMessage: expect.any(String)})
       expect(result.test).toHaveProperty('stripLow', true)
       expect(result.test).toHaveProperty('trim', true)
       expect(result.test).toHaveProperty('escape', true)
     })
     it('string', () => {
       const result = services.getSchema('test','string',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isAscii', true)
+      expect(result.test).toHaveProperty('isAscii', {errorMessage: expect.any(String)})
       expect(result.test).toHaveProperty('stripLow', true)
       expect(result.test).toHaveProperty('trim', true)
       expect(result.test).toHaveProperty('escape', true)
     })
     it('float', () => {
       const result = services.getSchema('test','float',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isFloat', true)
+      expect(result.test).toHaveProperty('isFloat', {errorMessage: expect.any(String)})
       expect(result.test).toHaveProperty('toFloat', true)
     })
     it('int', () => {
       const result = services.getSchema('test','int',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isInt', true)
+      expect(result.test).toHaveProperty('isInt', {errorMessage: expect.any(String)})
       expect(result.test).toHaveProperty('toInt', true)
     })
     it('boolean', () => {
       const result = services.getSchema('test','boolean',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isBoolean', true)
+      expect(result.test).toHaveProperty('isBoolean', {errorMessage: expect.any(String)})
       expect(result.test).toHaveProperty('toBoolean', true)
     })
     it('interval', () => {
       const result = services.getSchema('test','interval',null,['isIn'],false)
       expect(result.test).toHaveProperty('custom', expect.any(Object))
       expect(result.test).toHaveProperty('customSanitizer', expect.any(Object))
-      expect(result.test.custom).toHaveProperty('options', expect.anything())
-      expect(result.test.customSanitizer).toHaveProperty('options', expect.anything())
+      expect(result.test.custom).toEqual({options: expect.anything(), errorMessage: expect.any(String)})
+      expect(result.test.customSanitizer).toEqual({options: expect.anything()})
     })
     it('datetime', () => {
       const result = services.getSchema('test','datetime',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isISO8601', {options: {strict: strictDates, strictSeparator: strictDates}})
+      expect(result.test).toHaveProperty('isISO8601', {
+        options: {strict: strictDates, strictSeparator: strictDates},
+        errorMessage: expect.any(String)
+      })
       expect(result.test).toHaveProperty('toDate', true)
     })
     it('date', () => {
       const result = services.getSchema('test','date',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isDate', {options: dateOptions})
+      expect(result.test).toHaveProperty('isDate', {options: dateOptions, errorMessage: expect.any(String)})
       expect(result.test).toHaveProperty('trim', true)
     })
     it('object', () => {
       const result = services.getSchema('test','object',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isObject', true)
+      expect(result.test).toHaveProperty('isObject', {errorMessage: expect.any(String)})
     })
   })
 
@@ -290,7 +293,7 @@ describe('getSchema', () => {
     })
     it('array has basic props', () => {
       const result = services.getSchema('test','any[]',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isArray', true)
+      expect(result.test).toHaveProperty('isArray', {errorMessage: expect.any(String)})
       expect(result.test).toHaveProperty('in', ['isIn'])
     })
     it('elements basic props', () => {
@@ -311,8 +314,8 @@ describe('getSchema', () => {
     })
     it('array has non-optional props', () => {
       const result = services.getSchema('test','any[]',null,['isIn'],false)
-      expect(result.test).toHaveProperty('exists', true)
-      expect(result.test).toHaveProperty('notEmpty', true)
+      expect(result.test).toHaveProperty('exists', {errorMessage: expect.any(String)})
+      expect(result.test).toHaveProperty('notEmpty', {errorMessage: expect.any(String)})
       expect(result.test).not.toHaveProperty('optional')
     })
     it('elements missing optional props', () => {
@@ -334,31 +337,31 @@ describe('getSchema', () => {
       const result = services.getSchema('test','float[]',null,['isIn'],false)
       expect(result.test).not.toHaveProperty('isFloat')
       expect(result.test).not.toHaveProperty('toFloat')
-      expect(result["test.*"]).toHaveProperty('isFloat', true)
+      expect(result["test.*"]).toHaveProperty('isFloat', {errorMessage: expect.any(String)})
       expect(result["test.*"]).toHaveProperty('toFloat', true)
     })
 
     it('limits are key.arrayLimits', () => {
       const result = services.getSchema('test','int[]','lims',['isIn'],false)
-      expect(result.test).toHaveProperty('isArray', {options: 'lims'})
-      expect(result["test.*"]).toHaveProperty('isInt', true)
+      expect(result.test).toHaveProperty('isArray', {options: 'lims', errorMessage: expect.any(String)})
+      expect(result["test.*"]).toHaveProperty('isInt', {errorMessage: expect.any(String)})
     })
     it('limits.array for key & limits.elem for key.*', () => {
       const result = services.getSchema('test','int[]',{array:'aLims',elem:'eLims'},['isIn'],false)
-      expect(result.test).toHaveProperty('isArray', {options: 'aLims'})
-      expect(result["test.*"]).toHaveProperty('isInt', {options: 'eLims'})
+      expect(result.test).toHaveProperty('isArray', {options: 'aLims', errorMessage: expect.any(String)})
+      expect(result["test.*"]).toHaveProperty('isInt', {options: 'eLims', errorMessage: expect.any(String)})
     })
     it('limits.array only', () => {
       const result = services.getSchema('test','int[]',{array:'aLims'},['isIn'],false)
-      expect(result.test).toHaveProperty('isArray', {options: 'aLims'})
-      expect(result["test.*"]).toHaveProperty('isInt', true)
+      expect(result.test).toHaveProperty('isArray', {options: 'aLims', errorMessage: expect.any(String)})
+      expect(result["test.*"]).toHaveProperty('isInt', {errorMessage: expect.any(String)})
     })
     it('limits.elem only', () => {
       let result = services.getSchema('test','int[]',{elem:'eLims'},['isIn'],false)
-      expect(result.test).toHaveProperty('isArray', true)
-      expect(result["test.*"]).toHaveProperty('isInt', {options: 'eLims'})
+      expect(result.test).toHaveProperty('isArray', {errorMessage: expect.any(String)})
+      expect(result["test.*"]).toHaveProperty('isInt', {options: 'eLims', errorMessage: expect.any(String)})
       result = services.getSchema('test','int',{elem:'eLims'},['isIn'],false)
-      expect(result.test).toHaveProperty('isInt', {options: 'eLims'})
+      expect(result.test).toHaveProperty('isInt', {options: 'eLims', errorMessage: expect.any(String)})
     })
   })
 
@@ -366,17 +369,17 @@ describe('getSchema', () => {
   describe('errors', () => {
     it('errorMessage on key', () => {
       expect(services.getSchema('test','any',null,['isIn'],false).test)
-        .toHaveProperty('errorMessage', 'failed validation for <any>')
+        .toHaveProperty('errorMessage', 'does not exist as any')
     })
     it('errorMessage on key.*', () => {
       expect(services.getSchema('test','any[]',null,['isIn'],false)['test.*'])
-        .toHaveProperty('errorMessage', 'failed validation for <any>')
+        .toHaveProperty('errorMessage', 'does not exist as any')
     })
     it('throws on missing/invalid typeStr', () => {
       expect(() => services.getSchema('test',undefined,null,['isIn'],false))
-        .toThrowError('test has invalid or missing type definition: (Missing)')  
+        .toThrowError('test has missing type definition: ')  
       expect(() => services.getSchema('test','?wrong',null,['isIn'],false))
-        .toThrowError('test has invalid or missing type definition: ?wrong')  
+        .toThrowError('test has invalid type definition: ?wrong')
     })
     it('throws on missing/empty isIn', () => {
       expect(() => services.getSchema('test','any',null,undefined,false))
