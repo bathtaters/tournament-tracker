@@ -18,7 +18,7 @@ const getPlayerScore = (stats) => !stats ? 0 :
 
 // Calculate score of 2 players (base + rematch penalties)
 const getComboScore = (scores, opps) => ([playerA, playerB]) =>
-  diff(scores[playerA], scores[playerB]) + (count(playerB, opps[playerA]) + count(playerA, opps[playerB])) * weight.penalty
+  diff(scores[playerA], scores[playerB]) + (count(playerB, opps?.[playerA]) + count(playerA, opps?.[playerB])) * weight.penalty
 
 // Calculate score for single player match (base + bye penalties)
 const getSoloScore = (player, score, byes) => score + count(player, byes) * weight.penalty * 2
