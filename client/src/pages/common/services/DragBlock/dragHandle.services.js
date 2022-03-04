@@ -55,11 +55,12 @@ function drop({ classes, onDrop, canDrop, storeData, getCanDropData, dataType='t
       getDataUsing(getCanDropData, [ev]),
       getPublicData(ev, dataType),
       ev
-    )) return classMod(ev, classes.enabled, classes.illegal);
+    )) return;
 
     onDrop(getStored(ev, dataType, true), getDataUsing(storeData, [ev, dataType]));
     
     classMod(ev, classes.enabled, classes.drop);
+    classMod(ev, classes.enabled, classes.illegal);
     return false;
   };
 }
