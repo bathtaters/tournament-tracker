@@ -16,10 +16,10 @@ export const moveDrops = (baseArr, fromId, toId, moveValue, baseKey = 'drops') =
 
 // Construct swap handler
 export const swapController = (swapPlayers, eventid) => (playerA, playerB) => {
-  if (playerA.id === playerB.id) return;
+  if (playerA.playerid === playerB.playerid) return;
   if ((playerA.reported || playerB.reported) && !window.confirm(swapPlayerMsg())) return;
   swapPlayers({eventid, swap: [ playerA, playerB ] });
 };
 
 // Test if swap is allowed
-export const canSwap = (types, a, b) => a !== b && types.includes(dataType);
+export const canSwap = (types, a, b) => a !== b && types[0].includes(dataType);

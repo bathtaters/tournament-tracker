@@ -14,7 +14,7 @@ function MatchPlayer({ id, playerData, matchData, handleSwap, canSwap, isEditing
       storeData={{ id: matchData.id, playerid: id, reported: matchData.reported }}
       onDrop={handleSwap}
       canDrop={canSwap}
-      storeTestData={matchData.id}
+      storeTestData={id}
       className={playerBoxStyle}
       dataType={dataType}
       disabled={!isEditing}
