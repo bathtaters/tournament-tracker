@@ -1,4 +1,3 @@
-import { equalArrays, updateArrayWithChanges } from "./eventEditor.services";
 import { duplicatePlayerMsg, unsavedPlayerMsg } from "../../../assets/strings";
 
 
@@ -30,13 +29,6 @@ export default function playerListController (playerData, players, setPlayers) {
     popPlayer: popPlayerController(players, setPlayers),
   };
 }
-
-
-// Push global updates to state
-export const updateState = (prevState, currState, setCurrState) => {
-  if (!equalArrays(prevState, currState))
-    setCurrState(s => updateArrayWithChanges(prevState, currState || [], s));
-};
 
 
 // Get player list (Run via ref)

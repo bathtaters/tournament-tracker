@@ -27,22 +27,6 @@ export async function saveEvent(eventId, eventData, playerList, setEvent, modal)
 }
 
 
-// Apply only new changes to existing cache (For concurrent write-while-editing)
-export function updateArrayWithChanges(before, after, arrToChange) {
-  let result = [...arrToChange];
-  before.forEach(v => { 
-    if (!after.includes(v)) {
-      const idx = result.indexOf(v);
-      if (idx !== -1) result.splice(idx,1);
-    } 
-  });
-  after.forEach((v,i) => { 
-    if (!before.includes(v)) result.splice(i,0,v);
-  });
-  return result || [];
-}
-
-
 export const getButtonLayout = (id, data, deleteEvent, modal, navigate) => 
   editorButtonLayout(
     id,
