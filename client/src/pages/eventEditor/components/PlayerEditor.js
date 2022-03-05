@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef, useCallback, useRef } from "react";
+import React, { useState, useImperativeHandle, forwardRef, useCallback, useRef } from "react";
 import PropTypes from 'prop-types';
 
 import PlayerRow from "./PlayerRow";
@@ -8,8 +8,8 @@ import Loading from "../../common/Loading";
 
 import { usePlayerQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
 import playerInputController from "../services/playerEditor.services";
-import playerListController, { updateState, retrieveList } from "../services/playerList.services";
-import { usePreviousArray } from "../services/playerEditor.utils";
+import playerListController, { retrieveList } from "../services/playerList.services";
+import { usePropState } from "../services/playerEditor.utils";
 
 
 const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit = null }, ref) {
@@ -20,12 +20,11 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
   
   // Local State
   const suggestRef = useRef(null);
-  const [playerList, setPlayerList] = useState([]);
+  const [playerList, setPlayerList] = useState(players || []);
   const [isChanged, setChanged] = useState(!onEdit);
 
   // Push remote updates to local state - UNTESTED
-  const prevPlayers = usePreviousArray(players);
-  useEffect(() => { updateState(prevPlayers, players, setPlayerList) }, [prevPlayers, players, setPlayerList]);
+  usePropState(players, setPlayerList);
 
   // Add/Remove player to/from list
   const { pushPlayer, popPlayer } = playerListController(data, playerList, setPlayerList);

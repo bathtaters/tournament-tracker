@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useEffect } from "react";
 import { equalArrays } from "./eventEditor.services";
 
 // Advanced Settings
@@ -30,12 +30,7 @@ export const getRemaining = (players, playerList) => players ? Object.keys(playe
   .filter(p => !players[p].isteam && !playerList.includes(p)) : [];
 
 
-// Save history of 1D array
-export function usePreviousArray(newValue) {
-  const prevRef = useRef([]);
-  useEffect(() => { 
-    if (newValue && !equalArrays(prevRef.current, newValue))
-      prevRef.current = newValue;
-  }, [newValue]);
-  return prevRef.current || [];
-}
+// Push prop updates to state
+export const usePropState = (propState, setState) => useEffect(() => {
+  setState((oldState) => equalArrays(oldState, propState) ? oldState : propState || []);
+}, [propState, setState]);
