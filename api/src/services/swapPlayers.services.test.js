@@ -1,6 +1,28 @@
 // Import
-const { swapPlayersService } = require('./swapPlayers.services')
+const { swapPlayersService, getUniqueIds } = require('./swapPlayers.services')
 
+describe('getUnique IDs', () => {
+  it('filters out a dupe', () => {
+    expect(getUniqueIds([
+      {v:'a',x:1}, {v:'b',x:2}, {v:'c',x:3}, {v:'b',x:4}, {v:'d',x:5},
+    ], 'v')).toEqual(['a','b','c','d'])
+  })
+  it('filters out multiple dupes', () => {
+    expect(getUniqueIds([
+      {v:'a',x:1}, {v:'b',x:2}, {v:'c',x:3}, {v:'b',x:4}, {v:'d',x:5},
+      {v:'b',x:6}, {v:'d',x:7}, {v:'d',x:8}, {v:'d',x:9}, {v:'b',x:10}, 
+    ], 'v')).toEqual(['a','b','c','d'])
+  })
+  it('passes non-duped array', () => {
+    expect(getUniqueIds([{v:'a',x:1},{v:'b',x:2},{v:'c',x:3},{v:'d',x:4}], 'v'))
+      .toEqual(['a','b','c','d'])
+  })
+  it('passes empty array', () => {
+    expect(getUniqueIds([])).toEqual([])
+  })
+})
+
+// Test Services & Utils
 describe('swapPlayersService + Utils', () => {
   let swaps, matches
 
