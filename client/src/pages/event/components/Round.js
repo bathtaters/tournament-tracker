@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import PropTypes from 'prop-types';
 
 import Match from '../../match/Match';
@@ -6,15 +7,22 @@ import EditRound from './subcomponents/EditRound';
 import { RoundStyle, EditRoundStyle } from '../styles/RoundStyles';
 import OverlayContainer from '../../common/styles/OverlayContainer';
 
-import { useSettingsQuery } from '../event.fetch';
+import { useSettingsQuery, refetchStats } from '../event.fetch';
 
 
 function Round({ data, round, deleteRound }) {
   // Global
+  const dispatch = useDispatch();
   const { data: settings } = useSettingsQuery();
 
   // Local
-  const [isEditing, setEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Refetch Stats
+  const setEditing = (isEditing) => {
+    !isEditing && dispatch(refetchStats(data.id));
+    setIsEditing(isEditing);
+  };
 
   return (<>
     <RoundStyle 
