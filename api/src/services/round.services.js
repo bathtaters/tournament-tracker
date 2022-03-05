@@ -15,7 +15,7 @@ function round(eventData, matchData, oppData, autoReportByes) {
 
     // Collect data for match generator
     let stats = eventData.roundactive ?
-        toStats({ solo: matchData }, eventData.players, { solo: oppData }, true) :
+        toStats({ solo: matchData }, eventData.players, { solo: oppData }, true, true) :
         { ranking: eventData.players, noStats: true };
     if (!stats.ranking) stats.ranking = [];
     if (eventData.drops) stats.ranking = stats.ranking.filter(p => !eventData.drops.includes(p));

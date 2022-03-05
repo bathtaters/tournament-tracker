@@ -17,12 +17,19 @@ jest.mock('../config/constants', () => ({
 
 describe('rate', () => {
   it('works', () => {
-    expect(rate(0, [1]    )).toBeCloseTo(0.33)
-    expect(rate(0, [0]    )).toBe(NaN)
-    expect(rate(3, [1,0]  )).toBeCloseTo(1)
-    expect(rate(3, [1,2]  )).toBeCloseTo(1 / 3)
-    expect(rate(1, [1,1,1])).toBeCloseTo(0.33)
-    expect(rate(8, [2,1,0])).toBeCloseTo(8 / (3 * 3))
+    expect(rate(0, [1],     false)).toBeCloseTo(0)
+    expect(rate(0, [0],     false)).toBe(NaN)
+    expect(rate(3, [1,0],   false)).toBeCloseTo(1)
+    expect(rate(3, [1,2],   false)).toBeCloseTo(1 / 3)
+    expect(rate(1, [1,1,1], false)).toBeCloseTo(1 / 9)
+    expect(rate(8, [2,1,0], false)).toBeCloseTo(8 / (3 * 3))
+  })
+  it('uses floor when enabled', () => {
+    expect(rate(0, [1],     true)).toBeCloseTo(0.33)
+    expect(rate(1, [1,1,1], true)).toBeCloseTo(0.33)
+    expect(rate(0, [0],     true)).toBe(NaN)
+    expect(rate(3, [1,0],   true)).toBeCloseTo(1)
+    expect(rate(8, [2,1,0], true)).toBeCloseTo(8 / (3 * 3))
   })
   it('allows missing params', () => {
     expect(rate()).toBe(NaN)
@@ -135,10 +142,10 @@ describe('calcRates', () => {
   afterAll(() => rateSpy.mockRestore())
 
   it('calls rate', () => {
-    calcRates({matchScore: 'MS', gameScore: 'GS', matchRecord: 'MR', gameRecord: 'GR'})
+    calcRates({matchScore: 'MS', gameScore: 'GS', matchRecord: 'MR', gameRecord: 'GR'}, 'floor')
     expect(rateSpy).toBeCalledTimes(2)
-    expect(rateSpy).toHaveBeenNthCalledWith(1, 'MS', 'MR')
-    expect(rateSpy).toHaveBeenNthCalledWith(2, 'GS', 'GR')
+    expect(rateSpy).toHaveBeenNthCalledWith(1, 'MS', 'MR', 'floor')
+    expect(rateSpy).toHaveBeenNthCalledWith(2, 'GS', 'GR', 'floor')
   })
   it('passes rate results', () => {
     expect(calcRates({})).toEqual({ matchRate: 'MRate', gameRate: 'GRate' })
@@ -274,9 +281,9 @@ describe('finalize', () => {
   it('finalizes rates using calcRates', () => {
     rateSpy.mockImplementationOnce(r => r)
     comboResult = { eventids: ['d1','d2','d3'], oppMatch: [1], oppGame: [1] }
-    finalize(comboResult)
+    finalize(comboResult, 'floor')
     expect(rateSpy).toBeCalledTimes(1)
-    expect(rateSpy).toBeCalledWith(comboResult)
+    expect(rateSpy).toBeCalledWith(comboResult, 'floor')
   })
 
   it('finalizes oppo rates', () => {

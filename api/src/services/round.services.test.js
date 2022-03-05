@@ -137,7 +137,7 @@ describe('new round', () => {
       { solo: 'matches' },
       eventData.players,
       { solo: 'opps' },
-      true
+      true, true
     )
   })
 

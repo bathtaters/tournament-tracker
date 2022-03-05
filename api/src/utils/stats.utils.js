@@ -4,9 +4,9 @@
 const { points } = require('../config/constants');
 
 // Win % calculator
-exports.rate = (score, record) => Math.max(
+exports.rate = (score, record, useFloor) => Math.max(
     score / (sumArr(record || []) * points.win),
-    points.floor || 0
+    useFloor ? points.floor || 0 : 0
 ); // If no games played, returns NaN
 
 // Builds player array of 'WLD' index (ie Player Win = 0, Player Loss = 1, Draw = 2)
@@ -32,9 +32,9 @@ exports.calcBase = (playeridx, wldArr, { wins, draws, totalwins }, event) => ({
     gameScore:   ( wins[playeridx] * points.win ) + ( draws * points.draw ),
 });
 
-exports.calcRates = result => Object.assign(result, {
-    matchRate: exports.rate(result.matchScore, result.matchRecord),
-    gameRate:  exports.rate(result.gameScore,  result.gameRecord),
+exports.calcRates = (result, useFloor) => Object.assign(result, {
+    matchRate: exports.rate(result.matchScore, result.matchRecord, useFloor),
+    gameRate:  exports.rate(result.gameScore,  result.gameRecord,  useFloor),
 });
 
 exports.calcOpps = (result, current, oppList) => {
@@ -68,9 +68,9 @@ exports.combineFinal = (final,curr) => Object.assign( exports.combineStats(final
     oppGame:  final.oppGame.concat(curr.oppGame),
 });
 
-exports.finalize = result => {
+exports.finalize = (result, useFloor) => {
     // If more than 1 event, recalc rates
-    if (result.eventids.length > 1) result = exports.calcRates(result);
+    if (result.eventids.length > 1) result = exports.calcRates(result, useFloor);
 
     // Average oppRates (Ignoring NaNs)
     result.oppMatch = avgArr(result.oppMatch.filter(n => !isNaN(n)));

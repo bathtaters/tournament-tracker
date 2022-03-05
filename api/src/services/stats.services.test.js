@@ -153,7 +153,7 @@ describe('toStats', () => {
     expect(util.calcOpps).toBeCalledTimes(8)
   })
   it('passes correct args to calcs', () => {
-    const res = stats({ d1 }, 0, oppos)
+    const res = stats({ d1 }, 0, oppos, true, 'floor')
     expect(util.getWLD).toHaveBeenNthCalledWith(1, d1[0])
     expect(util.getWLD).toHaveBeenNthCalledWith(2, d1[1])
 
@@ -162,15 +162,23 @@ describe('toStats', () => {
     expect(util.calcBase).toHaveBeenNthCalledWith(3, 0, 'WLD:1b', d1[1], 'd1')
     expect(util.calcBase).toHaveBeenNthCalledWith(4, 1, 'WLD:1b', d1[1], 'd1')
 
-    expect(util.calcRates).toHaveBeenNthCalledWith(1, ['1a0'])
-    expect(util.calcRates).toHaveBeenNthCalledWith(2, ['1a1'])
-    expect(util.calcRates).toHaveBeenNthCalledWith(3, ['1b0'])
-    expect(util.calcRates).toHaveBeenNthCalledWith(4, ['1b1'])
+    expect(util.calcRates).toHaveBeenNthCalledWith(1, ['1a0'], 'floor')
+    expect(util.calcRates).toHaveBeenNthCalledWith(2, ['1a1'], 'floor')
+    expect(util.calcRates).toHaveBeenNthCalledWith(3, ['1b0'], 'floor')
+    expect(util.calcRates).toHaveBeenNthCalledWith(4, ['1b1'], 'floor')
 
     delete res.ranking; // Opps called before ranking added
     expect(util.calcOpps).toHaveBeenNthCalledWith(1,  ['1a0'], res, 'd1p1')
     expect(util.calcOpps).toHaveBeenNthCalledWith(2,  ['1a1'], res, 'd1p2')
     expect(util.calcOpps).toHaveBeenNthCalledWith(3,  ['1b0'], res, 'd1p3')
     expect(util.calcOpps).toHaveBeenNthCalledWith(4,  ['1b1'], res, 'd1p4')
+  })
+  it('passes correct args to finalize', () => {
+    const res = stats({ d1 }, 0, oppos, true, 'floor')
+    expect(util.finalize).toBeCalledTimes(4)
+    expect(util.finalize).toHaveBeenNthCalledWith(1, ['1a0'], 'floor')
+    expect(util.finalize).toHaveBeenNthCalledWith(2, ['1a1'], 'floor')
+    expect(util.finalize).toHaveBeenNthCalledWith(3, ['1b0'], 'floor')
+    expect(util.finalize).toHaveBeenNthCalledWith(4, ['1b1'], 'floor')
   })
 })

@@ -14,9 +14,10 @@ const logger = require('../utils/log.adapter');
  * @param {string[]} originalOrder - [ playerids, ... ]
  * @param {object} oppData - { eventid: { playerid: [ oppids, ... ], ... }, ... }
  * @param {boolean} [useMatchScore=true] - use matchScore (Within same event) vs percent (Comparing apples to oranges)
+ * @param {boolean} [usePercentFloor=false] - use floor on percents, should be used only when determining pairings (See /config/constants {points.floor})
  * @returns - { ranking: [ playerids... ], playerid: { ...playerStats }, ... }
  */
-function stats(matchData, originalOrder, oppData, useMatchScore = true) {
+function stats(matchData, originalOrder, oppData, useMatchScore = true, usePercentFloor = false) {
     let final = {};
 
     // Each event
@@ -44,7 +45,7 @@ function stats(matchData, originalOrder, oppData, useMatchScore = true) {
         });
 
         // Append match/game rates
-        Object.keys(current).forEach(player => current[player] = calcRates(current[player]));
+        Object.keys(current).forEach(player => current[player] = calcRates(current[player], usePercentFloor));
 
         // Append opp match/game rates (& push to 'final')
         Object.keys(current).forEach(player => {
@@ -59,7 +60,7 @@ function stats(matchData, originalOrder, oppData, useMatchScore = true) {
     });
 
     // Finalize records
-    Object.keys(final).forEach(player => final[player] = finalize(final[player]));
+    Object.keys(final).forEach(player => final[player] = finalize(final[player], usePercentFloor));
 
     // Rank players
     final.ranking = (originalOrder || Object.keys(final)).sort(rankSort(final, originalOrder, useMatchScore));
