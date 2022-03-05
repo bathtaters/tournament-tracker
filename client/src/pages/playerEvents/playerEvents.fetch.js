@@ -10,13 +10,13 @@ export const playerEventsApi = fetchApi.injectEndpoints({
     playerEvents:  build.query({
       query: (id) => `player/${id}/events`,
       transformResponse: res => console.log('PLAYER_EVENTS',res) || res,
-      providesTags: getTags('PlayerDetail',{ all: false }),
+      providesTags: ['PlayerDetail'],
     }),
 
     playerMatches:  build.query({
       query: (id) => `player/${id}/matches`,
       transformResponse: (res, _, id) => console.log('PLAYER_MATCHES',res) || getMatchData(res,id),
-      providesTags: getTags('PlayerDetail',{ all: false }),
+      providesTags: ['PlayerDetail'],
     }),
     
   }),
