@@ -26,7 +26,7 @@ export const eventApi = fetchApi.injectEndpoints({
   }),
   overrideExisting: true
 });
-const refetchStats = (id) => fetchApi.util.invalidateTags(getTags('Stats')({id}))
+const refetchStats = (id) => fetchApi.util.invalidateTags(getTags('Stats',{all:0})({id}))
 
 export { useEventQuery, usePlayerQuery, useSettingsQuery, useStatsQuery, refetchStats };
 export const { useNextRoundMutation, useClearRoundMutation } = eventApi;
