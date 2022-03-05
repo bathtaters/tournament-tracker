@@ -2,9 +2,9 @@
 const { updateFilter, swapArrays, moveArrays, getOtherIdx } = require('../utils/swapPlayers.utils');
 
 // Get unique IDs (For DB access)
-const getUnique = (data, key) => data.reduce((res,entry) =>
-  res.includes(entry[key]) ? res : res.concat(entry[key]
-), [])
+const getUniqueIds = (data, key) => data.reduce((res,entry) =>
+  res.includes(entry[key]) ? res : res.concat(entry[key])
+, [])
 
 
 // Returns updated matchData using swapData
@@ -42,4 +42,4 @@ function swapPlayersService(matchData, swapData) {
   return matchData.map(updateFilter)
 }
 
-module.exports = { swapPlayersService, getUnique };
+module.exports = { swapPlayersService, getUniqueIds };

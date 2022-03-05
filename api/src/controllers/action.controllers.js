@@ -9,7 +9,7 @@ const autoByesDef = require('../config/validation').defaults.settings.autobyes;
 
 // Services
 const roundService = require('../services/round.services');
-const { swapPlayersService, getUnique } = require('../services/swapPlayers.services');
+const { swapPlayersService, getUniqueIds } = require('../services/swapPlayers.services');
 const { arrToObj } = require('../utils/shared.utils');
 
 
@@ -17,7 +17,7 @@ const { arrToObj } = require('../utils/shared.utils');
 async function swapPlayers(req, res) {
   // Get data
   let matchData = await match.getMulti(
-    getUnique(req.body.swap, 'id'), false,
+    getUniqueIds(req.body.swap, 'id'), false,
     ['id', 'eventid','players','wins','drops','reported']
   );
 
