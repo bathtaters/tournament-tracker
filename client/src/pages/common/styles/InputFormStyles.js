@@ -6,6 +6,7 @@ export const elementDefaults = {
   className:  "text-sm sm:text-lg font-light m-1 flex items-baseline",
   labelClass: "mx-2 w-max whitespace-nowrap",
   inputClass: "max-color pt-1 px-2",
+  buttonClass: "font-light base-color w-14 h-8 mx-1 sm:w-20 sm:h-11 sm:mx-4",
 }
 
 // Row/Column wrapper
@@ -28,10 +29,10 @@ export function ButtonContainer({ children }) {
   return (<div className="mt-4 w-full flex justify-center items-baseline flex-wrap">{children}</div>);
 }
 
-export function ButtonElement({ label, onClick, isSubmit = false }) {
+export function ButtonElement({ label, onClick, className = elementDefaults.buttonClass, isSubmit = false }) {
   return (
     <input
-      className="font-light base-color w-14 h-8 mx-1 sm:w-20 sm:h-11 sm:mx-4"
+      className={className}
       value={label}
       type={isSubmit ? "submit" : "button"}
       onClick={onClick}
