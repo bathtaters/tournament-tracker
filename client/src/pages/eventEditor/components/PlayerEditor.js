@@ -6,7 +6,7 @@ import PlayerInput from "./PlayerInput";
 import { PlayerEditorStyle } from "../styles/PlayerEditorStyles";
 import Loading from "../../common/Loading";
 
-import { usePlayerQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
+import { usePlayerQuery, useSettingsQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
 import playerInputController from "../services/playerEditor.services";
 import playerListController, { retrieveList } from "../services/playerList.services";
 import { usePropState } from "../services/playerEditor.utils";
@@ -16,6 +16,7 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
 
   // Global State
   const { data, isLoading, error, isFetching } = usePlayerQuery();
+  const { data: settings, isLoading: settLoad, error: settErr } = useSettingsQuery();
   const [ createPlayer, { isLoading: playersUpdating } ] = useCreatePlayerMutation();
   
   // Local State
@@ -40,14 +41,16 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
 
 
   // Loading/Error catcher
-  if (isLoading || error || !data) return (
+  if (isLoading || settLoad || error || settErr || !data) return (
     <PlayerEditorStyle>
-        <Loading loading={isLoading} error={error} altMsg="No player data found" />
+        <Loading loading={isLoading || settLoad} error={error || settErr} altMsg="No player data found" />
     </PlayerEditorStyle>
   );
   
   // Load data needed for PlayerInput (Only if it's needed)
-  const inputData = status < 2 ? playerInputController({ data, playerList, setPlayerList, createPlayer, pushPlayer, onFirstEdit }) : {};
+  const inputData = status < 2 ? playerInputController({
+    data, playerList, setPlayerList, createPlayer, pushPlayer, onFirstEdit, autofillSize: settings?.autofillsize
+  }) : {};
 
   // Render
   return (

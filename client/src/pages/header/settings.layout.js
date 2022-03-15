@@ -14,7 +14,10 @@ const settingsLayout = [
     { label: 'End Date', id: 'dateend', type: 'date' }
   ],
 
-  { label: 'Daily Slots', id: 'dayslots', type: 'number', advanced: true },
+  [
+    { label: 'Auto-fill Size', id: 'autofillsize', type: 'number', advanced: true },
+    { label: 'Daily Slots', id: 'dayslots', type: 'number', advanced: true },
+  ],
 
   [
     [
