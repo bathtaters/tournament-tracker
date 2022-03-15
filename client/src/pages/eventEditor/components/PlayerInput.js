@@ -18,13 +18,19 @@ const PlayerInput = forwardRef(function PlayerInput({
   // Build list
   const suggestions = suggestListLayout(remainingPlayers, data);
 
+  // Add Button handler
+  const addButtonHandler = () => {
+    onFirstEdit && onFirstEdit();
+    return hideSuggest ? setHide(false) : ref.current.submit();
+  }
+
   // OnSubmit handler
   const submitHandler = onSubmitController(hideSuggest, setHide, handleNewPlayer, pushPlayer, onFirstEdit);
   
   return (
     <PlayerRowStyle>
 
-      <PlayerAddButton onClick={() => hideSuggest ? setHide(false) : ref.current.submit()} />
+      <PlayerAddButton onClick={addButtonHandler} />
       <PlayerFillButton onClick={autofill} size={autofillSize} hidden={hideAutofill || !hideSuggest} />
 
       <SuggestText
