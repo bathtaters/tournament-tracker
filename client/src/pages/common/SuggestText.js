@@ -8,7 +8,7 @@ import { WrapperStyle, ListStyle } from "./styles/SuggestTextStyles";
 import actionHandlers from "./services/SuggestText/suggestText.controller";
 import { getSuggestions, autoSelect, autoShow } from "./services/SuggestText/suggestText.services"
 import { getNext, getPrev, validList } from "./services/SuggestText/suggestText.utils"
-import { hotkeyListener, hotkeyController } from "./services/basic.services";
+import { useHotkeys } from "./services/basic.services";
 
 // list format: [ { value: "display/filter", id: "uniqueId", isStatic: true/false, className: "class"  }, ... ]
 const SuggestText = forwardRef(function SuggestText({ list = [], className = "", listClass = "", onChange, onSubmit, isHidden }, ref) {
@@ -36,13 +36,12 @@ const SuggestText = forwardRef(function SuggestText({ list = [], className = "",
   useImperativeHandle(ref, () => ({ submit, getValue: () => !isHidden && (picked, {value}) }));
 
   // Keyboard UI
-  const keystrokeHandler = hotkeyController({
+  useHotkeys({
     /* Enter */ 13: () => submitOnPicked(),
-    // /* Esc   */ 27: () => selected === -1 ? textbox.current.blur() : setSelected(-1), // Already cap'd by modal
+    /* Esc   */ 27: () => selected === -1 ? textbox.current.blur() : setSelected(-1), // Already cap'd by modal
     /* Up    */ 38: () => setSelected(getPrev(selected, suggestions?.length || 0)), 
     /* Down  */ 40: () => setSelected(getNext(selected, suggestions?.length || 0)),
   });
-  useEffect(hotkeyListener(keystrokeHandler));
 
   // Render
   return (

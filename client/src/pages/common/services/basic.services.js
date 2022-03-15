@@ -1,4 +1,5 @@
-  // EVENT - SERVICES
+import { useEffect, useCallback } from "react";
+
 // Checks that 2 arrays are equal (Must be 1D arrays, 2 falsy vars will also be equal)
 export const equalArrays = (a,b) =>
   (!a && !b) || (a && b && 
@@ -19,18 +20,26 @@ export const nextTempId = (type, exists) => {
   } return id;
 }
 
-// Listen & handle hotkeys
-export const hotkeyListener = (handler, enable = true) => () => {
-  if (enable) document.addEventListener('keydown', handler, false);
-  else document.removeEventListener('keydown', handler, false);
-  return () => document.removeEventListener('keydown', handler, false);
-};
 
-// keyMap = { [keyCode]: () => action(), ... }
-export const hotkeyController = (keyMap) => (e) => {
-  // console.debug(' >> KeyCode: ',e.keyCode); // print keycodes
-  if (!keyMap[e.keyCode]) return;
-  e.preventDefault();
-  if (typeof keyMap[e.keyCode] === 'function') keyMap[e.keyCode]();
-  else console.error('Malformed keyMap for', e.keyCode,keyMap[e.keyCode]);
-};
+// Listen & handle hotkeys
+// hotkeyMap = { [keyCode]: () => action(), ... }
+export function useHotkeys(hotkeyMap, { skip, deps } = {}) {
+  const hotkeyHandler = useCallback((ev) => {
+    // console.debug(' >> KeyCode: ',ev.keyCode); // print keycodes
+
+    if (!hotkeyMap[ev.keyCode]) return;
+    ev.preventDefault();
+
+    if (typeof hotkeyMap[ev.keyCode] === 'function') hotkeyMap[ev.keyCode](ev);
+    else console.error('Malformed keyMap for', ev.keyCode, hotkeyMap[ev.keyCode]);
+
+  }, deps);
+
+  useEffect(() => {
+    if (!skip) document.addEventListener('keydown', hotkeyHandler, false);
+    else document.removeEventListener('keydown', hotkeyHandler, false);
+
+    return () => document.removeEventListener('keydown', hotkeyHandler, false);
+
+  }, deps && deps.concat(skip));
+}
