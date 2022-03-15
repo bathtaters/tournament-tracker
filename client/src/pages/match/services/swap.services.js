@@ -8,10 +8,12 @@ export const swapPlayerArrays = (baseArr, swapArr, swapIndxes, baseKey = 'player
   [ baseArr[swapArr[1][swapIdKey]][baseKey][swapIndxes[1]], baseArr[swapArr[0][swapIdKey]][baseKey][swapIndxes[0]] ];
 }
 
-export const moveDrops = (baseArr, fromId, toId, moveValue, baseKey = 'drops') => {
-  const idx = baseArr[fromId][baseKey].indexOf(moveValue);
-  if (idx !== -1)
-    baseArr[toId][baseKey].push(baseArr[fromId][baseKey].splice(idx,1)[0]);
+export const moveDrops = (baseArr, fromId, toId, moveValue) => {
+  const idx = baseArr[fromId].drops.indexOf(moveValue);
+  if (idx !== -1) {
+    const playerId = baseArr[fromId].drops.splice(idx,1)[0];
+    if (baseArr[toId].reported) baseArr[toId].drops.push(playerId);
+  }
 }
 
 // Construct swap handler

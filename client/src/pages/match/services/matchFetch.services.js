@@ -26,7 +26,7 @@ export function swapPlayersUpdate({ id, eventid, clear = false, ...body }, { dis
       swapPlayerArrays(draft, body.swap, idx, 'players');
       swapPlayerArrays(draft, body.swap, idx, 'wins');
     }
-    moveDrops(draft, body.swap[0].id, body.swap[1].id, body.swap[0].playerid, 'drops');
-    moveDrops(draft, body.swap[1].id, body.swap[0].id, body.swap[1].playerid, 'drops');
+    moveDrops(draft, body.swap[0].id, body.swap[1].id, body.swap[0].playerid);
+    moveDrops(draft, body.swap[1].id, body.swap[0].id, body.swap[1].playerid);
   }));
 };

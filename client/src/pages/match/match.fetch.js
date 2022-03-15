@@ -33,7 +33,7 @@ export const eventApi = fetchApi.injectEndpoints({
     swapPlayers: build.mutation({
       query: ({ eventid, ...body}) => ({ url: `match/swap`, method: 'POST', body }),
       transformResponse: res => console.log('SWAP',res) || res,
-      invalidatesTags: getTags('Match',{key:'eventid',addBase:['PlayerDetail'],all:0}),
+      invalidatesTags: getTags(['Event','Match'],{key:'eventid',addBase:['PlayerDetail'],all:0}),
       onQueryStarted: swapPlayersUpdate,
     }),
 
