@@ -6,8 +6,9 @@ export { isTempId };
 export const noDate = 'none';
 
 // Get Date string
-export const toDate = dt => dt ? dt.toISOString().slice(0,10) : noDate;
-export const toDateObj = dt => dt === noDate ? null : new Date(dt+'T00:00');
+const zPad = (num) => (num < 10 ? '0' : '') + num;
+export const toDate = (dt) => `${dt.getFullYear()}-${zPad(dt.getMonth() + 1)}-${zPad(dt.getDate())}`
+export const toDateObj = (dt) => dt === noDate ? null : new Date(dt+'T00:00');
 
 // Build array of days from start/end dates
 export function getDays(start, end) {
