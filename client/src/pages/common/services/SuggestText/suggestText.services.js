@@ -33,7 +33,7 @@ export function getSuggestions(list, value) {
 // Auto-select rules (Runs on list change)
 export const autoSelect = (selected, list, setSelected) => () => {
   if (!validList(list)) setSelected(-1); // deselect when no list
-  else if ((selected < 0 || selected >= list.length)) setSelected(0); // select 1st entry if out of bounds
+  else if ((selected < -1 || selected >= list.length)) setSelected(0); // select 1st entry if out of bounds
 };
 
 
