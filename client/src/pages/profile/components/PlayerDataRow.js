@@ -5,6 +5,7 @@ import { EditButton, LabelStyle, InputStyle, ButtonsStyle } from "../styles/Play
 
 import { useUpdatePlayerMutation } from "../profile.fetch";
 import { editClickController, saveController } from "../services/profile.services";
+import { useHotkeys } from "../../common/services/basic.services";
 
 
 function PlayerDataRow({ rowData, data, id }) {
@@ -20,6 +21,8 @@ function PlayerDataRow({ rowData, data, id }) {
   const saveData = saveController(id, rowData.key, editData, data, updatePlayer);
   const setEdit = useCallback((edit = true) => { edit && setEditData(data); setEditing(edit); }, [data]);
   const handleClick = editClickController(isEditing, saveData, setEdit);
+
+  useHotkeys({ 13/* ENTER */: handleClick}, { skip: !isEditing })
 
   // Render
   return (<>
