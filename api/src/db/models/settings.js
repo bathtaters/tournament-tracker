@@ -9,6 +9,8 @@ const batchSet = settings => db.addRows('settings', settings, { upsert: 1 });
 
 module.exports = {  
   batchSet, getAll,
-  get: setting => db.getRow('settings',setting),
+  get: settings => Array.isArray(settings) ?
+    db.getRows('settings', 'WHERE id = ANY($1)', [settings]) :
+    db.getRow('settings', settings),
   rmv:  id => db.rmvRow('settings', id),
 }
