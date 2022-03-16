@@ -1,8 +1,5 @@
 import { getRemaining, playerExists, randomArray } from "./playerEditor.utils";
 import { createPlayerMsg, playerCreateError, duplicatePlayerMsg } from "../../../assets/strings";
-import valid from "../../../assets/validation.json";
-const autofillDef = valid.defaults.settings.autofillsize;
-
 
 // Add new player to DB
 async function newPlayerController(playerData, players, createPlayer, pushPlayer) {
@@ -36,7 +33,7 @@ export const onSubmitController = (hideSuggest, setHide, handleNewPlayer, pushPl
 
 // Build PlayerInput props
 export default function playerInputController({
-  data, playerList, setPlayerList, createPlayer, pushPlayer, onFirstEdit, autofillSize = autofillDef
+  data, playerList, setPlayerList, createPlayer, pushPlayer, onFirstEdit, autofillSize
 }) {
   const remainingPlayers = getRemaining(data, playerList);
 
