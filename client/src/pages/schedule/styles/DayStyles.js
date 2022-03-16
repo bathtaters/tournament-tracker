@@ -5,11 +5,11 @@ import { statusInfo } from '../../../assets/strings';
 
 // DAY.JS STYLES \\
 
-export function TitleStyle({ className, children }) {
+export function DayTitleStyle({ className, children }) {
   return (<h4 className={'text-2xl font-light text-center pointer-events-none ' + className}>{children}</h4>);
 }
 
-export function SubTitleStyle({ children }) {
+export function DaySubtitleStyle({ children }) {
   return (<h5 className="text-center italic text-sm font-thin mb-2 pointer-events-none">{children}</h5>);
 }
 
@@ -51,5 +51,5 @@ export function EditEventButton({ status, onClick, children }) {
 
 export const dragAndDropClass = {
   outer: "p-2 m-1 rounded-md w-40 min-h-32",
-  inner: "relative p-1 m-1 rounded-xl text-center",
+  inner: "relative flex justify-center items-center overflow-hidden m-1 h-8 rounded-xl",
 };
