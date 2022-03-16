@@ -1,8 +1,7 @@
 import valid from "../../assets/validation.json";
 
 // Settings Window Layout/Validation
-const statusLockDefault = 2; // Lock setting once game has started
-const lockAt = (statusVal = statusLockDefault) => (_,base) => base.eventStatus != null && base.eventStatus >= statusVal;
+const lockAt = (statusVal) => (_, base) => base.eventStatus != null && base.eventStatus >= statusVal;
 
 // Layout object for InputForm
 export const editorLayout = [ 'custom', [
@@ -16,10 +15,10 @@ export const editorLayout = [ 'custom', [
     min: data => data ? data.roundactive : valid.limits.event.roundcount.min
   },{
     label: 'Wins Needed', id: 'wincount',
-    type: 'number', disabled: lockAt(),
+    type: 'number', disabled: lockAt(2),
   },{
     label: 'Players per Game', id: 'playerspermatch',
-    type: 'number', disabled: lockAt(),
+    type: 'number', disabled: lockAt(2),
   },
 ]];
 
