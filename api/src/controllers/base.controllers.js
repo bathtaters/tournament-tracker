@@ -53,9 +53,14 @@ async function setSettings(req,res) {
 
 // Schedule data
 const getSchedule = async function(_, res) {
-  const schedule = await event.getSchedule().then(sortSlots).then(arrToObj('day'));
-  
-  return res.sendAndLog(schedule);
+  const [schedule, settingsData] = await Promise.all([
+    event.getSchedule().then(arrToObj('day')),
+    setting.get(['dayslots','datestart','dateend']),
+  ]);
+
+  let settings = {};
+  settingsData.forEach((entry) => settings[entry.id] = asType(entry));
+  return res.sendAndLog({ schedule, settings });
 }
 
 
@@ -71,20 +76,3 @@ const resetDB = full => (_, res) => ops.file(full && dbResetFile, dbTestFile)
 
 
 module.exports = { getAll, getSetting, getSettings, setSettings, getSchedule, resetDB, };
-
-
-
-// HELPER - Sort schedule to daily slots, appending unslotted to the end
-function sortSlots(schedArray) {
-  return schedArray.map(entry => {
-    entry.events = []; entry.slots = [];
-    
-    for (const [event,slot] of Object.entries(entry.eventslots)) {
-      if (slot && !entry.slots[slot - 1]) entry.slots[slot - 1] = event;
-      else entry.events.push(event);
-    }
-    
-    delete entry.eventslots;
-    return entry;
-  });
-}
