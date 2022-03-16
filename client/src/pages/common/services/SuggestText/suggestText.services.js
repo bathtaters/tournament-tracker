@@ -1,8 +1,5 @@
 import { validList } from "./suggestText.utils";
-
-// Advanced Settings
-const hideListWhenEmpty = false;
-const hideStaticWhenEmpty = true;
+const { hideListWhenEmpty, hideStaticWhenEmpty } = import("../../../../assets/config").then(c => c.suggestText);
 
 
 // Filter Suggestions logic
