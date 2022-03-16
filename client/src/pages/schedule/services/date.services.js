@@ -27,9 +27,3 @@ export const dayClasses = day => {
     (!day || day === noDate || new Date(day) < today) ?
     dayClass.past : dayClass.future;
 }
-
-// Get events w/o date or w/ date outside range
-export const getMissingEvents = (sched, range) => !sched || !range ? [] :
-  Object.keys(sched)
-    .filter(d => d === noDate || !range.includes(d))
-    .reduce((list,d)=>list.concat(sched[d].events || []),[]);
