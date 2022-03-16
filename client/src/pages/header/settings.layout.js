@@ -2,7 +2,7 @@ import { deepFilter } from "./services/settings.services";
 const defaultTitle = import("../../assets/validation.json").then(v => v.defaults.settings.title);
 
 // Settings layout object for InputForm
-const settingsLayout = [
+const basicLayout = [
   { label: 'Title', id: 'title', type: 'text', defaultValue: '',
     className: "text-base sm:text-xl font-medium m-2 flex w-full items-baseline",
     inputClass: "max-color pt-1 px-2 w-full",
@@ -31,11 +31,12 @@ const settingsLayout = [
 ];
 
 // Buttons prop for InputForm
-const settingsButtons = (clickCancel) => [{ label: "Cancel", onClick: clickCancel }];
+const buttons = (clickCancel) => [{ label: "Cancel", onClick: clickCancel }];
 
-
-export default { 
-  basic: settingsLayout,
-  advanced: deepFilter(settingsLayout, s => !s.advanced),
-  buttons: settingsButtons,
+const settingsLayout = { 
+  basic: basicLayout,
+  advanced: deepFilter(basicLayout, s => !s.advanced),
+  buttons,
 };
+
+export default settingsLayout;
