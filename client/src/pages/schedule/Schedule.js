@@ -6,9 +6,8 @@ import EditEvent from "../eventEditor/EditEvent";
 import Loading from "../common/Loading";
 import Modal from "../common/Modal";
 import RawData from "../common/RawData";
-import { DaysStyle } from "./styles/ScheduleStyles";
+import { DaysContainerStyle } from "./styles/ScheduleStyles";
 
-import { noDate, getMissingEvents } from "./services/date.services";
 import { useScheduleQuery, useSettingsQuery, useEventQuery } from "./schedule.fetch";
 
 function Schedule() {
@@ -24,30 +23,30 @@ function Schedule() {
   const openEventModal = useCallback(eventid => { setCurrentEvent(eventid); modal.current.open(); }, [modal]);
 
   // Calculated
-  const isLoading = schedLoad || settingsLoad || eventsLoad, error = schedErr || settingsErr || eventsErr;
-  const notLoaded = isLoading || error || !data || !settings || !eventData;
-  const otherEvents = getMissingEvents(data, settings.dateRange);
+  const isLoading = schedLoad || settingsLoad || eventsLoad,
+    error  = schedErr || settingsErr || eventsErr,
+    noData = isLoading || error || !data || !settings || !eventData;
 
   // Render
   return (
     <div>
-      <ScheduleHeader isEditing={isEditing} isLoading={notLoaded} setEdit={setEdit} openModal={openEventModal} />
+      <ScheduleHeader isEditing={isEditing} isLoading={noData} setEdit={setEdit} openModal={openEventModal} />
 
-      <DaysStyle>
-        { notLoaded ?
+      <DaysContainerStyle>
+        { noData ?
           <Loading loading={isLoading} error={error} altMsg="Unable to reach server"  tagName="h4" />
 
-        : (settings.dateRange || []).map(day => 
+        : data.map(({ day, events }) => 
           <Day
             key={day}
             day={day}
-            events={day === noDate ? otherEvents : data[day] && data[day].events}
+            events={events}
             eventData={eventData}
             isEditing={isEditing}
             setEventModal={openEventModal}
           />
         )}
-      </DaysStyle>
+      </DaysContainerStyle>
 
       <RawData data={data} />
       <RawData className="text-xs" data={eventData} />

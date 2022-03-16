@@ -1,59 +1,52 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import PropTypes from 'prop-types';
 
 import DayEntry from "./DayEntry";
-import DragBlock from '../../common/DragBlock';
-import {
-  TitleStyle, SubTitleStyle,
-  MissingDataStyle, dragAndDropClass
-} from "../styles/DayStyles";
+import { DayTitleStyle, DaySubtitleStyle, dragAndDropClass } from "../styles/DayStyles";
+import DragBlock from "../../common/DragBlock";
 
 import { useSetEventMutation } from "../schedule.fetch";
-import { toDateObj, dayClasses } from '../services/date.services';
+import { toDateObj, dayClasses, noDate } from '../services/date.services';
 import { canDrop, dropController, dataType } from "../services/day.services";
-
 import { weekdays } from '../../../assets/strings';
 
 
-// Component
 function Day({ events, isEditing, setEventModal, day, eventData }) {
   // Classes & date as DateObj
   const [ { titleCls, borderCls }, date ] = useMemo(() => [ dayClasses(day), toDateObj(day) ], [day]);
-  
+
   // Drag & Drop action
   const [ updateEvent ] = useSetEventMutation();
   const dropHandler = useCallback(dropController(updateEvent), [updateEvent]);
 
   return (
     <DragBlock
-      storeData={{ id: null, day }}
+      storeData={{ day }}
+      storeTestData="day"
       onDrop={dropHandler}
       canDrop={canDrop}
       className={dragAndDropClass.outer}
       borderClass={{disabledColor:borderCls, disabledOpacity:'100', baseOpacity:'100'}}
       dataType={dataType}
-      disabled={!isEditing}
+      disabled={day !== noDate || !isEditing}
       draggable={false}
     >
+      <DayTitleStyle className={titleCls}>{date ? weekdays[date.getDay()] : 'Unscheduled'}</DayTitleStyle>
 
-      <TitleStyle className={titleCls}>{date ? weekdays[date.getDay()] : 'Unscheduled'}</TitleStyle>
+      <DaySubtitleStyle>{date ? date.toLocaleDateString() : ''}</DaySubtitleStyle>
 
-      <SubTitleStyle>{date ? date.toLocaleDateString() : ''}</SubTitleStyle>
-
-      { events && events.length ?
-        events.map(eventid => 
-          <DayEntry
-            day={day}
-            id={eventid}
-            data={eventData && eventData[eventid]}
-            isEditing={isEditing}
-            dropHandler={dropHandler}
-            editEvent={()=>setEventModal(eventid)}
-            key={eventid}
-          />
-        )
-      : !isEditing && (<MissingDataStyle>No events</MissingDataStyle>)
-      }
+      { events.map((eventid,slot) => 
+        <DayEntry
+          day={day}
+          slot={day !== noDate && slot + 1}
+          id={eventid}
+          data={eventData && eventData[eventid]}
+          isEditing={isEditing}
+          dropHandler={dropHandler}
+          editEvent={()=>setEventModal(eventid)}
+          key={eventid || slot}
+        />
+      )}
     </DragBlock>
   );
 }

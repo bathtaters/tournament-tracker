@@ -12,26 +12,30 @@ import { isTempId } from '../services/date.services';
 import { canDrop, dataType } from "../services/day.services";
 
 
-function DayEntry({ day, id, data, isEditing, dropHandler, editEvent }) {
+function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent }) {
   // Setup prefetching
   const prefetchEvent = usePrefetch('event');
   const prefetchMatch = usePrefetch('match');
   const prefetchStats = usePrefetch('stats');
-  const loadEvent = id => { prefetchEvent(id); prefetchMatch(id); prefetchStats(id); };
+  const loadEvent = (id) => id && (() => { prefetchEvent(id); prefetchMatch(id); prefetchStats(id); });
 
-  if (!data || isTempId(id)) return <MissingDataStyle>...</MissingDataStyle>
+  if (id && isTempId(id)) return <MissingDataStyle>...</MissingDataStyle>
 
   return (
     <DragBlock
-      storeData={{ id, day }}
+      storeData={{ id, day, slot }}
+      storeTestData={day}
       onDrop={dropHandler}
       canDrop={canDrop}
       className={dragAndDropClass.inner}
       dataType={dataType}
       disabled={!isEditing}
-      onHover={()=>loadEvent(id)}
+      onHover={loadEvent(id)}
+      draggable={Boolean(data)}
     >
-      { isEditing ? <>
+      { !data ? 
+        <div /> :
+      isEditing ? <>
         <EntryTitleStyle isDone={data.isDone}>{data.title}</EntryTitleStyle>
         
         { data.status < 3 && <EditEventButton status={data.status} onClick={editEvent} /> }
