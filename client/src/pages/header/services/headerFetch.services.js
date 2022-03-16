@@ -1,5 +1,4 @@
 import { fetchApi, tagTypes } from "../header.fetch";
-import { getDays } from '../../schedule/services/date.services';
 
 // Check if any queries are currently running
 export const isAnyLoading = (state) =>
@@ -13,10 +12,7 @@ export const forceRefetchConstructor = (dispatch) =>
 // Update cache for settingsUpdate
 export function settingsUpdate(body, { dispatch }) {
   dispatch(fetchApi.util.updateQueryData(
-    'settings', undefined, draft => { 
-      draft = Object.assign(draft,body);
-      draft.dateRange = getDays(draft.datestart, draft.dateend);
-    }
+    'settings', undefined, draft => Object.assign(draft,body)
   ));
 }
 

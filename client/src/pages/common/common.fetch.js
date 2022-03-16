@@ -1,12 +1,12 @@
 import { fetchApi, getTags, tagTypes, ALL_ID } from '../../core/store/fetchApi';
-import { getSettings, getEvent } from './services/fetch.services';
+import { getEvent } from './services/fetch.services';
 
 export const commonApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
 
     settings: build.query({
       query: () => 'settings',
-      transformResponse: getSettings,
+      transformResponse: res => console.log('SETTINGS',res) || res,
       providesTags: ['Settings'],
     }),
 
