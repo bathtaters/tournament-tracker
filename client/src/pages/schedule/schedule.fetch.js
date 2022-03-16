@@ -1,4 +1,5 @@
 import { fetchApi, useEventQuery, useSettingsQuery, usePrefetch } from '../common/common.fetch';
+import { scheduleAdapter } from './services/scheduleFetch.services';
 import { useSetEventMutation } from '../eventEditor/eventEditor.fetch';
 
 export const scheduleApi = fetchApi.injectEndpoints({
@@ -6,7 +7,7 @@ export const scheduleApi = fetchApi.injectEndpoints({
 
     schedule: build.query({
       query: () => 'schedule',
-      transformResponse: res => console.log('SCHEDULE',res) || res,
+      transformResponse: scheduleAdapter,
       providesTags: ['Schedule'],
     }),
     
