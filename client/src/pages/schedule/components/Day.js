@@ -6,14 +6,15 @@ import { DayTitleStyle, DaySubtitleStyle, dragAndDropClass } from "../styles/Day
 import DragBlock from "../../common/DragBlock";
 
 import { useSetEventMutation } from "../schedule.fetch";
-import { toDateObj, dayClasses, noDate } from '../services/date.services';
+import { toDateObj, getToday, dayClasses, noDate } from '../services/date.services';
 import { canDrop, dropController, dataType } from "../services/day.services";
 import { weekdays } from '../../../assets/strings';
 
 
 function Day({ events, isEditing, setEventModal, day, eventData }) {
   // Classes & date as DateObj
-  const [ { titleCls, borderCls }, date ] = useMemo(() => [ dayClasses(day), toDateObj(day) ], [day]);
+  const today = getToday();
+  const [ { titleCls, borderCls }, date ] = useMemo(() => [ dayClasses(day, today), toDateObj(day) ], [day, today]);
 
   // Drag & Drop action
   const [ updateEvent ] = useSetEventMutation();
