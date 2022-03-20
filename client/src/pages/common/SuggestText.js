@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import SuggestList from "./components/SuggestText/SuggestList";
 import SuggestTextBox from "./components/SuggestText/SuggestTextBox";
-import { WrapperStyle, ListStyle } from "./styles/SuggestTextStyles";
+import { WrapperStyle } from "./styles/SuggestTextStyles";
 
 import actionHandlers from "./services/SuggestText/suggestText.controller";
 import { getSuggestions, autoSelect, autoShow } from "./services/SuggestText/suggestText.services"
@@ -49,9 +49,7 @@ const SuggestText = forwardRef(function SuggestText({ list = [], className = "",
       <SuggestTextBox {...{value, isHidden, className, setListVisible, change, setValue}} ref={textbox} />
       
       { listIsVisible && validList(suggestions) && 
-        <ListStyle>
-          <SuggestList list={suggestions} className={listClass} {...{selected, pick, setSelected}} />
-        </ListStyle>
+        <SuggestList list={suggestions} className={listClass} {...{selected, pick, setSelected}} />
       }
     </WrapperStyle>
   );
