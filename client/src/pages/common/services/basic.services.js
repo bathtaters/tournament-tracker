@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 
 // Checks that 2 arrays are equal (Must be 1D arrays, 2 falsy vars will also be equal)
 export const equalArrays = (a,b) =>
@@ -42,4 +42,34 @@ export function useHotkeys(hotkeyMap, { skip, deps } = {}) {
     return () => document.removeEventListener('keydown', hotkeyHandler, false);
 
   }, deps && deps.concat(skip));
+}
+
+
+// Provides a ref to give to an object you want to be scrolled to if invisible
+//    options = see IntersectionObserver options & ScrollIntoView options
+export function useScrollToRef({
+  // Observer options
+  rootRef = null, threshold = 1.0, rootMargin = "0px",
+  // ScrollIntoView options
+  behavior = "auto", block = "start", inline = "nearest", 
+} = {}) {
+  // Create scroll callback
+  const elementRef = useRef(null)
+  const scrollTo = (entries) => {
+    if (!entries[0].isIntersection)
+      elementRef.current.scrollIntoView({ behavior, block, inline })
+  }
+
+  // Add/Remove observer listener
+  useEffect(() => {
+    const root = rootRef && 'current' in rootRef ? rootRef.current : rootRef
+
+    const observer = new IntersectionObserver(scrollTo, {root, threshold, rootMargin})
+    if (elementRef.current) observer.observe(elementRef.current)
+
+    return () => { if (elementRef.current) observer.unobserve(elementRef.current) }
+  }, [elementRef.current, rootRef, threshold, rootMargin])
+
+  // Get reference to element
+  return elementRef
 }
