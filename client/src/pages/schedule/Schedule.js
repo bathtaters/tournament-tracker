@@ -43,6 +43,7 @@ function Schedule() {
             events={events}
             eventData={eventData}
             isEditing={isEditing}
+            isSlotted={Boolean(settings.dayslots)}
             setEventModal={openEventModal}
           />
         )}
