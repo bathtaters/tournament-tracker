@@ -8,7 +8,7 @@ import {
 } from "../styles/DayStyles";
 
 import { usePrefetch } from "../schedule.fetch";
-import { isTempId } from '../services/date.services';
+import { isTempId } from '../services/date.utils';
 import { canDrop, dataType } from "../services/day.services";
 
 

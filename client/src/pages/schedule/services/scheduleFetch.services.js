@@ -1,4 +1,4 @@
-import { getDays, noDate } from "./date.services"
+import { getDays, noDate } from "./date.utils"
 
 // Convert Schedule output from server to array
 export function scheduleAdapter({ schedule, settings }) {

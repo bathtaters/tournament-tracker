@@ -1,4 +1,4 @@
-import { dayClasses } from "../../schedule/services/date.services";
+import { dayClasses } from "../../schedule/services/date.utils";
 
 export { dayClasses };
 

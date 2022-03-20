@@ -6,7 +6,7 @@ import { DayTitleStyle, DaySubtitleStyle, dragAndDropClass } from "../styles/Day
 import DragBlock from "../../common/DragBlock";
 
 import { useSetEventMutation } from "../schedule.fetch";
-import { toDateObj, getToday, dayClasses, noDate } from '../services/date.services';
+import { toDateObj, getToday, dayClasses, noDate } from '../services/date.utils';
 import { canDrop, dropController, dataType } from "../services/day.services";
 import { weekdays } from '../../../assets/strings';
 
