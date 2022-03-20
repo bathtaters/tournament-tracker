@@ -15,7 +15,7 @@ export const toDateObj = (dt) => dt === noDate ? null : new Date(dt+'T00:00');
 
 // Build array of days from start/end dates
 export function getDays(start, end) {
-  let arr = [noDate];
+  let arr = [];
   end = toDateObj(end);
   for (let d = toDateObj(start); d <= end; d.setDate(d.getDate() + 1)) {
     arr.push(toDate(d));
@@ -29,4 +29,22 @@ export const dayClasses = (day, today) => {
   return day === today ? dayClass.today :
     !day || day === noDate ? dayClass.future :
     new Date(day) < toDateObj(today) ? dayClass.past : dayClass.future;
+}
+
+// Sort events based on slot numbers
+//  eventSlots = { [eventId]: slotNumber, ... }
+export function sortedEvents(eventSlots, existing = []) {
+  let sorted = [...existing]; // copy input array
+  if (!eventSlots) return sorted; // skip if no data provided
+
+  let unsorted = []
+  for (const [event, slot] of Object.entries(eventSlots)) {
+    // Index based on slot number
+    if (slot && !sorted[slot - 1]) sorted[slot - 1] = event
+    // If duplicate or missing slot, place in unsorted
+    else unsorted.push(event)
+  }
+
+  // Append unsorted events to end
+  return sorted.concat(unsorted)
 }
