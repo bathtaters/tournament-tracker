@@ -20,7 +20,15 @@ const getOpponents = (eventid, completed=true) => eventid ?
 
 const getPlayers = id => db.getRow('event', id, 'players');
 
-const getRound = id => db.query(strings.maxRound, [id]).then(r => r && (r[0] || r).round);
+const getLastSlot = (day, id) => {
+    const qry = strings.maxSlot[0]
+        + (day ? 'day = $1' : 'day IS NULL')
+        + (!id ? '' : day ? ' AND id != $2' : ' AND id != $1')
+        + strings.maxSlot[1];
+    return db.query(qry, [day, id].filter(Boolean)).then(r => (r?.[0]?.slot || 0));
+}
+
+const getRound = id => db.query(strings.maxRound, [id]).then(r => r?.[0]?.round);
 
 
 // Create new event
@@ -56,8 +64,8 @@ const popRound = (eventid, round) => db.operation(client => Promise.all([
 
 module.exports = {
     get,
-    getSchedule, getOpponents, 
-    getPlayers, getRound,
+    getSchedule, getOpponents, getPlayers, 
+    getLastSlot, getRound,
     
     add, popRound, pushRound,
 
