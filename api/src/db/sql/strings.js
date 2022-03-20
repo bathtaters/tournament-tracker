@@ -7,6 +7,7 @@ exports.clock = {
 
 exports.event = {
     byEventId: "WHERE eventid = $1",
+    maxSlot: ['SELECT slot FROM event@date_idx WHERE ', ' ORDER BY slot DESC LIMIT 1;'],
     maxRound: "SELECT round FROM match WHERE eventid = $1 ORDER BY round DESC LIMIT 1;",
     deleteRound: "DELETE FROM match WHERE eventid = $1 AND round = $2;",
     complete: "LEFT JOIN event ON event.id = eventid WHERE event.roundactive > event.roundcount",
