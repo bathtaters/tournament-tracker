@@ -5,20 +5,18 @@ import DayEntry from "./DayEntry";
 import { DayTitleStyle, DaySubtitleStyle, dragAndDropClass } from "../styles/DayStyles";
 import DragBlock from "../../common/DragBlock";
 
-import { useSetEventMutation } from "../schedule.fetch";
 import { toDateObj, getToday, dayClasses, noDate } from '../services/date.utils';
-import { canDrop, dropController, dataType } from "../services/day.services";
+import { useUpdateSchedule, canDrop, dataType } from "../services/day.services";
 import { weekdays } from '../../../assets/strings';
 
 
-function Day({ events, isEditing, setEventModal, day, eventData }) {
+function Day({ events, isEditing, isSlotted, setEventModal, day, eventData }) {
   // Classes & date as DateObj
   const today = getToday();
   const [ { titleCls, borderCls }, date ] = useMemo(() => [ dayClasses(day, today), toDateObj(day) ], [day, today]);
 
   // Drag & Drop action
-  const [ updateEvent ] = useSetEventMutation();
-  const dropHandler = useCallback(dropController(updateEvent), [updateEvent]);
+  const dropHandler = useUpdateSchedule();
 
   return (
     <DragBlock
@@ -29,7 +27,7 @@ function Day({ events, isEditing, setEventModal, day, eventData }) {
       className={dragAndDropClass.outer}
       borderClass={{disabledColor:borderCls, disabledOpacity:'100', baseOpacity:'100'}}
       dataType={dataType}
-      disabled={day !== noDate || !isEditing}
+      disabled={(isSlotted && day !== noDate) || !isEditing}
       draggable={false}
     >
       <DayTitleStyle className={titleCls}>{date ? weekdays[date.getDay()] : 'Unscheduled'}</DayTitleStyle>
