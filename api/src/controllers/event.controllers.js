@@ -27,16 +27,21 @@ const getAllEvents = (_, res) => event.get().then(arrToObj('id',{delKey:0})).the
 /* SET event database. */
 
 // Create/Remove event
-function createEvent (req, res) {
-  const eventData = { ...defs, ...req.body };
+async function createEvent (req, res) {
+  const slot = await event.getLastSlot(null).then(s => s + 1);
+  const eventData = { ...defs, ...req.body, slot };
   return event.add(eventData).then(res.sendAndLog);
 }
 async function removeEvent (req, res) {
   return event.rmv(req.params.id).then(res.sendAndLog);
 }
 
-// Manually set event data
-const updateEvent = (req, res) => event.set(req.params.id, req.body).then(res.sendAndLog);
+// Manually set event data (Guess day-slot if missing when updating day)
+async function updateEvent (req, res) {
+  if ('day' in req.body && !('slot' in req.body))
+    req.body.slot = await event.getLastSlot(req.body.day, req.params.id).then(s => s + 1);
+  return event.set(req.params.id, req.body).then(res.sendAndLog);
+}
 
 
 module.exports = {
@@ -46,7 +51,7 @@ module.exports = {
 
 
 // GetEvent HELPER - index rounds
-const sortMatchResult = result => result && result.reduce((matchArr, row) => {
+const sortMatchResult = (result) => result && result.reduce((matchArr, row) => {
   matchArr[row.round - 1] = row.matches;
   return matchArr;
 }, []);
