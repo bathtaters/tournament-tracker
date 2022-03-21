@@ -19,5 +19,7 @@ exports.player = {
 
 exports.match = {
     list: "SELECT round, array_agg(id) matches FROM match WHERE eventid = $1 GROUP BY round;",
+    drop:   "UPDATE match SET drops = ARRAY_APPEND(drops, $3) WHERE id = $1 AND round = $2 RETURNING eventid;",
+    undrop: "UPDATE match SET drops = ARRAY_REMOVE(drops, $3) WHERE id = $1 AND round = $2 RETURNING eventid;",
     complete: exports.event.complete,
 }
