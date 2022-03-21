@@ -17,6 +17,7 @@ module.exports = {
   matchId:     bySet('match')('id'),
   reportMatch: bySet('match')('id', reportKeys),
   updateMatch: validateMatchUpdate,
+  updateDrops: bySet('match')('id', ['id', 'round', 'undrop']),
   swapPlayers: bySet('swap')(0,'all'),
 }
 

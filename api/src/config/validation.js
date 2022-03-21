@@ -56,6 +56,7 @@ module.exports = {
       draws: 0,
       drops: [],
       reported: false,
+      undrop: false,
     },
   },
 
@@ -131,7 +132,8 @@ module.exports = {
       wins: "int[]",
       draws: "int",
       drops: "uuid[]?",
-      reported: "boolean"
+      reported: "boolean",
+      undrop: "boolean"
     },
     swap: {
       swap: "object[]",
