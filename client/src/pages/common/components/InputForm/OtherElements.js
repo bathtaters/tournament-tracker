@@ -20,5 +20,6 @@ export function ElementLabel({ id, label, className }) {
 }
 
 export function ElementInput({ inputProps = {}, className }) {
+  if (inputProps.type === 'number') inputProps.pattern = "\\d*";
   return (<input {...inputProps} className={className} />);
 }
