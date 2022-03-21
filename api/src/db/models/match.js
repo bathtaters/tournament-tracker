@@ -3,7 +3,6 @@ const db = require('../admin/interface');
 const strings = require('../sql/strings').match;
 const { filtering } = require('../../utils/shared.utils');
 
-
 // Match Table Operations //
 
 // Get match base or match detail
@@ -27,6 +26,10 @@ const getAll = (completed = true) => db.getRows(
     completed && strings.complete, null,
     completed && 'matchDetail.*'
 );
+
+// Drop/Undrop player from match
+const dropPlayer = (id, player, round, drop) =>
+    db.query(drop ? strings.drop : strings.undrop, [id, round, player]).then(r => r?.[0]);
 
 // Update match data (Providing match.player will overwrite entire object)
 const update = (id, newData) => db.updateRow('match', id, newData, { returning: 'eventid' });
@@ -53,5 +56,5 @@ const updateWins = async (id, index, wins) => {
 
 module.exports = {
     get, getMulti, listByEvent, getByEvent, getAll,
-    update, updateMulti, updateWins,
+    dropPlayer, update, updateMulti, updateWins,
 }

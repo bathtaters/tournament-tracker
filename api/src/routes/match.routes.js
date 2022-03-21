@@ -12,9 +12,10 @@ router.get('/all',                              catcher(controller.getAllMatches
 router.get('/event/:eventid', validate.eventid, catcher(controller.getEventMatches));
 
 // Sets
-router.post( '/swap', validate.swapPlayers, catcher(action.swapPlayers));
-router.post(  '/:id', validate.reportMatch, catcher(controller.reportMatch));
-router.delete('/:id', validate.matchId,     catcher(controller.unreportMatch));
-router.patch( '/:id', validate.updateMatch, catcher(controller.updateMatch));
+router.post(  '/swap',     validate.swapPlayers, catcher(action.swapPlayers));
+router.patch( '/:id/drop', validate.updateDrops, catcher(controller.updateDrops));
+router.post(  '/:id',      validate.reportMatch, catcher(controller.reportMatch));
+router.delete('/:id',      validate.matchId,     catcher(controller.unreportMatch));
+router.patch( '/:id',      validate.updateMatch, catcher(controller.updateMatch));
 
 module.exports = router;
