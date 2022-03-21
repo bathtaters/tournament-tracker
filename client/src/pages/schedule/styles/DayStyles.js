@@ -20,19 +20,23 @@ export function MissingDataStyle({ children }) {
 
 // DAY-ENTRY.JS STYLES \\
 
-export function EntryTitleStyle({ isDone, children }) {
+function BaseTitleStyle({ status, className = '', children }) {
+  const statusClass = status === 1 ? '' : statusInfo[status + 1].class;
+  return (<div className={statusClass+' text-sm font-normal block '+className}>{children}</div>);
+}
+
+export function EntryTitleStyle({ status, children }) {
   return (
-    <div className={'text-sm font-normal pointer-events-none '+(isDone ? 'dim-color' : 'link-color')}>
-      {children}
+    <div className="link pointer-events-none">
+      <BaseTitleStyle status={status}>{children}</BaseTitleStyle>
     </div>
   );
 }
 
 export function EntryLinkStyle({ to, status, children }) {
-  const statusClass = status === 1 ? '' : statusInfo[status + 1].class;
   return (
-    <Link to={to} className={'text-sm font-normal block '+statusClass}>
-      {children}
+    <Link to={to}>
+      <BaseTitleStyle status={status}>{children}</BaseTitleStyle>
     </Link>
   );
 }

@@ -36,7 +36,7 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent }) {
       { !data ? 
         <div /> :
       isEditing ? <>
-        <EntryTitleStyle isDone={data.isDone}>{data.title}</EntryTitleStyle>
+        <EntryTitleStyle status={data.status}>{data.title}</EntryTitleStyle>
         
         { data.status < 3 && <EditEventButton status={data.status} onClick={editEvent} /> }
 
