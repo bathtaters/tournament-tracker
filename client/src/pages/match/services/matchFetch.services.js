@@ -11,6 +11,13 @@ export function reportUpdate({ id, eventid, clear = false, ...body }, { dispatch
   }));
 };
 
+export function dropsUpdate({ id, eventid, playerid, undrop }, { dispatch }) {
+  dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
+    if (!undrop) draft[id].drops.push(playerid);
+    else draft[id].drops.splice(draft[id].drops.indexOf(playerid),1);
+  }));
+}
+
 export function matchUpdate({ id, eventid, clear = false, ...body }, { dispatch }) {
   dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
     const idx = body.key.match(/^wins\.(\d+)$/);

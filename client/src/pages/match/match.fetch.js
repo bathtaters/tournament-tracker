@@ -4,7 +4,7 @@ import {
   useSettingsQuery, useStatsQuery
 } from '../common/common.fetch';
 
-import { reportUpdate, matchUpdate, swapPlayersUpdate } from './services/matchFetch.services'
+import { reportUpdate, dropsUpdate, matchUpdate, swapPlayersUpdate } from './services/matchFetch.services'
 
 export const eventApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
@@ -30,6 +30,13 @@ export const eventApi = fetchApi.injectEndpoints({
       onQueryStarted: matchUpdate,
     }),
 
+    updateDrops: build.mutation({
+      query: ({ id, playerid, eventid, ...body }) => ({ url: `match/${id}/drop`, method: 'PATCH', body: { ...body, id: playerid } }),
+      transformResponse: res => console.log('UPD_DROPS',res) || res,
+      invalidatesTags: getTags(['Match','Event','Stats'],{key:'eventid',addBase:['PlayerDetail'],all:0}),
+      onQueryStarted: dropsUpdate,
+    }),
+
     swapPlayers: build.mutation({
       query: ({ eventid, ...body}) => ({ url: `match/swap`, method: 'POST', body }),
       transformResponse: res => console.log('SWAP',res) || res,
@@ -44,5 +51,6 @@ export const eventApi = fetchApi.injectEndpoints({
 export { usePlayerQuery, useSettingsQuery, useStatsQuery };
 export const {
   useMatchQuery, useUpdateMatchMutation, 
-  useReportMutation, useSwapPlayersMutation,
+  useReportMutation, useUpdateDropsMutation,
+  useSwapPlayersMutation,
 } = eventApi;
