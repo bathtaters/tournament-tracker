@@ -14,7 +14,7 @@ const weight = {
 
 // Calculate single player's base score
 const getPlayerScore = (stats) => !stats ? 0 :
-  Object.keys(weight).reduce((tot,key) => tot + (key in stats ? stats[key] * weight[key] : 0), 0)
+  Object.keys(weight).reduce((tot,key) => tot + (key in stats && !isNaN(stats[key]) ? stats[key] * weight[key] : 0), 0)
 
 // Calculate score of 2 players (base + rematch penalties)
 const getComboScore = (scores, opps) => ([playerA, playerB]) =>
@@ -22,9 +22,6 @@ const getComboScore = (scores, opps) => ([playerA, playerB]) =>
 
 // Calculate score for single player match (base + bye penalties)
 const getSoloScore = (player, score, byes) => score + count(player, byes) * weight.penalty * 2
-
-// Uncomment to enable logging of each combo's score for debugging
-const logScores = (sc,gp,bs) => null //gp.forEach((e,i) => console.log(sc[i] === bs ? 'x' : '-', sc[i].toFixed(0), e))
 
 
 
@@ -52,13 +49,36 @@ function generateMatchups(stats, { playerspermatch, byes, oppData }) {
       avg( getCombos(match, 2).map(getComboScore(playerScores, oppData)) )
     ))
   )
+  
+  // Get pairing with the lowest score
+  const bestScore = Math.min(...allScores)
+  // logScores(allScores, allPossible, bestScore) // DEBUG LOG
+  const bestMatch = allPossible[allScores.indexOf(bestScore)]
 
-  // DEBUG LOG
-  logScores(allScores, allPossible, Math.min(...allScores))
+  // Catch error
+  if (!bestMatch) {
+    console.error('SWISS MONRAD Input Data:', stats, { playerspermatch, byes, oppData })
+    console.error('SWISS MONRAD Results:', resultsLogObject(allScores, bestScore, Math.max(...allScores)))
+    throw new Error('SWISS MONRAD failed to find best match pairing.')
+  }
 
-  // Return pairing with the lowest score
-  return allPossible[allScores.indexOf(Math.min(...allScores))]
+  return bestMatch
 }
 
 
 module.exports = generateMatchups;
+
+
+
+// ----- Logging ------ \\
+
+// Log each combo's score for debugging
+const logScores = (sc,gp,bs) => gp.forEach((e,i) => console.log(sc[i] === bs ? 'x' : '-', sc[i].toFixed(0), e)) || console.log('RESULTS:',resultsLogObject(sc, bs, Math.max(...sc)))
+
+// Get results as readable object for error reporting
+const resultsLogObject = (allScores, bestScore, worstScore) => ({
+  bestScore, worstScore,
+  totalCount: allScores.length,
+  bestCount: allScores.filter(s => s === bestScore).length,
+  worstCount: allScores.filter(s => s === Math.max(...allScores)).length
+})
