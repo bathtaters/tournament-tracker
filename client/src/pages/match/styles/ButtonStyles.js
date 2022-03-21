@@ -49,3 +49,10 @@ export function ClearReportButton({ onClick }) {
   );
 }
 
+export function DropButton({ onClick, isDrop }) {
+  return (
+    <div className="link text-center font-light p-0.5 pointer-events-auto" onClick={onClick}>
+      { isDrop ? 'Undrop' : 'Drop' }
+    </div>
+  )
+}

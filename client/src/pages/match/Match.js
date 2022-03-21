@@ -17,6 +17,7 @@ import {
   useMatchQuery, useReportMutation,
   useUpdateMatchMutation, 
   useSwapPlayersMutation,
+  useUpdateDropsMutation,
   useStatsQuery, useSettingsQuery,
   usePlayerQuery
 } from "./match.fetch";
@@ -54,6 +55,10 @@ function Match({ eventid, matchId, wincount, isEditing }) {
   const [ swapPlayers ] = useSwapPlayersMutation();
   const handleSwap = swapController(swapPlayers, eventid);
 
+  // (Un)Drop players
+  const [ updateDrops ] = useUpdateDropsMutation();
+  const handleDrop = (playerid, undrop) => updateDrops({ id: matchId, round: matchData.round, playerid, undrop });
+
   
   // Loading/Error catcher
   if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankError || playerError)
@@ -72,6 +77,7 @@ function Match({ eventid, matchId, wincount, isEditing }) {
             playerData={players[playerid]}
             matchData={matchData}
             handleSwap={handleSwap}
+            handleDrop={handleDrop}
             canSwap={canSwap}
             isEditing={isEditing}
             index={index}

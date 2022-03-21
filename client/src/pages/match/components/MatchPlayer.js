@@ -1,11 +1,15 @@
+import React, { useState } from "react";
+
 import DragBlock from "../../common/DragBlock";
-import { NameStyle, PlayerInfoStyle, VsStyle, playerBoxStyle } from "../styles/MatchStyles";
+import { NameStyle, PlayerInfoStyle, PlayerDropStyle, VsStyle, playerBoxStyle } from "../styles/MatchStyles";
+import { DropButton } from "../styles/ButtonStyles";
 import { dataType } from "../services/swap.services";
 
 import { formatRecord } from '../../../assets/strings';
 
-function MatchPlayer({ id, playerData, matchData, handleSwap, canSwap, isEditing, index, record }) {
+function MatchPlayer({ id, playerData, matchData, handleSwap, handleDrop, canSwap, isEditing, index, record }) {
   const isDrop = matchData.drops && matchData.drops.includes(id);
+  const clickDrop = () => handleDrop(id, isDrop)
   
   return (<>
     { Boolean(index) && <VsStyle>vs.</VsStyle> }
@@ -24,8 +28,12 @@ function MatchPlayer({ id, playerData, matchData, handleSwap, canSwap, isEditing
         {(playerData && playerData.name) || '?'}
       </NameStyle>
       
-      <PlayerInfoStyle isDrop={isDrop}>
+      <PlayerInfoStyle isDrop={isDrop} onClick={isEditing ? clickDrop : null}>
         { isDrop ? 'Dropped' : formatRecord(record) }
+
+        <PlayerDropStyle visible={isEditing && matchData.reported}>
+          <DropButton isDrop={isDrop} onClick={clickDrop} />
+        </PlayerDropStyle>
       </PlayerInfoStyle>
 
     </DragBlock>
