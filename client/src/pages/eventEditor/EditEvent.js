@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 
 import PlayerEditor from "./components/PlayerEditor";
+import OverlayContainer from "../common/styles/OverlayContainer";
 import { TitleStyle, StatusStyle } from "./styles/EventEditorStyles";
 
 import InputForm from "../common/InputForm";
@@ -23,7 +24,7 @@ function EditEvent({ eventid, modal }) {
   
   // Init mutators
   let navigate = useNavigate();
-  const [ setEvent ] = useSetEventMutation();
+  const [ setEvent, { isLoading: isUpdating } ] = useSetEventMutation();
   const [ deleteEvent ] = useDeleteEventMutation();
 
   // Loading/Error catcher
@@ -59,6 +60,8 @@ function EditEvent({ eventid, modal }) {
       </InputForm>
 
       <RawData className="text-sm mt-4" data={data} />
+
+      { isUpdating && <OverlayContainer /> }
     </div>
   );
 }

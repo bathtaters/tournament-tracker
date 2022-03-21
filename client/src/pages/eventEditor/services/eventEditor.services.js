@@ -22,8 +22,7 @@ export async function saveEvent(eventId, eventData, playerList, setEvent, modal)
   eventData.players = savedPlayers;
 
   // Push event to server (Create/Update)
-  setEvent(eventData);
-  modal.current.close(true);
+  setEvent(eventData).then(() => modal.current.close(true));
 }
 
 
