@@ -57,7 +57,7 @@ function Match({ eventid, matchId, wincount, isEditing }) {
 
   // (Un)Drop players
   const [ updateDrops ] = useUpdateDropsMutation();
-  const handleDrop = (playerid, undrop) => updateDrops({ id: matchId, round: matchData.round, playerid, undrop });
+  const handleDrop = (playerid, undrop) => updateDrops({ id: matchId, playerid, undrop, eventid });
 
   
   // Loading/Error catcher
