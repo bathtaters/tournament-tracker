@@ -38,7 +38,7 @@ export const statusInfo = [
 ];
 export const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 export const roundButtonText = [
-  "Loading", "Start Event", "Awaiting Report",
+  "", "Start Event", "Awaiting Report",
   "Next Round", "End Event", "Event Complete"
 ];
 

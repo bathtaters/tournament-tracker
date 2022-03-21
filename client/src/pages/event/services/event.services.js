@@ -4,7 +4,7 @@ import { roundButtonText } from "../../../assets/strings";
 // Round Button label
 // [0: N/A, 1: Start, 2: Not Reported, 3: Next, 4: End, 5: Complete]
 export const getRoundButton = event => roundButtonText[
-  !event ? 0 : event.roundactive === 0 ? 1 :
+  !event || !event.players?.length ? 0 : event.roundactive === 0 ? 1 :
   event.roundactive > event.roundcount ? 5 :
   event.canadvance === false ? 2 :
   event.roundactive === event.roundcount ? 4 : 3
