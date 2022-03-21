@@ -1,3 +1,10 @@
+// Spies
+const utils = require('./matchGen.utils')
+const avgSpy = jest.spyOn(utils,'avg'),
+  errSpy = jest.spyOn(console,'error');
+afterAll(() => { avgSpy.mockRestore(); errSpy.mockRestore(); })
+
+// Mocks
 const generateMatchups = require('./swissMonrad')
 
 // NOTE: Uses un-mocked matchGen.utils, ensure that passes test first //
@@ -81,4 +88,34 @@ describe('generateMatchups', () => {
       })
     ).toEqual([['a','c'], ['b','f'], ['d','e']])
   })
+
+  it('throws error and prints reports', () => {
+    avgSpy.mockReturnValue(NaN) // force error
+    errSpy.mockImplementationOnce(() => {}).mockImplementationOnce(() => {}) // ignore errs
+    
+    expect(() => generateMatchups(stats, { playerspermatch: 2 }))
+      .toThrowError('SWISS MONRAD failed to find best match pairing.')
+    avgSpy.mockReset()
+
+    expect(errSpy).toBeCalledTimes(2)
+    expect(errSpy).toHaveBeenNthCalledWith(1,
+      'SWISS MONRAD Input Data:',
+      stats, {
+        playerspermatch: 2,
+        byes: undefined,
+        oppData: undefined,
+      }
+    )
+    expect(errSpy).toHaveBeenNthCalledWith(2,
+      'SWISS MONRAD Results:',
+      {
+        bestScore: NaN,
+        worstScore: NaN,
+        bestCount: 0,
+        worstCount: 0,
+        totalCount: 3,
+      }
+    )
+  })
+
 })
