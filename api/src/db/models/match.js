@@ -28,8 +28,7 @@ const getAll = (completed = true) => db.getRows(
 );
 
 // Drop/Undrop player from match
-const dropPlayer = (id, player, round, drop) =>
-    db.query(drop ? strings.drop : strings.undrop, [id, round, player]).then(r => r?.[0]);
+const dropPlayer = (id, player, drop) => db.query(drop ? strings.drop : strings.undrop, [id, player]).then(r => r?.[0]);
 
 // Update match data (Providing match.player will overwrite entire object)
 const update = (id, newData) => db.updateRow('match', id, newData, { returning: 'eventid' });

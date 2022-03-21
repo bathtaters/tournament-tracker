@@ -66,11 +66,11 @@ async function updateMatch(req, res) {
 
 // Drop/Undrop Player
 async function updateDrops(req, res) {
-  if (!req.body || !req.body.id || !req.body.round)
+  if (!req.body || !req.body.id)
     throw new Error("Not enough data provided to drop/undrop player.");
 
   // Add/Remove player to drop
-  const ret = await match.dropPlayer(req.params.id, req.body.id, req.body.round, !req.body.undrop)
+  const ret = await match.dropPlayer(req.params.id, req.body.id, !req.body.undrop)
   
   // Return match & event IDs
   return res.sendAndLog({ id: req.params.id, eventid: ret?.eventid });
