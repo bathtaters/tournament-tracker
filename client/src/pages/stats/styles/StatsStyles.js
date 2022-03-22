@@ -3,7 +3,7 @@ import { layoutTemplate } from "../services/stats.services";
 import { HeaderStyle } from "./InnerStyles";
 
 export function StatsStyle({ children }) {
-  return (<div className="relative">{children}</div>);
+  return (<div className="relative overflow-auto min-w-max">{children}</div>);
 }
 
 const gridBase = "grid grid-flow-row gap-y-1 py-2"
