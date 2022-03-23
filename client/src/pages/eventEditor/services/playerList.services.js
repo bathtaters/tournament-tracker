@@ -1,16 +1,17 @@
 import { equalArrays } from "../../common/services/basic.services";
 import { usePropState } from "../../common/common.hooks";
 import { duplicatePlayerMsg, unsavedPlayerMsg } from "../../../assets/strings";
+import openAlert from "../../common/Alert";
 
 export const usePropStateList = (propList) => usePropState(propList || [], equalArrays)
 
 // Add player to list
-const pushPlayerController = (playerData, players, setPlayers) => function pushPlayer(playerId) {
+const pushPlayerController = (playerData, players, setPlayers) => async function pushPlayer(playerId) {
   if (!playerId) throw new Error("Add player is missing playerid!");
 
   let res = true;
   if (players.includes(playerId)) {
-    window.alert(duplicatePlayerMsg(playerData[playerId] && playerData[playerId].name));
+    await openAlert(duplicatePlayerMsg(playerData[playerId]?.name));
     res = false;
   } else setPlayers(players.concat(playerId));
 
@@ -43,12 +44,16 @@ export const retrieveList = (playerList, suggestRef) => async () => {
   const textbox = suggestRef.current.getValue();
   if ((textbox?.value || '').trim()) {
 
+    // Ask user
+    const answer = await openAlert(unsavedPlayerMsg(textbox.value), ["Add","Ignore","Cancel"])
+    if (answer === 'Ignore') return savedPlayers; // continue w/o adding
+    if (answer !== 'Add') return; // user cancel
+    
     // Add player to list
-    if (!window.confirm(unsavedPlayerMsg(textbox.value))) return; // user cancel
-    const newPlayer = suggestRef.current.submit();
+    const newPlayer = await suggestRef.current.submit();
 
     // Get player ID to include in savedPlayers
-    const newId = newPlayer && (newPlayer.id || await newPlayer.result);
+    const newId = newPlayer?.id || newPlayer?.result;
     if (!newId) return; // failed to add player
     savedPlayers.push(newId); // add new player
   }
