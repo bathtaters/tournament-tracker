@@ -1,17 +1,11 @@
+import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchApi, tagTypes } from "../store/fetchApi";
-import { setFetch, setAlert } from "../store/globalSlice";
+import { setFetch } from "../store/globalSlice";
 
 // Get global status
-export const useGlobalFetching = () => useSelector((state) => state.global.isFetching)
+export const useFetchingStatus = () => useSelector((state) => state.global.isFetching)
 
-export function useGlobalAlert() {
-  const dispatch = useDispatch()
-  return [
-    useSelector((state) => state.global.isAlert),
-    (open = true) => dispatch(setAlert(open)),
-  ]
-}
 
 // Check if any queries are currently running, set global
 export function useFetchingProvider(reducerPath = fetchApi.reducerPath) {
@@ -23,6 +17,8 @@ export function useFetchingProvider(reducerPath = fetchApi.reducerPath) {
   // Set state to actual value
   const dispatch = useDispatch()
   if (anyLoading !== isFetching) dispatch(setFetch(anyLoading))
+
+  return anyLoading
 }
 
 

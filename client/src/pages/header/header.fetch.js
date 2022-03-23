@@ -1,5 +1,5 @@
-import { fetchApi, tagTypes, ALL_ID, useSettingsQuery, useGlobalFetching, useForceRefetch } from '../common/common.fetch';
 import { settingsUpdate, clearSchedule } from './services/headerFetch.services';
+import { fetchApi, tagTypes, ALL_ID, useSettingsQuery, useForceRefetch, useFetchingProvider } from '../common/common.fetch';
 
 export const headerApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
@@ -21,5 +21,5 @@ export const headerApi = fetchApi.injectEndpoints({
   overrideExisting: true
 });
 
-export { fetchApi, tagTypes, useSettingsQuery, useGlobalFetching, useForceRefetch };
+export { fetchApi, tagTypes, useSettingsQuery, useForceRefetch, useFetchingProvider };
 export const { useUpdateSettingsMutation, useResetDbMutation } = headerApi;

@@ -1,5 +1,5 @@
 import { fetchApi, getTags, tagTypes, ALL_ID } from '../../core/store/fetchApi';
-import { useGlobalFetching, useGlobalAlert, useFetchingProvider, useForceRefetch } from '../../core/services/global.services';
+import { useFetchingStatus, useFetchingProvider, useForceRefetch } from '../../core/services/global.services';
 import { getEvent } from './services/fetch.services';
 
 export const commonApi = fetchApi.injectEndpoints({
@@ -33,7 +33,5 @@ export const commonApi = fetchApi.injectEndpoints({
   overrideExisting: true
 });
 
-export { fetchApi, tagTypes, ALL_ID, getTags, useGlobalFetching, useGlobalAlert, useFetchingProvider, useForceRefetch };
-export const {
-  usePlayerQuery, useSettingsQuery, useEventQuery, useStatsQuery, usePrefetch,
-} = commonApi;
+export { fetchApi, tagTypes, ALL_ID, getTags, useFetchingStatus, useFetchingProvider, useForceRefetch };
+export const { usePlayerQuery, useSettingsQuery, useEventQuery, useStatsQuery, usePrefetch } = commonApi;
