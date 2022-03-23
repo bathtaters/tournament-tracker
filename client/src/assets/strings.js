@@ -13,16 +13,16 @@ export const dragType = { event: "json/eventday", player: "json/matchplayer" };
 
 // Messages
 const defPlayer = 'This player';
-export const createPlayerMsg = name => <><i>{name || defPlayer}</i> does not exist. Would you like to create a profile?</>;
-export const duplicatePlayerMsg = name => <><i>{name || defPlayer}</i> is already in this event.</>;
-export const unsavedPlayerMsg = name => <><i>{name || defPlayer}</i> has not been added to the event. Would you like to add now?</>;
-export const unaddedPlayerMsg = name => <><i>{name || defPlayer}</i> has not been added to the event. Would you like to continue without this player?</>;
-export const deletePlayerMsg = name => <>Are you sure you want to delete <i>{name || defPlayer.toLowerCase()}</i>? All of their info will be lost.</>;
-export const deleteEventMsg = name => <>Are you sure you want to delete <i>{name || 'this event'}</i>? It will be lost for good.</>;
-export const swapPlayerMsg = (nameA,nameB) => <>Are you sure you want to swap <i>{nameA ? nameA + ' w/ ' + nameB : 'these players'}</i>? Their match(es) have already been reported.</>;
-export const deleteRoundMsg = <>Are you sure you want to delete this round? Reported matches will be lost for good.</>;
-export const cantDeletePlayerMsg = name => <><i>{name}</i> cannot be deleted while registered for events.</>;
-export const clearReportMsg = (title) => <>Are you sure you want to delete the records for <i>{title}</i>?</>;
+export const createPlayerMsg = name => (name || defPlayer) + " does not exist. Would you like to create a profile?";
+export const duplicatePlayerMsg = name => (name || defPlayer) + " is already in this event.";
+export const unsavedPlayerMsg = name => (name || defPlayer) + " has not been added to the event. Would you like to add now?";
+export const unaddedPlayerMsg = name => (name || defPlayer) + " has not been added to the event. Would you like to continue without this player?";
+export const deletePlayerMsg = name => "Are you sure you want to delete "+(name || defPlayer.toLowerCase())+"? All of their info will be lost.";
+export const deleteEventMsg = name => "Are you sure you want to delete "+(name || 'this event')+"? It will be lost for good.";
+export const swapPlayerMsg = (nameA,nameB) => "Are you sure you want to swap "+(nameA ? nameA + ' w/ ' + nameB : 'these players')+"? Their match(es) have already been reported.";
+export const deleteRoundMsg = "Are you sure you want to delete this round? Reported matches will be lost for good.";
+export const cantDeletePlayerMsg = name => name+" cannot be deleted while registered for events.";
+export const clearReportMsg = (title) => `Are you sure you want to delete the records for ${title}?`;
 
 // Errors
 export const playerCreateError = ({ error }, { name }) => new Error(error?.data?.error ? error.data.error : '"'+name+'" was not able to be added.')
