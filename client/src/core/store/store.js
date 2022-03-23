@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import devToolsEnhancer from 'remote-redux-devtools'
+import globalSlice from './globalSlice';
 import { fetchApi } from './fetchApi'
 
 // Load in basic queries to allow prefetching w/ lazy loading
@@ -9,6 +10,7 @@ import { } from "../../pages/match/match.fetch";
 
 export default configureStore({
   reducer: {
+    global: globalSlice,
     [fetchApi.reducerPath]: fetchApi.reducer,
   },
   devTools: false,
