@@ -1,5 +1,3 @@
-import openAlert from "../Alert";
-
 // Constant
 const defaultLockMsg = "Are you sure you want to close? Unsaved changes will be lost.";
 
@@ -11,7 +9,7 @@ export const closeController = (isLock, open, resetLock) => (overrideLock=false)
   resetLock();
 };
 
-export const msgController = (close, isLock, lockMsg) => async () => {
+export const msgController = (openAlert, close, isLock, lockMsg) => async () => {
   const forceClose = isLock ? await openAlert(lockMsg || defaultLockMsg, ["Yes","No"]) : "Yes"
   if(forceClose === 'Yes') close(true);
 };

@@ -1,8 +1,7 @@
 import { deletePlayerMsg, cantDeletePlayerMsg } from "../../../assets/strings";
-import openAlert from "../../common/Alert";
 
 // Click on player name handler
-export const playerClickController = (canDelete, deletePlayer) => (playerid, e, playerData) => {
+export const playerClickController = (canDelete, deletePlayer, openAlert) => (playerid, e, playerData) => {
   if (!canDelete) return; // Pass click to default handler
   e.preventDefault();
 

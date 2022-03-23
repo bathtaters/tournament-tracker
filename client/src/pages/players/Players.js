@@ -6,6 +6,7 @@ import Modal from "../common/Modal";
 import { TitleStyle, StatsStyle, FooterStyle, statsClass } from "./styles/PlayerStyles";
 import { AddButton, RemoveButton } from "./styles/ButtonStyles";
 
+import { useOpenAlert } from "../common/common.hooks";
 import { playerClickController } from "./services/player.services";
 import { useSettingsQuery, useDeletePlayerMutation } from "./player.fetch";
 
@@ -21,8 +22,9 @@ function Players() {
   const toggleDelete = () => setDeleteMode(!canDelete);
   
   // Actions
+  const openAlert = useOpenAlert();
   const handlePlayerClick = useCallback(
-    playerClickController(canDelete, deletePlayer), [canDelete, deletePlayer]
+    playerClickController(canDelete, deletePlayer, openAlert), [canDelete, deletePlayer, openAlert]
   );
 
   return (

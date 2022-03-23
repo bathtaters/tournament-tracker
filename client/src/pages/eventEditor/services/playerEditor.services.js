@@ -1,5 +1,6 @@
 import { useState, useImperativeHandle, useCallback, useRef } from "react";
 import { usePlayerQuery, useSettingsQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
+import { useOpenAlert } from "../../common/common.hooks";
 
 import playerListController, { retrieveList, usePropStateList } from "./playerList.services";
 import { getRemaining, randomArray } from "./playerEditor.utils";
@@ -15,15 +16,16 @@ export default function usePlayerEditorController(players, status, onEdit, ref) 
   
   // Init Local State
   const suggestRef = useRef(null);
+  const openAlert = useOpenAlert();
   const [ isChanged, setChanged ] = useState(!onEdit);
   const [ playerList, setPlayerList ] = usePropStateList(players);
 
   // Assign getList function to ref
-  useImperativeHandle(ref, () => ({ getList: retrieveList(playerList, suggestRef) }), [playerList]);
+  useImperativeHandle(ref, () => ({ getList: retrieveList(playerList, suggestRef, openAlert) }), [playerList, suggestRef.current, openAlert]);
 
 
   // Add/Remove player to/from list
-  const { pushPlayer, popPlayer } = playerListController(data, playerList, setPlayerList);
+  const { pushPlayer, popPlayer } = playerListController(data, playerList, setPlayerList, openAlert);
   
   // Run onEdit once, when first edit is made
   const onFirstEdit = useCallback(isChanged ? null : () => { onEdit(); setChanged(true); }, [isChanged, setChanged, onEdit]);

@@ -26,7 +26,7 @@ import reportLayout from "./report.layout";
 import { getMatchTitle } from "./services/match.services";
 import { swapController, canSwap } from "./services/swap.services";
 import { clearReportMsg } from '../../assets/strings';
-import openAlert from "../common/Alert";
+import { useOpenAlert } from "../common/common.hooks";
 import valid from "../../assets/validation.json";
 
 
@@ -48,13 +48,14 @@ function Match({ eventid, matchId, wincount, isEditing }) {
   
   // Report match
   const [ report, { isLoading: isReporting } ] = useReportMutation();
+  const openAlert = useOpenAlert();
   const clearReport = () => 
     openAlert(clearReportMsg(title), ["Delete","Cancel"])
       .then(r => r === 'Delete' && report({ id: matchData.id, eventid, clear: true }));
 
   // Swap players
   const [ swapPlayers ] = useSwapPlayersMutation();
-  const handleSwap = swapController(swapPlayers, eventid);
+  const handleSwap = swapController(swapPlayers, eventid, openAlert);
 
   // (Un)Drop players
   const [ updateDrops ] = useUpdateDropsMutation();

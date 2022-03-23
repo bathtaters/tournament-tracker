@@ -13,7 +13,7 @@ import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 import { useEventQuery, useClearRoundMutation } from "./event.fetch";
 import { roundArray } from "./services/event.services";
 import { deleteRoundMsg } from "../../assets/strings";
-import openAlert from "../common/Alert";
+import { useOpenAlert } from "../common/common.hooks";
 
 
 function Event() {
@@ -24,7 +24,8 @@ function Event() {
   // Global
   const { data, isLoading, error, isFetching } = useEventQuery(id);
   const [ prevRound ] = useClearRoundMutation();
-  const handleDelete = () => openAlert(deleteRoundMsg, ["Yes","No"]).then(r => r === 'Yes' && prevRound(id))
+  const openAlert = useOpenAlert();
+  const handleDelete = () => openAlert(deleteRoundMsg, ["Yes","No"]).then(r => r === 'Yes' && prevRound(id));
   
   // Loading/Error catcher
   if (isLoading || error || !data)

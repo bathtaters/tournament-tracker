@@ -1,12 +1,11 @@
 import { equalArrays } from "../../common/services/basic.services";
 import { usePropState } from "../../common/common.hooks";
 import { duplicatePlayerMsg, unsavedPlayerMsg } from "../../../assets/strings";
-import openAlert from "../../common/Alert";
 
 export const usePropStateList = (propList) => usePropState(propList || [], equalArrays)
 
 // Add player to list
-const pushPlayerController = (playerData, players, setPlayers) => async function pushPlayer(playerId) {
+const pushPlayerController = (playerData, players, setPlayers, openAlert) => async function pushPlayer(playerId) {
   if (!playerId) throw new Error("Add player is missing playerid!");
 
   let res = true;
@@ -27,16 +26,16 @@ const popPlayerController = (players, setPlayers) => (pid, idx) => function popP
 };
 
 // Combined
-export default function playerListController (playerData, players, setPlayers) {
+export default function playerListController (playerData, players, setPlayers, openAlert) {
   return {
-    pushPlayer: pushPlayerController(playerData, players, setPlayers),
+    pushPlayer: pushPlayerController(playerData, players, setPlayers, openAlert),
     popPlayer: popPlayerController(players, setPlayers),
   };
 }
 
 
 // Get player list (Run via ref)
-export const retrieveList = (playerList, suggestRef) => async () => {
+export const retrieveList = (playerList, suggestRef, openAlert) => async () => {
   let savedPlayers = playerList.slice();
   if (!suggestRef?.current) return savedPlayers;
 

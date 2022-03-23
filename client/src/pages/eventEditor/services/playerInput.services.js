@@ -2,10 +2,10 @@ import { useState } from "react";
 import { suggestListLayout } from "../eventEditor.layout";
 import { playerExists } from "./playerEditor.utils";
 import { createPlayerMsg, playerCreateError, duplicatePlayerMsg } from "../../../assets/strings";
-import openAlert from "../../common/Alert";
+import { useOpenAlert } from "../../common/common.hooks";
 
 // Add new player to DB
-async function newPlayerController(playerData, players, createPlayer, pushPlayer) {
+async function newPlayerController(playerData, players, createPlayer, pushPlayer, openAlert) {
   // Check for errors/confirm
   if (playerExists(playerData.name, players)) return openAlert(duplicatePlayerMsg(playerData.name));
   const answer = await openAlert(createPlayerMsg(playerData.name), ["Create","Cancel"])
@@ -37,11 +37,12 @@ const onSubmitController = (hideSuggest, setHide, handleNewPlayer, pushPlayer, o
 
 // PlayerInput component logic
 export default function usePlayerInputController({ data, remainingPlayers, onFirstEdit, pushPlayer, createPlayer }, ref) {
+  const openAlert = useOpenAlert()
 
   const [isHidden, setHide] = useState(true)
 
   // New player handler (For clicking 'add player')
-  const handleNewPlayer = (name) => newPlayerController({ name }, data, createPlayer, pushPlayer)
+  const handleNewPlayer = (name) => newPlayerController({ name }, data, createPlayer, pushPlayer, openAlert)
 
   return {
     // Local state

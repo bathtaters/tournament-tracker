@@ -4,10 +4,10 @@ import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "../e
 
 import { editorButtonLayout } from "../eventEditor.layout";
 import { deleteEventMsg } from "../../../assets/strings";
-import openAlert from "../../common/Alert";
+import { useOpenAlert } from "../../common/common.hooks";
 
 // Delete button controller
-const deleteController = (id, data, deleteEvent, closeModal, navigate) => () => 
+const deleteController = (id, data, deleteEvent, openAlert, closeModal, navigate) => () => 
   openAlert(deleteEventMsg(data?.title), ["Delete","Cancel"]).then(res => {
     if (res !== 'Delete') return;
     if (id) deleteEvent(id);
@@ -34,21 +34,22 @@ async function saveEvent(eventId, eventData, playerList, setEvent, modal) {
 // EditEvent main logic
 export default function useEditEventController(eventid, modal) {
   // Get server data
-  const { data, isLoading, error } = useEventQuery(eventid, { skip: !eventid });
+  const { data, isLoading, error } = useEventQuery(eventid, { skip: !eventid })
 
   // Init server fetches
-  const [ setEvent, { isLoading: isUpdating } ] = useSetEventMutation();
-  const [ deleteEvent ] = useDeleteEventMutation();
+  const [ setEvent, { isLoading: isUpdating } ] = useSetEventMutation()
+  const [ deleteEvent ] = useDeleteEventMutation()
   
   // Init hooks
-  const playerList = useRef(null);
-  let navigate = useNavigate();
+  const playerList = useRef(null)
+  let navigate = useNavigate()
+  const openAlert = useOpenAlert()
 
   // Break early if no data/error
   if (isLoading || error || !modal) return { isLoading, error, notLoaded: true }
 
   // Delete handler (for editorButtons)
-  const deleteHandler = deleteController(eventid, data, deleteEvent, modal.current.close, navigate)
+  const deleteHandler = deleteController(eventid, data, deleteEvent, openAlert, modal.current.close, navigate)
 
   return {
     data, playerList, isUpdating,

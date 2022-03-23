@@ -6,6 +6,7 @@ import OverlayContainer from "./styles/OverlayContainer";
 import ModalStyle, { CloseButton, overlayClasses } from "./styles/ModalStyle";
 import { closeController, msgController, refController } from "./services/modal.services";
 import { useHotkeys } from "./services/basic.services";
+import { useOpenAlert } from "./common.hooks"
 
 const modalRoot = document.getElementById('modal-root');
 
@@ -13,10 +14,11 @@ const modalRoot = document.getElementById('modal-root');
 function Modal({ children, className = '', bgdClose = true, startOpen = false, startLocked = false, lockMsg = '' }, ref) {
 
   // Modal actions
+  const openAlert = useOpenAlert();
   const [isOpen, open] = useState(startOpen);
   const [isLock, lock] = useState(startLocked);
   const close = useCallback(closeController(isLock, open, ()=>lock(startLocked)), [isLock, startLocked, open, lock]);
-  const closeWithMsg = useCallback(msgController(close, isLock, lockMsg), [close, isLock, lockMsg]);
+  const closeWithMsg = useCallback(msgController(openAlert, close, isLock, lockMsg), [close, isLock, lockMsg]);
   
   // Setup ref functions
   useImperativeHandle(ref, refController(open, close, lock), [open, close, lock]);
