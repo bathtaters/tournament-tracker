@@ -1,27 +1,41 @@
-import { getSelected } from "./suggestText.utils";
+import { useEffect, useState, useRef, useMemo, useImperativeHandle } from "react";
 
-function suggestTextController({ value, selected, picked, suggestions, onSubmit, onChange, setPick, setValue, setListVisible }) {
+import { getSuggestions, autoSelect, autoShow } from "./suggestText.services"
+import { getSelected, getNext, getPrev, validList } from "./suggestText.utils"
+import { useHotkeys } from "../basic.services";
+
+
+function useSuggestTextController(list, isHidden, onChange, onSubmit, ref) {
   
-  // Calculate exact match
-  const exact = !Array.isArray(suggestions) ? suggestions : suggestions.length === 1 ? suggestions[0] : false;
+  // --- Component State --- \\
+
+  // Setup Local State
+  const textbox = useRef(null);
+  const [value, setValue] = useState("");
+  const [selected, setSelected] = useState(-1);
+  const [picked, setPick] = useState(null);
+  const [listIsVisible, setListVisible] = useState(false);
+  
+  // Setup List
+  const suggestions = useMemo(() => getSuggestions(list, value), [list, value]);
+  useEffect(autoSelect(selected, suggestions, setSelected),   [selected, suggestions]);
+  useEffect(autoShow(listIsVisible, textbox, setListVisible), [listIsVisible, textbox.current]);
+  const isExact = !Array.isArray(suggestions) ? suggestions : suggestions.length === 1 ? suggestions[0] : false;
 
 
-  // Pick handler
-  const pick = (forcePick) => {
-    const newPick = forcePick || exact || getSelected(selected, suggestions);
+  // --- Action Handlers --- \\
+
+  // TextBox controller
+  const change = (e) => {
+    setValue(e.target.value); // Controlled component
     
-    if (!newPick) return false; // Ignore missing pick
-    if (newPick.isStatic) return submit(newPick); // Submit static pick
+    if (picked && e.target.value !== picked.value) setPick(null); // Clear pick value
 
-    // Pick newPick
-    setPick(newPick);
-    setValue(newPick.value);
-  };
+    if (onChange) onChange(e); // Passthrough onChange function
+  }
 
-
-  // Submit handler
   const submit = async (forcePick) => {
-    const newPick = forcePick || picked || exact;
+    const newPick = forcePick || picked || isExact;
 
     // Submit
     const result = await (onSubmit && onSubmit(newPick, value));
@@ -31,24 +45,42 @@ function suggestTextController({ value, selected, picked, suggestions, onSubmit,
     setPick(null);
     setValue('');
     return newPick && { ...newPick, result };
-  };
-
-
-  // Submit or Pick, whichever makes more sense
-  const submitOnPicked = () => picked || exact ? submit() : pick();
-
-
-  // onChange handler for text box
-  const change = (e) => {
-    setValue(e.target.value); // Controlled component
-    
-    if (picked && e.target.value !== picked.value) setPick(null); // Clear pick value
-
-    if (onChange) onChange(e); // Passthrough onChange function
   }
 
+  const pick = (forcePick) => {
+    const newPick = forcePick || isExact || getSelected(selected, suggestions);
+    
+    if (!newPick) return false; // Ignore missing pick
+    if (newPick.isStatic) return submit(newPick); // Submit static pick
+
+    // Pick newPick
+    setPick(newPick);
+    setValue(newPick.value);
+  };
+
+  // Submit or Pick, whichever makes more sense
+  const submitOnPicked = () => picked || isExact ? submit() : pick();
   
-  return { pick, submit, change, submitOnPicked };
+
+  // --- Additional Hooks --- \\
+
+  // Allow parent to Submit
+  useImperativeHandle(ref, () => ({ submit, getValue: () => !isHidden && (picked, {value}) }));
+
+  // Setup Keyboard UI
+  useHotkeys({
+    /* Enter */ 13: () => submitOnPicked(),
+    /* Esc   */ 27: () => selected === -1 ? textbox.current.blur() : setSelected(-1), // Already cap'd by modal
+    /* Up    */ 38: () => setSelected(getPrev(selected, suggestions?.length || 0)), 
+    /* Down  */ 40: () => setSelected(getNext(selected, suggestions?.length || 0)),
+  });
+
+
+  return {
+    boxProps:  { value, setListVisible, change, ref: textbox },
+    listProps: { suggestions, selected, pick, setSelected },
+    showList: listIsVisible && validList(suggestions),
+  }
 }
 
-export default suggestTextController;
+export default useSuggestTextController;
