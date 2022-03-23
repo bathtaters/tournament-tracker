@@ -2,18 +2,19 @@ import { useState } from "react";
 import { suggestListLayout } from "../eventEditor.layout";
 import { playerExists } from "./playerEditor.utils";
 import { createPlayerMsg, playerCreateError, duplicatePlayerMsg } from "../../../assets/strings";
-
+import openAlert from "../../common/Alert";
 
 // Add new player to DB
 async function newPlayerController(playerData, players, createPlayer, pushPlayer) {
   // Check for errors/confirm
-  if (playerExists(playerData.name, players)) return window.alert(duplicatePlayerMsg(playerData.name));
-  if (!window.confirm(createPlayerMsg(playerData.name))) return false;
+  if (playerExists(playerData.name, players)) return openAlert(duplicatePlayerMsg(playerData.name));
+  const answer = await openAlert(createPlayerMsg(playerData.name), ["Create","Cancel"])
+  if (answer !== 'Create') return false;
 
   // Create & Push player
-  const res = await createPlayer(playerData);
-  if (res?.error || !res?.data?.id) throw playerCreateError(res, playerData);
-  return pushPlayer(res.data.id) && res.data.id;
+  const result = await createPlayer(playerData);
+  if (result?.error || !result?.data?.id) throw playerCreateError(result, playerData);
+  return pushPlayer(result.data.id) && result.data.id;
 }
 
 

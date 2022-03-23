@@ -4,15 +4,16 @@ import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "../e
 
 import { editorButtonLayout } from "../eventEditor.layout";
 import { deleteEventMsg } from "../../../assets/strings";
-
+import openAlert from "../../common/Alert";
 
 // Delete button controller
-const deleteController = (id, data, deleteEvent, closeModal, navigate) => () => {
-  if (!window.confirm(deleteEventMsg(data && data.title))) return;
-  if (id) deleteEvent(id);
-  closeModal(true);
-  navigate("/home");
-};
+const deleteController = (id, data, deleteEvent, closeModal, navigate) => () => 
+  openAlert(deleteEventMsg(data?.title), ["Delete","Cancel"]).then(res => {
+    if (res !== 'Delete') return;
+    if (id) deleteEvent(id);
+    closeModal(true);
+    navigate("/home");
+  });
 
 
 // Create/Update event & close modal

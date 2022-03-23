@@ -1,4 +1,5 @@
 import { deletePlayerMsg, cantDeletePlayerMsg } from "../../../assets/strings";
+import openAlert from "../../common/Alert";
 
 // Click on player name handler
 export const playerClickController = (canDelete, deletePlayer) => (playerid, e, playerData) => {
@@ -7,11 +8,11 @@ export const playerClickController = (canDelete, deletePlayer) => (playerid, e, 
 
   // Check player can be deleted
   if (playerData.eventids && playerData.eventids.length)
-    return window.alert(cantDeletePlayerMsg(playerData.name));
+    return openAlert(cantDeletePlayerMsg(playerData.name));
 
   // Delete player
-  if (!window.confirm(deletePlayerMsg(playerData.name))) return;
-  deletePlayer(playerid);
+  openAlert(deletePlayerMsg(playerData.name), ["Delete","Cancel"])
+    .then(r => r === 'Delete' && deletePlayer(playerid));
 }
 
 // Validate and add new player
