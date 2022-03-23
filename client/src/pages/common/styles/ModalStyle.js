@@ -6,7 +6,7 @@ export const overlayClasses = "p-8 flex justify-center items-center";
 // Modal window style
 function ModalStyle({ className, children }, ref) {
   return (
-    <div className={`relative max-h-full overflow-auto p-8 alt-bgd shadow-lg rounded-lg ${className}`}>
+    <div className={`relative max-h-full overflow-auto p-8 alt-bgd shadow-lg rounded-lg ${className}`} ref={ref}>
       {children}
     </div>
   )
