@@ -1,15 +1,10 @@
-import { useEffect } from "react";
-import { equalArrays } from "./eventEditor.services";
-
-// Advanced Settings
-const checkTeamsForDupe = true;
-
+import { eventEditor } from "../../../assets/config";
 
 // Check if player already exists in list
 export const playerExists = (player, allPlayers) => {
   const lower = player.toLowerCase();
   return Object.values(allPlayers).some(p =>
-    (checkTeamsForDupe || !p.isteam) && p.name.toLowerCase() === lower
+    (eventEditor.checkTeamsForDupe || !p.isteam) && p.name.toLowerCase() === lower
   );
 }
 
@@ -28,9 +23,3 @@ export const randomArray = (arr, size) => {
 // Get list of players who are not already selected
 export const getRemaining = (players, playerList) => players ? Object.keys(players)
   .filter(p => !players[p].isteam && !playerList.includes(p)) : [];
-
-
-// Push prop updates to state
-export const usePropState = (propState, setState) => useEffect(() => {
-  setState((oldState) => equalArrays(oldState, propState) ? oldState : propState || []);
-}, [propState, setState]);

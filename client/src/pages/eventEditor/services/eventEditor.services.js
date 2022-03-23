@@ -1,4 +1,4 @@
-import { equalArrays, nextTempId } from "../../common/services/basic.services";
+import { nextTempId } from "../../common/services/basic.services";
 import { editorButtonLayout } from "../eventEditor.layout";
 import { deleteEventMsg } from "../../../assets/strings";
 
@@ -33,4 +33,4 @@ export const getButtonLayout = (id, data, deleteEvent, modal, navigate) =>
     modal.current.close
   );
 
-export { equalArrays, nextTempId };
+export { nextTempId };

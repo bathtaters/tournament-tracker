@@ -1,5 +1,8 @@
+import { equalArrays } from "../../common/services/basic.services";
+import { usePropState } from "../../common/common.hooks";
 import { duplicatePlayerMsg, unsavedPlayerMsg } from "../../../assets/strings";
 
+export const usePropStateList = (propList) => usePropState(propList || [], equalArrays)
 
 // Add player to list
 const pushPlayerController = (playerData, players, setPlayers) => function pushPlayer(playerId) {
