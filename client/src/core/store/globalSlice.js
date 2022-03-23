@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
-  isFetching: false,
+  isFetching: true,
   isAlert:    false,
 }
 
