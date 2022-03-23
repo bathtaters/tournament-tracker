@@ -1,54 +1,61 @@
-import { getRemaining, playerExists, randomArray } from "./playerEditor.utils";
-import { createPlayerMsg, playerCreateError, duplicatePlayerMsg } from "../../../assets/strings";
+import { useState, useImperativeHandle, useCallback, useRef } from "react";
+import { usePlayerQuery, useSettingsQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
 
-// Add new player to DB
-async function newPlayerController(playerData, players, createPlayer, pushPlayer) {
-  // Check for errors/confirm
-  if (playerExists(playerData.name, players)) return window.alert(duplicatePlayerMsg(playerData.name));
-  if (!window.confirm(createPlayerMsg(playerData.name))) return false;
-
-  // Create & Push player
-  const res = await createPlayer(playerData);
-  if (res?.error || !res?.data?.id) throw playerCreateError(res, playerData);
-  return pushPlayer(res.data.id) && res.data.id;
-}
+import playerListController, { retrieveList, usePropStateList } from "./playerList.services";
+import { getRemaining, randomArray } from "./playerEditor.utils";
 
 
-// Click add button
-export const onSubmitController = (hideSuggest, setHide, handleNewPlayer, pushPlayer, onEdit) =>
-  function submitHandler(entry, text) {
-    // Show/Hide field
-    if (hideSuggest) return setHide(false);
-    if (!entry) return setHide(!hideSuggest);
+// PlayerEditor component logic
+export default function usePlayerEditorController(players, status, onEdit, ref) {
 
-    // Call onEdit
-    if (onEdit && !entry.isStatic) onEdit();
+  // Get Global State
+  const { data, isLoading, error, isFetching } = usePlayerQuery();
+  const { data: settings, isLoading: settLoad, error: settErr } = useSettingsQuery();
+  const [ createPlayer, { isLoading: playersUpdating } ] = useCreatePlayerMutation();
+  
+  // Init Local State
+  const suggestRef = useRef(null);
+  const [ isChanged, setChanged ] = useState(!onEdit);
+  const [ playerList, setPlayerList ] = usePropStateList(players);
 
-    // Add Player
-    if (entry.id) return pushPlayer(entry.id);
-    if (!entry.isStatic) console.warn('Missing player created automatically', entry);
-    return handleNewPlayer(text);
-  }
+  // Assign getList function to ref
+  useImperativeHandle(ref, () => ({ getList: retrieveList(playerList, suggestRef) }), [playerList]);
 
 
-// Build PlayerInput props
-export default function playerInputController({
-  data, playerList, setPlayerList, createPlayer, pushPlayer, onFirstEdit, autofillSize
-}) {
-  const remainingPlayers = getRemaining(data, playerList);
+  // Add/Remove player to/from list
+  const { pushPlayer, popPlayer } = playerListController(data, playerList, setPlayerList);
+  
+  // Run onEdit once, when first edit is made
+  const onFirstEdit = useCallback(isChanged ? null : () => { onEdit(); setChanged(true); }, [isChanged, setChanged, onEdit]);
 
-  return {
-    // Simple props
-    data, remainingPlayers, autofillSize, pushPlayer, onFirstEdit,
+
+  // Break early while awaiting global data
+  if (isLoading || settLoad || error || settErr || !data) return { isLoading: isLoading || settLoad, error: error || settErr }
+
+
+  // If not started, get additional data for editing playerList
+  const notStarted = status < 2
+  const inputData = notStarted ? {
+    // Data from parent
+    data, pushPlayer, onFirstEdit, createPlayer,
+    autofillSize: settings?.autofillsize,
     hideAutofill: Boolean(playerList.length),
-
-    // Handle adding a new player
-    handleNewPlayer: (name) => newPlayerController({ name }, data, createPlayer, pushPlayer),
-
+    remainingPlayers: getRemaining(data, playerList),
+    autofill: onFirstEdit,
+  } : {}
+  
+  if (notStarted) {
     // Handle autofill click
-    autofill: () => {
-      setPlayerList(randomArray(remainingPlayers, autofillSize));
-      onFirstEdit && onFirstEdit();
-    },
-  };
+    inputData.autofill = () => {
+      setPlayerList(randomArray(inputData.remainingPlayers, inputData.autofillSize))
+      onFirstEdit && onFirstEdit()
+    }
+  }
+  
+
+  // Pass to renderer
+  return {
+    data, playerList, inputData, suggestRef, popPlayer, notStarted,
+    isFetching: playersUpdating || isFetching,
+  }
 }

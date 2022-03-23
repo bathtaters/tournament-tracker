@@ -1,6 +1,5 @@
-import React, { useRef } from "react";
+import React from "react";
 import PropTypes from 'prop-types';
-import { useNavigate } from "react-router-dom";
 
 import PlayerEditor from "./components/PlayerEditor";
 import OverlayContainer from "../common/styles/OverlayContainer";
@@ -10,33 +9,23 @@ import InputForm from "../common/InputForm";
 import RawData from "../common/RawData";
 import Loading from "../common/Loading";
 
+import useEditEventController from "./services/eventEditor.services";
 import { editorLayout } from "./eventEditor.layout";
-import { saveEvent, getButtonLayout } from "./services/eventEditor.services";
-import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "./eventEditor.fetch";
 
 import valid from "../../assets/validation.json";
 const baseData = { defaultValues: valid.defaults.event, limits: valid.limits.event };
 
+
 function EditEvent({ eventid, modal }) {
-  // Init state
-  const playerList = useRef(null);
-  const { data, isLoading, error } = useEventQuery(eventid, { skip: !eventid });
   
-  // Init mutators
-  let navigate = useNavigate();
-  const [ setEvent, { isLoading: isUpdating } ] = useSetEventMutation();
-  const [ deleteEvent ] = useDeleteEventMutation();
+  const {
+    data, playerList, buttons, submitHandler, isUpdating,
+    isLoading, error, notLoaded
+  } = useEditEventController(eventid, modal)
 
   // Loading/Error catcher
-  if (isLoading || error || !modal) return <Loading loading={isLoading} error={error} altMsg="Popup not initialized" tagName="h3" />;
+  if (notLoaded) return <Loading loading={isLoading} error={error} altMsg="Modal error" tagName="h3" />
 
-  // Actions
-  const submitHandler = (event) => saveEvent(eventid, event, playerList, setEvent, modal);
-
-  // Button layout
-  const buttons = getButtonLayout(eventid, data, deleteEvent, modal, navigate);
-
-  // Render
   return (
     <div>
       <TitleStyle isNew={!data} />

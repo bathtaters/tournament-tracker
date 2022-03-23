@@ -1,42 +1,25 @@
-import React, { useState, forwardRef } from "react";
+import React, { forwardRef } from "react";
 
 import SuggestText from "../../common/SuggestText";
 import { PlayerRowStyle, suggestClass } from "../styles/PlayerEditorStyles"
 import { PlayerAddButton, PlayerFillButton } from "../styles/PlayerEditorButtons"
 
-import { suggestListLayout } from "../eventEditor.layout";
-import { onSubmitController } from "../services/playerEditor.services";
+import usePlayerInputController from "../services/playerInput.services";
 
-const PlayerInput = forwardRef(function PlayerInput({
-  data, remainingPlayers, autofillSize, onFirstEdit, hideAutofill,
-  pushPlayer, autofill, handlePlayerChange, handleNewPlayer,
-}, ref) {
-
-  // Local state
-  const [hideSuggest, setHide] = useState(true);
-
-  // Build list
-  const suggestions = suggestListLayout(remainingPlayers, data);
-
-  // Add Button handler
-  const addButtonHandler = () => {
-    onFirstEdit && onFirstEdit();
-    return hideSuggest ? setHide(false) : ref.current.submit();
-  }
-
-  // OnSubmit handler
-  const submitHandler = onSubmitController(hideSuggest, setHide, handleNewPlayer, pushPlayer, onFirstEdit);
+const PlayerInput = forwardRef(function PlayerInput({autofillSize, hideAutofill, autofill, handlePlayerChange, ...props}, ref) {
+  
+  const { isHidden, suggestions, submitHandler, addButtonHandler } = usePlayerInputController(props, ref);
   
   return (
     <PlayerRowStyle>
 
       <PlayerAddButton onClick={addButtonHandler} />
-      <PlayerFillButton onClick={autofill} size={autofillSize} hidden={hideAutofill || !hideSuggest} />
+      <PlayerFillButton onClick={autofill} size={autofillSize} hidden={hideAutofill || !isHidden} />
 
       <SuggestText
         list={suggestions}
         className={suggestClass.box}
-        isHidden={hideSuggest}
+        isHidden={isHidden}
         onChange={handlePlayerChange}
         onSubmit={submitHandler}
         ref={ref}
