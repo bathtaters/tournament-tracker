@@ -19,7 +19,7 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, ref) {
   // Setup List
   const suggestions = useMemo(() => getSuggestions(list, value), [list, value]);
   useEffect(autoSelect(selected, suggestions, setSelected),   [selected, suggestions]);
-  useEffect(autoShow(listIsVisible, textbox, setListVisible), [listIsVisible, textbox.current]);
+  useEffect(autoShow(listIsVisible, textbox, setListVisible), [listIsVisible, textbox.current, value]);
   const isExact = !Array.isArray(suggestions) ? suggestions : suggestions.length === 1 ? suggestions[0] : false;
 
 
