@@ -48,7 +48,7 @@ export default function playerInputController({
     // Handle autofill click
     autofill: () => {
       setPlayerList(randomArray(remainingPlayers, autofillSize));
-      onFirstEdit();
+      onFirstEdit && onFirstEdit();
     },
   };
 }
