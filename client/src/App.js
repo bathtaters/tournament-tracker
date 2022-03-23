@@ -6,10 +6,11 @@ import Routing from "./Routing";
 import Loading from "./pages/common/Loading";
 import { AppWrapperStyle, PageWrapperStyle } from "./pages/common/styles/CommonStyles";
 
-import { useSettingsQuery } from "./pages/common/common.fetch";
+import { useSettingsQuery, useFetchingProvider } from "./pages/common/common.fetch";
 
 function App() {
   const { data, isLoading, error } = useSettingsQuery();
+  useFetchingProvider(); // setup isFetching global
 
   if (isLoading || error)
     return <Loading altMsg="Loading your data..." error={error} className="m-8 text-xl" />;

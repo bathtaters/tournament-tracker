@@ -1,19 +1,17 @@
 import React from "react";
 import PropTypes from 'prop-types';
-import { useSelector, useDispatch } from "react-redux";
 
 import LoadingStyle from "../styles/LoadingStyle"
-import { forceRefetchConstructor, isAnyLoading } from "../services/headerFetch.services";
+import { useGlobalFetching, useForceRefetch } from "../header.fetch";
 
 function ReloadButton(props) {
-  // Force refetch of all data
-  const dispatch = useDispatch();  
-  const forceRefetch = forceRefetchConstructor(dispatch);
-
   // Check for active queries
-  const isLoading = useSelector(isAnyLoading);
+  const isFetching = useGlobalFetching();
 
-  return ('force' in props ? props.force : isLoading) ? 
+  // Force refetch of all data
+  const forceRefetch = useForceRefetch();
+
+  return ('force' in props ? props.force : isFetching) ? 
     
     // Loading ring
     <LoadingStyle {...props} />:
