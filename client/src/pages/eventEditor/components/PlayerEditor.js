@@ -8,8 +8,7 @@ import Loading from "../../common/Loading";
 
 import { usePlayerQuery, useSettingsQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
 import playerInputController from "../services/playerEditor.services";
-import playerListController, { retrieveList } from "../services/playerList.services";
-import { usePropState } from "../services/playerEditor.utils";
+import playerListController, { retrieveList, usePropStateList } from "../services/playerList.services";
 
 
 const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit = null }, ref) {
@@ -21,11 +20,8 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
   
   // Local State
   const suggestRef = useRef(null);
-  const [playerList, setPlayerList] = useState(players || []);
   const [isChanged, setChanged] = useState(!onEdit);
-
-  // Push remote updates to local state - UNTESTED
-  usePropState(players, setPlayerList);
+  const [playerList, setPlayerList] = usePropStateList(players);
 
   // Add/Remove player to/from list
   const { pushPlayer, popPlayer } = playerListController(data, playerList, setPlayerList);
