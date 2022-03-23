@@ -1,22 +1,26 @@
 import { configureStore } from '@reduxjs/toolkit'
 import devToolsEnhancer from 'remote-redux-devtools'
-import globalSlice from './globalSlice';
-import alertSlice from './alertSlice';
+import globalSlice from './globalSlice'
+import alertSlice from './alertSlice'
 import { fetchApi } from './fetchApi'
 
 // Load in basic queries to allow prefetching w/ lazy loading
-import { } from "../../pages/common/common.fetch";
-import { } from "../../pages/schedule/schedule.fetch";
-import { } from "../../pages/match/match.fetch";
+import { } from "../../pages/common/common.fetch"
+import { } from "../../pages/schedule/schedule.fetch"
+import { } from "../../pages/match/match.fetch"
 
-export default configureStore({
+const thunkExtra = { store: null }
+
+const store = configureStore({
   reducer: {
     global: globalSlice,
     alert: alertSlice,
     [fetchApi.reducerPath]: fetchApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(fetchApi.middleware),
+    getDefaultMiddleware({
+      thunk: { extraArgument: thunkExtra }
+    }).concat(fetchApi.middleware),
   
   // Enable remote dev tools
   devTools: false,
@@ -29,3 +33,6 @@ export default configureStore({
     })
   ],
 })
+
+thunkExtra.store = store
+export default store
