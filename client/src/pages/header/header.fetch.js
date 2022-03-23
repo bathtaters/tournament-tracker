@@ -1,4 +1,4 @@
-import { fetchApi, tagTypes, ALL_ID, useSettingsQuery } from '../common/common.fetch';
+import { fetchApi, tagTypes, ALL_ID, useSettingsQuery, useGlobalFetching, useForceRefetch } from '../common/common.fetch';
 import { settingsUpdate, clearSchedule } from './services/headerFetch.services';
 
 export const headerApi = fetchApi.injectEndpoints({
@@ -21,5 +21,5 @@ export const headerApi = fetchApi.injectEndpoints({
   overrideExisting: true
 });
 
-export { fetchApi, tagTypes, useSettingsQuery };
+export { fetchApi, tagTypes, useSettingsQuery, useGlobalFetching, useForceRefetch };
 export const { useUpdateSettingsMutation, useResetDbMutation } = headerApi;
