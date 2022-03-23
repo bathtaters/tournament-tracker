@@ -56,7 +56,7 @@ export function useScrollToRef({
   // Create scroll callback
   const elementRef = useRef(null)
   const scrollTo = (entries) => {
-    if (!entries[0].isIntersection)
+    if (elementRef.current && !entries[0].isIntersection)
       elementRef.current.scrollIntoView({ behavior, block, inline })
   }
 
