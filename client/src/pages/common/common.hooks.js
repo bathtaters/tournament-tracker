@@ -1,4 +1,25 @@
 import { useState, useEffect, useCallback } from "react";
+import { usePrefetch } from "./common.fetch";
+
+// Preload page data
+export function usePrefetchBase() {
+  const loadSched  = usePrefetch('schedule')
+  const loadEvent  = usePrefetch('event')
+  const loadPlayer = usePrefetch('player')
+  const loadStats  = usePrefetch('stats')
+  useEffect(
+    () => { loadSched(); loadEvent(); loadPlayer(); loadStats(); },
+    [loadSched,loadEvent,loadPlayer,loadStats]
+  )
+}
+
+// Preload event data
+export function usePrefetchEvent() {
+  const prefetchEvent = usePrefetch('event')
+  const prefetchMatch = usePrefetch('match')
+  const prefetchStats = usePrefetch('stats')
+  return (id) => { prefetchEvent(id); prefetchMatch(id); prefetchStats(id); }
+}
 
 // Push prop updates to state
 export function usePropState(propVal, equalsTest = (a,b) => a === b, depends = []) {

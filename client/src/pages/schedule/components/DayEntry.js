@@ -7,17 +7,15 @@ import {
   MissingDataStyle, dragAndDropClass
 } from "../styles/DayStyles";
 
-import { usePrefetch } from "../schedule.fetch";
+import { usePrefetchEvent } from "../schedule.fetch";
 import { isTempId } from '../services/date.utils';
 import { canDrop, dataType } from "../services/day.services";
 
 
 function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent }) {
   // Setup prefetching
-  const prefetchEvent = usePrefetch('event');
-  const prefetchMatch = usePrefetch('match');
-  const prefetchStats = usePrefetch('stats');
-  const loadEvent = (id) => id && (() => { prefetchEvent(id); prefetchMatch(id); prefetchStats(id); });
+  const prefetch = usePrefetchEvent();
+  const loadEvent = (id) => id && (() => prefetch(id));
 
   if (id && isTempId(id)) return <MissingDataStyle>...</MissingDataStyle>
 

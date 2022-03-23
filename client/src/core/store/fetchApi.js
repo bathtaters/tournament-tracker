@@ -16,4 +16,4 @@ export const fetchApi = createApi({
 })
 
 export { getTags, tagTypes, ALL_ID }
-export const { usePrefetch, useTestApiQuery } = fetchApi
+export const { useTestApiQuery } = fetchApi

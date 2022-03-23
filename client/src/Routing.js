@@ -1,10 +1,9 @@
-import React, { Suspense, lazy, useEffect } from "react";
+import React, { Suspense, lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import ErrorBoundary from "./pages/common/ErrorBoundary";
 
-// Prefetch API data
-import { usePrefetch } from "./pages/common/common.fetch";
+import { usePrefetchBase } from "./pages/common/common.hooks";
 
 // Lazy load each main route
 const Schedule = lazy(() => import("./pages/schedule/Schedule"));
@@ -13,14 +12,7 @@ const Players  = lazy(() => import("./pages/players/Players"));
 const Profile  = lazy(() => import("./pages/profile/Profile"));
 
 function Routing() {
-  // Preload page data
-  const loadSched  = usePrefetch('schedule');
-  const loadEvent  = usePrefetch('event');
-  const loadPlayer = usePrefetch('player');
-  const loadStats  = usePrefetch('stats');
-  useEffect(() => {
-    loadSched(); loadEvent(); loadPlayer(); loadStats();
-  }, [loadSched,loadEvent,loadPlayer,loadStats]);
+  usePrefetchBase(); // Preload page data
 
   return (
     <ErrorBoundary>

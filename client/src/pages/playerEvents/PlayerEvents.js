@@ -8,7 +8,7 @@ import { WrapperStyle, GridStyle } from "./styles/PlayerEventStyles";
 import { HeaderStyle, NoEventsStyle } from "./styles/CellStyle";
 
 import scheduleRows from "./playerEvents.layout";
-import { useEventQuery, usePlayerEventsQuery, usePlayerMatchesQuery, usePrefetch } from "./playerEvents.fetch";
+import { useEventQuery, usePlayerEventsQuery, usePlayerMatchesQuery, usePrefetchEvent } from "./playerEvents.fetch";
 
 
 function PlayerEvents({ id }) {
@@ -18,9 +18,7 @@ function PlayerEvents({ id }) {
   const { data: events,  isLoading: eventLoad, error: eventErr } = useEventQuery();
 
   // Setup pre-fetching
-  const prefetchMatch = usePrefetch('match');
-  const prefetchStats = usePrefetch('stats');
-  const prefetch = id => { prefetchMatch(id); prefetchStats(id); };
+  const prefetch = usePrefetchEvent();
 
   // Handle loading/errors
   const [ loading, err ] = [ isLoading || matchLoad || eventLoad,  error || matchErr || eventErr ];

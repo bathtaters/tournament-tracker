@@ -1,6 +1,5 @@
-import {
-  fetchApi, getTags, usePrefetch, useEventQuery
-} from '../common/common.fetch';
+import { fetchApi, useEventQuery } from '../common/common.fetch';
+import { usePrefetchEvent } from '../common/common.hooks';
 import { getMatchData } from "./services/playerEventFetch.services";
 
 
@@ -23,5 +22,5 @@ export const playerEventsApi = fetchApi.injectEndpoints({
   overrideExisting: true
 });
 
-export { useEventQuery, usePrefetch };
+export { useEventQuery, usePrefetchEvent };
 export const { usePlayerEventsQuery, usePlayerMatchesQuery } = playerEventsApi;
