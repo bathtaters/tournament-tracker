@@ -4,7 +4,7 @@ import { render } from "react-dom";
 const alertRoot = document.getElementById('alert-root');
 
 // Open Alert
-export const openAsPromise = (Alert) => (message, buttons = ["Ok"], title = "Warning!") =>
+export const openAsPromise = (Alert) => (message, buttons = ["Ok"], title) =>
   new Promise((resolve) =>
     render(<Alert message={message} title={title} buttons={buttons} callback={resolve} />, alertRoot)
   )
