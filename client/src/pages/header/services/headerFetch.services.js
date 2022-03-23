@@ -1,13 +1,4 @@
-import { fetchApi, tagTypes } from "../header.fetch";
-
-// Check if any queries are currently running
-export const isAnyLoading = (state) =>
-  Object.values(state.dbApi.queries)
-    .some(qry => qry.status === 'pending');
-
-// Force refetch of all data
-export const forceRefetchConstructor = (dispatch) =>
-  () => dispatch(fetchApi.util.invalidateTags(tagTypes));
+import { fetchApi } from "../header.fetch";
 
 // Update cache for settingsUpdate
 export function settingsUpdate(body, { dispatch }) {
