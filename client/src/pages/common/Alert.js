@@ -11,6 +11,7 @@ import {
 } from "./styles/AlertStyles";
 
 import { useCloseAlert } from "./services/alert.services";
+import { useHotkeys } from "./services/basic.services";
 
 
 // Render into root separate root to allow Alerts on top of modals
@@ -18,17 +19,20 @@ const alertRoot = document.getElementById('alert-root');
 
 
 // Alert base component
-export default function Alert({ className = alertModalClass }) {
+function Alert({ className = alertModalClass }) {
   // Get alert settings
   const { isOpen, title, message, buttons, result } = useSelector((state) => state.alert)
   
   // Close alert
   const close = useCloseAlert()
 
+  // Setup hotkeys
+  useHotkeys({ 27: () => close('Esc') }, { skip: !isOpen, deps: [close] })
+
   // Render Alert Component to AlertRoot
   return createPortal(isOpen && (
     <OverlayContainer className={overlayClasses} z={5}>
-      <FocusTrap>
+      <FocusTrap focusTrapOptions={{ escapeDeactivates: false }}>
         <ModalStyle className={className}>
           {!buttons && <CloseButton onClick={() => close('Close')} />}
 
@@ -51,3 +55,5 @@ export default function Alert({ className = alertModalClass }) {
     </OverlayContainer>
   ), alertRoot)
 }
+
+export default Alert
