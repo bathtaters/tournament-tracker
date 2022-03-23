@@ -1,21 +1,32 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { createPortal } from "react-dom";
 import FocusTrap from "focus-trap-react";
 
+import RawData from "./RawData";
 import OverlayContainer from "./styles/OverlayContainer";
 import {
   AlertTitleStyle, AlertMessageStyle, AlertButtonWrapperStyle, AlertButtonStyle, 
   ModalStyle, CloseButton, overlayClasses, alertModalClass,
 } from "./styles/AlertStyles";
 
-import { openAsPromise, clickHandler } from "./services/alert.services";
+import { useCloseAlert } from "./services/alert.services";
+
+
+// Render into root separate root to allow Alerts on top of modals
+const alertRoot = document.getElementById('alert-root');
+
 
 // Alert base component
-function Alert({ title, message, buttons, className = alertModalClass, callback }) {
+export default function Alert({ className = alertModalClass }) {
+  // Get alert settings
+  const { isOpen, title, message, buttons, result } = useSelector((state) => state.alert)
+  
+  // Close alert
+  const close = useCloseAlert()
 
-  const close = clickHandler(callback)
-
-  // Alert Component (Based off Modal)
-  return (
+  // Render Alert Component to AlertRoot
+  return createPortal(isOpen && (
     <OverlayContainer className={overlayClasses} z={5}>
       <FocusTrap>
         <ModalStyle className={className}>
@@ -33,12 +44,10 @@ function Alert({ title, message, buttons, className = alertModalClass, callback 
             </AlertButtonWrapperStyle>
           }
 
+          <RawData data={{ isOpen, title, message, buttons, result }} className="text-xs" />
+
         </ModalStyle>
       </FocusTrap>
     </OverlayContainer>
-  )
+  ), alertRoot)
 }
-
-// Create Alert interface
-const openAlert = openAsPromise(Alert)
-export default openAlert

@@ -1,16 +1,19 @@
-import { render } from "react-dom";
+import { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { openAlert, closeAlert } from "../../../core/store/alertSlice";
 
-// Render into root separate root to allow Alerts on top of modals
-const alertRoot = document.getElementById('alert-root');
-
-// Open Alert
-export const openAsPromise = (Alert) => (message, buttons = ["Ok"], title) =>
-  new Promise((resolve) =>
-    render(<Alert message={message} title={title} buttons={buttons} callback={resolve} />, alertRoot)
+export function useOpenAlert() {
+  const dispatch = useDispatch()
+  return useCallback(
+    (message, buttons = ["Ok"], title) => dispatch(openAlert({ message, buttons, title })).unwrap(),
+    [openAlert]
   )
-
-// Close Alert
-export const clickHandler = (callback) => (buttonValue) => {
-  callback(buttonValue); // execute callback
-  render(null, alertRoot); // clear alert
 }
+
+export function useCloseAlert() {
+  const dispatch = useDispatch()
+  return useCallback((result) => dispatch(closeAlert(result)), [closeAlert])
+}
+
+export const useAlertStatus = () => useSelector((state) => state.alert.isOpen)
+export const useAlertResult = () => useSelector((state) => state.alert.result)
