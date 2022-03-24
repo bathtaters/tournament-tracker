@@ -12,3 +12,7 @@ export const counter = {
 export const eventEditor = {
   checkTeamsForDupe: true, // check team names for duplicate player names
 }
+
+export const alert = {
+  defaultResult: 'Close', // Result given when window is closed w/o setting result
+}
