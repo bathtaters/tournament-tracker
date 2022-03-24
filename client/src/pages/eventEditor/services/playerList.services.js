@@ -1,3 +1,4 @@
+import { getName } from "./playerEditor.utils";
 import { equalArrays } from "../../common/services/basic.services";
 import { usePropState } from "../../common/common.hooks";
 import { duplicatePlayerMsg, unsavedPlayerMsg } from "../../../assets/strings";
@@ -40,11 +41,11 @@ export const retrieveList = (playerList, suggestRef, openAlert) => async () => {
   if (!suggestRef?.current) return savedPlayers;
 
   // Handle leftover text in player box
-  const textbox = suggestRef.current.getValue();
-  if ((textbox?.value || '').trim()) {
+  const unaddedName = getName(suggestRef.current.getValue());
+  if ((unaddedName || '').trim()) {
 
     // Ask user
-    const answer = await openAlert(unsavedPlayerMsg(textbox.value), ["Add & Save","Ignore & Save","Cancel"])
+    const answer = await openAlert(unsavedPlayerMsg(unaddedName), ["Add & Save","Drop & Save","Cancel"])
     if (answer === 'Ignore & Save') return savedPlayers; // continue w/o adding
     if (answer !== 'Add & Save') return; // user cancel
     
