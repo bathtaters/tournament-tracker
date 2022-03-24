@@ -1,4 +1,5 @@
-import { validList } from "./suggestText.utils";
+import { useState } from "react";
+import { validList, getNonStaticSoloIdx } from "./suggestText.utils";
 const { hideListWhenEmpty, hideStaticWhenEmpty } = import("../../../../assets/config").then(c => c.suggestText);
 
 
@@ -30,7 +31,8 @@ export function getSuggestions(list, value) {
 // Auto-select rules (Runs on list change)
 export const autoSelect = (selected, list, setSelected) => () => {
   if (!validList(list)) setSelected(-1); // deselect when no list
-  else if ((selected < -1 || selected >= list.length)) setSelected(0); // select 1st entry if out of bounds
+  else if ((selected < -2 || selected >= list.length)) setSelected(0); // select 1st entry if out of bounds
+  else if (selected === -1) setSelected(getNonStaticSoloIdx(list))
 };
 
 
@@ -38,3 +40,16 @@ export const autoSelect = (selected, list, setSelected) => () => {
 export const autoShow = (listIsVisible, isFocused, setListVisible) => () => {
   if (!listIsVisible && isFocused) setListVisible(true);
 };
+
+
+// Auto-select list item on mouse hover 
+export const useSetOnHover = (setter) => {
+  const [ lastCoords, setLastCoords ] = useState([]);
+
+  return (id) => (ev) => {
+    // Ignores if no mouse movement (Fixes unwanted triggers while scrolling)
+    if (lastCoords[0] !== ev.screenX || lastCoords[1] !== ev.screenY) setter(id)
+
+    setLastCoords([ev.screenX, ev.screenY])
+  }
+}
