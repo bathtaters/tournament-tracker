@@ -1,8 +1,8 @@
 import { ModalTitleStyle } from "./CommonStyles";
 import ModalStyle, { CloseButton, overlayClasses } from "./ModalStyle";
 
-export function AlertButtonStyle(props) {
-  return <input className="mx-2" type="button" {...props} />
+export function AlertButton({ className, ...props }) {
+  return <input type="button" className={'mx-2 ' + (className || '')} {...props} />
 }
 
 export const AlertTitleStyle = ModalTitleStyle
