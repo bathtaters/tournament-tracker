@@ -23,6 +23,8 @@ export const swapPlayerMsg = (nameA,nameB) => "Are you sure you want to swap "+(
 export const deleteRoundMsg = "Are you sure you want to delete this round? Reported matches will be lost for good.";
 export const cantDeletePlayerMsg = name => name+" cannot be deleted while registered for events.";
 export const clearReportMsg = (title) => `Are you sure you want to delete the records for ${title}?`;
+export const duplicateNameMsg = (name) => (name || defPlayer) + " already exists."
+export const emptyNameMsg = "Please enter a name."
 
 // Errors
 export const playerCreateError = ({ error }, { name }) => new Error(error?.data?.error ? error.data.error : '"'+name+'" was not able to be added.')
