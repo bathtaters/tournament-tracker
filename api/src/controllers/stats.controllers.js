@@ -23,8 +23,8 @@ async function getAllStats(_, res) {
     player.list(),
     event.getOpponents(null, !includeIncomplete).then(oppsByEvent),
   ]);
-  
-  return res.sendAndLog(toStats(matches, players, opps, false));
+
+  return withMissingEventIds(toStats(matches, players, opps, false)).then(res.sendAndLog);
 }
 
 async function getStats(req, res) {
@@ -60,3 +60,23 @@ const matchesByEvent = matches => matches && matches.reduce((obj,entry) => {
   else obj[entry.eventid].push(entry);
   return obj;
 }, {});
+
+async function withMissingEventIds(stats) {
+  if (!stats?.ranking) return stats
+
+  // Collect missing ids
+  const playerids = stats.ranking.filter(pid => !(pid in stats))
+  if (!playerids.length) return stats
+
+  // Get missing player events
+  const playerEvents = await player.getPlayerEvents(playerids);
+  if (!playerEvents) return stats
+
+  // Create stats entries for missing players
+  playerEvents.forEach((playerData, idx) => {
+    if (!playerData?.length || !playerids[idx]) return;
+    stats[playerids[idx]] = { eventids: playerData.map(d => d.id) }
+  })
+
+  return stats
+}
