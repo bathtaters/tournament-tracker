@@ -35,6 +35,6 @@ export const autoSelect = (selected, list, setSelected) => () => {
 
 
 // Auto-select rules (Runs on list change)
-export const autoShow = (listIsVisible, textbox, setListVisible) => () => {
-  if (!listIsVisible && document.activeElement === textbox.current) setListVisible(true);
+export const autoShow = (listIsVisible, isFocused, setListVisible) => () => {
+  if (!listIsVisible && isFocused) setListVisible(true);
 };
