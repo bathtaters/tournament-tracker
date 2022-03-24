@@ -5,17 +5,12 @@ import InputForm from "../../common/InputForm";
 import { ModalTitleStyle } from "../styles/PlayerStyles";
 import addPlayerLayout from "../addPlayer.layout";
 
-import { useCreatePlayerMutation } from "../player.fetch";
-import { createPlayerController } from "../services/player.services";
+import useCreatePlayer from "../services/addPlayer.services";
 
 function AddPlayer({ modal }) {
-  const [ createPlayer ] = useCreatePlayerMutation();
+  const createPlayer = useCreatePlayer(modal)
 
-  const submitPlayer = (playerData) => {
-    createPlayerController(playerData, createPlayer) && modal.current.close(true);
-  };
-
-  if (!modal || !modal.current) throw Error('Add Player modal not loaded');
+  if (!modal?.current) throw Error('Add Player modal not loaded')
 
   return (
     <div>
@@ -23,17 +18,13 @@ function AddPlayer({ modal }) {
       <InputForm
         rows={addPlayerLayout.basic}
         submitLabel="Create"
-        onSubmit={submitPlayer}
+        onSubmit={createPlayer}
         onEdit={modal.current.lock}
         buttons={addPlayerLayout.buttons(modal.current.close)}
       />
     </div>
-  );
+  )
 }
 
-AddPlayer.propTypes = {
-  hideModal: PropTypes.func,
-  lockModal: PropTypes.func,
-};
-
-export default AddPlayer;
+AddPlayer.propTypes = { modal: PropTypes.object }
+export default AddPlayer
