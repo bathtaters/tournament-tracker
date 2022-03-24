@@ -1,13 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import { alert } from "../../assets/config"
 
-export const initialState = {
-  isOpen:  false,
-  title:   undefined,
-  message: undefined,
-  className: '',
-  buttons: ['Ok'],
-  result:  undefined,
-}
+export const initialState = { isOpen: false }
 
 export const alertSlice = createSlice({
   name: 'alert',
@@ -17,7 +11,7 @@ export const alertSlice = createSlice({
       state.isOpen ? state : Object.assign(state, action.payload, { result: undefined, isOpen: true }),
 
     closeAlert: (state, action) =>
-      state.isOpen ? Object.assign({}, initialState, { result: action.payload }) : state,
+      state.isOpen ? { ...initialState, result: action.payload ?? state.defaultResult } : state,
   }
 })
 
@@ -31,7 +25,7 @@ export const openAlert = createAsyncThunk(
     dispatch(alertSlice.actions.openAlert(alertOptions))
     
     // Create thunk promise
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const unsubscribe = store.subscribe(() => {
         const alertState = store.getState().alert
         
@@ -40,10 +34,10 @@ export const openAlert = createAsyncThunk(
           unsubscribe();
           resolve(alertState.result);
         
-        // Rejects if closed without result being set
+        // Returns default result if closed without result being set
         } else if (!alertState.isOpen) {
           unsubscribe();
-          reject('Alert closed without result');
+          resolve(alert.defaultResult);
         }
       })
     })
