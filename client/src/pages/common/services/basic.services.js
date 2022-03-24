@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback, useState } from "react";
 
 // Checks that 2 arrays are equal (Must be 1D arrays, 2 falsy vars will also be equal)
 export const equalArrays = (a,b) =>
@@ -54,10 +54,10 @@ export function useScrollToRef({
   behavior = "auto", block = "start", inline = "nearest", 
 } = {}) {
   // Create scroll callback
-  const elementRef = useRef(null)
+  const [ elementRef, setRef ] = useState(null)
   const scrollTo = (entries) => {
-    if (elementRef.current && !entries[0].isIntersection)
-      elementRef.current.scrollIntoView({ behavior, block, inline })
+    if (elementRef && !entries[0].isIntersection)
+      elementRef.scrollIntoView({ behavior, block, inline })
   }
 
   // Add/Remove observer listener
@@ -65,11 +65,11 @@ export function useScrollToRef({
     const root = rootRef && 'current' in rootRef ? rootRef.current : rootRef
 
     const observer = new IntersectionObserver(scrollTo, {root, threshold, rootMargin})
-    if (elementRef.current) observer.observe(elementRef.current)
+    if (elementRef) observer.observe(elementRef)
 
-    return () => { if (elementRef.current) observer.unobserve(elementRef.current) }
-  }, [elementRef.current, rootRef, threshold, rootMargin])
+    return () => { if (elementRef) observer.unobserve(elementRef) }
+  }, [elementRef, rootRef, threshold, rootMargin])
 
   // Get reference to element
-  return elementRef
+  return (newRef) => setRef(newRef)
 }
