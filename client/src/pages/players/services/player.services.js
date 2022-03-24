@@ -18,7 +18,7 @@ const playerClickController = (deleteMode, deletePlayer, openAlert) => (playerid
   e.preventDefault()
 
   // Check player can be deleted
-  if (playerData.eventids && playerData.eventids.length) return openAlert(cantDeletePlayerMsg(playerData.name))
+  if (playerData.eventids?.length) return openAlert(cantDeletePlayerMsg(playerData.name))
 
   // Delete player
   openAlert(deletePlayerMsg(playerData.name), ["Delete","Cancel"]).then(r => r === 'Delete' && deletePlayer(playerid))
