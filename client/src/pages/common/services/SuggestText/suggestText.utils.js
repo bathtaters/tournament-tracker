@@ -16,3 +16,14 @@ export const getSelected = (selected, suggestions) => {
   }
   return selected < suggestions.length && suggestions[selected];
 };
+
+export const getNonStaticSolo = (list) => {
+  const nonStatic = list.filter(entry => !entry.isStatic)
+  return nonStatic.length === 1 && nonStatic[0]
+}
+
+export const getNonStaticSoloIdx = (list) => {
+  let nonStatic = []
+  list.forEach((entry,idx) => !entry.isStatic && nonStatic.push(idx))
+  return nonStatic.length === 1 ? nonStatic[0] : -1
+}
