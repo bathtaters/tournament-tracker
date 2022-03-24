@@ -1,3 +1,17 @@
+import { useResetDbMutation } from "../header.fetch";
+import { useOpenAlert, isResult } from "../../common/common.hooks";
+import { resetDbAlert, resetDbAlertConfirm } from "../../../assets/strings";
+
+// Handle clicking ResetDB buttons
+export function useResetHandler() {
+  const openAlert = useOpenAlert()
+  const [ resetDb ] = useResetDbMutation()
+  return (fullReset) =>
+    openAlert(resetDbAlert).then(isResult(resetDbAlert, 0))
+      .then(r => r && openAlert(resetDbAlertConfirm)).then(isResult(resetDbAlertConfirm, 1))
+      .then(r => r && resetDb(fullReset))
+}
+
 // Returns properties from 'base' that are changed from 'compare'
 const getUnqiue = (base, compare = {}) => Object.keys(base).reduce((obj,key) => {
   if (base[key] !== compare[key]) obj[key] = base[key]

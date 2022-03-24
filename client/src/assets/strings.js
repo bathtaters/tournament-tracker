@@ -29,6 +29,17 @@ export const emptyNameMsg = "Please enter a name."
 // Errors
 export const playerCreateError = ({ error }, { name }) => new Error(error?.data?.error ? error.data.error : '"'+name+'" was not able to be added.')
 
+// Alerts
+export const resetDbAlert = {
+  title: "Erase ALL DATA?", message: "ALL players & games will be lost with no hope of recovery!",
+  className: "base-bgd max-color",
+  buttons: [{ value: "Erase Database", className: "neg-bgd base-color" }, "Cancel"],
+}
+export const resetDbAlertConfirm = {
+  title: "Confirm Total Erase", message: "Are you sure you want to go through with this?",
+  className: "base-bgd max-color",
+  buttons: ["Cancel", { value: "Erase Database", className: "neg-bgd base-color" }],
+}
 
 // --- Lists --- \\
 export const statusInfo = [
