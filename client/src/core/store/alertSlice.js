@@ -4,6 +4,7 @@ export const initialState = {
   isOpen:  false,
   title:   undefined,
   message: undefined,
+  className: '',
   buttons: ['Ok'],
   result:  undefined,
 }

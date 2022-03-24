@@ -19,9 +19,9 @@ const alertRoot = document.getElementById('alert-root');
 
 
 // Alert base component
-function Alert({ className = alertModalClass }) {
+function Alert() {
   // Get alert settings
-  const { isOpen, title, message, buttons, result } = useSelector((state) => state.alert)
+  const { isOpen, title, message, buttons, className, result } = useSelector((state) => state.alert)
   
   // Close alert
   const close = useCloseAlert()
@@ -36,7 +36,7 @@ function Alert({ className = alertModalClass }) {
   return createPortal(isOpen && (
     <OverlayContainer className={overlayClasses} z={5}>
       <FocusTrap focusTrapOptions={{ escapeDeactivates: false }}>
-        <ModalStyle className={className}>
+        <ModalStyle className={alertModalClass + (className ?? '')}>
           {!buttons && <CloseButton onClick={() => close('Close')} />}
 
           {title && <AlertTitleStyle>{title}</AlertTitleStyle>}

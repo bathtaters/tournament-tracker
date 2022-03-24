@@ -15,6 +15,6 @@ export function AlertButtonWrapperStyle({ children }) {
   return <div className="flex justify-evenly">{children}</div>
 }
 
-export const alertModalClass = "text-center p-4 max-w-xs sm:max-w-sm"
+export const alertModalClass = "text-center p-4 max-w-xs sm:max-w-sm "
 
 export { ModalStyle, CloseButton, overlayClasses  }
