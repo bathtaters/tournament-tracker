@@ -11,6 +11,7 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, ref) {
 
   // Setup Local State
   const textbox = useRef(null);
+  const isFocused = document.activeElement === textbox.current;
   const [value, setValue] = useState("");
   const [selected, setSelected] = useState(-1);
   const [picked, setPick] = useState(null);
@@ -19,7 +20,7 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, ref) {
   // Setup List
   const suggestions = useMemo(() => getSuggestions(list, value), [list, value]);
   useEffect(autoSelect(selected, suggestions, setSelected),   [selected, suggestions]);
-  useEffect(autoShow(listIsVisible, textbox, setListVisible), [listIsVisible, textbox.current, value]);
+  useEffect(autoShow(listIsVisible, isFocused, setListVisible), [listIsVisible, isFocused, value]);
   const isExact = !Array.isArray(suggestions) ? suggestions : suggestions.length === 1 ? suggestions[0] : false;
 
 
@@ -73,7 +74,7 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, ref) {
     /* Esc   */ 27: () => selected === -1 ? textbox.current.blur() : setSelected(-1), // Already cap'd by modal
     /* Up    */ 38: () => setSelected(getPrev(selected, suggestions?.length || 0)), 
     /* Down  */ 40: () => setSelected(getNext(selected, suggestions?.length || 0)),
-  });
+  }, { skip: !isFocused });
 
 
   return {

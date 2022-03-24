@@ -26,8 +26,9 @@ function Modal({ children, className = '', bgdClose = true, startOpen = false, s
   
   // Link HotKeys -> Functions
   useHotkeys({
-    27: close,  // Esc: Close Modal
-  }, { skip: alertIsOpen || !isOpen || isLock, deps: [close] });
+    13: () => document.activeElement?.click(), // Enter: Click if on a clickable object
+    27: !isLock && close,  // Esc: Close Modal
+  }, { skip: alertIsOpen || !isOpen, deps: [close] });
 
   // Render into modalRoot
   return createPortal(isOpen && (

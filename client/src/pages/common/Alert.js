@@ -27,7 +27,10 @@ function Alert({ className = alertModalClass }) {
   const close = useCloseAlert()
 
   // Setup hotkeys
-  useHotkeys({ 27: () => close('Esc') }, { skip: !isOpen, deps: [close] })
+  useHotkeys({
+    13: () => document.activeElement?.click(), // Enter: Click if on a clickable object
+    27: () => close('Esc'),
+  }, { skip: !isOpen, deps: [close] })
 
   // Render Alert Component to AlertRoot
   return createPortal(isOpen && (
