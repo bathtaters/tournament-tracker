@@ -44,9 +44,9 @@ export const retrieveList = (playerList, suggestRef, openAlert) => async () => {
   if ((textbox?.value || '').trim()) {
 
     // Ask user
-    const answer = await openAlert(unsavedPlayerMsg(textbox.value), ["Add","Ignore","Cancel"])
-    if (answer === 'Ignore') return savedPlayers; // continue w/o adding
-    if (answer !== 'Add') return; // user cancel
+    const answer = await openAlert(unsavedPlayerMsg(textbox.value), ["Add & Save","Ignore & Save","Cancel"])
+    if (answer === 'Ignore & Save') return savedPlayers; // continue w/o adding
+    if (answer !== 'Add & Save') return; // user cancel
     
     // Add player to list
     const newPlayer = await suggestRef.current.submit();
