@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useMemo, useImperativeHandle } from "react";
 
 import { getSuggestions, autoSelect, autoShow } from "./suggestText.services"
-import { getSelected, getNext, getPrev, validList } from "./suggestText.utils"
+import { getSelected, getNext, getPrev, validList, getNonStaticSolo } from "./suggestText.utils"
 import { useHotkeys } from "../basic.services";
 
 
@@ -19,7 +19,7 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, ref) {
   
   // Setup List
   const suggestions = useMemo(() => getSuggestions(list, value), [list, value]);
-  useEffect(autoSelect(selected, suggestions, setSelected),   [selected, suggestions]);
+  useEffect(autoSelect(selected, suggestions, setSelected), [selected, suggestions]);
   useEffect(autoShow(listIsVisible, isFocused, setListVisible), [listIsVisible, isFocused, value]);
   const isExact = !Array.isArray(suggestions) ? suggestions : suggestions.length === 1 ? suggestions[0] : false;
 
@@ -35,11 +35,13 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, ref) {
     if (onChange) onChange(e); // Passthrough onChange function
   }
 
+  const getSubmitValue = () => !isHidden && (picked || isExact || getNonStaticSolo(suggestions))
+
   const submit = async (forcePick) => {
-    const newPick = forcePick || picked || isExact;
+    const newPick = forcePick || getSubmitValue();
 
     // Submit
-    const result = await (onSubmit && onSubmit(newPick, value));
+    const result = await (onSubmit && onSubmit(newPick, value, suggestions));
 
     // Reset form
     setListVisible(false);
@@ -66,12 +68,12 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, ref) {
   // --- Additional Hooks --- \\
 
   // Allow parent to Submit
-  useImperativeHandle(ref, () => ({ submit, getValue: () => !isHidden && (picked, {value}) }));
+  useImperativeHandle(ref, () => ({ submit, getValue: () => ({ ...getSubmitValue(), text: value }) }));
 
   // Setup Keyboard UI
   useHotkeys({
     /* Enter */ 13: () => submitOnPicked(),
-    /* Esc   */ 27: () => selected === -1 ? textbox.current.blur() : setSelected(-1), // Already cap'd by modal
+    /* Esc   */ 27: () => selected < 0 ? textbox.current.blur() : setSelected(-2),
     /* Up    */ 38: () => setSelected(getPrev(selected, suggestions?.length || 0)), 
     /* Down  */ 40: () => setSelected(getNext(selected, suggestions?.length || 0)),
   }, { skip: !isFocused });
@@ -80,7 +82,7 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, ref) {
   return {
     boxProps:  { value, setListVisible, change, ref: textbox },
     listProps: { suggestions, selected, pick, setSelected },
-    showList: listIsVisible && validList(suggestions),
+    showList:  listIsVisible && validList(suggestions),
   }
 }
 
