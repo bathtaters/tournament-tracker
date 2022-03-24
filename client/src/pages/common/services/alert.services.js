@@ -12,7 +12,10 @@ const optionFilter = ({ message, buttons = ["Ok"], title, className = "" }) => (
 export function useOpenAlert() {
   const dispatch = useDispatch()
   return useCallback(
-    (options) => dispatch(openAlert(optionFilter(options))).unwrap(),
+    (options, expectedIndex = null) => {
+      const expected = typeof expectedIndex === 'number' && getReturnValue(options.buttons[expectedIndex], expectedIndex)
+      return dispatch(openAlert(optionFilter(options))).unwrap().then((result) => expected ? result === expected : result)
+    },
     [openAlert]
   )
 }
@@ -29,16 +32,11 @@ export const useAlertStatus = () => useSelector((state) => state.alert.isOpen)
 // Hook returning function to get result of last-closed alert
 export const useAlertResult = () => useSelector((state) => state.alert.result)
 
-// Simple then function for openAlert, returns True/False
-export function isResult({ buttons }, buttonIndex) {
-  const expected = getReturnValue(buttons[buttonIndex])
-  return (result) => result && result === expected
-}
 
 // --- INTERNAL FUNCTIONS --- \\
 
-const getReturnValue = (button) => typeof button === 'string' ? button :
-  typeof button.onClick === 'string' ? button.onClick : button.value || button.id || button.label || null
+const getReturnValue = (button, idx) => typeof button === 'string' ? button :
+  typeof button.onClick === 'string' ? button.onClick : button.value || button.id || button.label || idx
 
 // Convert button data to props on input tag
 export function getButtonProps(data, close, idx) {
@@ -60,8 +58,6 @@ export function getButtonProps(data, close, idx) {
 
     // Button action is onClick(event, data) => closeWith(onClick<string> => data[Value => ID => Label] => NULL)
     onClick:
-      typeof data.onClick === 'function' ? (ev) => data.onClick(ev, close, data) :
-      typeof data.onClick === 'string'   ? () => close(data.onClick) :
-        () => close(data.value || data.id || data.label || null),
+      typeof data.onClick === 'function' ? (ev) => data.onClick(ev, close, data) : () => close(getReturnValue(data, idx)),
   }
 }

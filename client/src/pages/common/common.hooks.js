@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePrefetch } from "./common.fetch";
-import { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult, isResult } from "./services/alert.services";
-export { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult, isResult }
+import { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult } from "./services/alert.services";
+export { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult }
 
 // Preload page data
 export function usePrefetchBase() {
