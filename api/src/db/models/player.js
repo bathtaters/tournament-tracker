@@ -11,7 +11,7 @@ const get = id => db.getRow('player', id);
 const list = () => db.getRow('player',null,'id').then(r => r && r.map(p => p.id));
 
 // Get Event detail for player
-const getPlayerEvents = playerid => db.getRows('event', strings.eventFilter, [playerid], 'id');
+const getPlayerEvents = playerids => db.query(playerids.map(() => strings.eventFilter), playerids.map(id => [id]), true)
 
 // Get Match detail for player
 const getPlayerMatches = playerid => db.getRow('matchDetail', playerid, null, { idCol: 'ANY(players)', getOne: false });

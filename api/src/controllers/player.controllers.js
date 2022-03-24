@@ -10,8 +10,8 @@ const getPlayer = (req, res) => players.get(req.params.id).then(res.sendAndLog);
 const getAllPlayers = (_, res) => players.get().then(arrToObj('id')).then(res.sendAndLog);
 
 // Individual player event details
-const getPlayerEvents = (req, res) => players.getPlayerEvents(req.params.id)
-.then(events => events && events.map(d => d.id)).then(res.sendAndLog);
+const getPlayerEvents = (req, res) => players.getPlayerEvents([req.params.id])
+.then(events => events?.map(d => d.id)).then(res.sendAndLog);
 
 // Individual player match details
 async function getPlayerMatches(req, res) {
