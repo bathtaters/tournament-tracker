@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 
 import PlayerEditor from "./components/PlayerEditor";
-import OverlayContainer from "../common/styles/OverlayContainer";
+import LoadingScreen from "../common/LoadingScreen";
 import { TitleStyle, StatusStyle } from "./styles/EventEditorStyles";
 
 import InputForm from "../common/InputForm";
@@ -19,7 +19,7 @@ const baseData = { defaultValues: valid.defaults.event, limits: valid.limits.eve
 function EditEvent({ eventid, modal }) {
   
   const {
-    data, playerList, buttons, submitHandler, isUpdating,
+    data, playerList, buttons, submitHandler,
     isLoading, error, notLoaded
   } = useEditEventController(eventid, modal)
 
@@ -50,7 +50,7 @@ function EditEvent({ eventid, modal }) {
 
       <RawData className="text-sm mt-4" data={data} />
 
-      { isUpdating && <OverlayContainer /> }
+      <LoadingScreen enable={isLoading} caption="Creating event..." />
     </div>
   );
 }
