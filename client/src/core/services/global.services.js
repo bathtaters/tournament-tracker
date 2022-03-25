@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchApi, tagTypes } from "../store/fetchApi";
 import { setFetch } from "../store/globalSlice";
@@ -11,12 +11,10 @@ export const useFetchingStatus = () => useSelector((state) => state.global.isFet
 export function useFetchingProvider(reducerPath = fetchApi.reducerPath) {
   // Get actual value
   const anyLoading = useSelector((state) => Object.values(state[reducerPath].queries).some(qry => qry.status === 'pending'))
-  // Get stored value
-  const isFetching = useSelector((state) => state.global.isFetching)
   
   // Set state to actual value
   const dispatch = useDispatch()
-  if (anyLoading !== isFetching) dispatch(setFetch(anyLoading))
+  useEffect(() => { dispatch(setFetch(anyLoading)) }, [anyLoading])
 
   return anyLoading
 }
@@ -26,4 +24,16 @@ export function useFetchingProvider(reducerPath = fetchApi.reducerPath) {
 export function useForceRefetch() {
   const dispatch = useDispatch()
   return () => dispatch(fetchApi.util.invalidateTags(tagTypes))
+}
+
+
+// Lock on isLoading = true, unlock when anyFetching = false
+export function useLockScreen(isLoading) {
+  const [ isLocked, setLock ] = useState(false)
+  const anyFetching = useFetchingStatus()
+
+  useEffect(() => { if (isLoading) setLock(true) }, [isLoading])
+  useEffect(() => { if (isLocked && !anyFetching && !isLoading) setLock(false) }, [anyFetching])
+
+  return isLocked
 }
