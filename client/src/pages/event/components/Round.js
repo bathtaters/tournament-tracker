@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Match from '../../match/Match';
 import EditRound from './subcomponents/EditRound';
 import { RoundStyle, EditRoundStyle } from '../styles/RoundStyles';
-import OverlayContainer from '../../common/styles/OverlayContainer';
+import OverlayContainer from '../../common/components/OverlayContainer';
 
 import { useSettingsQuery, refetchStats } from '../event.fetch';
 

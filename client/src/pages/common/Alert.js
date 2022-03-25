@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import FocusTrap from "focus-trap-react";
 
 import RawData from "./RawData";
-import OverlayContainer from "./styles/OverlayContainer";
+import OverlayContainer from "./components/OverlayContainer";
 import {
   AlertTitleStyle, AlertMessageStyle, AlertButtonWrapperStyle, AlertButton, 
   ModalStyle, CloseButton, overlayClasses, alertModalClass,

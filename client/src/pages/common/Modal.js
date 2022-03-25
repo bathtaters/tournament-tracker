@@ -2,7 +2,7 @@ import React, { useState, useImperativeHandle, forwardRef, useCallback } from "r
 import { createPortal } from "react-dom";
 import FocusTrap from "focus-trap-react";
 
-import OverlayContainer from "./styles/OverlayContainer";
+import OverlayContainer from "./components/OverlayContainer";
 import ModalStyle, { CloseButton, overlayClasses } from "./styles/ModalStyle";
 import { closeController, msgController, refController } from "./services/modal.services";
 import { useHotkeys } from "./services/basic.services";
