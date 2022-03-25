@@ -52,7 +52,7 @@ export default function useEditEventController(eventid, modal) {
   const deleteHandler = deleteController(eventid, data, deleteEvent, openAlert, modal.current.close, navigate)
 
   return {
-    data, playerList, isUpdating,
+    data, playerList, isLoading: !eventid && isUpdating,
     // Button layout
     buttons: editorButtonLayout(eventid, deleteHandler, modal.current.close),
     // Handler
