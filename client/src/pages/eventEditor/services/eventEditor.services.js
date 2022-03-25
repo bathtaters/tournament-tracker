@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "../eventEditor.fetch";
 
 import { editorButtonLayout } from "../eventEditor.layout";
-import { deleteEventMsg } from "../../../assets/strings";
+import { deleteEventAlert } from "../../../assets/strings";
 import { useOpenAlert } from "../../common/common.hooks";
 
 // Delete button controller
 const deleteController = (id, data, deleteEvent, openAlert, closeModal, navigate) => () => 
-  openAlert(deleteEventMsg(data?.title), ["Delete","Cancel"]).then(res => {
-    if (res !== 'Delete') return;
+  openAlert(deleteEventAlert(data?.title), 0).then(res => {
+    if (!res) return;
     if (id) deleteEvent(id);
     closeModal(true);
     navigate("/home");

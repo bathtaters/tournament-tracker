@@ -1,4 +1,4 @@
-import { swapPlayerMsg, dragType } from '../../../assets/strings';
+import { swapPlayerAlert, dragType } from '../../../assets/strings';
 export const dataType = dragType.player;
 
 // Helpers for swapping player arrays during optimistic updates
@@ -19,8 +19,8 @@ export const moveDrops = (baseArr, fromId, toId, moveValue) => {
 // Construct swap handler
 export const swapController = (swapPlayers, eventid, openAlert) => async (playerA, playerB) => {
   if (playerA.playerid === playerB.playerid) return;
-  const answer = playerA.reported || playerB.reported ? await openAlert(swapPlayerMsg(), ["Swap","Cancel"]) : "Swap"
-  if(answer === 'Swap') swapPlayers({eventid, swap: [ playerA, playerB ] });
+  const doSwap = (!playerA.reported && !playerB.reported) || await openAlert(swapPlayerAlert, 0)
+  if (doSwap) swapPlayers({ eventid, swap: [ playerA, playerB ] });
 };
 
 // Test if swap is allowed

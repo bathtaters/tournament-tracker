@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { useOpenAlert } from "../../common/common.hooks";
 import { useSettingsQuery, useDeletePlayerMutation } from "../player.fetch";
-import { deletePlayerMsg, cantDeletePlayerMsg } from "../../../assets/strings";
+import { deletePlayerAlert, cantDeletePlayerAlert } from "../../../assets/strings";
 
 // Validate and add new player
 export const createPlayerController = (playerData, createPlayer) => {
@@ -18,10 +18,10 @@ const playerClickController = (deleteMode, deletePlayer, openAlert) => (playerid
   e.preventDefault()
 
   // Check player can be deleted
-  if (playerData.eventids?.length) return openAlert(cantDeletePlayerMsg(playerData.name))
+  if (playerData.eventids?.length) return openAlert(cantDeletePlayerAlert(playerData.name))
 
   // Delete player
-  openAlert(deletePlayerMsg(playerData.name), ["Delete","Cancel"]).then(r => r === 'Delete' && deletePlayer(playerid))
+  openAlert(deletePlayerAlert(playerData.name), 0).then(r => r && deletePlayer(playerid))
 }
 
 // Players base logic

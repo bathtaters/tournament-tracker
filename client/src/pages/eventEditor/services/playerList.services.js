@@ -1,7 +1,7 @@
 import { getName } from "./playerEditor.utils";
 import { equalArrays } from "../../common/services/basic.services";
 import { usePropState } from "../../common/common.hooks";
-import { duplicatePlayerMsg, unsavedPlayerMsg } from "../../../assets/strings";
+import { duplicatePlayerAlert, unsavedPlayerAlert } from "../../../assets/strings";
 
 export const usePropStateList = (propList) => usePropState(propList || [], equalArrays)
 
@@ -11,7 +11,7 @@ const pushPlayerController = (playerData, players, setPlayers, openAlert) => asy
 
   let res = true;
   if (players.includes(playerId)) {
-    await openAlert(duplicatePlayerMsg(playerData[playerId]?.name));
+    await openAlert(duplicatePlayerAlert(playerData[playerId]?.name));
     res = false;
   } else setPlayers(players.concat(playerId));
 
@@ -45,9 +45,10 @@ export const retrieveList = (playerList, suggestRef, openAlert) => async () => {
   if ((unaddedName || '').trim()) {
 
     // Ask user
-    const answer = await openAlert(unsavedPlayerMsg(unaddedName), ["Add & Save","Drop & Save","Cancel"])
-    if (answer === 'Ignore & Save') return savedPlayers; // continue w/o adding
-    if (answer !== 'Add & Save') return; // user cancel
+    const alert = unsavedPlayerAlert(unaddedName)
+    const answer = await openAlert(alert)
+    if (answer === alert.buttons[1]) return savedPlayers; // continue w/o adding
+    if (answer !== alert.buttons[0]) return; // user cancel
     
     // Add player to list
     const newPlayer = await suggestRef.current.submit();

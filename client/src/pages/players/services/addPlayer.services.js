@@ -1,6 +1,6 @@
 import { usePlayerQuery, useCreatePlayerMutation } from "../player.fetch";
 import { useOpenAlert } from "../../common/common.hooks";
-import { emptyNameMsg, duplicateNameMsg } from "../../../assets/strings";
+import { duplicateNameAlert, emptyNameAlert, notLoadedAlert } from "../../../assets/strings";
 
 export default function useCreatePlayer(modal) {
   // Load in global data
@@ -14,11 +14,11 @@ export default function useCreatePlayer(modal) {
   // Create player action
   const createPlayer = (playerData) => {
     // Do nothing if empty
-    if (!playerData?.name) return openAlert(emptyNameMsg)
+    if (!playerData?.name) return openAlert(emptyNameAlert)
 
     // Check if player name exists
     if (playerNames.includes(playerData.name.toLowerCase()))
-      return openAlert(duplicateNameMsg(playerData.name))
+      return openAlert(duplicateNameAlert(playerData.name))
 
     // Add player & close modal
     createPlayerFetch(playerData)
@@ -27,7 +27,7 @@ export default function useCreatePlayer(modal) {
 
   // Catch errors
   if (error) throw new Error(error)
-  if (isLoading) return () => openAlert('Player data not loaded. Try again in a minute.')
+  if (isLoading) return () => openAlert(notLoadedAlert)
 
   return createPlayer
 }
