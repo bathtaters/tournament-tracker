@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { validList, getNonStaticSoloIdx } from "./suggestText.utils";
-const { hideListWhenEmpty, hideStaticWhenEmpty } = import("../../../../assets/config").then(c => c.suggestText);
-
+import { suggestText } from "../../../../assets/config";
+const { hideListWhenEmpty, hideStaticWhenEmpty } = suggestText;
 
 // Filter Suggestions logic
 export function getSuggestions(list, value) {
