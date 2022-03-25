@@ -7,17 +7,15 @@ import { useOpenAlert } from "../../common/common.hooks";
 // Add new player to DB
 async function newPlayerController(playerData, players, createPlayer, pushPlayer, openAlert) {
   // Check for errors
+  if (!playerData.name.trim()) return; // Blank player
   if (playerExists(playerData.name, players)) return openAlert(duplicatePlayerAlert(playerData.name));
 
   // Confirm create
   const answer = await openAlert(createPlayerAlert(playerData.name),0)
-  console.log('CREATE',answer)
   if (!answer) return false;
 
   // Create & Push player
-  console.log('CREATE PLAYER')
   const result = await createPlayer(playerData);
-  console.log('RESULT',result)
   if (result?.error || !result?.data?.id) throw playerCreateError(result, playerData);
   return pushPlayer(result.data.id) && result.data.id;
 }
