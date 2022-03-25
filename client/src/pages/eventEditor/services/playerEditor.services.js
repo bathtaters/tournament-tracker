@@ -12,7 +12,7 @@ export default function usePlayerEditorController(players, status, onEdit, ref) 
   // Get Global State
   const { data, isLoading, error, isFetching } = usePlayerQuery();
   const { data: settings, isLoading: settLoad, error: settErr } = useSettingsQuery();
-  const [ createPlayer, { isLoading: playersUpdating } ] = useCreatePlayerMutation();
+  const [ createPlayer, { isLoading: isAddingPlayer } ] = useCreatePlayerMutation();
   
   // Init Local State
   const suggestRef = useRef(null);
@@ -58,6 +58,6 @@ export default function usePlayerEditorController(players, status, onEdit, ref) 
   // Pass to renderer
   return {
     data, playerList, inputData, suggestRef, popPlayer, notStarted,
-    isFetching: playersUpdating || isFetching,
+    isUpdating: isAddingPlayer || isFetching, isLoading: isAddingPlayer
   }
 }

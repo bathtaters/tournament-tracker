@@ -5,6 +5,7 @@ import PlayerRow from "./PlayerRow";
 import PlayerInput from "./PlayerInput";
 import { PlayerEditorStyle } from "../styles/PlayerEditorStyles";
 import Loading from "../../common/Loading";
+import LoadingScreen from "../../common/LoadingScreen";
 
 import usePlayerEditorController from "../services/playerEditor.services";
 
@@ -12,7 +13,7 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
   // Get data for editor
   const {
     data, playerList, inputData, suggestRef, popPlayer,
-    notStarted, isFetching, isLoading, error,
+    notStarted, isUpdating, isLoading, error,
   } = usePlayerEditorController(players, status, onEdit, ref)
 
   // Loading/Error catcher
@@ -27,13 +28,15 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
       {playerList.map((pid,idx) => 
         <PlayerRow
           name={data[pid] && data[pid].name}
-          isUpdating={isFetching}
+          isUpdating={isUpdating}
           onClick={notStarted && popPlayer(pid, idx)}
           key={pid}
         />
       )}
 
       {notStarted &&  <PlayerInput {...inputData} ref={suggestRef} />}
+
+      <LoadingScreen enable={isLoading} caption="Creating player..." />
 
     </PlayerEditorStyle>
   )
