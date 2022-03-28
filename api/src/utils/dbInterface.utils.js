@@ -27,7 +27,7 @@ exports.queryValues = (objArray, keys) => objArray.flatMap(colObj =>
 const pgReturnKey = 'rows';
 
 exports.getFirst = (additBool=true) => res =>
-  additBool && Array.isArray(res) && res[0] ? res[0] : res;
+  additBool && Array.isArray(res) ? res[0] : res;
 
 exports.getReturn = res =>
   Array.isArray(res) ? res.map(r => (r && r[pgReturnKey]) || r) :

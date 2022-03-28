@@ -139,8 +139,8 @@ describe('getFirst', () => {
     expect(getFirst()([1,2,3])).toBe(1);
   });
 
-  it('passes result if falsy 0th item', () => {
-    expect(getFirst()([0,1,2])).toEqual([0,1,2]);
+  it('returns 0th item if falsy', () => {
+    expect(getFirst()([0,1,2])).toBe(0);
   });
 
   it('passes result if not array', () => {
