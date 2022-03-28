@@ -20,14 +20,14 @@ export function MissingDataStyle({ children }) {
 
 // DAY-ENTRY.JS STYLES \\
 
-function BaseTitleStyle({ status, className = '', children }) {
+function BaseTitleStyle({ status, children }) {
   const statusClass = status === 1 ? '' : statusInfo[status + 1].class;
-  return (<div className={statusClass+' text-sm font-normal block '+className}>{children}</div>);
+  return (<div className={statusClass+' text-sm font-normal break-words text-center line-clamp-2 leading-none'}>{children}</div>);
 }
 
 export function EntryTitleStyle({ status, children }) {
   return (
-    <div className="link pointer-events-none">
+    <div className="link pointer-events-none w-full">
       <BaseTitleStyle status={status}>{children}</BaseTitleStyle>
     </div>
   );
@@ -35,7 +35,7 @@ export function EntryTitleStyle({ status, children }) {
 
 export function EntryLinkStyle({ to, status, children }) {
   return (
-    <Link to={to}>
+    <Link to={to} className="w-full">
       <BaseTitleStyle status={status}>{children}</BaseTitleStyle>
     </Link>
   );
@@ -55,5 +55,5 @@ export function EditEventButton({ status, onClick, children }) {
 
 export const dragAndDropClass = {
   outer: "p-2 m-1 rounded-md w-40 min-h-32",
-  inner: "relative flex justify-center items-center overflow-hidden m-1 h-8 rounded-xl",
+  inner: "relative flex justify-center items-center overflow-hidden h-9 m-1 px-2 rounded-xl",
 };
