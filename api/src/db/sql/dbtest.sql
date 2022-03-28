@@ -3,6 +3,7 @@ USE tournamenttracker;
 
 -- Erase all entries
 SET sql_safe_updates = FALSE;
+DELETE FROM settings *;
 DELETE FROM event *;
 DELETE FROM match *;
 DELETE FROM player *;
