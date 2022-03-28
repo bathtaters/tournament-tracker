@@ -9,22 +9,39 @@ const logger = require('../../utils/log.adapter');
 const retryAttempts = 15;
 const retryPauseMs = 1000;
 
+// Test that DB works
+const testDb = () => runOperation((cl) => cl.query("SHOW TABLES;")).then(t => t?.rows?.length).catch(e => { throw e; });
+
+// Reset DB
+const resetDbFile =  require('path').join(require('../../config/meta').sqlFilesPath, 'resetDb.sql');
+async function resetDatabase() {
+  await require('./directOps').execFiles([resetDbFile]);
+  const test = await testDb();
+  if (!test) throw new Error('ResetDB did not work! Check resetDb.sql file.');
+}
+
 // Connect to the DB
 let staticPool;
-/* istanbul ignore next */
 async function openConnection(asUser = 'api', cfg = null) {
   if (staticPool) { await closeConnection(); }
   const connStr = getConnStr(asUser, cfg); // Build URI
 
-  try { staticPool = new Pool(parse(connStr)); }
-  catch(e) { 
-    throw new Error(`Unable to connect to DB: ${connStr}: ${e.message || e.description || e}`);
+  try {
+    staticPool = new Pool(parse(connStr));
+    await testDb().then(test => { if (!test) throw { code: '3D000' } });
+  }
+  catch(e) {
+    // Catch missing DB
+    if ((e.code === '42602' || e.code === '3D000')) {
+      console.error('DB Does Not Exist! Creating now...');
+      try { await resetDatabase(); } catch (err) { throw err; }
+    }
+    throw new Error(`Unable to connect to DB: "${connStr}": ${e.message || e.description || e}`);
   }
   return logger.info('Connected to DB server.');
 }
 
 // Disconnect from DB
-/* istanbul ignore next */
 async function closeConnection() {
   if (!staticPool) { throw new Error("Attempting to close connection before opening."); }
   await staticPool.end();
@@ -41,7 +58,7 @@ async function runOperation(operation = client => {}, maxAttempts = retryAttempt
   
   let client = await retryBlock(
     pool => pool.connect(), [pool], 5,
-    0, null, null, 1000
+    0, null, null, retryPauseMs
   );
   if (!client) throw new Error("Unable to connect to DB.");
 
@@ -65,7 +82,7 @@ async function runOperation(operation = client => {}, maxAttempts = retryAttempt
           .then(() => logger.warn("Rolling back & retrying due to: "+(e.message || e.name || e || 'error')));
       },
       // Wait 1s+ between attempts
-      1000
+      retryPauseMs
     );
 
     // Cleanup
@@ -82,4 +99,4 @@ async function runOperation(operation = client => {}, maxAttempts = retryAttempt
   }
 }
 
-module.exports = { openConnection, closeConnection, runOperation, isConnected: () => !!staticPool }
+module.exports = { openConnection, closeConnection, runOperation, resetDatabase, isConnected: () => !!staticPool }
