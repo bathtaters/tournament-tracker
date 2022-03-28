@@ -77,7 +77,7 @@ async function runOperation(operation = client => {}, maxAttempts = retryAttempt
     try { await client.query("ROLLBACK;"); }
     catch(rollerr) { logger.error('Failed rollback attempt due to', rollerr); }
     client.release();
-    logger.warn("Attempted rollback & released client due to error.");
+    logger.warn("Attempted rollback & released client due to error. CODE:", e.code);
     throw e;
   }
 }
