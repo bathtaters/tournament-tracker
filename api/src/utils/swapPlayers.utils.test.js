@@ -18,12 +18,12 @@ describe('swapPlayer Utilities', () => {
     it('filters out un-needed fields', () => {
       const result = updateFilter({
         id: 'a', players: 'b', wins: 'c',
-        title: 'd', roundcount: -12, canadvance: false,
+        title: 'd', roundcount: -12, allreported: false,
       })
       expect(result).toMatchObject({ id: 'a', players: 'b', wins: 'c', })
       expect(result).not.toHaveProperty('title')
       expect(result).not.toHaveProperty('roundcount')
-      expect(result).not.toHaveProperty('canadvance')
+      expect(result).not.toHaveProperty('allreported')
     })
 
     it('filters out saveDrops', () => {

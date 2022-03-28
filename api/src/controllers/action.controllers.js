@@ -58,7 +58,7 @@ async function nextRound(req, res) {
   if (data.roundactive > data.roundcount)
     throw new Error("Event is over");
 
-  if (data.roundactive && !data.canadvance)
+  if (data.roundactive && !data.allreported)
     throw new Error("All matches have not been reported");
 
   // Get additional data

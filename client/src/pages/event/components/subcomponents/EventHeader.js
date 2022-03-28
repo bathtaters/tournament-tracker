@@ -8,7 +8,7 @@ import { getRoundButton } from "../../services/event.services";
 
 function EventHeader({ data, disabled }) {
   const [ nextRound, { isLoading } ] = useNextRoundMutation();
-  const isDisabled = disabled || data.canadvance === false || data.status > 2 || !data.players?.length
+  const isDisabled = disabled || data.allreported === false || data.status > 2 || !data.players?.length
 
   return (<>
     <RoundButton
