@@ -80,13 +80,13 @@ GRANT SELECT ON TABLE * TO db_read;
 CREATE VIEW eventDetail (
     id, title, players, playerspermatch,
     day, slot, roundactive, roundcount, wincount,
-    canadvance,
+    allreported, anyreported,
     byes,
     drops
 ) AS SELECT
     event.id, event.title, event.players, playerspermatch,
     day, slot, roundactive, roundcount, wincount,
-    BOOL_AND(reported),
+    BOOL_AND(reported), BOOL_OR(reported),
     ARRAY_AGG(match.players[1]) FILTER(WHERE ARRAY_LENGTH(match.players, 1) = 1),
     JSON_AGG(drops)
 FROM event
