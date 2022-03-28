@@ -28,7 +28,7 @@ async function loadFiles(pathArray) {
   
     // Remove comments and minimize white space
     sqlFileText = sqlFileText.map(l => 
-        l.replace(/--[^\n]*(?:\n|$)/g,'').replace(/\s+/g,' ').trim()
+        l && l.replace(/--[^\n]*(?:\n|$)/g,'').replace(/\s+/g,' ').trim()
     ).filter(Boolean);
 
     // logger.debug(sqlFileText);
