@@ -16,3 +16,8 @@ export const eventEditor = {
 export const alert = {
   defaultResult: 'Close', // Result given when window is closed w/o setting result
 }
+
+export const settings = {
+  // Store these settings locally (per user settings)
+  storeLocal: ['showadvanced','showrawjson'],
+}
