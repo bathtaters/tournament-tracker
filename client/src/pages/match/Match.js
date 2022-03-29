@@ -1,89 +1,45 @@
-import React, { useRef } from "react";
-import PropTypes from 'prop-types';
+import React from "react"
+import PropTypes from 'prop-types'
 
-import MatchPlayer from "./components/MatchPlayer";
-import MatchWins from "./components/MatchWins";
-import Report from "./components/Report";
+import MatchPlayer from "./components/MatchPlayer"
+import MatchWins from "./components/MatchWins"
+import Report from "./components/Report"
 
-import Modal from "../common/Modal";
-import Counter from "../common/Counter";
-import RawData from "../common/RawData";
-import Loading from "../common/Loading";
+import Modal from "../common/Modal"
+import Counter from "../common/Counter"
+import RawData from "../common/RawData"
+import Loading from "../common/Loading"
+import LoadingScreen from "../common/LoadingScreen"
 
-import { MatchStyle, PlayerStyle } from "./styles/MatchStyles";
-import { DrawsStyle, WinsStyle } from "./styles/CounterStyles";
+import { MatchStyle, PlayerStyle } from "./styles/MatchStyles"
+import { DrawsStyle, WinsStyle } from "./styles/CounterStyles"
 
-import { 
-  useMatchQuery, useReportMutation,
-  useUpdateMatchMutation, 
-  useSwapPlayersMutation,
-  useUpdateDropsMutation,
-  useStatsQuery, useSettingsQuery,
-  usePlayerQuery
-} from "./match.fetch";
-
-import reportLayout from "./report.layout";
-import { getMatchTitle } from "./services/match.services";
-import { swapController, canSwap } from "./services/swap.services";
-import { clearReportAlert } from '../../assets/strings';
-import { useOpenAlert } from "../common/common.hooks";
-import valid from "../../assets/validation.json";
+import reportLayout from "./report.layout"
+import { formatDraws } from "./services/match.services"
+import useMatchController from "./services/match.controller"
 
 
 function Match({ eventid, matchId, wincount, isEditing }) {
-  // Global State
-  const { data,           isLoading,                 error              } = useMatchQuery(eventid);
-  const { data: rankings, isLoading: loadingRank,    error: rankError   } = useStatsQuery(eventid);
-  const { data: players,  isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
-  const { data: settings } = useSettingsQuery();
-
-  // Setup
-  const reportModal = useRef(null);
-  const matchData = data && data[matchId];
-  const title = getMatchTitle(matchData, players, isLoading || loadingPlayers);
-  
-  // Change reported values
-  const [ update ] = useUpdateMatchMutation();
-  const setVal = key => value => update({ id: matchData.id, eventid, key, value });
-  
-  // Report match
-  const [ report, { isLoading: isReporting } ] = useReportMutation();
-  const openAlert = useOpenAlert();
-  const clearReport = () => 
-    openAlert(clearReportAlert(title), 0).then(r => r && report({ id: matchData.id, eventid, clear: true }));
-
-  // Swap players
-  const [ swapPlayers ] = useSwapPlayersMutation();
-  const handleSwap = swapController(swapPlayers, eventid, openAlert);
-
-  // (Un)Drop players
-  const [ updateDrops ] = useUpdateDropsMutation();
-  const handleDrop = (playerid, undrop) => updateDrops({ id: matchId, playerid, undrop, eventid });
-
+  // Get component data
+  const {
+    matchData, rankings, players, settings, title, isReporting, reportModal,
+    setVal, clearReport, report, swapProps, maxDraws, showLoading, error,
+  } = useMatchController(eventid, matchId)
   
   // Loading/Error catcher
-  if (isLoading || loadingRank || loadingPlayers || !matchData || error || rankError || playerError)
-    return (<MatchStyle>
-      <Loading error={error || rankError || playerError} altMsg=". . ." className="m-auto text-xs" />
-    </MatchStyle>);
+  if (showLoading) return <MatchStyle><Loading error={error} altMsg=". . ." className="m-auto text-xs" /></MatchStyle>
   
-  
-  // Render
+  // Render component
   return (
     <MatchStyle settings={settings}>
       <PlayerStyle>
         { matchData.players.map((playerid, index) => (
           <MatchPlayer
-            id={playerid}
+            key={playerid} id={playerid} index={index}
             playerData={players[playerid]}
-            matchData={matchData}
-            handleSwap={handleSwap}
-            handleDrop={handleDrop}
-            canSwap={canSwap}
+            record={rankings?.[playerid]?.matchRecord}
             isEditing={isEditing}
-            index={index}
-            record={rankings && rankings[playerid] && rankings[playerid].matchRecord}
-            key={playerid+'.n'}
+            {...swapProps}
           />
         )) }
       </PlayerStyle>
@@ -92,10 +48,10 @@ function Match({ eventid, matchId, wincount, isEditing }) {
         <DrawsStyle hidden={!isEditing && (!matchData.draws || matchData.isbye)}>
           <Counter
             isEditing={isEditing}
-            maxVal={valid.limits.match.setDrawsMax || 0}
+            maxVal={maxDraws}
             setVal={setVal('draws')}
-            suff={d=>' draw'+(d===1?'':'s')}
-            val={isNaN(matchData.draws) ? matchData.draws : +matchData.draws}
+            suff={formatDraws}
+            val={+(matchData.draws || 0)}
           />
         </DrawsStyle>
       }
@@ -111,20 +67,21 @@ function Match({ eventid, matchId, wincount, isEditing }) {
         />
       </WinsStyle>
 
-
+      <LoadingScreen enable={isReporting} caption="Updating standings..." />
       <RawData className="text-xs w-80 m-auto" data={matchData} />
 
       <Modal ref={reportModal}>
         <Report
           title={title}
           match={matchData}
+          report={report}
           layout={reportLayout(matchData.players, players, wincount)}
           modal={reportModal}
         />
       </Modal>
 
     </MatchStyle>
-  );
+  )
 }
 
 Match.propTypes = {
@@ -132,6 +89,6 @@ Match.propTypes = {
   eventid: PropTypes.string,
   wincount: PropTypes.number,
   isEditing: PropTypes.bool.isRequired,
-};
+}
 
-export default Match;
+export default Match
