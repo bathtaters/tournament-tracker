@@ -1,4 +1,5 @@
 import React from "react";
+import LoadingScreen from "../../common/LoadingScreen";
 import { ResetButtonStyle } from "../styles/SettingsStyles";
 import { useResetHandler } from "../services/settings.services";
 
@@ -14,17 +15,19 @@ function SettingsButtons({ onClick, value }) {
   );
 }
 
-// Render temporary 'Reset' buttons + Logic
-function ResetButtons() {
+// Render 'Reset' buttons + Logic
+function ResetButtons({ closeModal }) {
 
-  const resetHandler = useResetHandler()
+  const [resetHandler, isLoading] = useResetHandler(closeModal)
 
-  return (
+  return (<>
     <ResetButtonStyle>
       <SettingsButtons value="Reset Data" onClick={()=>resetHandler(false)} />
       <SettingsButtons value="Full Reset" onClick={()=>resetHandler(true)}  />
     </ResetButtonStyle>
-  );
+
+    <LoadingScreen enable={isLoading} caption="Resetting data..." />
+  </>);
 }
 
 export default ResetButtons;
