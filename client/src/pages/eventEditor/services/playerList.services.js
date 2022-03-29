@@ -1,7 +1,7 @@
 import { getName } from "./playerEditor.utils";
 import { equalArrays } from "../../common/services/basic.services";
 import { usePropState } from "../../common/common.hooks";
-import { duplicatePlayerAlert, unsavedPlayerAlert } from "../../../assets/strings";
+import { duplicatePlayerAlert, unsavedPlayerAlert } from "../../../assets/alerts";
 
 export const usePropStateList = (propList) => usePropState(propList || [], equalArrays)
 

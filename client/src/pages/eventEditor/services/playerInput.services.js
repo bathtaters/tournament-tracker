@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { suggestListLayout } from "../eventEditor.layout";
 import { playerExists } from "./playerEditor.utils";
-import { duplicatePlayerAlert, playerCreateError, createPlayerAlert } from "../../../assets/strings";
+import { duplicatePlayerAlert, createPlayerAlert, playerCreateError } from "../../../assets/alerts";
 import { useOpenAlert } from "../../common/common.hooks";
 
 // Add new player to DB

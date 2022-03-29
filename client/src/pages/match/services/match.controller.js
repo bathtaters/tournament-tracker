@@ -12,7 +12,7 @@ import {
 import { getMatchTitle } from "./match.services"
 import { swapController, canSwap } from "./swap.services"
 
-import { clearReportAlert } from '../../../assets/strings'
+import { clearReportAlert } from '../../../assets/alerts'
 import valid from "../../../assets/validation.json"
 
 

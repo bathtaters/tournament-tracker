@@ -1,6 +1,6 @@
 import { usePlayerQuery, useCreatePlayerMutation } from "../player.fetch";
 import { useOpenAlert } from "../../common/common.hooks";
-import { duplicateNameAlert, emptyNameAlert, notLoadedAlert } from "../../../assets/strings";
+import { duplicateNameAlert, emptyNameAlert, notLoadedAlert } from "../../../assets/alerts";
 
 export default function useCreatePlayer(modal) {
   // Load in global data

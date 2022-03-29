@@ -1,6 +1,6 @@
 import { useNextRoundMutation, useClearRoundMutation } from "../event.fetch";
 import { useLockScreen } from "../../common/common.fetch";
-import { roundButtonText } from "../../../assets/strings";
+import { roundButtonText } from "../../../assets/constants";
 
 // Get Round Button label
 //  none|begin|end|back|next|wait|done

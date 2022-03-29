@@ -1,4 +1,4 @@
-import { formatMatchTitle } from "../../../assets/strings"
+import { formatMatchTitle } from "../../../assets/formatting"
 
 // Get Match Title (To use in ErrMsg & Report dialog)
 export const getMatchTitle = (match, players) =>

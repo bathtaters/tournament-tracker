@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "../eventEditor.fetch";
 
 import { editorButtonLayout } from "../eventEditor.layout";
-import { deleteEventAlert } from "../../../assets/strings";
+import { deleteEventAlert } from "../../../assets/alerts";
 import { useOpenAlert } from "../../common/common.hooks";
 
 // Delete button controller

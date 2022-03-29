@@ -7,7 +7,7 @@ import DragBlock from "../../common/DragBlock";
 
 import { toDateObj, getToday, dayClasses, noDate } from '../services/date.utils';
 import { useUpdateSchedule, canDrop, dataType } from "../services/day.services";
-import { weekdays } from '../../../assets/strings';
+import { weekdays } from '../../../assets/constants';
 
 
 function Day({ events, isEditing, isSlotted, setEventModal, day, eventData }) {

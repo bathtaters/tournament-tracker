@@ -1,4 +1,4 @@
-import { formatNum } from '../../../assets/strings';
+import { formatNum } from '../../../assets/formatting';
 
 // Count the total number of columns
 export const colCount = (layout) =>

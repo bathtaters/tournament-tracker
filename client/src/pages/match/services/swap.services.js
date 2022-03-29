@@ -1,4 +1,5 @@
-import { swapPlayerAlert, dragType } from '../../../assets/strings';
+import { swapPlayerAlert } from '../../../assets/alerts';
+import { dragType } from '../../../assets/constants';
 export const dataType = dragType.player;
 
 // Helpers for swapping player arrays during optimistic updates

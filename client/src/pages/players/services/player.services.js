@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { useOpenAlert } from "../../common/common.hooks";
 import { useSettingsQuery, useDeletePlayerMutation } from "../player.fetch";
-import { deletePlayerAlert, cantDeletePlayerAlert } from "../../../assets/strings";
+import { deletePlayerAlert, cantDeletePlayerAlert } from "../../../assets/alerts";
 
 // Validate and add new player
 export const createPlayerController = (playerData, createPlayer) => {

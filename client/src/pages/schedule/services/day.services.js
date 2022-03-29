@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useSetEventMutation } from "../schedule.fetch";
 import { noDate } from "./date.utils";
-import { dragType } from "../../../assets/strings";
+import { dragType } from "../../../assets/constants";
 export const dataType = dragType.event;
 
 // Drag & Drop tester

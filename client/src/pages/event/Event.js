@@ -12,7 +12,7 @@ import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 
 import { useEventQuery, useClearRoundMutation } from "./event.fetch";
 import { roundArray } from "./services/event.services";
-import { deleteRoundAlert } from "../../assets/strings";
+import { deleteRoundAlert } from "../../assets/alerts";
 import { useOpenAlert } from "../common/common.hooks";
 
 function Event() {

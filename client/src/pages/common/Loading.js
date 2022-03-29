@@ -1,7 +1,7 @@
 import React from "react";
 
 import LoadingStyle from "./styles/LoadingStyle";
-import { formatQueryError } from "../../assets/strings";
+import { formatQueryError } from "../../assets/formatting";
 
 function Loading({ loading = false, error = null, altMsg = 'Missing data', className = '', tagName = 'div' }) {
   return (

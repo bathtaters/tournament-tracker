@@ -1,22 +1,5 @@
-// --- Constants --- \\
-
-// Values
-export const defaultTournamentTitle = "My Tournament";
-export const defaultEventTitle = "New Event";
-export const defaultPlayerName = "New Player";
-export const maxDrawsCounter = 1;
-export const dragType = { event: "json/eventday", player: "json/matchplayer" };
-
-// Strings
+// Alerts
 const defPlayer = 'This player';
-
-
-// --- Errors --- \\
-
-export const playerCreateError = ({ error }, { name }) => new Error(error?.data?.error ? error.data.error : '"'+name+'" was not able to be added.')
-
-
-// --- Alerts --- \\
 
 export const modalCloseAlert = (customMsg) => ({
   message: customMsg || "Are you sure you want to close? Unsaved changes will be lost.",
@@ -81,38 +64,6 @@ export const resetDbAlertConfirm = {
   className: "base-bgd max-color",
 }
 
+// --- Errors --- \\
 
-// --- Lists --- \\
-export const statusInfo = [
-  {label: 'N/A', class: "dim-color"},
-  {label: 'Not Started', class: "max-color"},
-  {label: 'Active', class: "neg-color"},
-  {label: 'Complete', class: "pos-color"},
-  {label: 'N/A', class: "dim-color"},
-];
-
-export const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-
-export const roundButtonText = {
-  none: "",
-  begin: "Start Event",
-  end: "End Event",
-  back: "Delete Round",
-  next: "Next Round",
-  wait: "Awaiting Report",
-  done: "Event Complete",
-};
-
-
-// --- Formatting --- \\
-
-export const formatQueryError = err => 'ERROR: '+JSON.stringify(err);
-
-export const formatMatchTitle = (matchPlayers, playerData) =>
-  matchPlayers.map(id => (playerData[id] && playerData[id].name) || '?').join(' vs. ');
-
-export const formatRecord = (record, braces=true) => (braces?'[ ':'')+(record || ['','']).join(' - ')+(braces?' ]':'');
-
-export const formatNum = num => num == null ? '-' : num;
-
-export const formatPercent = decimal => decimal == null ? '- %' : (Math.round(decimal * 1000) / 10) + '%';
+export const playerCreateError = ({ error }, { name }) => new Error(error?.data?.error ? error.data.error : '"'+name+'" was not able to be added.')

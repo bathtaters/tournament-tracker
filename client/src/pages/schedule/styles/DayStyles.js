@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { statusInfo } from '../../../assets/strings';
+import { statusInfo } from '../../../assets/constants';
 
 // DAY.JS STYLES \\
 

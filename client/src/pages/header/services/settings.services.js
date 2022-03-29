@@ -2,7 +2,7 @@ import { settings } from "../../../assets/config"
 import { useResetDbMutation } from "../header.fetch";
 import { useOpenAlert } from "../../common/common.hooks";
 import { getLocalSettings, setLocalVar } from "../../common/services/fetch.services";
-import { resetDbAlert, resetDbAlertConfirm } from "../../../assets/strings";
+import { resetDbAlert, resetDbAlertConfirm } from "../../../assets/alerts";
 
 // Handle clicking ResetDB buttons
 export function useResetHandler() {

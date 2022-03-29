@@ -1,6 +1,6 @@
 import React from "react";
 import { ModalTitleStyle } from "../../common/styles/CommonStyles";
-import { statusInfo } from "../../../assets/strings";
+import { statusInfo } from "../../../assets/constants";
 
 export function TitleStyle({ isNew }) {
   return (<ModalTitleStyle>{isNew ? 'New Event' : 'Edit Event'}</ModalTitleStyle>);

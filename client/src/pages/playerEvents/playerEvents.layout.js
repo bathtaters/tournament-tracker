@@ -1,5 +1,5 @@
 import { dayClasses } from "./services/playerEvent.services";
-import { statusInfo } from "../../assets/strings";
+import { statusInfo } from "../../assets/constants";
 
 // Component layout
 const scheduleRows = [

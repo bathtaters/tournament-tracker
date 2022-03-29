@@ -1,4 +1,4 @@
-import { modalCloseAlert } from "../../../assets/strings";
+import { modalCloseAlert } from "../../../assets/alerts";
 
 
 // Simple handlers
@@ -8,9 +8,9 @@ export const closeController = (isLock, open, resetLock) => (overrideLock=false)
   resetLock();
 };
 
-export const msgController = (openAlert, close, isLock, lockMsg) => () => {
+export const msgController = (openAlert, close, isLock, lockAlert) => () => {
   if (!isLock) return close(true)
-  return openAlert(modalCloseAlert(lockMsg), 0).then(r => r && close(true))
+  return openAlert(modalCloseAlert(lockAlert), 0).then(r => r && close(true))
 };
 
 

@@ -1,4 +1,4 @@
-import { formatPercent } from '../../assets/strings';
+import { formatPercent } from '../../assets/formatting';
 // Stats columns
 
 export default [

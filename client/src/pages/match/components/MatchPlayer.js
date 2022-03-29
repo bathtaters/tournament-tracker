@@ -5,7 +5,7 @@ import { NameStyle, PlayerInfoStyle, PlayerDropStyle, VsStyle, playerBoxStyle } 
 import { DropButton } from "../styles/ButtonStyles"
 import { dataType } from "../services/swap.services"
 
-import { formatRecord } from '../../../assets/strings'
+import { formatRecord } from '../../../assets/formatting'
 
 function MatchPlayer({ id, playerData, matchData, handleSwap, handleDrop, canSwap, isEditing, index, record }) {
   const isDrop = matchData.drops && matchData.drops.includes(id)
