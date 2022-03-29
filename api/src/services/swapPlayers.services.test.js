@@ -65,6 +65,30 @@ describe('swapPlayersService + Utils', () => {
       expect.objectContaining({ id: 'm2' }),
     ])
   })
+  it('swaps player with bye', () => {
+    matches[1].players = ['b']
+    matches[1].wins = [2]
+    expect(swapPlayersService(matches, swaps)).toEqual([
+      expect.objectContaining({ players: ['a','b'] }),
+      expect.objectContaining({ players: ['c'] }),
+    ])
+  })
+  it('doesn\'t swap wins with bye', () => {
+    matches[1].players = ['b']
+    matches[1].wins = [2]
+    expect(swapPlayersService(matches, swaps)).toEqual([
+      expect.objectContaining({ wins: [1,3] }),
+      expect.objectContaining({ wins: [2] }),
+    ])
+  })
+  it('swaps drops with bye', () => {
+    matches[1].players = ['b']
+    matches[1].wins = [2]
+    expect(swapPlayersService(matches, swaps)).toEqual([
+      expect.objectContaining({ drops: ['a','b'] }),
+      expect.anything(),
+    ])
+  })
 
   it('clear drops from unreported match', () => {
     matches[1].reported = false
