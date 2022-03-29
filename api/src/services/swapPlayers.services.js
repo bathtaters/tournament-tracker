@@ -19,7 +19,10 @@ function swapPlayersService(matchData, swapData) {
 
   // Swap players
   swapArrays(swapData, matchData, 'players', 'matchIdx', 'playerIdx')
-  swapArrays(swapData, matchData,    'wins', 'matchIdx', 'playerIdx')
+
+  // Swap wins, only if neither match is a bye
+  if (matchData.every((match) => match.players.length !== 1))
+    swapArrays(swapData, matchData,  'wins', 'matchIdx', 'playerIdx')
 
   // Swap drops (if any)
   swapData.forEach((data, i) => {
