@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import PropTypes from 'prop-types';
 
 import ResetButtons from "./ResetButtons";
@@ -13,14 +14,16 @@ import { useSettingsQuery, useUpdateSettingsMutation } from "../header.fetch";
 import { updateController } from "../services/settings.services";
 
 
+
 function Settings({ modal }) {
   // Global state
+  const dispatch = useDispatch();
   const { data, isLoading, error } = useSettingsQuery();
   const [ updateSettings ] = useUpdateSettingsMutation();
   
   // Submit
   const submitSettings = formData => 
-    updateController(formData, data, updateSettings) || modal.current.close(true);
+    updateController(formData, data, updateSettings, dispatch) || modal.current.close(true);
 
   // Catch loading/error
   if (isLoading || error || !data || !modal)
