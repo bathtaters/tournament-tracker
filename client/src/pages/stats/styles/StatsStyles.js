@@ -27,3 +27,7 @@ export function OverlayStyle({ className = '', children }) {
     </div>
   )
 }
+
+export function MissingStyle({ colCount = 1, children }) {
+  return (<div className={`italic dim-color text-center font-thin col-span-${colCount}`}>{children}</div>)
+}

@@ -7,12 +7,13 @@ import StatsOverlay from "./components/StatsOverlay";
 import RawData from "../common/RawData";
 import Loading from "../common/Loading";
 
-import { StatsStyle, GridStyle, OverlayStyle } from "./styles/StatsStyles";
+import { StatsStyle, GridStyle, OverlayStyle, MissingStyle } from "./styles/StatsStyles";
 import statsLayout from "./stats.layout";
 
 import { useStatsQuery, usePlayerQuery } from "../common/common.fetch";
 import { getPlayerList, colCount } from "./services/stats.services";
 
+const colCnt = colCount(statsLayout); // calc column count
 
 function Stats({ eventid, onPlayerClick, className = '', highlightClass = '', hideTeams }) {
   // Global state
@@ -30,7 +31,7 @@ function Stats({ eventid, onPlayerClick, className = '', highlightClass = '', hi
   if (isLoading || playLoad || error || playErr) return (
     <StatsStyle><GridStyle className={className} layoutArray={statsLayout}>
       <StatsHeader layoutArray={statsLayout} />
-      <Loading loading={isLoading || playLoad} error={error || playErr} className={'col-span-'+colCount(statsLayout)} />
+      <Loading loading={isLoading || playLoad} error={error || playErr} className={'col-span-'+colCnt} />
     </GridStyle></StatsStyle>
   );
   
@@ -41,9 +42,12 @@ function Stats({ eventid, onPlayerClick, className = '', highlightClass = '', hi
         <GridStyle className={className} layoutArray={statsLayout}>
           <StatsHeader layoutArray={statsLayout} />
 
-          { playerList.map((id, idx) => 
-            <StatsRow key={id+'__S'} playerId={id} index={idx} layoutArray={statsLayout} players={players} stats={data} />
-          ) }
+          { playerList?.length ? 
+            playerList.map((id, idx) => 
+              <StatsRow key={id+'__S'} playerId={id} index={idx} layoutArray={statsLayout} players={players} stats={data} />
+             ) :
+            <MissingStyle colCount={colCnt}>No players exist</MissingStyle>
+          }
         </GridStyle>
 
         <OverlayStyle className={className}>
