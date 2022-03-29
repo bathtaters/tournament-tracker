@@ -1,21 +1,21 @@
-import React, { useState } from "react";
+import React from "react"
 
-import DragBlock from "../../common/DragBlock";
-import { NameStyle, PlayerInfoStyle, PlayerDropStyle, VsStyle, playerBoxStyle } from "../styles/MatchStyles";
-import { DropButton } from "../styles/ButtonStyles";
-import { dataType } from "../services/swap.services";
+import DragBlock from "../../common/DragBlock"
+import { NameStyle, PlayerInfoStyle, PlayerDropStyle, VsStyle, playerBoxStyle } from "../styles/MatchStyles"
+import { DropButton } from "../styles/ButtonStyles"
+import { dataType } from "../services/swap.services"
 
-import { formatRecord } from '../../../assets/strings';
+import { formatRecord } from '../../../assets/strings'
 
 function MatchPlayer({ id, playerData, matchData, handleSwap, handleDrop, canSwap, isEditing, index, record }) {
-  const isDrop = matchData.drops && matchData.drops.includes(id);
+  const isDrop = matchData.drops && matchData.drops.includes(id)
   const clickDrop = () => handleDrop(id, isDrop)
   
   return (<>
     { Boolean(index) && <VsStyle>vs.</VsStyle> }
 
     <DragBlock
-      storeData={{ id: matchData.id, playerid: id, reported: matchData.reported }}
+      storeData={{ id: matchData.id, playerid: id, reported: matchData.players?.length !== 1 && matchData.reported }}
       onDrop={handleSwap}
       canDrop={canSwap}
       storeTestData={id}
@@ -37,7 +37,7 @@ function MatchPlayer({ id, playerData, matchData, handleSwap, handleDrop, canSwa
       </PlayerInfoStyle>
 
     </DragBlock>
-  </>);
+  </>)
 }
 
-export default MatchPlayer;
+export default MatchPlayer
