@@ -24,7 +24,7 @@ module.exports = {
       title: "Tournament Tracker",
       showadvanced: false,
       showrawjson: false,
-      dayslots: 4,
+      dayslots: 3,
       autofillsize: 8,
       datestart: today,
       dateend: tomorrow,
