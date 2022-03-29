@@ -1,14 +1,25 @@
-// Import
-import { roundButtonText } from "../../../assets/strings";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSettingsQuery, refetchStats } from '../event.fetch';
 
-// Round Button label
-// [0: N/A, 1: Start, 2: Not Reported, 3: Next, 4: End, 5: Complete]
-export const getRoundButton = event => roundButtonText[
-  !event || !event.players?.length ? 0 : event.roundactive === 0 ? 1 :
-  event.roundactive > event.roundcount ? 5 :
-  event.allreported === false ? 2 :
-  event.roundactive === event.roundcount ? 4 : 3
-];
+// Round Editor controller
+export function useRoundEditor({ id, roundactive, anyreported }, round) {
+  // Setup
+  const dispatch = useDispatch()
+  const { data } = useSettingsQuery()
+  const [isEditing, setIsEditing] = useState(false)
+
+  // Refetch Stats
+  const setEditing = (isEditing) => {
+    !isEditing && dispatch(refetchStats(id))
+    setIsEditing(isEditing)
+  }
+
+  const showAdvanced = data?.showadvanced || (roundactive === round + 1 && !anyreported)
+
+  return { isEditing, setEditing, showAdvanced, showDelete: data?.showadvanced }
+}
+
 
 // Build array of round numbers
 export function roundArray(matchCount) {
@@ -18,6 +29,7 @@ export function roundArray(matchCount) {
   }
   return rounds;
 }
+
 
 // Generate temp round
 export const fakeRound = (eventData) => {
