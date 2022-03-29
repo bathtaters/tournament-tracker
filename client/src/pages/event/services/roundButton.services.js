@@ -5,7 +5,8 @@ import { roundButtonText } from "../../../assets/strings";
 // Get Round Button label
 // [0: N/A, 1: Start, 2: Not Reported, 3: Last, 4: Next, 5: End, 6: Complete]
 const getRoundButton = (event, isLocked) => roundButtonText[
-  !event || isLocked || !event.players?.length ? 0 :
+  isLocked ? 2 :
+  !event || !event.players?.length ? 0 :
   event.roundactive === 0 ? 1 :
   event.roundactive > event.roundcount ? 6 :
   event.allreported === false ? (event.anyreported === true ? 2 : 3) :
@@ -25,7 +26,10 @@ export default function useRoundButton(event, disabled) {
   // Setup hooks
   const [ nextRound, { isLoading } ] = useNextRoundMutation()
   const [ clearRound ] = useClearRoundMutation()
-  const isLocked = useLockScreen(isLoading)
+  
+  // Get fetching status
+  const isFetching = isLoading && event.roundactive !== event.roundcount + 1
+  const isLocked = useLockScreen(isFetching)
 
   // Get button status
   const disableButton = disabled || isLocked || disableRound(event)
@@ -33,6 +37,6 @@ export default function useRoundButton(event, disabled) {
   return {
     handleClick: disableButton ? null : isNext(event) ? ()=>nextRound(event.id) : ()=>clearRound(event.id),
     buttonText: getRoundButton(event, isLocked),
-    isLoading
+    isFetching
   }
 }
