@@ -3,14 +3,15 @@ import { useLockScreen } from "../../common/common.fetch";
 import { roundButtonText } from "../../../assets/strings";
 
 // Get Round Button label
-// [0: N/A, 1: Start, 2: Not Reported, 3: Last, 4: Next, 5: End, 6: Complete]
+//  none|begin|end|back|next|wait|done
 const getRoundButton = (event, isLocked) => roundButtonText[
-  isLocked ? 2 :
-  !event || !event.players?.length ? 0 :
-  event.roundactive === 0 ? 1 :
-  event.roundactive > event.roundcount ? 6 :
-  event.allreported === false ? (event.anyreported === true ? 2 : 3) :
-  event.roundactive === event.roundcount ? 5 : 4
+  isLocked ? 'wait' :
+  !event || !event.players?.length ? 'none' :
+  event.roundactive === 0 ? 'begin' :
+  event.roundactive > event.roundcount ? 'done' :
+  event.allreported === false ?
+    (event.anyreported === true ? 'wait' : 'back') :
+  event.roundactive === event.roundcount ? 'end' : 'next'
 ]
 
 // Check if button should get Next round
