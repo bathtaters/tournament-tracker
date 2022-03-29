@@ -1,4 +1,6 @@
 import React from "react";
+import { ModalTitleStyle } from "../../common/styles/CommonStyles";
+export { ModalTitleStyle };
 
 export const statsStyle = {
   number: (isDrop) => 'font-light text-right ' + (isDrop ? 'neg-color' : ''),

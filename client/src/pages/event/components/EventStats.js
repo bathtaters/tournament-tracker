@@ -3,18 +3,16 @@ import PropTypes from 'prop-types';
 
 import Stats from "../../stats/Stats";
 import StatsRow from "./subcomponents/StatsRow";
-import { EventStatsStyle, ViewStatsStyle, StatsRowStyle } from "../styles/StatsStyles";
+import { EventStatsStyle, ViewStatsStyle, StatsRowStyle, ModalTitleStyle } from "../styles/StatsStyles";
 
 import Modal from "../../common/Modal";
 import Loading from "../../common/Loading";
 
 import { useStatsQuery, usePlayerQuery } from "../event.fetch";
 
-
 function EventStats({ event }) {
-  const modal = useRef(null);
-
   // Global
+  const modal = useRef(null);
   const { data,          isLoading,                 error              } = useStatsQuery(event.id);
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
 
@@ -43,7 +41,7 @@ function EventStats({ event }) {
       </StatsRowStyle>
 
       <Modal ref={modal}>
-        <h3 className="font-light max-color text-center mb-4">{event.title+' Stats'}</h3>
+        <ModalTitleStyle>{event.title+' Stats'}</ModalTitleStyle>
         <Stats eventid={event.id} playerList={data?.ranking} players={players} />
       </Modal>
 
