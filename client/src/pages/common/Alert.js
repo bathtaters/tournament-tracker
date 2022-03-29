@@ -10,7 +10,7 @@ import {
   ModalStyle, CloseButton, overlayClasses, alertModalClass,
 } from "./styles/AlertStyles";
 
-import { getButtonProps, useCloseAlert } from "./services/alert.services";
+import { getButtonProps, useCloseAlert, breakMessage } from "./services/alert.services";
 import { useHotkeys } from "./services/basic.services";
 
 /* *** ALERT OPTIONS *** *\
@@ -52,7 +52,7 @@ function Alert() {
 
           {title && <AlertTitleStyle>{title}</AlertTitleStyle>}
 
-          {message && <AlertMessageStyle>{message}</AlertMessageStyle>}
+          {message && <AlertMessageStyle>{breakMessage(message)}</AlertMessageStyle>}
 
           {buttons &&
             <AlertButtonWrapperStyle>

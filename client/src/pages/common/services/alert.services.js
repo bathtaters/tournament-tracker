@@ -35,6 +35,8 @@ export const useAlertResult = () => useSelector((state) => state.alert.result)
 
 // --- INTERNAL FUNCTIONS --- \\
 
+export const breakMessage = (message) => <>{message.split('\n').map(line => <div>{line}</div>)}</>
+
 const getReturnValue = (button, idx) => typeof button === 'string' ? button :
   typeof button.onClick === 'string' ? button.onClick : button.value || button.id || button.label || idx
 
