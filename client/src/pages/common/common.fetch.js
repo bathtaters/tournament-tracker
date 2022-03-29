@@ -1,13 +1,13 @@
 import { fetchApi, getTags, tagTypes, ALL_ID } from '../../core/store/fetchApi';
 import { useFetchingStatus, useFetchingProvider, useForceRefetch, useLockScreen } from '../../core/services/global.services';
-import { getEvent } from './services/fetch.services';
+import { getEvent, getSettings } from './services/fetch.services';
 
 export const commonApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
 
     settings: build.query({
       query: () => 'settings',
-      transformResponse: res => console.log('SETTINGS',res) || res,
+      transformResponse: getSettings,
       providesTags: ['Settings'],
     }),
 
