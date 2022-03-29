@@ -1,10 +1,10 @@
 import React from "react";
 
-export function RoundButton({ value, disabled, onClick }) {
+export function RoundButton({ value, onClick }) {
   return (
     <div className="text-center my-4">
       <input
-        disabled={disabled}
+        disabled={!onClick}
         onClick={onClick}
         type="button"
         value={value}
