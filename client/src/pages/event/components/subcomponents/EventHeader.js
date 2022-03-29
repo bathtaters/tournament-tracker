@@ -6,7 +6,7 @@ import LoadingScreen from "../../../common/LoadingScreen";
 import useRoundButton from "../../services/roundButton.services";
 
 function EventHeader({ data, disabled }) {
-  const { handleClick, buttonText, isLoading } = useRoundButton(data, disabled)
+  const { handleClick, buttonText, isFetching } = useRoundButton(data, disabled)
 
   return (<>
     <RoundButton
@@ -14,7 +14,7 @@ function EventHeader({ data, disabled }) {
       value={buttonText}
     />
 
-    <LoadingScreen enable={isLoading} caption="Generating round..." />
+    <LoadingScreen enable={isFetching} caption="Generating round..." />
   </>)
 }
 
