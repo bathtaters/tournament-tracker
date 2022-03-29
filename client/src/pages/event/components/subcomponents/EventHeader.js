@@ -3,22 +3,19 @@ import React from "react";
 import { RoundButton } from "../../styles/ButtonStyles";
 import LoadingScreen from "../../../common/LoadingScreen";
 
-import { useNextRoundMutation } from "../../event.fetch";
-import { getRoundButton } from "../../services/event.services";
+import useRoundButton from "../../services/roundButton.services";
 
 function EventHeader({ data, disabled }) {
-  const [ nextRound, { isLoading } ] = useNextRoundMutation();
-  const isDisabled = disabled || data.allreported === false || data.status > 2 || !data.players?.length
+  const { handleClick, buttonText, isLoading } = useRoundButton(data, disabled)
 
   return (<>
     <RoundButton
-      disabled={isDisabled}
-      onClick={()=>nextRound(data.id)}
-      value={getRoundButton(data)}
+      onClick={handleClick}
+      value={buttonText}
     />
 
     <LoadingScreen enable={isLoading} caption="Generating round..." />
-  </>);
+  </>)
 }
 
-export default EventHeader;
+export default EventHeader
