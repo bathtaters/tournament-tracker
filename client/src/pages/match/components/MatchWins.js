@@ -1,16 +1,15 @@
-import React from "react";
+import React from "react"
 
-import Counter from "../../common/Counter";
-import { winClass, ByeStyle } from "../styles/CounterStyles";
-import { ReportButton, ClearReportButton } from "../styles/ButtonStyles";
+import Counter from "../../common/Counter"
+import { winClass, ByeStyle } from "../styles/CounterStyles"
+import { ReportButton, ClearReportButton } from "../styles/ButtonStyles"
 
-import { winValue } from "../services/match.services";
+import { winValue } from "../services/match.services"
 
-// Main
+// All win counters
 function MatchWins({ matchData, wincount, isEditing, clearReport, setVal, openReport }) {
 
-  if (!matchData.reported)
-    return (<ReportButton disabled={isEditing} onClick={openReport} />);
+  if (!matchData.reported) return <ReportButton disabled={isEditing} onClick={openReport} />
 
   return (<>
     { matchData.players.map((id, index) => (
@@ -24,12 +23,12 @@ function MatchWins({ matchData, wincount, isEditing, clearReport, setVal, openRe
       />
     )) }
     { isEditing && <ClearReportButton onClick={clearReport} /> }
-  </>);
+  </>)
 }
 
 // Each win counter
 function WinsBox({ matchData, wincount, index, isEditing, setVal }) {
-  if (matchData.isbye && !isEditing) return (<ByeStyle>Bye</ByeStyle>);
+  if (matchData.players?.length === 1 && !isEditing) return <ByeStyle>Bye</ByeStyle>
 
   return (<>
     { index !== 0 && <span className="inline-block">{' – '}</span> }
@@ -41,7 +40,7 @@ function WinsBox({ matchData, wincount, index, isEditing, setVal }) {
       val={winValue(matchData.wins,index)}
       className={winClass(matchData.wins && matchData.wins[index], isEditing, matchData)}
     />
-  </>);
+  </>)
 }
 
-export default MatchWins;
+export default MatchWins
