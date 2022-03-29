@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Modal from "../common/Modal";
 import RawData from "../common/RawData";
 
-import EventHeader from "./components/subcomponents/EventHeader";
+import EventHeader from "./components/EventHeader";
 import EventDashboard from "./components/EventDashboard";
 import EditEvent from "../eventEditor/EditEvent";
 import Round from "./components/Round";

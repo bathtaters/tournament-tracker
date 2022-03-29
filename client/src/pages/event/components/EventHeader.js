@@ -1,9 +1,9 @@
 import React from "react";
 
-import { RoundButton } from "../../styles/ButtonStyles";
-import LoadingScreen from "../../../common/LoadingScreen";
+import { RoundButton } from "../styles/ButtonStyles";
+import LoadingScreen from "../../common/LoadingScreen";
 
-import useRoundButton from "../../services/roundButton.services";
+import useRoundButton from "../services/roundButton.services";
 
 function EventHeader({ data, disabled }) {
   const { handleClick, buttonText, isFetching } = useRoundButton(data, disabled)
