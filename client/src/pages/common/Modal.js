@@ -11,7 +11,7 @@ import { useOpenAlert, useAlertStatus } from "./common.hooks"
 const modalRoot = document.getElementById('modal-root');
 
 // Modal base component
-function Modal({ children, className = '', bgdClose = true, startOpen = false, startLocked = false, lockMsg = '' }, ref) {
+function Modal({ children, className = '', bgdClose = true, startOpen = false, startLocked = false, lockAlert }, ref) {
 
   // Modal actions
   const openAlert = useOpenAlert();
@@ -19,7 +19,7 @@ function Modal({ children, className = '', bgdClose = true, startOpen = false, s
   const [isOpen, open] = useState(startOpen);
   const [isLock, lock] = useState(startLocked);
   const close = useCallback(closeController(isLock, open, ()=>lock(startLocked)), [isLock, startLocked, open, lock]);
-  const closeWithMsg = useCallback(msgController(openAlert, close, isLock, lockMsg), [close, isLock, lockMsg]);
+  const closeWithMsg = useCallback(msgController(openAlert, close, isLock, lockAlert), [close, isLock, lockAlert]);
   
   // Setup ref functions
   useImperativeHandle(ref, refController(open, close, lock), [open, close, lock]);
