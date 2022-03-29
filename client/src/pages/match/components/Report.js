@@ -1,20 +1,18 @@
-import React from "react";
-import PropTypes from 'prop-types';
+import React from "react"
+import PropTypes from 'prop-types'
 
-import InputForm from "../../common/InputForm";
-import { ReportTitleStyle, reportStyles } from "../styles/ReportStyles";
+import InputForm from "../../common/InputForm"
+import { ReportTitleStyle, reportStyles } from "../styles/ReportStyles"
 
-import { useReportMutation } from "../match.fetch";
-import { reportAdapter } from "../services/match.services";
+import { reportAdapter } from "../services/match.services"
 
-function Report({ title, match, layout, modal }) {
+function Report({ title, match, report, layout, modal }) {
 
   // Actions
-  const [ report ] = useReportMutation();
   const submitReport = reportData => {
     report(reportAdapter(reportData, match.id, match.eventid));
     modal.current.close(true);
-  };
+  }
 
   // Render
   return (
@@ -29,14 +27,15 @@ function Report({ title, match, layout, modal }) {
         className={reportStyles.form}
       />
     </div>
-  );
+  )
 }
 
 Report.propTypes = {
   title: PropTypes.string,
   match: PropTypes.object,
-  layout: PropTypes.array,
-  modal: PropTypes.object,
-};
+  report: PropTypes.func.isRequired,
+  layout: PropTypes.array.isRequired,
+  modal: PropTypes.object.isRequired,
+}
 
-export default Report;
+export default Report
