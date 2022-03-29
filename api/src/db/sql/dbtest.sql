@@ -15,8 +15,6 @@ INSERT INTO settings (id, value, type) VALUES
     ('title','Tournament Tracker Demo','string'),
     ('datestart','2022-02-01','string'),
     ('dateend','2022-02-09','string'),
-    ('showadvanced','true','boolean'),
-    ('showrawjson','false','boolean'),
     ('autobyes','true','boolean'),
     ('dayslots','4','number');
 
