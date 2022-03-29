@@ -9,5 +9,5 @@ export function settingsUpdate(body, { dispatch }) {
 
 // Update cache when resetting data
 export const clearSchedule = (_, { dispatch }) => {
-  dispatch(fetchApi.util.updateQueryData('schedule', undefined, () => ({})));
+  dispatch(fetchApi.util.updateQueryData('schedule', undefined, () => []));
 }
