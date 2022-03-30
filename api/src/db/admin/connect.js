@@ -18,13 +18,13 @@ async function openConnection(asUser = 'api', cfg = null) {
 
   try {
     staticPool = new Pool(parse(connStr));
-    await testDatabase().then(test => { if (!test) throw { code: '3D000' } });
+    await testDatabase(runOperation).then(test => { if (!test) throw { code: '3D000' } });
   }
   catch(e) {
     // Catch missing DB
     if ((e.code === '42602' || e.code === '3D000')) {
       console.error('DB Does Not Exist! Creating now...');
-      try { await resetDatabase(); } catch (err) { throw err; }
+      try { await resetDatabase(true, false, runOperation); } catch (err) { throw err; }
     }
     throw new Error(`Unable to connect to DB: "${connStr}": ${e.message || e.description || e}`);
   }
