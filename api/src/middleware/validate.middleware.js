@@ -9,9 +9,13 @@ const checkValidation = (req, _, next) => {
     next({ 
       message: validErrors.formatWith(errorFormatter).array().join(', '),
       stack:
-        'Request data:\n\tURL: '+req.originalUrl + '\n\tMethod: '+req.method +
-          '\n\tParams: '+JSON.stringify(req.params) + '\n\tBody: '+JSON.stringify(req.body) +
-        'Validation errors:\n\t' + validErrors.formatWith(errorFormatter).array().join('\n\t'),
+        '\n  Request data:' +
+        '\n    URL: ' + req.originalUrl +
+        '\n    Method: ' + req.method +
+        '\n    Params: ' + JSON.stringify(req.params) +
+        '\n    Body: ' + JSON.stringify(req.body) +
+        '\n  Validation errors:' +
+        '\n    ' + validErrors.formatWith(errorFormatter).array().join('\n    '),
       status: 400,
     })
   next()
