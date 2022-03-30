@@ -17,7 +17,7 @@ afterAll(() => { warnSpy.mockRestore(); });
 
 describe('runOperation', () => {
   // Init Mocks
-  const retryBlockErr = 'Attempted rollback & released client due to error.';
+  const retryBlockErr = 'Attempted rollback & released client due to error. CODE:';
   let mockClient, mockPool, mockOp;
 
   beforeAll(() => {
@@ -76,7 +76,7 @@ describe('runOperation', () => {
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects.toThrow();
 
       expect(mockClient.query).toHaveBeenNthCalledWith(2,"ROLLBACK;");
-      expect(warnSpy).toBeCalledWith(retryBlockErr);
+      expect(warnSpy).toBeCalledWith(retryBlockErr, undefined);
       expect(warnSpy).toBeCalledTimes(1);
     });
 
@@ -95,7 +95,7 @@ describe('runOperation', () => {
 
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects.toThrow();
       expect(mockClient.query).toHaveBeenNthCalledWith(2,"ROLLBACK;");
-      expect(warnSpy).toBeCalledWith(retryBlockErr);
+      expect(warnSpy).toBeCalledWith(retryBlockErr, undefined);
       expect(warnSpy).toBeCalledTimes(1);
     });
 
@@ -104,7 +104,7 @@ describe('runOperation', () => {
 
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects
         .toThrowError('Test Error');
-        expect(warnSpy).toBeCalledWith(retryBlockErr);
+        expect(warnSpy).toBeCalledWith(retryBlockErr, undefined);
         expect(warnSpy).toBeCalledTimes(1);
     });
   });
