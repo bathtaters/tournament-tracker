@@ -24,7 +24,7 @@ export function usePrefetchEvent() {
 }
 
 // Push prop updates to state
-export function usePropState(propVal, equalsTest = (a,b) => a === b, depends = []) {
+export function usePropState(propVal, equalsTest = (state,prop) => state === prop, depends = []) {
   const [ localVal, setLocal ] = useState(propVal)
   const equals = useCallback(equalsTest, depends)
 
