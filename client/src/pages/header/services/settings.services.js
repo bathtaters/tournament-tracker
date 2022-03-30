@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom'
+
 import { useOpenAlert } from "../../common/common.hooks"
 import { useResetDbMutation } from "../header.fetch"
 import { doReset } from './headerFetch.services'
-
 import { getLocalSettings, setLocalVar } from "../../common/services/fetch.services"
+
 import { resetDbAlert, resetDbAlertConfirm } from "../../../assets/alerts"
 import { settings } from "../../../assets/config"
 
@@ -21,17 +22,17 @@ export function useResetHandler() {
   ]
 }
 
-// Returns properties from 'base' that are changed in 'compare'
-const getUnqiue = (base, compare = {}) => Object.keys(base).reduce((obj,key) => {
-  if (base[key] !== compare[key]) obj[key] = base[key]
-  return obj
-}, {})
+// Push live updates to cache
+export const updateLocals = (localIds, dispatch) => ({ target }) => {
+  if (!localIds.includes(target.id)) return;
+  setLocalVar(target.id, target.type === 'checkbox' ? target.checked : target.value, dispatch)
+}
 
-// Transform settingsObject and update
-export const updateController = (newData, oldData, updater, dispatch) => {
+// Get updated values + push local updates
+export function getNewSettings(newData, serverData, dispatch) {
   // Get server data
   let compareData = {}
-  oldData.saved.forEach((key) => compareData[key] = oldData[key])
+  serverData.saved.forEach((key) => compareData[key] = serverData[key])
 
   // Get local data
   Object.assign(compareData, getLocalSettings())
@@ -45,14 +46,21 @@ export const updateController = (newData, oldData, updater, dispatch) => {
     delete newSettings[key];
   });
 
-  // Set server data
-  if (!Object.keys(newSettings).length) return;
-  updater(newSettings);
+  // Return server data
+  return Object.keys(newSettings).length && newSettings
 }
 
-// Runs array.filter on nested arrays (Only calls predicate on non-array elements)
+
+
+// HELPER -- Runs array.filter on nested arrays (Only calls predicate on non-array elements)
 export const deepFilter = (array, predicate) => array.reduce((res,elem,idx) => {
   if (Array.isArray(elem)) res.push(deepFilter(elem, predicate))
   else if (predicate(elem,idx,array)) res.push(elem)
   return res
 }, [])
+
+// HELPER -- Returns properties from 'base' that are changed in 'compare'
+const getUnqiue = (base, compare = {}) => Object.keys(base).reduce((obj,key) => {
+  if (base[key] !== compare[key]) obj[key] = base[key]
+  return obj
+}, {})
