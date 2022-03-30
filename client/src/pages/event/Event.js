@@ -10,21 +10,19 @@ import Round from "./components/Round";
 import Loading from "../common/Loading";
 import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 
-import { useEventQuery, useClearRoundMutation } from "./event.fetch";
+import { useEventQuery } from "./event.fetch";
 import { roundArray } from "./services/event.services";
-import { deleteRoundAlert } from "../../assets/alerts";
-import { useOpenAlert } from "../common/common.hooks";
+import { useDeleteRound } from "./services/roundButton.services";
+
 
 function Event() {
-  // Local
+  // Get data
   let { id } = useParams();
   const modal = useRef(null);
-
-  // Global
   const { data, isLoading, error, isFetching } = useEventQuery(id);
-  const [ prevRound ] = useClearRoundMutation();
-  const openAlert = useOpenAlert();
-  const handleDelete = () => openAlert(deleteRoundAlert,0).then(r => r && prevRound(id));
+
+  // Handle delete round
+  const handleDelete = useDeleteRound(data);
   
   // Loading/Error catcher
   if (isLoading || error || !data)

@@ -1,5 +1,8 @@
-import { useNextRoundMutation, useClearRoundMutation } from "../event.fetch";
+import { useOpenAlert } from "../../common/common.hooks";
 import { useLockScreen } from "../../common/common.fetch";
+import { useNextRoundMutation, useClearRoundMutation } from "../event.fetch";
+
+import { deleteRoundAlert } from "../../../assets/alerts";
 import { roundButtonText } from "../../../assets/constants";
 
 // Get Round Button label
@@ -25,8 +28,8 @@ const disableRound = ({ allreported, anyreported, status, players }) =>
 // Round Button controller
 export default function useRoundButton(event, disabled) {
   // Setup hooks
+  const deleteRound = useDeleteRound(event)
   const [ nextRound, { isLoading } ] = useNextRoundMutation()
-  const [ clearRound ] = useClearRoundMutation()
   
   // Get fetching status
   const isFetching = isLoading && event.roundactive !== event.roundcount + 1
@@ -36,8 +39,15 @@ export default function useRoundButton(event, disabled) {
   const disableButton = disabled || isLocked || disableRound(event)
 
   return {
-    handleClick: disableButton ? null : isNext(event) ? ()=>nextRound(event.id) : ()=>clearRound(event.id),
+    handleClick: disableButton ? null : isNext(event) ? ()=>nextRound(event.id) : deleteRound,
     buttonText: getRoundButton(event, isLocked),
     isFetching
   }
+}
+
+export function useDeleteRound({ id, anyreported, roundactive } = {}) {
+  const [ prevRound ] = useClearRoundMutation()
+  const openAlert = useOpenAlert()
+  return () => !anyreported ? prevRound(id) :
+    openAlert(deleteRoundAlert,0).then(r => r && prevRound(id))
 }
