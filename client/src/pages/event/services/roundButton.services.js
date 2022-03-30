@@ -39,15 +39,26 @@ export default function useRoundButton(event, disabled) {
   const disableButton = disabled || isLocked || disableRound(event)
 
   return {
-    handleClick: disableButton ? null : isNext(event) ? ()=>nextRound(event.id) : deleteRound,
+    handleClick: disableButton ? null :
+      isNext(event) ? () => nextRound({ id: event.id, roundactive: event.roundactive }) : deleteRound,
+
     buttonText: getRoundButton(event, isLocked),
+
     isFetching
   }
 }
 
+// Delete Round contoller
 export function useDeleteRound({ id, anyreported, roundactive } = {}) {
   const [ prevRound ] = useClearRoundMutation()
   const openAlert = useOpenAlert()
-  return () => !anyreported ? prevRound(id) :
-    openAlert(deleteRoundAlert,0).then(r => r && prevRound(id))
+  
+  // Confirm id isn't missing
+  return () => !id ? console.warn('Delete round is missing id.') :
+    
+    // If no data saved yet, go back w/o asking
+    !anyreported ? prevRound({ id, roundactive }) :
+
+    // Otherwise confirm deleting round data
+    openAlert(deleteRoundAlert,0).then(r => r && prevRound({ id, roundactive }))
 }
