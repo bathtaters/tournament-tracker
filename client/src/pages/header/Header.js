@@ -5,8 +5,8 @@ import SettingsButton from "./components/SettingsButton";
 import ReloadButton from "./components/ReloadButton";
 import { HeaderStyle, TitleStyle, LinkStyle, OverlayStyle } from "./styles/HeaderStyles";
 
-const defaultTitle = import("../../assets/validation.json")
-  .then(v => v.defaults.settings.title);
+import valid from "../../assets/validation.json";
+const defaultTitle = valid.defaults.settings.title;
 
 function Header({ title }) {
   return (

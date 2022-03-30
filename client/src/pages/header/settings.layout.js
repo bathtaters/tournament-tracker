@@ -1,5 +1,6 @@
 import { deepFilter } from "./services/settings.services";
-const defaultTitle = import("../../assets/validation.json").then(v => v.defaults.settings.title);
+import valid from "../../assets/validation.json";
+const defaultTitle = valid.defaults.settings.title;
 
 // Settings layout object for InputForm
 const basicLayout = [
