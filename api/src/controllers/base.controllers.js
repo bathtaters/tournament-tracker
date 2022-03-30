@@ -5,6 +5,7 @@ const player = require('../db/models/player');
 const setting = require('../db/models/settings');
 
 // Imports
+const { resetDatabase } = require('../services/db.services');
 const { asType, toObjArray } = require('../services/settings.services');
 const { arrToObj } = require('../utils/shared.utils');
 const logger = require('../utils/log.adapter');
@@ -64,14 +65,9 @@ const getSchedule = async function(_, res) {
 }
 
 
-
-// RESET TO DEMO DB (Dev only)
-const ops = require('../db/admin/interface');
-const sqlFolder = require('../config/meta').sqlFilesPath;
-const dbResetFile = require('path').join(sqlFolder,'resetDb.sql');
-const dbTestFile = require('path').join(sqlFolder,'dbtest.sql');
-const resetDB = full => (_, res) => ops.file(full && dbResetFile, dbTestFile)
-  .then(() => res.sendAndLog({ reset: true, full }));
+// RESET DB
+const resetDB = full => (_, res) => resetDatabase(full, true)
+  .then((r) => res.sendAndLog({ reset: Boolean(r & 1), full: Boolean(r & 2) }));
 
 
 
