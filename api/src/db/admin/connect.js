@@ -3,22 +3,12 @@ const { Pool } = require("pg");
 const parse = require("pg-connection-string").parse;
 
 const { getConnStr, retryBlock } = require('../../utils/dbConnect.utils');
+const { testDatabase, resetDatabase } = require('../../services/db.services');
 const logger = require('../../utils/log.adapter');
 
 // Default Settings
 const retryAttempts = 15;
 const retryPauseMs = 1000;
-
-// Test that DB works
-const testDb = () => runOperation((cl) => cl.query("SHOW TABLES;")).then(t => t?.rows?.length).catch(e => { throw e; });
-
-// Reset DB
-const resetDbFile =  require('path').join(require('../../config/meta').sqlFilesPath, 'resetDb.sql');
-async function resetDatabase() {
-  await require('./directOps').execFiles([resetDbFile]);
-  const test = await testDb();
-  if (!test) throw new Error('ResetDB did not work! Check resetDb.sql file.');
-}
 
 // Connect to the DB
 let staticPool;
@@ -28,7 +18,7 @@ async function openConnection(asUser = 'api', cfg = null) {
 
   try {
     staticPool = new Pool(parse(connStr));
-    await testDb().then(test => { if (!test) throw { code: '3D000' } });
+    await testDatabase().then(test => { if (!test) throw { code: '3D000' } });
   }
   catch(e) {
     // Catch missing DB
