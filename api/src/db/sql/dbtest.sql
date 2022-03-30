@@ -39,8 +39,8 @@ INSERT INTO player (name, isteam, members) VALUES
 INSERT INTO event (title, day, roundcount) VALUES
     ('KLD',  '2020-10-05', 5),
     ('AKH',  '2020-10-07', 1);
-INSERT INTO event (title, day, wincount, roundcount, playerspermatch) VALUES
-    ('CPY',  '2020-10-07', 1, 1, 4);
+INSERT INTO event (title, day, wincount, roundcount, playerspermatch, notes) VALUES
+    ('CPY',  '2020-10-07', 1, 1, 4, 'Notes test');
 
 -- Create Maches for Two-Headed AKH Event
 INSERT INTO match (eventid, round, players, wins) VALUES
