@@ -15,7 +15,7 @@ export const roundButtonText = {
   none: "",
   begin: "Start Event",
   end: "End Event",
-  back: "Undo Round",
+  back: "Delete Round",
   next: "Next Round",
   wait: "Awaiting Report",
   done: "Event Complete",
