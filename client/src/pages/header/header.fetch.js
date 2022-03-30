@@ -14,8 +14,6 @@ export const headerApi = fetchApi.injectEndpoints({
     // DEV ONLY
     resetDb:     build.mutation({
       query: (full=false) => ({ url: 'reset'+(full?'/full':''), method: 'POST' }),
-      invalidatesTags: tagTypes,
-      onQueryStarted: clearSchedule,
     }),
   }),
   overrideExisting: true
