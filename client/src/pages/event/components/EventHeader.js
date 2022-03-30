@@ -1,5 +1,6 @@
 import React from "react";
 
+import NotesEditor from "./subcomponents/NotesEditor";
 import { RoundButton } from "../styles/ButtonStyles";
 import LoadingScreen from "../../common/LoadingScreen";
 
@@ -13,6 +14,7 @@ function EventHeader({ data, disabled }) {
       onClick={handleClick}
       value={buttonText}
     />
+    <NotesEditor id={data.id} notes={data.notes} />
 
     <LoadingScreen enable={isFetching} caption="Generating round..." />
   </>)
