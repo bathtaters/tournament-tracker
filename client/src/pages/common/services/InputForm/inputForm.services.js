@@ -34,6 +34,7 @@ export const transformFunction = (transformObj, oldData, baseData) => data => {
 
 
 // Handle first onChange event
-export const changeController = (isChanged, onEdit, setChanged) => () => { 
+export const changeController = (isChanged, onEdit, setChanged, onChange) => (ev) => { 
   if (!isChanged) { onEdit && onEdit(); setChanged(true); }
+  onChange && onChange(ev);
 };

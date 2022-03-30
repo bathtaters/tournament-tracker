@@ -15,7 +15,7 @@ function InputForm({
   // Styling
   className = "", submitLabel = "Save", rowFirst = false, isGrid,
   // Event handlers
-  onSubmit, onEdit,
+  onSubmit, onEdit, onChange
 }) {
 
   // Local state
@@ -26,7 +26,7 @@ function InputForm({
   const transformData = useCallback(transformFunction(transformObject(rows), data, baseData), [rows, baseData]);
   
   // First edit handler
-  const handleChange = useCallback(changeController(isChanged, onEdit, setChanged), [isChanged, onEdit, setChanged]);
+  const handleChange = useCallback(changeController(isChanged, onEdit, setChanged, onChange), [isChanged, onEdit, setChanged, onChange]);
 
   // Submit handler
   const submitController = (data) => onSubmit ? onSubmit(transformData(data)) : transformData(data);
