@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useLayoutEffect, useRef } from "react";
 import { usePrefetch } from "./common.fetch";
 import { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult } from "./services/alert.services";
 export { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult }
@@ -50,4 +50,35 @@ export function useServerValue(value, setServerCallback, updateBundleDelay = 500
 
   // Return value & setter
   return [ localVal, setLocal ]
+}
+
+// Scales height based on internal content (padding = vertical padding, everything is in pixels)
+export function useScaleToFitRef(depends = [], { padding = 0, minHeight = 32 } = {}) {
+  const ref = useRef(null)
+
+  useLayoutEffect(() => {
+    ref.current.style.height = 'inherit' // initial value
+    ref.current.style.height = Math.max(ref.current.scrollHeight + padding, minHeight) + 'px'
+  }, depends) // Re-render on depends change
+
+  return ref
+}
+
+// Runs 'onClick' when you click outside of ref element (if skip == falsy)
+export function useOnClickOutsideRef(onClick, { depends = [], skip }) {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    if (skip || !ref.current) return;
+
+    // Build & register listener
+    const onOutsideClick = (ev) => { !ref.current.contains(ev.target) && onClick() }
+    document.addEventListener("mousedown", onOutsideClick)
+
+    // Cleanup listener
+    return () => { document.removeEventListener("mousedown", onOutsideClick) }
+    
+  }, [...depends, onClick, skip, Boolean(ref.current)])
+
+  return ref
 }
