@@ -1,26 +1,22 @@
 import { useNavigate } from 'react-router-dom'
 import { useOpenAlert } from "../../common/common.hooks"
 import { useResetDbMutation } from "../header.fetch"
+import { doReset } from './headerFetch.services'
 
-import { settings } from "../../../assets/config"
 import { getLocalSettings, setLocalVar } from "../../common/services/fetch.services"
 import { resetDbAlert, resetDbAlertConfirm } from "../../../assets/alerts"
+import { settings } from "../../../assets/config"
 
 // Handle clicking ResetDB buttons
-export function useResetHandler(onReset) {
+export function useResetHandler() {
   const navigate = useNavigate()
   const openAlert = useOpenAlert()
   const [ resetDb, { isLoading } ] = useResetDbMutation()
+
   return [
-    (fullReset) => openAlert(resetDbAlert, 0).then(r => r && openAlert(resetDbAlertConfirm, 1))
-      .then(r => {
-        if (!r) return;
-        localStorage.clear()
-        resetDb(fullReset).then(() => {
-          navigate('/')
-          onReset && onReset()
-        })
-      }),
+    (fullReset) => openAlert(resetDbAlert, 0)
+      .then(r => r && openAlert(resetDbAlertConfirm, 1))
+      .then(r => r && doReset(resetDb, fullReset, navigate)),
     isLoading
   ]
 }

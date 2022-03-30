@@ -7,7 +7,11 @@ export function settingsUpdate(body, { dispatch }) {
   ));
 }
 
-// Update cache when resetting data
-export const clearSchedule = (_, { dispatch }) => {
-  dispatch(fetchApi.util.updateQueryData('schedule', undefined, () => []));
+// Extra functions during full reset
+export async function doReset(resetDb, fullReset, navigate) {
+  localStorage.clear()
+  navigate('/')
+  await resetDb(fullReset)
+  window.location.reload(true)
+  return true
 }
