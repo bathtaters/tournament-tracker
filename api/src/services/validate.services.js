@@ -43,10 +43,14 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
 
   // Add validation for optionals/non-optionals
   if (type[4]) {
-    ptr.optional = { options: { nullable: true } }
+    ptr.optional = { options: { nullable: true, checkFalsy: type[1] === 'string' } }
   } else {
-    ptr.exists = { errorMessage: 'must exist' }
-    ptr.notEmpty = { errorMessage: 'must not be empty' }
+    ptr.exists = { errorMessage: 'must be included' }
+    
+    // Skip validation of empty strings (only if empty strings are allowed)
+    if (type[1] === 'string' && limits && (limits.elem || limits) && (limits.elem || limits).min === 0) {
+      ptr.optional = { options: { checkFalsy: true } }
+    }
   }
 
   // Handle validation for array elements
@@ -79,7 +83,7 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
   switch (type[1]) {
     case 'uuid': ptr.isUUID = { options: 4, errorMessage: 'not a valid UUID' } // pass to string
     case 'string':
-      ptr.isAscii = { errorMessage: 'contains invalid characters' }
+      ptr.isAscii = { errorMessage: 'contains invalid characters or is empty' }
       ptr.stripLow = !type[2]
       ptr.trim = !type[2]
       ptr.escape = true
