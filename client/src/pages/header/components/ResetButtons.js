@@ -16,9 +16,9 @@ function SettingsButtons({ onClick, value }) {
 }
 
 // Render 'Reset' buttons + Logic
-function ResetButtons({ closeModal }) {
+function ResetButtons() {
 
-  const [resetHandler, isLoading] = useResetHandler(closeModal)
+  const [resetHandler, isLoading] = useResetHandler()
 
   return (<>
     <ResetButtonStyle>
