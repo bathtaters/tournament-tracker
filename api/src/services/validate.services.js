@@ -13,8 +13,8 @@ const missingErr = (key, type) =>
 const missingInErr = (key) =>
   `${key} missing 'in' array for validation`
 
-// Decode validation types to [fullStr, typeStr, isArray, isOptional]
-const typeRegex = /^([^[?]+)(\[\])?(\?)?$/
+// Decode validation types to [fullStr, typeStr, leaveWhiteSpace (*), isArray ([]), isOptional (?)]
+const typeRegex = /^([^[?*]+)(\*)?(\[\])?(\?)?$/
 
 // Setup date-only parsing
 const strictDates = true
@@ -32,7 +32,8 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
   // Get type from typeStr
   const type = (typeStr || '').match(typeRegex)
   if (!type || !type[0]) throw new Error(missingErr(key, typeStr))
-  if (forceOptional) type[3] = '?'
+  if (forceOptional) type[4] = '?'
+  if (type[2] && type[1] !== 'string') logger.warn('* is ignored w/ non-string type: ', type[0])
 
   // Initialize ptr & static values (errMsg/in)
   let valid = { [key]: {} }
@@ -41,7 +42,7 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
   ptr.in = isIn
 
   // Add validation for optionals/non-optionals
-  if (type[3]) {
+  if (type[4]) {
     ptr.optional = { options: { nullable: true } }
   } else {
     ptr.exists = { errorMessage: 'must exist' }
@@ -49,7 +50,7 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
   }
 
   // Handle validation for array elements
-  if (type[2]) {
+  if (type[3]) {
     // Set limits
     let arrLimit
     if (limits && (limits.array || limits.elem)) {
@@ -79,8 +80,8 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
     case 'uuid': ptr.isUUID = { options: 4, errorMessage: 'not a valid UUID' } // pass to string
     case 'string':
       ptr.isAscii = { errorMessage: 'contains invalid characters' }
-      ptr.stripLow = true
-      ptr.trim = true
+      ptr.stripLow = !type[2]
+      ptr.trim = !type[2]
       ptr.escape = true
       if (limits) ptr.isLength = limits
       break

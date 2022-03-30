@@ -122,7 +122,7 @@ module.exports = {
       roundcount: "int",
       wincount: "int",
       playerspermatch: "int",
-      notes: "string",
+      notes: "string*",
       clocklimit: "interval",
       clockstart: "datetime?",
       clockmod: "interval?"
