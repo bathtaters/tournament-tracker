@@ -83,9 +83,11 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
   switch (type[1]) {
     case 'uuid': ptr.isUUID = { options: 4, errorMessage: 'not a valid UUID' } // pass to string
     case 'string':
-      ptr.isAscii = { errorMessage: 'contains invalid characters or is empty' }
-      ptr.stripLow = !type[2]
-      ptr.trim = !type[2]
+      ptr.isString = { errorMessage: 'not a valid string' }
+      if (!type[2]) { 
+        ptr.stripLow = true
+        ptr.trim = true
+      }
       ptr.escape = true
       if (limits) ptr.isLength = limits
       break
