@@ -48,6 +48,9 @@ async function nextRound(req, res) {
   // Error check
   if (!data) throw new Error("Event not found: "+req.params.id);
 
+  if (data.roundactive + 1 !== req.params.roundactive)
+    throw new Error("Recieved too many round change requests.");
+
   if (
     !data.players ||
     !data.players.length ||
@@ -87,6 +90,9 @@ async function nextRound(req, res) {
 async function prevRound(req, res) {
   const round = await event.getRound(req.params.id); // Get latest round num
   if (round == null) throw new Error("No matches found.");
+
+  if (round !== req.params.roundactive)
+    throw new Error("Recieved too many round change requests.");
 
   await event.popRound(req.params.id, round);
 

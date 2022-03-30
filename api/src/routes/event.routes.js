@@ -22,7 +22,7 @@ router.delete('/:id', validate.eventid,     catcher(controller.removeEvent));
 router.patch( '/:id', validate.updateEvent, catcher(controller.updateEvent));
 
 // Create matches
-router.post(  '/:id/round', validate.eventid, catcher(action.nextRound));
-router.delete('/:id/round', validate.eventid, catcher(action.prevRound));
+router.post(  '/:id/round/:roundactive', validate.rounds, catcher(action.nextRound));
+router.delete('/:id/round/:roundactive', validate.rounds, catcher(action.prevRound));
 
 module.exports = router;
