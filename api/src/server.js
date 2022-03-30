@@ -6,6 +6,7 @@ const { name, port, apiVersion: version } = require('./config/meta');
 // Setup middleware
 app.use(express.json());
 app.use(require('./middleware/log.middleware'));
+app.use(require('./middleware/unescape.middleware'));
 
 // Setup routes
 app.use(`/api/v${version}`,        require('./routes/base.routes'));
