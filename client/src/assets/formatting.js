@@ -1,6 +1,6 @@
 // Format data for display
 
-export const formatQueryError = (err) => 'ERROR: '+JSON.stringify(err);
+export const formatQueryError = (err) => 'Please refresh page'
 
 export const formatMatchTitle = (matchPlayers, playerData) =>
   matchPlayers.map(id => (playerData[id] && playerData[id].name) || '?').join(' vs. ');
