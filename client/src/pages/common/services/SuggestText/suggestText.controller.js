@@ -18,10 +18,11 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, ref) {
   const [listIsVisible, setListVisible] = useState(false);
   
   // Setup List
+  const isEmpty = !value || !value.trim()
   const suggestions = useMemo(() => getSuggestions(list, value), [list, value]);
   useEffect(autoSelect(selected, suggestions, setSelected), [selected, suggestions]);
   useEffect(autoShow(listIsVisible, isFocused, setListVisible), [listIsVisible, isFocused, value]);
-  const isExact = !Array.isArray(suggestions) ? suggestions : suggestions.length === 1 ? suggestions[0] : false;
+  const isExact = !isEmpty && (!Array.isArray(suggestions) ? suggestions : suggestions.length === 1 ? suggestions[0] : false);
 
 
   // --- Action Handlers --- \\
@@ -35,7 +36,7 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, ref) {
     if (onChange) onChange(e); // Passthrough onChange function
   }
 
-  const getSubmitValue = () => !isHidden && (picked || isExact || getNonStaticSolo(suggestions))
+  const getSubmitValue = () => !isHidden && (picked || isExact || (!isEmpty && getNonStaticSolo(suggestions)))
 
   const submit = async (forcePick) => {
     const newPick = forcePick || getSubmitValue();
