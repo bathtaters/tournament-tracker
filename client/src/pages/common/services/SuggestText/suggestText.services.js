@@ -21,7 +21,7 @@ export function getSuggestions(list, value) {
     if (entryLower === lower) exact = entry; // get exact matches
     return !exact &&
       entryLower.slice(0,len) === lower; // Quicker
-      // entryLower.indexOf(lower) > -1; // More flexible
+      // entryLower.indexOf(lower) !== -1; // More flexible
   });
 
   return exact || matches;
@@ -31,7 +31,7 @@ export function getSuggestions(list, value) {
 // Auto-select rules (Runs on list change)
 export const autoSelect = (selected, list, setSelected) => () => {
   if (!validList(list)) setSelected(-1); // deselect when no list
-  else if ((selected < -2 || selected >= list.length)) setSelected(0); // select 1st entry if out of bounds
+  else if ((selected < -1 || selected >= list.length)) setSelected(0); // select 1st entry if out of bounds
   else if (selected === -1) setSelected(getNonStaticSoloIdx(list))
 };
 
