@@ -47,8 +47,8 @@ export const retrieveList = (playerList, suggestRef, openAlert) => async () => {
     // Ask user
     const alert = unsavedPlayerAlert(unaddedName)
     const answer = await openAlert(alert)
-    if (answer === alert.buttons[1]) return savedPlayers; // continue w/o adding
-    if (answer !== alert.buttons[0]) return; // user cancel
+    if (answer === alert.buttons[1].value ?? alert.buttons[1]) return savedPlayers; // continue w/o adding
+    if (answer !== alert.buttons[0].value ?? alert.buttons[0]) return; // user cancel
     
     // Add player to list
     const newPlayer = await suggestRef.current.submit();
