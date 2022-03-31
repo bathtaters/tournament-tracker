@@ -26,4 +26,4 @@ export const getRemaining = (players, playerList) => players ? Object.keys(playe
 
 
 // Get name of player from getValue result
-export const getName = (value) => value?.isStatic ? value?.text : value.value
+export const getName = (value) => value?.isStatic ? value.text : value?.value
