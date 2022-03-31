@@ -20,3 +20,17 @@ export const roundButtonText = {
   wait: "Awaiting Report",
   done: "Event Complete",
 };
+
+
+// -- Server error adapters -- \\
+
+// FORMAT = endpoint: (arg) => `Endpoint ${arg}`,
+export const errorTitle = {
+  default: "Error",
+}
+
+// FORMAT = msg/TEXT_STATUS: (arg) => `New msg ${arg}.`,
+export const errorMessage = {
+  default: "An unknown server error occurred.",
+  PARSING_ERROR: (msg) => "Server is not responding: "+(msg || "Unknown error."),
+}

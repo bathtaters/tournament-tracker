@@ -3,6 +3,7 @@ import devToolsEnhancer from 'remote-redux-devtools'
 import globalSlice from './globalSlice'
 import alertSlice from './alertSlice'
 import { fetchApi } from './fetchApi'
+import errorMiddleware from '../services/error.services'
 
 // Load in basic queries to allow prefetching w/ lazy loading
 import { } from "../../pages/common/common.fetch"
@@ -18,9 +19,9 @@ const store = configureStore({
     [fetchApi.reducerPath]: fetchApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      thunk: { extraArgument: thunkExtra }
-    }).concat(fetchApi.middleware),
+    getDefaultMiddleware({ thunk: { extraArgument: thunkExtra } })
+      .concat(errorMiddleware)
+      .concat(fetchApi.middleware),
   
   // Enable remote dev tools
   devTools: false,
