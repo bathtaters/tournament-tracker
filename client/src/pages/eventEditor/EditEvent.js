@@ -50,7 +50,7 @@ function EditEvent({ eventid, modal }) {
 
       <RawData className="text-sm mt-4" data={data} />
 
-      <LoadingScreen enable={isLoading} caption="Creating event..." />
+      <LoadingScreen enable={isLoading} caption={`${eventid ? 'Upd' : 'Cre'}ating event...`} />
     </div>
   );
 }

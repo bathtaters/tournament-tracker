@@ -50,7 +50,7 @@ export default function useEditEventController(eventid, modal) {
   return {
     data, playerList, submitHandler,
     // Show lock screen
-    isLoading: !eventid && isUpdating,
+    isLoading: isUpdating,
     // Button layout
     buttons: editorButtonLayout(eventid, deleteHandler, modal.current.close),
   }
