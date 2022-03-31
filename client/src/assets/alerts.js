@@ -13,6 +13,8 @@ export const modalCloseAlert = (customAlert = {}) => ({
 
 export const notLoadedAlert = { title: "Still Loading", message: "Try again in a minute or refresh." }
 
+export const errorAlertBase = { buttons: [{ value: "Ok", className: "base-bgd" }], className: "", showClose: true }
+
 
 // --- EventEditor Alerts --- \\
 
@@ -36,8 +38,8 @@ export const unsavedPlayerAlert = (name) => ({
   title: "Add Player?",
   message: `Would you like to add ${name || defPlayer} before saving?`,
   buttons: [ // [0]=Y+, [1]=Y-, [2]=N
-    { value: "Add",  className: "neg-bgd base-color-inv" },
-    { value: "Drop", className: "pos-bgd base-color-inv" },
+    { value: "Add",  className: "pos-bgd base-color-inv" },
+    { value: "Drop", className: "neg-bgd base-color-inv" },
     "Back"
   ],
 })
