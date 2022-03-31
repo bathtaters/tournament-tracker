@@ -29,14 +29,15 @@ async function getAllStats(_, res) {
 
 async function getStats(req, res) {
   const id = req.params.id;
-  const [matches, players, opps] = await Promise.all([
+  const players = await event.getPlayers(id);
+  if (!players) return res.sendStatus(204);
+
+  const [matches, opps] = await Promise.all([
     match.getByEvent(id),
-    event.getPlayers(id).then(d => d.players),
-    event.getOpponents(id)
-      .then(arrToObj('playerid',{ valKey: 'oppids' })),
+    event.getOpponents(id).then(arrToObj('playerid',{ valKey: 'oppids' })),
   ]);
   
-  return res.sendAndLog(toStats({[id]: matches}, players, {[id]: opps}, true));
+  return res.sendAndLog(toStats({[id]: matches}, players.players, {[id]: opps}, true));
 }
 
 
