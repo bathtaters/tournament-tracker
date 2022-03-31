@@ -4,7 +4,7 @@ import SuggestText from "../../common/SuggestText";
 import { PlayerRowStyle, suggestClass } from "../styles/PlayerEditorStyles"
 import { PlayerAddButton, PlayerFillButton } from "../styles/PlayerEditorButtons"
 
-import usePlayerInputController from "../services/playerInput.services";
+import usePlayerInputController from "../services/playerInput.controller";
 
 const PlayerInput = forwardRef(function PlayerInput({autofillSize, hideAutofill, autofill, handlePlayerChange, ...props}, ref) {
   

@@ -7,7 +7,7 @@ import { PlayerEditorStyle } from "../styles/PlayerEditorStyles";
 import Loading from "../../common/Loading";
 import LoadingScreen from "../../common/LoadingScreen";
 
-import usePlayerEditorController from "../services/playerEditor.services";
+import usePlayerEditorController from "../services/playerEditor.controller";
 
 const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit = null }, ref) {
   // Get data for editor

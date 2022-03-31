@@ -9,7 +9,7 @@ import InputForm from "../common/InputForm";
 import RawData from "../common/RawData";
 import Loading from "../common/Loading";
 
-import useEditEventController from "./services/eventEditor.services";
+import useEditEventController from "./services/editEvent.controller";
 import { editorLayout } from "./eventEditor.layout";
 
 import valid from "../../assets/validation.json";

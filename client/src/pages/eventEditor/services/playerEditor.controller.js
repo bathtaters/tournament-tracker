@@ -6,7 +6,6 @@ import playerListController, { retrieveList, usePropStateList } from "./playerLi
 import { getRemaining, randomArray } from "./playerEditor.utils";
 
 
-// PlayerEditor component logic
 export default function usePlayerEditorController(players, status, onEdit, ref) {
 
   // Get Global State
