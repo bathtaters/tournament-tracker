@@ -1,8 +1,8 @@
 import { fetchApi } from '../../common/common.fetch';
 import { swapPlayerArrays, moveDrops } from './swap.services';
 
-export function reportUpdate({ id, eventid, clear = false, ...body }, { dispatch }) {
-  dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
+export function reportUpdate({ id, eventid, clear = false, ...body }, { dispatch, queryFulfilled }) {
+  const update = dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
     if (clear) { // Unreport match
       draft[id].reported = false;
       draft[id].drops = [];
@@ -11,29 +11,32 @@ export function reportUpdate({ id, eventid, clear = false, ...body }, { dispatch
       Object.assign(draft[id], body, {reported: true});
     }
   }));
+  queryFulfilled.catch(update.undo); // rollback
 };
 
-export function dropsUpdate({ id, eventid, playerid, undrop }, { dispatch }) {
-  dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
+export function dropsUpdate({ id, eventid, playerid, undrop }, { dispatch, queryFulfilled }) {
+  const update = dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
     // Add playerId to match.drops array
     if (!undrop) draft[id].drops.push(playerid);
     // Remove playerId from match.drops array
     else draft[id].drops.splice(draft[id].drops.indexOf(playerid),1);
   }));
+  queryFulfilled.catch(update.undo); // rollback
 }
 
-export function matchUpdate({ id, eventid, clear = false, ...body }, { dispatch }) {
-  dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
+export function matchUpdate({ id, eventid, clear = false, ...body }, { dispatch, queryFulfilled }) {
+  const update = dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
     const idx = body.key.match(/^wins\.(\d+)$/); // check for 'wins' update
     // update wins value
     if (idx) draft[id].wins[+idx[1]] = body.value;
     // update draws value
     else if (body.key === 'draws') draft[id].draws = body.value;
   }));
+  queryFulfilled.catch(update.undo); // rollback
 };
 
-export function swapPlayersUpdate({ id, eventid, clear = false, ...body }, { dispatch }) {
-  dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
+export function swapPlayersUpdate({ id, eventid, clear = false, ...body }, { dispatch, queryFulfilled }) {
+  const update = dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
     // Get player match-indexes
     const idx = [...Array(2)].map((_,i) => draft[body.swap[i].id].players.indexOf(body.swap[i].playerid));
     // Check if either player has a bye
@@ -53,4 +56,5 @@ export function swapPlayersUpdate({ id, eventid, clear = false, ...body }, { dis
     }
 
   }));
+  queryFulfilled.catch(update.undo); // rollback
 };

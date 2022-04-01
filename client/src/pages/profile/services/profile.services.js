@@ -18,11 +18,12 @@ export const saveController = (id, key, value, data, updateData) => () => {
 
 
 // Cache update
-export function playerUpdate({ id, ...body }, { dispatch }) {
-  dispatch(fetchApi.util.updateQueryData('player', undefined, draft => { 
+export function playerUpdate({ id, ...body }, { dispatch, queryFulfilled }) {
+  const updateAll = dispatch(fetchApi.util.updateQueryData('player', undefined, draft => { 
     Object.assign(draft[id], body); 
   }));
-  dispatch(fetchApi.util.updateQueryData('player', id, draft => { 
+  const updateOne = dispatch(fetchApi.util.updateQueryData('player', id, draft => { 
     Object.assign(draft, body); 
   }));
+  queryFulfilled.catch(() => { updateAll.undo(); updateOne.undo(); }); // rollback
 };

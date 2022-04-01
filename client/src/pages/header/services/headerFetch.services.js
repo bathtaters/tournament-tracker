@@ -1,10 +1,11 @@
 import { fetchApi } from "../header.fetch";
 
 // Update cache for settingsUpdate
-export function settingsUpdate(body, { dispatch }) {
-  dispatch(fetchApi.util.updateQueryData(
+export function settingsUpdate(body, { dispatch, queryFulfilled }) {
+  const update = dispatch(fetchApi.util.updateQueryData(
     'settings', undefined, draft => Object.assign(draft,body)
   ));
+  queryFulfilled.catch(update.undo); // rollback
 }
 
 // Extra functions during full reset
