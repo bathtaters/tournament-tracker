@@ -107,19 +107,19 @@
     } 
     input[type="checkbox"] + label::before { /* build bgd element */
         @apply max-bgd bg-opacity-10 border-gray-500 border-2;
-        @apply content-[''] w-12 h-6 rounded-xl mr-2;
+        @apply content-[''] w-14 h-7 rounded-2xl mr-2;
         @apply outline outline-2 no-outline;
     }
     input[type="checkbox"] + label::after { /* build switch */
         @apply content-['\2715'];
-        @apply absolute left-0 flex justify-center items-center;
-        @apply text-xs w-6 h-6 rounded-xl;
+        @apply absolute left-1 flex justify-center items-center;
+        @apply text-xs w-5 h-5 rounded-xl;
         @apply base-color-inv alt-bgd-inv;
         @apply transition-all duration-300 ease-in-out;
     }
     input[type="checkbox"]:checked + label { /* select action (switch) */
         @apply after:content-['\2713'] base-color;
-        @apply after:base-bgd-inv after:translate-x-full;
+        @apply after:base-bgd-inv after:translate-x-7;
     }
     input[type="checkbox"]:disabled + label { /* disabled (base/bgd/switch) */
         @apply dim-color before:alt-bgd after:alt-bgd-inv;
