@@ -14,14 +14,16 @@ function InputElement(props) {
   // Get element styles (or defaults if none provided)
   const { className, labelClass, inputClass } = getClasses(props);
 
+  const rightLabel = props.labelIsRight ?? props.type === 'checkbox';
+
   // Render
   return (
     <ElementStyle isFragment={props.isFragment} className={className}>
-      {!props.labelIsRight && <ElementLabel id={inputProps.id} label={props.label} className={labelClass} />}
+      {!rightLabel && <ElementLabel id={inputProps.id} label={props.label} className={labelClass} />}
 
       <ElementInput inputProps={inputProps} type={props.type} className={inputClass} />
 
-      {props.labelIsRight && <ElementLabel id={inputProps.id} label={props.label} className={labelClass} />}
+      {rightLabel && <ElementLabel id={inputProps.id} label={props.label} className={labelClass} />}
     </ElementStyle>
   );
 }

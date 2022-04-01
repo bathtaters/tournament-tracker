@@ -10,31 +10,33 @@
 /* Base Styles */
 @layer base {
     /* Colors */
-    .link-color       { @apply text-indigo-800   dark:text-indigo-200;   }
-    .link-hover-color { @apply text-indigo-600   dark:text-indigo-400;   }
-    .base-color       { @apply text-gray-800     dark:text-gray-200;     }
-    .dim-color        { @apply text-gray-600     dark:text-gray-400;     }
-    .dim-color-inv    { @apply text-gray-400     dark:text-gray-600;     }
-    .base-color-inv   { @apply text-gray-200     dark:text-gray-800;     }
-    .max-color        { @apply text-black        dark:text-white;        }
-    .pos-color        { @apply text-green-700    dark:text-green-300;    }
-    .neg-color        { @apply text-red-700      dark:text-red-300;      }
-    .base-bgd         { @apply bg-gray-200       dark:bg-gray-800;       }
-    .alt-bgd          { @apply bg-gray-400       dark:bg-gray-600;       }
-    .alt-bgd-inv      { @apply bg-gray-600       dark:bg-gray-400;       }
-    .base-bgd-inv     { @apply bg-gray-800       dark:bg-gray-200;       }
-    .max-bgd          { @apply bg-white          dark:bg-black;          }
-    .pos-bgd          { @apply bg-green-700      dark:bg-green-300;      }
-    .neg-bgd          { @apply bg-red-700        dark:bg-red-300;        }
-    .no-bgd           { @apply  bg-gray-200/0       dark:bg-gray-800/0;      }
-    .base-border      { @apply border-gray-800   dark:border-gray-200;   }
-    .dim-border       { @apply border-gray-600   dark:border-gray-400;   }
-    .dimmer-border    { @apply border-gray-400   dark:border-gray-600;   }
-    .inv-border       { @apply border-gray-200   dark:border-gray-800;   }
-    .max-border       { @apply border-black      dark:border-white;      }
-    .pos-border       { @apply border-green-700  dark:border-green-300;  }
-    .neg-border       { @apply border-red-700    dark:border-red-300;    }
-    .no-border        { @apply  border-gray-200/0    dark:border-gray-800/0; }
+    .link-color       { @apply text-indigo-800   dark:text-indigo-200;    }
+    .link-hover-color { @apply text-indigo-600   dark:text-indigo-400;    }
+    .base-color       { @apply text-gray-800     dark:text-gray-200;      }
+    .dim-color        { @apply text-gray-600     dark:text-gray-400;      }
+    .dim-color-inv    { @apply text-gray-400     dark:text-gray-600;      }
+    .base-color-inv   { @apply text-gray-200     dark:text-gray-800;      }
+    .max-color        { @apply text-black        dark:text-white;         }
+    .pos-color        { @apply text-green-700    dark:text-green-300;     }
+    .neg-color        { @apply text-red-700      dark:text-red-300;       }
+    .base-bgd         { @apply bg-gray-200       dark:bg-gray-800;        }
+    .alt-bgd          { @apply bg-gray-400       dark:bg-gray-600;        }
+    .alt-bgd-inv      { @apply bg-gray-600       dark:bg-gray-400;        }
+    .base-bgd-inv     { @apply bg-gray-800       dark:bg-gray-200;        }
+    .max-bgd          { @apply bg-white          dark:bg-black;           }
+    .pos-bgd          { @apply bg-green-700      dark:bg-green-300;       }
+    .neg-bgd          { @apply bg-red-700        dark:bg-red-300;         }
+    .no-bgd           { @apply  bg-gray-200/0       dark:bg-gray-800/0;       }
+    .base-border      { @apply border-gray-800   dark:border-gray-200;    }
+    .dim-border       { @apply border-gray-600   dark:border-gray-400;    }
+    .dimmer-border    { @apply border-gray-400   dark:border-gray-600;    }
+    .inv-border       { @apply border-gray-200   dark:border-gray-800;    }
+    .max-border       { @apply border-black      dark:border-white;       }
+    .pos-border       { @apply border-green-700  dark:border-green-300;   }
+    .neg-border       { @apply border-red-700    dark:border-red-300;     }
+    .no-border        { @apply   border-gray-200/0   dark:border-gray-800/0;  }
+    .base-outline     { @apply outline-gray-800  dark:outline-gray-200;   }
+    .no-outline       { @apply outline-transparent  dark:outline-transparent; }
     
     body {
         @apply relative  leading-none  font-sans;
@@ -50,27 +52,22 @@
         @apply cursor-pointer link-color;
         @apply hover:link-hover-color group-hover:link-hover-color;
     }
-    
-    /* Form elements */
+
+    /* Form Elements Basics */
     input, textarea {
         @apply max-bgd bg-opacity-10 focus:bg-opacity-50;
         @apply border-gray-500 border-2 px-1 rounded-sm print:border-none;
         @apply disabled:bg-opacity-0 disabled:border-0;
     }
     input[type="button"], input[type="submit"] {
-        @apply text-center rounded-lg;
-        @apply py-0 px-1 sm:py-1 sm:px-2;
-        @apply transition-transform duration-300;
-        @apply active:translate-y-0.5;
-        @apply hover:bg-opacity-90    active:bg-opacity-90;
-        @apply active:base-color-inv  active:base-bgd-inv;
-        @apply disabled:opacity-50    disabled:bg-opacity-10;
+        @apply text-center rounded sm:rounded-lg;
+        @apply py-0.5 px-1 sm:py-1 sm:px-2;
     }
     input[type="button"].p-lg, input[type="submit"].p-lg {
         @apply py-1 px-3 sm:py-2 sm:px-4;
     }
 
-    /* Effects */
+    /* Basic Effects */
     a, .link {
         @apply transition-all duration-500;
     }
@@ -91,6 +88,46 @@
     a.active-parent.group:hover .link {
         @apply opacity-50 link-color hover:link-color;
     }
+
+    /* Form elements interaction */
+    input[type="button"], input[type="submit"] {
+        @apply transition-transform duration-300;
+        @apply active:translate-y-0.5;
+        @apply hover:bg-opacity-90    active:bg-opacity-90;
+        @apply active:base-color-inv  active:base-bgd-inv;
+        @apply disabled:opacity-50    disabled:bg-opacity-10;
+    }
+    
+    /* Toggle checkbox */
+    input[type="checkbox"] { /* hide std box */
+        @apply absolute -left-96 -top-96 opacity-0;
+    } 
+    input[type="checkbox"] + label { /* make label interactive */
+        @apply relative flex items-center cursor-pointer dim-color;
+    } 
+    input[type="checkbox"] + label::before { /* build bgd element */
+        @apply max-bgd bg-opacity-10 border-gray-500 border-2;
+        @apply content-[''] w-12 h-6 rounded-xl mr-2;
+        @apply outline outline-2 no-outline;
+    }
+    input[type="checkbox"] + label::after { /* build switch */
+        @apply content-['\2715'];
+        @apply absolute left-0 flex justify-center items-center;
+        @apply text-xs w-6 h-6 rounded-xl;
+        @apply base-color-inv alt-bgd-inv;
+        @apply transition-all duration-300 ease-in-out;
+    }
+    input[type="checkbox"]:checked + label { /* select action (switch) */
+        @apply after:content-['\2713'] base-color;
+        @apply after:base-bgd-inv after:translate-x-full;
+    }
+    input[type="checkbox"]:disabled + label { /* disabled (base/bgd/switch) */
+        @apply dim-color before:alt-bgd after:alt-bgd-inv;
+    }
+    input[type="checkbox"]:focus + label { /* focus action (bgd) */
+        @apply before:base-outline before:bg-opacity-50;
+    }
+    
 }
 
 @layer utilities {
