@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
 import ProfilePic from "./components/ProfilePic";
@@ -11,39 +11,42 @@ import { WrapperStyle, ProfileStyle, PlayerDataStyle } from "./styles/ProfileSty
 import profileLayout from "./profile.layout";
 
 import { usePlayerQuery } from "./profile.fetch";
+import { urlToId } from "../common/services/idUrl.services";
 
 
 function Profile() {
   const { id } = useParams();
-  const { data: playerData, isLoading, error } = usePlayerQuery();
+  const playerId = useMemo(() => urlToId(id), [id]);
+  const { data: allPlayers, isLoading, error } = usePlayerQuery();
+  const playerData = allPlayers?.[playerId];
 
-  if (isLoading || error || !playerData || !playerData[id]) return (
+  if (isLoading || error || !playerData) return (
     <WrapperStyle>
       <Loading loading={isLoading} error={error} altMsg="Player missing." tagName="h4" />
     </WrapperStyle>
   );
 
   return (
-    <WrapperStyle isTeam={playerData[id].isteam}>
+    <WrapperStyle isTeam={playerData.isteam}>
       <ProfileStyle>
 
         <ProfilePic />
 
         <PlayerDataStyle>
-          {profileLayout(playerData[id].isteam).map(row =>
+          {profileLayout(playerData.isteam).map(row =>
             <PlayerDataRow
               key={row.key}
               rowData={row}
-              data={playerData[id][row.key]}
-              id={id}
+              data={playerData[row.key]}
+              id={playerId}
             />
           )}
         </PlayerDataStyle>
       </ProfileStyle>
 
-      <RawData data={playerData[id]} />
+      <RawData data={playerData} />
       
-      <PlayerEvents id={id} />
+      <PlayerEvents id={playerId} />
 
     </WrapperStyle>
   );

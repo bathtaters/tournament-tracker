@@ -10,6 +10,7 @@ import {
 import { usePrefetchEvent } from "../schedule.fetch";
 import { isTempId } from '../services/date.utils';
 import { canDrop, dataType } from "../services/day.services";
+import { idToUrl } from "../../common/services/idUrl.services";
 
 
 function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent }) {
@@ -39,7 +40,7 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent }) {
         { data.status < 3 && <EditEventButton status={data.status} onClick={editEvent} /> }
 
       </> :
-        <EntryLinkStyle to={'/event/'+id} status={data.status}>{data.title}</EntryLinkStyle>
+        <EntryLinkStyle to={'/event/'+idToUrl(id)} status={data.status}>{data.title}</EntryLinkStyle>
       }
     </DragBlock>
   );

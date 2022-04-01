@@ -1,5 +1,6 @@
 import React from "react";
 import { OverlayRowStyle } from "../styles/InnerStyles";
+import { idToUrl } from "../../common/services/idUrl.services";
 
 function StatsOverlay({ players, clickHandler, className = '' }) {
   return players.map((pid) => 
@@ -7,7 +8,7 @@ function StatsOverlay({ players, clickHandler, className = '' }) {
       key={pid+'__L'}
       className={className}
       onClick={clickHandler(pid)}
-      to={'/profile/'+pid}
+      to={'/profile/'+idToUrl(pid)}
     />
   );
 }

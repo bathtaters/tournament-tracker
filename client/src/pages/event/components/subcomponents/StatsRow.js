@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 
 import { statsStyle } from "../../styles/StatsStyles";
-import { formatRecord } from '../../../../assets/formatting';
+import { formatRecord } from "../../../../assets/formatting";
+import { idToUrl } from "../../../common/services/idUrl.services"
 
 
 function StatsRow({ rowNum, id, name, isDrop, record }) {
@@ -12,6 +13,8 @@ function StatsRow({ rowNum, id, name, isDrop, record }) {
       {rowNum ? rowNum+')' : '• '}
     </span>
   );
+
+  const playerUrl = useMemo(() => '/profile/'+idToUrl(id), [id])
 
   // Missing Player Data
   if (!name) return (<>
@@ -23,7 +26,7 @@ function StatsRow({ rowNum, id, name, isDrop, record }) {
   return (<>
       {rowHead}
 
-      <Link className={statsStyle.name(rowNum)} to={'/profile/'+id}>
+      <Link className={statsStyle.name(rowNum)} to={playerUrl}>
         {name}
       </Link>
 

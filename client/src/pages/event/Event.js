@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Modal from "../common/Modal";
 import RawData from "../common/RawData";
@@ -13,13 +13,15 @@ import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 import { useEventQuery } from "./event.fetch";
 import { roundArray } from "./services/event.services";
 import { useDeleteRound } from "./services/roundButton.services";
+import { urlToId } from "../common/services/idUrl.services";
 
 
 function Event() {
   // Get data
-  let { id } = useParams();
+  const { id } = useParams();
   const modal = useRef(null);
-  const { data, isLoading, error, isFetching } = useEventQuery(id);
+  const eventId = useMemo(() => urlToId(id), [id]);
+  const { data, isLoading, error, isFetching } = useEventQuery(eventId);
 
   // Handle delete round
   const handleDelete = useDeleteRound(data);
@@ -53,7 +55,7 @@ function Event() {
 
       <Modal ref={modal}>
         <EditEvent
-          eventid={id}
+          eventid={eventId}
           modal={modal}
         />
       </Modal>
