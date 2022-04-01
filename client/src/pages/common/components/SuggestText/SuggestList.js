@@ -7,7 +7,7 @@ import { useSetOnHover } from "../../services/SuggestText/suggestText.services"
 
 
 
-function SuggestList({ suggestions, className, selected, pick, setSelected }) {
+function SuggestList({ suggestions, className, selected, pick, setSelected, textbox }) {
   // Scroll hidden item into view
   const listRef = useRef(null);
   const entryRef = useScrollToRef({ rootRef: listRef, threshold: 0.75, block: 'nearest' });
@@ -20,7 +20,7 @@ function SuggestList({ suggestions, className, selected, pick, setSelected }) {
   if (!Array.isArray(suggestions)) return null;
 
   // Render list
-  return <ListStyle ref={listRef}>{
+  return <ListStyle ref={listRef} textbox={textbox}>{
     suggestions.map((entry, idx) => (
       <EntryStyle className={`${className} ${entry.className || ''}`} isSelected={selected === idx} key={getId(entry)}>
 
