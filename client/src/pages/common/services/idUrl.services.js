@@ -1,3 +1,7 @@
+import { useMemo } from "react"
+import { useParams } from "react-router-dom"
+import { isTempId } from "./basic.services"
+
 // Base62 settings
 const digits = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 const zero = digits[0]
@@ -12,8 +16,8 @@ const hexWidth = 32
 const bigZero = BigInt(0)
 
 // UUID <=> Hex
-const uuidToHex = (uuid) =>  uuid.slice(0,8) + uuid.slice(9,13) + uuid.slice(14,18) + uuid.slice(19,23) + uuid.slice(24)
-const hexToUuid = (hex) => `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`
+const uuidToHex = (uuid) =>  uuid.slice(0,8) + uuid.slice(9,13) + uuid.slice(14,18) + uuid.slice(19,23) + uuid.slice(24,36)
+const hexToUuid = (hex) => `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20,32)}`
 
 // Hex <=> BigInt
 const hexToBig = (hex) => BigInt(`0x${hex}`)
@@ -42,5 +46,16 @@ const b62ToBig = (b62) => {
 }
 
 // Main methods (UUID <=> B62)
-export const idToUrl = (uuid) => uuid && bigToB62(hexToBig(uuidToHex(uuid)))
+export const idToUrl = (uuid) => uuid && !isTempId(uuid) && bigToB62(hexToBig(uuidToHex(uuid)))
 export const urlToId = (url)  => url && hexToUuid(bigToHex(b62ToBig(url)))
+
+// Hooks
+export function useLinkId (uuid, urlPrefix = '') {
+  const linkId = useMemo(() => idToUrl(uuid), [uuid])
+  return linkId ? `/${urlPrefix}${linkId}` : ''
+}
+
+export function useParamId (idParamLabel = 'id') {
+  const params = useParams()
+  return useMemo(() => urlToId(params[idParamLabel]), [params[idParamLabel]])
+}

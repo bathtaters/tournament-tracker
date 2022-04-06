@@ -1,15 +1,15 @@
-import React, { useMemo } from "react"
+import React from "react"
 
 import DragBlock from "../../common/DragBlock"
 import { NameStyle, PlayerInfoStyle, PlayerDropStyle, VsStyle, playerBoxStyle } from "../styles/MatchStyles"
 import { DropButton } from "../styles/ButtonStyles"
 import { dataType } from "../services/swap.services"
 
-import { idToUrl } from "../../common/services/idUrl.services"
+import { useLinkId } from "../../common/services/idUrl.services"
 import { formatRecord } from '../../../assets/formatting'
 
 function MatchPlayer({ id, playerData, matchData, handleSwap, handleDrop, canSwap, isEditing, index, record }) {
-  const playerUrl = useMemo(() => '/profile/'+idToUrl(id), [id])
+  const playerUrl = useLinkId(id,'profile/')
   const isDrop = matchData.drops && matchData.drops.includes(id)
   const clickDrop = () => handleDrop(id, isDrop)
   

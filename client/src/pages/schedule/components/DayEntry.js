@@ -10,13 +10,14 @@ import {
 import { usePrefetchEvent } from "../schedule.fetch";
 import { isTempId } from '../services/date.utils';
 import { canDrop, dataType } from "../services/day.services";
-import { idToUrl } from "../../common/services/idUrl.services";
+import { useLinkId } from "../../common/services/idUrl.services";
 
 
 function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent }) {
   // Setup prefetching
   const prefetch = usePrefetchEvent();
   const loadEvent = (id) => id && (() => prefetch(id));
+  const eventUrl = useLinkId(id, 'event/');
 
   if (id && isTempId(id)) return <MissingDataStyle>...</MissingDataStyle>
 
@@ -40,7 +41,7 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent }) {
         { data.status < 3 && <EditEventButton status={data.status} onClick={editEvent} /> }
 
       </> :
-        <EntryLinkStyle to={'/event/'+idToUrl(id)} status={data.status}>{data.title}</EntryLinkStyle>
+        <EntryLinkStyle to={eventUrl} status={data.status}>{data.title}</EntryLinkStyle>
       }
     </DragBlock>
   );

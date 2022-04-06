@@ -1,5 +1,4 @@
-import React, { useMemo, useRef } from "react";
-import { useParams } from "react-router-dom";
+import React, { useRef } from "react";
 import Modal from "../common/Modal";
 import RawData from "../common/RawData";
 
@@ -13,14 +12,13 @@ import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 import { useEventQuery } from "./event.fetch";
 import { roundArray } from "./services/event.services";
 import { useDeleteRound } from "./services/roundButton.services";
-import { urlToId } from "../common/services/idUrl.services";
+import { useParamId } from "../common/services/idUrl.services";
 
 
 function Event() {
   // Get data
-  const { id } = useParams();
   const modal = useRef(null);
-  const eventId = useMemo(() => urlToId(id), [id]);
+  const eventId = useParamId('id');
   const { data, isLoading, error, isFetching } = useEventQuery(eventId);
 
   // Handle delete round
@@ -42,7 +40,7 @@ function Event() {
 
         {roundArray(data.matches && data.matches.length).map((roundNum, idx) => 
           <Round
-            key={id+'.'+roundNum}
+            key={eventId+'.'+roundNum}
             data={data}
             round={roundNum - 1}
             deleteRound={!idx ? handleDelete : null}

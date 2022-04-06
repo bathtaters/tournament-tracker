@@ -1,5 +1,4 @@
-import React, { useMemo } from "react";
-import { useParams } from "react-router-dom";
+import React from "react";
 
 import ProfilePic from "./components/ProfilePic";
 import PlayerDataRow from "./components/PlayerDataRow";
@@ -11,12 +10,11 @@ import { WrapperStyle, ProfileStyle, PlayerDataStyle } from "./styles/ProfileSty
 import profileLayout from "./profile.layout";
 
 import { usePlayerQuery } from "./profile.fetch";
-import { urlToId } from "../common/services/idUrl.services";
+import { useParamId } from "../common/services/idUrl.services";
 
 
 function Profile() {
-  const { id } = useParams();
-  const playerId = useMemo(() => urlToId(id), [id]);
+  const playerId = useParamId('id');
   const { data: allPlayers, isLoading, error } = usePlayerQuery();
   const playerData = allPlayers?.[playerId];
 
