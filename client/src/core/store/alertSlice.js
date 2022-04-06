@@ -8,10 +8,12 @@ export const alertSlice = createSlice({
   initialState, 
   reducers: {
     openAlert:  (state, action) => 
-      state.isOpen ? state : Object.assign(state, action.payload, { result: undefined, isOpen: true }),
+      state.isOpen ? console.warn('Cannot open alert while already open', state, action.payload) || state :
+        Object.assign(state, action.payload, { result: undefined, isOpen: true }),
 
     closeAlert: (state, action) =>
-      state.isOpen ? { ...initialState, result: action.payload ?? state.defaultResult } : state,
+      state.isOpen ? { ...initialState, result: action.payload ?? state.defaultResult } :
+        console.warn('Cannot close alert while already closed', state, action.payload) || state,
   }
 })
 
