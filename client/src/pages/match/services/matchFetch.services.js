@@ -24,7 +24,7 @@ export function dropsUpdate({ id, eventid, playerid, undrop }, { dispatch, query
   queryFulfilled.catch(update.undo); // rollback
 }
 
-export function matchUpdate({ id, eventid, clear = false, ...body }, { dispatch, queryFulfilled }) {
+export function matchUpdate({ id, eventid, ...body }, { dispatch, queryFulfilled }) {
   const update = dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
     const idx = body.key.match(/^wins\.(\d+)$/); // check for 'wins' update
     // update wins value
@@ -35,7 +35,7 @@ export function matchUpdate({ id, eventid, clear = false, ...body }, { dispatch,
   queryFulfilled.catch(update.undo); // rollback
 };
 
-export function swapPlayersUpdate({ id, eventid, clear = false, ...body }, { dispatch, queryFulfilled }) {
+export function swapPlayersUpdate({ id, eventid, ...body }, { dispatch, queryFulfilled }) {
   const update = dispatch(fetchApi.util.updateQueryData('match', eventid, draft => { 
     // Get player match-indexes
     const idx = [...Array(2)].map((_,i) => draft[body.swap[i].id].players.indexOf(body.swap[i].playerid));
