@@ -4,7 +4,7 @@ import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "../e
 
 import { editorButtonLayout } from "../eventEditor.layout";
 import { deleteEventAlert } from "../../../assets/alerts";
-import { useOpenAlert } from "../../common/common.hooks";
+import { useLockScreen, useOpenAlert } from "../../common/common.hooks";
 
 
 export default function useEditEventController(eventid, modal) {
@@ -12,8 +12,9 @@ export default function useEditEventController(eventid, modal) {
   const { data, isLoading, error } = useEventQuery(eventid, { skip: !eventid })
 
   // Init server fetches
-  const [ setEvent, { isLoading: isUpdating } ] = useSetEventMutation()
   const [ deleteEvent ] = useDeleteEventMutation()
+  const [ setEvent, { isLoading: isUpdating } ] = useSetEventMutation()
+  useLockScreen(isUpdating, `${eventid ? 'Upd' : 'Cre'}ating event...`)
   
   // Init hooks
   const playerList = useRef(null)
@@ -49,8 +50,6 @@ export default function useEditEventController(eventid, modal) {
 
   return {
     data, playerList, submitHandler,
-    // Show lock screen
-    isLoading: isUpdating,
     // Button layout
     buttons: editorButtonLayout(eventid, deleteHandler, modal.current.close),
   }

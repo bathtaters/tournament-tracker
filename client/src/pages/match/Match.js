@@ -9,7 +9,6 @@ import Modal from "../common/Modal"
 import Counter from "../common/Counter"
 import RawData from "../common/RawData"
 import Loading from "../common/Loading"
-import LoadingScreen from "../common/LoadingScreen"
 
 import { MatchStyle, PlayerStyle } from "./styles/MatchStyles"
 import { DrawsStyle, WinsStyle } from "./styles/CounterStyles"
@@ -22,7 +21,7 @@ import useMatchController from "./services/match.controller"
 function Match({ eventid, matchId, wincount, isEditing }) {
   // Get component data
   const {
-    matchData, rankings, players, settings, title, isReporting, reportModal,
+    matchData, rankings, players, settings, title, isLocked, reportModal,
     setVal, clearReport, report, swapProps, maxDraws, showLoading, error,
   } = useMatchController(eventid, matchId)
   
@@ -60,14 +59,13 @@ function Match({ eventid, matchId, wincount, isEditing }) {
         <MatchWins 
           matchData={matchData}
           wincount={wincount}
-          isEditing={isEditing || isReporting}
+          isEditing={isEditing || isLocked}
           clearReport={clearReport}
           setVal={setVal}
           openReport={()=>reportModal.current.open()}
         />
       </WinsStyle>
 
-      <LoadingScreen enable={isReporting} caption="Updating standings..." />
       <RawData className="text-xs w-80 m-auto" data={matchData} />
 
       <Modal ref={reportModal}>

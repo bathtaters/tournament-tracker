@@ -1,6 +1,6 @@
 import { useState, useImperativeHandle, useCallback, useRef } from "react";
 import { usePlayerQuery, useSettingsQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
-import { useOpenAlert } from "../../common/common.hooks";
+import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
 
 import playerListController, { retrieveList, usePropStateList } from "./playerList.services";
 import { getRemaining, randomArray } from "./playerEditor.utils";
@@ -12,6 +12,7 @@ export default function usePlayerEditorController(players, status, onEdit, ref) 
   const { data, isLoading, error, isFetching } = usePlayerQuery();
   const { data: settings, isLoading: settLoad, error: settErr } = useSettingsQuery();
   const [ createPlayer, { isLoading: isAddingPlayer } ] = useCreatePlayerMutation();
+  useLockScreen(isAddingPlayer, "Creating player...");
   
   // Init Local State
   const suggestRef = useRef(null);
@@ -57,6 +58,6 @@ export default function usePlayerEditorController(players, status, onEdit, ref) 
   // Pass to renderer
   return {
     data, playerList, inputData, suggestRef, popPlayer, notStarted,
-    isUpdating: isAddingPlayer || isFetching, isLoading: isAddingPlayer
+    isUpdating: isAddingPlayer || isFetching,
   }
 }

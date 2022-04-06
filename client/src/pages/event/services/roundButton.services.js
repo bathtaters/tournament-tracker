@@ -1,5 +1,4 @@
-import { useOpenAlert } from "../../common/common.hooks";
-import { useLockScreen } from "../../common/common.fetch";
+import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
 import { useNextRoundMutation, useClearRoundMutation } from "../event.fetch";
 
 import { deleteRoundAlert } from "../../../assets/alerts";
@@ -33,7 +32,7 @@ export default function useRoundButton(event, disabled) {
   
   // Get fetching status
   const isFetching = isLoading && event.roundactive !== event.roundcount + 1
-  const isLocked = useLockScreen(isFetching)
+  const isLocked = useLockScreen(isFetching, "Generating round...")
 
   // Get button status
   const disableButton = disabled || isLocked || disableRound(event)
@@ -43,8 +42,6 @@ export default function useRoundButton(event, disabled) {
       isNext(event) ? () => nextRound({ id: event.id, roundactive: event.roundactive }) : deleteRound,
 
     buttonText: getRoundButton(event, isLocked),
-
-    isFetching
   }
 }
 

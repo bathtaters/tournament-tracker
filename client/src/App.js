@@ -5,6 +5,7 @@ import Header from "./pages/header/Header";
 import Routing from "./Routing";
 import Loading from "./pages/common/Loading";
 import Alert from "./pages/common/Alert";
+import LoadingScreen from "./pages/common/LoadingScreen";
 import { AppWrapperStyle, PageWrapperStyle } from "./pages/common/styles/CommonStyles";
 
 import { useSettingsQuery } from "./pages/common/common.fetch";
@@ -21,6 +22,7 @@ function App() {
       <BrowserRouter>
         <Header title={data && data.title} />
         <PageWrapperStyle><Routing /></PageWrapperStyle>
+        <LoadingScreen />
       </BrowserRouter>
     </AppWrapperStyle>
   );

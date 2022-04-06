@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from 'prop-types';
 
 import PlayerEditor from "./components/PlayerEditor";
-import LoadingScreen from "../common/LoadingScreen";
 import { TitleStyle, StatusStyle } from "./styles/EventEditorStyles";
 
 import InputForm from "../common/InputForm";
@@ -49,8 +48,6 @@ function EditEvent({ eventid, modal }) {
       </InputForm>
 
       <RawData className="text-sm mt-4" data={data} />
-
-      <LoadingScreen enable={isLoading} caption={`${eventid ? 'Upd' : 'Cre'}ating event...`} />
     </div>
   );
 }

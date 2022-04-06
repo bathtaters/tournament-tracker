@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 
-import { useOpenAlert } from "../../common/common.hooks"
+import { useOpenAlert, useLockScreen } from "../../common/common.hooks"
 import { useResetDbMutation } from "../header.fetch"
 import { doReset } from './headerFetch.services'
 import { getLocalSettings, setLocalVar } from "../../common/services/fetch.services"
@@ -13,13 +13,11 @@ export function useResetHandler() {
   const navigate = useNavigate()
   const openAlert = useOpenAlert()
   const [ resetDb, { isLoading } ] = useResetDbMutation()
+  useLockScreen(isLoading, "Resetting data...")
 
-  return [
-    (fullReset) => openAlert(resetDbAlert, 0)
-      .then(r => r && openAlert(resetDbAlertConfirm, 1))
-      .then(r => r && doReset(resetDb, fullReset, navigate)),
-    isLoading
-  ]
+  return (fullReset) => openAlert(resetDbAlert, 0)
+    .then(r => r && openAlert(resetDbAlertConfirm, 1))
+    .then(r => r && doReset(resetDb, fullReset, navigate));
 }
 
 // Push live updates to cache

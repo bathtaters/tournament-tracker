@@ -1,5 +1,5 @@
 import { useRef } from "react"
-import { useOpenAlert } from "../../common/common.hooks"
+import { useOpenAlert, useLockScreen } from "../../common/common.hooks"
 import { 
   useMatchQuery, useReportMutation,
   useUpdateMatchMutation, 
@@ -29,9 +29,10 @@ export default function useMatchController(eventid, matchId) {
 
   // Mutation Hooks
   const [ update ] = useUpdateMatchMutation()
-  const [ report, { isLoading: isReporting } ] = useReportMutation()
   const [ swapPlayers ] = useSwapPlayersMutation()
   const [ updateDrops ] = useUpdateDropsMutation()
+  const [ report, { isLoading: isReporting } ] = useReportMutation()
+  const isLocked = useLockScreen(isReporting, "Updating standings...")
 
   // Catch loading/error
   const matchData = matches?.[matchId], error = matchError || rankError || playerError
@@ -48,7 +49,7 @@ export default function useMatchController(eventid, matchId) {
   return {
     // Base data
     matchData, rankings, players, settings,
-    title, isReporting, reportModal,
+    title, isLocked, reportModal,
     // Mutators
     clearReport, report,
 

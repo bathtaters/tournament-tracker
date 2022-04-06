@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useLayoutEffect, useRef } from "react";
 import { usePrefetch } from "./common.fetch";
+import { useLockScreen } from '../../core/services/global.services';
 import { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult } from "./services/alert.services";
-export { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult }
+export { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult, useLockScreen }
 
 // Preload page data
 export function usePrefetchBase() {
