@@ -4,6 +4,7 @@ import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
 
 import playerListController, { retrieveList, usePropStateList } from "./playerList.services";
 import { getRemaining, randomArray } from "./playerEditor.utils";
+import { playerLockCaption } from "../../../assets/constants";
 
 
 export default function usePlayerEditorController(players, status, onEdit, ref) {
@@ -12,7 +13,7 @@ export default function usePlayerEditorController(players, status, onEdit, ref) 
   const { data, isLoading, error, isFetching } = usePlayerQuery();
   const { data: settings, isLoading: settLoad, error: settErr } = useSettingsQuery();
   const [ createPlayer, { isLoading: isAddingPlayer } ] = useCreatePlayerMutation();
-  useLockScreen(isAddingPlayer, "Creating player...");
+  useLockScreen(isAddingPlayer, playerLockCaption);
   
   // Init Local State
   const suggestRef = useRef(null);

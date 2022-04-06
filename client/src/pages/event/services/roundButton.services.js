@@ -2,7 +2,7 @@ import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
 import { useNextRoundMutation, useClearRoundMutation } from "../event.fetch";
 
 import { deleteRoundAlert } from "../../../assets/alerts";
-import { roundButtonText } from "../../../assets/constants";
+import { roundButtonText, roundButtonLockCaption } from "../../../assets/constants";
 
 // Get Round Button label
 //  none|begin|end|back|next|wait|done
@@ -32,7 +32,7 @@ export default function useRoundButton(event, disabled) {
   
   // Get fetching status
   const isFetching = isLoading && event.roundactive !== event.roundcount + 1
-  const isLocked = useLockScreen(isFetching, "Generating round...")
+  const isLocked = useLockScreen(isFetching, roundButtonLockCaption)
 
   // Get button status
   const disableButton = disabled || isLocked || disableRound(event)

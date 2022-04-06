@@ -6,6 +6,7 @@ import { doReset } from './headerFetch.services'
 import { getLocalSettings, setLocalVar } from "../../common/services/fetch.services"
 
 import { resetDbAlert, resetDbAlertConfirm } from "../../../assets/alerts"
+import { resetDataLockCaption } from '../../../assets/constants'
 import { settings } from "../../../assets/config"
 
 // Handle clicking ResetDB buttons
@@ -13,7 +14,7 @@ export function useResetHandler() {
   const navigate = useNavigate()
   const openAlert = useOpenAlert()
   const [ resetDb, { isLoading } ] = useResetDbMutation()
-  useLockScreen(isLoading, "Resetting data...")
+  useLockScreen(isLoading, resetDataLockCaption)
 
   return (fullReset) => openAlert(resetDbAlert, 0)
     .then(r => r && openAlert(resetDbAlertConfirm, 1))

@@ -1,3 +1,4 @@
+// -- String Sets -- \\
 
 export const dragType = { event: "json/eventday", player: "json/matchplayer" };
 
@@ -20,6 +21,13 @@ export const roundButtonText = {
   wait: "Awaiting Report",
   done: "Event Complete",
 };
+
+// Lock Screen captions
+export const roundButtonLockCaption = "Generating round...";
+export const editEventLockCaptions = ["Creating event...", "Updating event..."];
+export const playerLockCaption = "Creating player...";
+export const resetDataLockCaption = "Resetting data...";
+export const reportLockCaption = "Updating standings...";
 
 
 // -- Server error adapters -- \\

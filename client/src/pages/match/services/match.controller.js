@@ -13,6 +13,7 @@ import { getMatchTitle } from "./match.services"
 import { swapController, canSwap } from "./swap.services"
 
 import { clearReportAlert } from '../../../assets/alerts'
+import { reportLockCaption } from "../../../assets/constants"
 import valid from "../../../assets/validation.json"
 
 
@@ -32,7 +33,7 @@ export default function useMatchController(eventid, matchId) {
   const [ swapPlayers ] = useSwapPlayersMutation()
   const [ updateDrops ] = useUpdateDropsMutation()
   const [ report, { isLoading: isReporting } ] = useReportMutation()
-  const isLocked = useLockScreen(isReporting, "Updating standings...")
+  const isLocked = useLockScreen(isReporting, reportLockCaption)
 
   // Catch loading/error
   const matchData = matches?.[matchId], error = matchError || rankError || playerError

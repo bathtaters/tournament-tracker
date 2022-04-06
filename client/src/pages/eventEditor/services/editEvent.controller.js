@@ -4,6 +4,7 @@ import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "../e
 
 import { editorButtonLayout } from "../eventEditor.layout";
 import { deleteEventAlert } from "../../../assets/alerts";
+import { editEventLockCaptions } from "../../../assets/constants";
 import { useLockScreen, useOpenAlert } from "../../common/common.hooks";
 
 
@@ -14,7 +15,7 @@ export default function useEditEventController(eventid, modal) {
   // Init server fetches
   const [ deleteEvent ] = useDeleteEventMutation()
   const [ setEvent, { isLoading: isUpdating } ] = useSetEventMutation()
-  useLockScreen(isUpdating, `${eventid ? 'Upd' : 'Cre'}ating event...`)
+  useLockScreen(isUpdating, editEventLockCaptions[+Boolean(eventid)])
   
   // Init hooks
   const playerList = useRef(null)
