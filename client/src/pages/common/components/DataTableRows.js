@@ -23,7 +23,7 @@ export function BaseRow({ id, extra, index, colLayout, className }) {
 }
 
 
-export function OverlayRow({ id, rowLink, onClick, className }) {
+export function OverlayRow({ id, rowLink, onClick, onHover, className }) {
   const linkUrl = useLinkId(rowLink != null && id, rowLink)
-  return <OverlayRowStyle className={className} onClick={onClick} to={linkUrl} />
+  return <OverlayRowStyle to={linkUrl} className={className} onClick={onClick} onHover={onHover} />
 }

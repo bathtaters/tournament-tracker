@@ -28,12 +28,22 @@ import { colCount } from "./services/dataTable.services"
   children   (optional) = displayed when no rows are present
 \* ***  ---  *** */
 
-function DataTable({ colLayout, rowIds, extra, rowLink, onRowClick, hdrClass, className = '', rowClass = '', cellClass = '', children }) {
+function DataTable({
+  colLayout, rowIds, extra,
+  rowLink, onRowClick, onRowHover,
+  hdrClass, className = '', rowClass = '', cellClass = '',
+  children
+}) {
   // Pass clicks to onRowClick
   const clickHandler = (rowId, idx) => typeof onRowClick === 'function' ?
     (ev) => onRowClick(rowId, ev, extra, idx) : undefined
+
+  const hoverHandler = (rowId, idx) => typeof onRowHover === 'function' ?
+    (ev) => onRowHover(rowId, ev, extra, idx) : undefined
   
   const colCnt = useMemo(() => colCount(colLayout), [])
+
+  const overlayClass = `${rowClass} ${cellClass}`
   
   // Render
   return (
@@ -49,7 +59,10 @@ function DataTable({ colLayout, rowIds, extra, rowLink, onRowClick, hdrClass, cl
 
         <OverlayStyle className={className} hdrClass={hdrClass}>
           { rowIds?.map((id, idx) => 
-            <OverlayRow key={id+'__L'} id={id} rowLink={rowLink} className={`${rowClass} ${cellClass}`} onClick={clickHandler(id, idx)} />
+            <OverlayRow
+              key={id+'__L'} id={id} rowLink={rowLink} className={overlayClass}
+              onClick={clickHandler(id, idx)} onHover={hoverHandler(id, idx)}
+            />
           )}
         </OverlayStyle>
 

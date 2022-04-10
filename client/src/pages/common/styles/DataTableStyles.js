@@ -29,11 +29,17 @@ export function OverlayStyle({ className = '', hdrClass, children }) {
   )
 }
 
-export function OverlayRowStyle({ to, onClick, className = '' }) {
-  if (!to) return <div className={`w-full h-full px-2 bg-opacity-0 base-bgd-inv ${className} hover:bg-opacity-25`} onClick={onClick}>{" "}</div>
+export function OverlayRowStyle({ to, onClick, onHover, className = '' }) {
+  if (!to) return (
+    <div
+      onClick={onClick} onMouseEnter={onHover}
+      className={`w-full h-full px-2 bg-opacity-0 base-bgd-inv ${className} hover:bg-opacity-25`}
+    >{" "}</div>
+  )
   return (
     <Link
-      to={to} onClick={onClick} className={`w-full h-full px-2 bg-opacity-0 base-bgd-inv ${className} hover:bg-opacity-25`}
+      to={to} onClick={onClick} onMouseEnter={onHover}
+      className={`w-full h-full px-2 bg-opacity-0 base-bgd-inv ${className} hover:bg-opacity-25`}
     >{" "}</Link>
   )
 }
