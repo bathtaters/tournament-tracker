@@ -47,7 +47,7 @@ function DataTable({ colLayout, rowIds, extra, rowLink, onRowClick, hdrClass, cl
           }
         </GridStyle>
 
-        <OverlayStyle className={className}>
+        <OverlayStyle className={className} hdrClass={hdrClass}>
           { rowIds?.map((id, idx) => 
             <OverlayRow key={id+'__L'} id={id} rowLink={rowLink} className={`${rowClass} ${cellClass}`} onClick={clickHandler(id, idx)} />
           )}

@@ -20,10 +20,10 @@ export function GridStyle({ colLayout, className = '', children }) {
   )
 }
 
-export function OverlayStyle({ className = '', children }) {
+export function OverlayStyle({ className = '', hdrClass, children }) {
   return (
     <div className={gridBase + " grid-cols-1 absolute top-0 left-0 right-0 bottom-0 z-0 " + className}>
-      <HeaderStyle label=" " />
+      <HeaderStyle label=" " className={hdrClass} />
       {children}
     </div>
   )

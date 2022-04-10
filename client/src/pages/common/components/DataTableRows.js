@@ -5,7 +5,7 @@ import { getCellValue } from "../services/dataTable.services"
 
 
 export const HeaderRow = React.memo(function HeaderRow({ colLayout, className }) {
-  return colLayout.map(({ label, span, hdrClass,  }) =>
+  return colLayout.map(({ label, span, hdrClass }) =>
     <HeaderStyle label={label} span={span} className={`${className || ''} ${hdrClass ?? headerBase}`} key={label || '_none'} />
   )
 })
