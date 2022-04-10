@@ -39,7 +39,7 @@ export function OverlayRowStyle({ to, onClick, className = '' }) {
 }
 
 export function HeaderStyle({ label, span = 1, className = '' }) {
-  return <div className={`${className} col-span-${span}`}>{label}</div>
+  return <h4 className={`${className} col-span-${span}`}>{label}</h4>
 }
 
 export function CellStyle({ cellStyle, span = 1, baseClass = '', className = '', children }) {
