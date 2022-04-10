@@ -13,15 +13,18 @@ export const createPlayerController = (playerData, createPlayer) => {
 
 
 // Click on player name handler
-const playerClickController = (deleteMode, deletePlayer, openAlert) => (playerid, e, playerData) => {
+const playerClickController = (deleteMode, deletePlayer, openAlert) => (playerid, e, { players, stats }) => {
   if (!deleteMode) return; // Pass click to default handler
   e.preventDefault()
 
+  // Get data
+  const name = players[playerid]?.name, hasEvents = stats[playerid]?.eventids?.length;
+
   // Check player can be deleted
-  if (playerData.eventids?.length) return openAlert(cantDeletePlayerAlert(playerData.name))
+  if (hasEvents) return openAlert(cantDeletePlayerAlert(name))
 
   // Delete player
-  openAlert(deletePlayerAlert(playerData.name), 0).then(r => r && deletePlayer(playerid))
+  openAlert(deletePlayerAlert(name), 0).then(r => r && deletePlayer(playerid))
 }
 
 // Players base logic

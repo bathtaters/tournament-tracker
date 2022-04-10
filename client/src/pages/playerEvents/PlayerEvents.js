@@ -1,19 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import EventRow from "./components/EventRow";
+import DataTable from "../common/DataTable";
 import Loading from "../common/Loading";
 import RawData from "../common/RawData";
-import { WrapperStyle, GridStyle } from "./styles/PlayerEventStyles";
-import { HeaderStyle, NoEventsStyle } from "./styles/CellStyle";
+import { WrapperStyle } from "./styles/PlayerEventStyles";
 
-import scheduleRows from "./playerEvents.layout";
+import eventsLayout from "./playerEvents.layout";
 import { useEventQuery, usePlayerEventsQuery, usePlayerMatchesQuery, usePrefetchEvent } from "./playerEvents.fetch";
 
 
 function PlayerEvents({ id }) {
   // Fetch global state
-  const { data, isLoading, error } = usePlayerEventsQuery(id);
+  const { data: eventIds, isLoading, error } = usePlayerEventsQuery(id);
   const { data: matches, isLoading: matchLoad, error: matchErr } = usePlayerMatchesQuery(id);
   const { data: events,  isLoading: eventLoad, error: eventErr } = useEventQuery();
 
@@ -22,22 +21,31 @@ function PlayerEvents({ id }) {
 
   // Handle loading/errors
   const [ loading, err ] = [ isLoading || matchLoad || eventLoad,  error || matchErr || eventErr ];
-  if (loading || err || !events || !Array.isArray(data)) return <Loading loading={loading} error={err} altMsg="Not found" />;
+  if (loading || err || !events || !Array.isArray(eventIds)) return (
+    <WrapperStyle title="Schedule">
+      <DataTable colLayout={eventsLayout} className="mx-4" hdrClass="dim-color text-left text-xl">
+        <Loading loading={loading} error={err} altMsg="Not found" />
+      </DataTable>
+    </WrapperStyle>
+  )
 
   // Render
   return (
     <WrapperStyle title="Schedule">
-      <GridStyle>
-        { scheduleRows.map(row => <HeaderStyle span={row.span} key={row.title}>{row.title}</HeaderStyle>) }
-
-        { data.length ?
-            data.map(eventId => <EventRow data={events[eventId]} results={matches[eventId]} prefetch={prefetch} key={eventId} />)
-            :
-            <NoEventsStyle />
-        }
-      </GridStyle>
+      <DataTable
+        colLayout={eventsLayout}
+        rowIds={eventIds}
+        extra={{ events, matches }}
+        rowLink="event/"
+        className="mx-4"
+        cellClass="py-1"
+        hdrClass="dim-color text-left text-xl"
+        onHover={'TO DO:' || prefetch}
+      >
+        – None –
+      </DataTable>
       
-      <RawData className="mt-6" data={data} />
+      <RawData className="mt-6" data={eventIds} />
     </WrapperStyle>
   );
 }

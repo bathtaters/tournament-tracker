@@ -1,62 +1,44 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import StatsHeader from "./components/StatsHeader";
-import StatsRow from "./components/StatsRow";
-import StatsOverlay from "./components/StatsOverlay";
+import DataTable from "../common/DataTable";
 import RawData from "../common/RawData";
 import Loading from "../common/Loading";
 
-import { StatsStyle, GridStyle, OverlayStyle, MissingStyle } from "./styles/StatsStyles";
 import statsLayout from "./stats.layout";
-
+import { getPlayerList } from "./services/stats.services";
 import { useStatsQuery, usePlayerQuery } from "../common/common.fetch";
-import { getPlayerList, colCount } from "./services/stats.services";
-
-const colCnt = colCount(statsLayout); // calc column count
 
 function Stats({ eventid, onPlayerClick, className = '', highlightClass = '', hideTeams }) {
   // Global state
-  const { data, isLoading, error } = useStatsQuery(eventid);
-  const { data: players, isLoading: playLoad, error: playErr } = usePlayerQuery();
-  const playerList = getPlayerList(data && data.ranking, players, !eventid, hideTeams);
-
-  // Pass clicks to onPlayerClick
-  const clickHandler = pid => event => {
-    if (typeof onPlayerClick === 'function')
-      onPlayerClick(pid, event, {...players[pid], ...data[pid]});
-  };
+  const { data: stats, isLoading, error } = useStatsQuery(eventid)
+  const { data: players, isLoading: playLoad, error: playErr } = usePlayerQuery()
+  const playerList = getPlayerList(stats?.ranking, players, !eventid, hideTeams)
 
   // Loading/Error catcher
   if (isLoading || playLoad || error || playErr) return (
-    <StatsStyle><GridStyle className={className} layoutArray={statsLayout}>
-      <StatsHeader layoutArray={statsLayout} />
-      <Loading loading={isLoading || playLoad} error={error || playErr} className={'col-span-'+colCnt} />
-    </GridStyle></StatsStyle>
-  );
+    <DataTable colLayout={statsLayout} className={className}>
+      <Loading loading={isLoading || playLoad} error={error || playErr} />
+    </DataTable>
+  )
   
   // Render
   return (
     <div>
-      <StatsStyle>
-        <GridStyle className={className} layoutArray={statsLayout}>
-          <StatsHeader layoutArray={statsLayout} />
+      <DataTable
+        colLayout={statsLayout}
+        rowIds={playerList}
+        extra={{ stats, players }}
+        rowLink="profile/"
+        rowClass={highlightClass}
+        className={className}
+        hdrClass="font-normal text-center mb-2"
+        onRowClick={onPlayerClick}
+      >
+        No players exist
+      </DataTable>
 
-          { playerList?.length ? 
-            playerList.map((id, idx) => 
-              <StatsRow key={id+'__S'} playerId={id} index={idx} layoutArray={statsLayout} players={players} stats={data} />
-             ) :
-            <MissingStyle colCount={colCnt}>No players exist</MissingStyle>
-          }
-        </GridStyle>
-
-        <OverlayStyle className={className}>
-          <StatsOverlay players={playerList} className={highlightClass} clickHandler={clickHandler} />
-        </OverlayStyle>
-
-      </StatsStyle>
-
-      <RawData className="text-sm" data={data} />
+      <RawData className="text-sm" data={stats} />
     </div>
   );
 }
