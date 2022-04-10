@@ -1,23 +1,26 @@
-import { dayClasses } from "./services/playerEvent.services";
-import { statusInfo } from "../../assets/constants";
-import { idToUrl } from "../common/services/idUrl.services";
+import { dayClasses } from "../schedule/services/date.utils";
+import { statusInfo } from "../../assets/constants"
 
-// Component layout
-const scheduleRows = [
+// Player Schedule Columns
+const eventsLayout = [
   { 
-    title: 'Day', 
-    value: ({day}) => day ? day.slice(5,10).replace(/-/g,'/') : 'None', 
-    class: ({day}) => dayClasses(day && day.slice(0,10)).titleCls,
+    label: 'Date', default: 'TBD', cellStyle: {align: 'right', size: 'md'}, hdrClass: 'text-right mr-2',
+    className: (id, {events}) => dayClasses(events[id]?.day?.slice(0,10)).titleCls + ' mr-2',
+    get: (id, {events}) => events[id]?.day?.slice(5,10).replace(/-/g,'/'), 
   },
-  { title: 'Event', value: d => d.title, span: 3, link: d => `/event/${idToUrl(d.id)}` },
   {
-    title: 'Status', span: 2,
-    value: ({isDrop, status}) => statusInfo[status || 0].label + (isDrop ? " (Dropped)" : ""),
-    class: ({status}) => statusInfo[status || 0].class,
+    label: 'Event', cellStyle: {align: 'left', weight: 'normal', size: 'lg'}, default: '?',
+    hdrClass: 'text-left', className: 'link',
+    get: (id, {events}) => events[id]?.title, span: 3,
   },
-  { title: 'Wins',   value: ({ record }) => record[0], hideBelow: 2 },
-  { title: 'Losses', value: ({ record }) => record[1], hideBelow: 2 },
-  { title: 'Draws',  value: ({ record }) => record[2], hideBelow: 2 },
-];
+  {
+    label: 'Status', span: 2, cellStyle: {align: 'left', size: 'md'}, default: statusInfo[0].label, hdrClass: 'text-left',
+    className: (id, {events}) => statusInfo[events[id]?.status ?? 0].class,
+    get: (id, {events, matches}) => statusInfo[events[id]?.status ?? 0].label + (matches[id]?.isDrop ? " (Dropped)" : ""),
+  },
+  { label: 'Wins',   get: (id, {events, matches}) => events[id]?.status > 2 ? matches[id]?.record?.[0] : '', cellStyle: {size: 'lg'} },
+  { label: 'Losses', get: (id, {events, matches}) => events[id]?.status > 2 ? matches[id]?.record?.[1] : '', cellStyle: {size: 'lg'} },
+  { label: 'Draws',  get: (id, {events, matches}) => events[id]?.status > 2 ? matches[id]?.record?.[2] : '', cellStyle: {size: 'lg'} },
+]
 
-export default scheduleRows;
+export default eventsLayout

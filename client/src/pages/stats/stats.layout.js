@@ -1,13 +1,20 @@
 import { formatPercent } from '../../assets/formatting';
-// Stats columns
 
-export default [
-  { label: '',     get: 'index', span: 'auto', indexStyle: true },
-  { label: 'Name', get: 'name',  span: 'auto', titleStyle: true, default: '-' },
-  { label: 'W',    get: data => data.matchRecord && data.matchRecord[0], },
-  { label: 'L',    get: data => data.matchRecord && data.matchRecord[1], },
-  { label: 'D',    get: data => data.matchRecord && data.matchRecord[2], },
-  { label: 'G',    get: data => formatPercent(data.gameRate), },
-  { label: 'OMW',  get: data => formatPercent(data.oppMatch), },
-  { label: 'OGW',  get: data => formatPercent(data.oppGame), },
+// Stats table classes
+const hdrClass = 'text-xs sm:text-xl',
+  indexStyle = { size: 'base', color: 'dim',  weight: 'light',  align: 'right'  },
+  titleStyle = { size: 'lg',   color: 'max',  weight: 'light',  align: 'left'   };
+
+// Stats columns
+const statsLayout = [
+  { label: '',     get: 'index', span: 'auto', cellStyle: indexStyle },
+  { label: 'Name', get: (id, {players}) => players[id]?.name, span: 'auto', cellStyle: titleStyle, hdrClass: 'text-xl', default: '?' },
+  { label: 'W',    get: (id, {stats}) => stats[id]?.matchRecord?.[0], default: '-', hdrClass: 'text-xl' },
+  { label: 'L',    get: (id, {stats}) => stats[id]?.matchRecord?.[1], default: '-', hdrClass: 'text-xl' },
+  { label: 'D',    get: (id, {stats}) => stats[id]?.matchRecord?.[2], default: '-', hdrClass: 'text-xl' },
+  { label: 'G',    get: (id, {stats}) => stats[id]?.gameRate, format: formatPercent, default: '-', hdrClass },
+  { label: 'OMW',  get: (id, {stats}) => stats[id]?.oppMatch, format: formatPercent, default: '-', hdrClass },
+  { label: 'OGW',  get: (id, {stats}) => stats[id]?.oppGame,  format: formatPercent, default: '-', hdrClass },
 ]
+
+export default statsLayout
