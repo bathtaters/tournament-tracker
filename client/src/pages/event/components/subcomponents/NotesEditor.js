@@ -12,7 +12,7 @@ const charLimit = valid.limits.event.notes.max
 function NotesEditor({ id, notes }) {
   // Save to server
   const [ updateEvent, { isLoading } ] = useSetEventMutation()
-  const saveText = useCallback((text) => updateEvent({ id, notes: text }), [updateEvent])
+  const saveText = useCallback((text) => updateEvent({ id, notes: text }), [id, updateEvent])
 
   // Setup text editor logic
   const { text, isEdit, ref, onClick, onChange } = useTextEditor(notes, saveText, { charLimit })
