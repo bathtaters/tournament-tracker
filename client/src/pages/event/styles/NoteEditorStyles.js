@@ -22,7 +22,7 @@ export function NotesStyle(props) {
 export function NotesOverlayStyle({ visible, onClick, children }) {
   if (!visible) return null
   return (
-    <div className="absolute top-0 bottom-0 left-0 right-0 flex" onClick={onClick}>
+    <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex" onClick={onClick}>
       <div className="m-auto pb-1 dim-color italic font-thin cursor-pointer">{children}</div>
     </div>
   )
@@ -31,15 +31,18 @@ export function NotesOverlayStyle({ visible, onClick, children }) {
 // Character Counter
 export function CharCountStyle({ visible, children }) {
   if (!visible) return null
-  return <div className="dim-color absolute bottom-2 right-1 text-right text-xs font-thin base-bgd bg-opacity-70">{children}</div>
+  return <div className="dim-color absolute bottom-2 right-1 z-10 text-right text-xs font-thin base-bgd bg-opacity-70">{children}</div>
 }
 
 
 // Edit/Save Button
+const editNotesClass = "absolute top-0 right-1 z-20 p-1 cursor-"
 export function EditNotesButton({ isEdit, onClick, isFetching }) {
+  if (isFetching) return <div className={editNotesClass+"wait"}><LoadingSpinner /></div>
   return (
-    <div className={"absolute top-0 right-1 p-1 cursor-"+(isFetching ? "wait" : "pointer")} onClick={isFetching ? undefined : onClick}>
-      {isFetching ? <LoadingSpinner /> : isEdit ? '💾' : "🖊"}
-    </div>
+    <input
+      value={isEdit ? "💾" : "🖊"} type="button" onClick={onClick}
+      className={editNotesClass+"pointer border-0 active:!bg-opacity-0"}
+    />
   )
 }
