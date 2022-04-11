@@ -1,20 +1,17 @@
 import { useEffect, useState } from "react"
 import { usePropState, useOnClickOutsideRef } from "../../common/common.hooks"
 
-export default function useTextEditor(serverText, updateServer, { charLimit = 1000, saveOnDismount = true }) {
+export default function useTextEditor(serverText, updateServer, { charLimit = 1000 }) {
   // Setup state (editMode + controlledText)
   const [ isEdit, setEdit ] = useState(false)
   const [ text,   setText ] = usePropState(serverText, (s,p) => p && s === p)
 
   // Truncs text to charLimit & sends to server (only if it's changed)
-  const saveText = async () => {
-    const saveText = text.length > charLimit ? text.slice(0, charLimit) : text
-    if (saveText !== serverText) updateServer(saveText)
+  const saveText = () => {
+    const newText = text.length > charLimit ? text.slice(0, charLimit) : text
+    if (newText !== serverText) updateServer(newText)
     setEdit(false) // Exit editMode
   }
-
-  // Save on leave page
-  useEffect(() => saveOnDismount && isEdit ? saveText : null, [])
   
   return {
     // Main state vars
