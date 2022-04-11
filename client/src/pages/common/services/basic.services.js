@@ -20,6 +20,8 @@ export const nextTempId = (type, exists) => {
   } return id;
 }
 
+// Generates 'onClick' events for mouse & touch screen (usage: <Tag {...onClickAll(cb)} /> )
+export const onClickAll = (callback) => ({ onMouseDown: callback, onTouchStart: callback })
 
 // Listen & handle hotkeys
 // hotkeyMap = { [keyCode]: () => action(), ... }
