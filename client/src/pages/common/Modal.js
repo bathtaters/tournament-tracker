@@ -32,7 +32,7 @@ function Modal({ children, className = '', bgdClose = true, startOpen = false, s
 
   // Render into modalRoot
   return createPortal(isOpen && (
-    <OverlayContainer className={overlayClasses} z={4} onClick={bgdClose ? () => close() : null}>
+    <OverlayContainer className={overlayClasses} z={70} onClick={bgdClose ? () => close() : null}>
       <FocusTrap paused={alertIsOpen} focusTrapOptions={{ escapeDeactivates: false }}>
         <ModalStyle className={className}>
           <CloseButton onClick={closeWithMsg} />

@@ -45,7 +45,7 @@ function Alert() {
 
   // Render Alert Component to AlertRoot
   return createPortal(isOpen && (
-    <OverlayContainer className={overlayClasses} z={5}>
+    <OverlayContainer className={overlayClasses} z={90}>
       <FocusTrap focusTrapOptions={{ escapeDeactivates: false }}>
         <ModalStyle className={alertModalClass + (className ?? '')}>
           { Boolean(showClose ?? !buttons?.length) && <CloseButton onClick={() => close(showClose || undefined)} /> }

@@ -5,7 +5,7 @@ export function HeaderStyle({ children }) {
   return (
     <div className="h-28"> {/* Spacing underneath header */}
 
-      <div className="fixed top-0 z-20 w-full alt-bgd bg-opacity-90 h-24 p-2 flex justify-around items-center px-2">
+      <div className="fixed top-0 z-40 w-full alt-bgd bg-opacity-90 h-24 p-2 flex justify-around items-center px-2">
         {children}
       </div>
 
@@ -26,5 +26,5 @@ export function LinkStyle({ to, text }) {
 }
 
 export function OverlayStyle({ edge = "left", spacing = "2", children }) {
-  return (<div className={`absolute top-0 ${edge}-0 z-30 m-${spacing}`}>{children}</div>);
+  return (<div className={`absolute top-0 ${edge}-0 z-50 m-${spacing}`}>{children}</div>);
 }

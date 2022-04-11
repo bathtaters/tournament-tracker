@@ -14,7 +14,7 @@ export function WrapperStyle({ children }) {
 export function GridStyle({ colLayout, className = '', children }) {
   const gridTemplateColumns = useMemo(() => layoutTemplate(colLayout), [])
   return (
-    <div className={gridBase + " gap-x-2 px-4 items-center " + className} style={{ gridTemplateColumns }}>
+    <div className={`${gridBase} gap-x-2 px-4 items-center ${className}`} style={{ gridTemplateColumns }}>
       {children}
     </div>
   )
@@ -22,7 +22,7 @@ export function GridStyle({ colLayout, className = '', children }) {
 
 export function OverlayStyle({ className = '', hdrClass, children }) {
   return (
-    <div className={gridBase + " grid-cols-1 absolute top-0 left-0 right-0 bottom-0 z-0 " + className}>
+    <div className={`${gridBase} grid-cols-1 absolute top-0 left-0 right-0 bottom-0 z-auto ${className}`}>
       <HeaderStyle label=" " className={hdrClass} />
       {children}
     </div>

@@ -12,7 +12,7 @@ export const ListStyle = React.forwardRef(function ListStyle({ textbox, children
   }, [textbox.current?.offsetWidth])
 
   return (
-    <div className="absolute z-50 top-auto max-h-screen">
+    <div className="absolute z-auto top-auto max-h-screen">
       <div className="fixed border dim-border shadow-lg max-h-32 overflow-y-auto overflow-x-hidden" ref={ref}>
         <ul>{children}</ul>
       </div>
