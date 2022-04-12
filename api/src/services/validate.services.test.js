@@ -10,6 +10,7 @@ jest.mock('../config/validation', () => ({
   limits: { setA: { a: 'lims1', b: 'lims2' }, setB: { c: 'lims3' }, },
 }))
 
+// USES UNMOCKED VALIDATE.UTILS -- Ensure that passes the test first
 
 // GET SCHEMA FROM CONFIG \\
 
@@ -193,8 +194,8 @@ describe('getSchema', () => {
         .toHaveProperty('optional', {options: {nullable: true, checkFalsy: true}})
     })
     it('limits for string/float/int', () => {
-      expect(services.getSchema('test','string','lims',['isIn'],false).test.isLength)
-        .toEqual({ options: 'lims', errorMessage: expect.any(String) })
+      expect(services.getSchema('test','string','lims',['isIn'],false).test.custom)
+        .toEqual({ options: expect.any(Function), errorMessage: expect.any(String) })
       expect(services.getSchema('test','float','lims',['isIn'],false).test.isFloat)
         .toEqual({ options: 'lims', errorMessage: expect.any(String) })
       expect(services.getSchema('test','int','lims',['isIn'],false).test.isInt)
@@ -290,18 +291,9 @@ describe('getSchema', () => {
 
 
   describe('interval', () => {
-    it('validation', () => {
-      const validate = services.getSchema('test','interval',null,['isIn'],false)
-        .test.custom.options
-      expect(validate).toEqual(expect.any(Function))
-      expect(validate('01')).toBe(true)
-      expect(validate('01:02')).toBe(true)
-      expect(validate('01:02:03')).toBe(true)
-      expect(validate('01:02:03:04')).toBe(false)
-      expect(validate('01:0203')).toBe(false)
-      expect(validate('1')).toBe(false)
-      expect(validate('01:02:03a')).toBe(false)
-      expect(validate('a01:02:03')).toBe(false)
+    it('validation is custom function', () => {
+      const result = services.getSchema('test','interval',null,['isIn'],false)
+      expect(result.test.custom.options).toEqual(expect.any(Function))
     })
     it('sanitize w/ parseInterval', () => {
       const result = services.getSchema('test','interval',null,['isIn'],false)
@@ -318,7 +310,7 @@ describe('getSchema', () => {
     })
     it('array has basic props', () => {
       const result = services.getSchema('test','any[]',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isArray', {errorMessage: expect.any(String)})
+      expect(result.test).toHaveProperty('isArray', {errorMessage: expect.any(String), options: null})
       expect(result.test).toHaveProperty('in', ['isIn'])
     })
     it('elements basic props', () => {
