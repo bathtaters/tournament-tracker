@@ -5,8 +5,8 @@ export function HeaderStyle({ children }) {
   return (
     <div className="h-28"> {/* Spacing underneath header */}
 
-      <div className="fixed top-0 z-40 w-full alt-bgd bg-opacity-90 h-24 p-2 flex justify-around items-center px-2">
-        {children}
+      <div className="fixed top-0 z-40 w-full alt-bgd bg-opacity-90 p-2 px-2">
+        <div className="flex justify-around items-center h-24 max-w-3xl m-auto relative">{children}</div>
       </div>
 
     </div>
