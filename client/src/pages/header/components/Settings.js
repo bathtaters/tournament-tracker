@@ -33,7 +33,7 @@ function Settings({ modal }) {
 
     <RawData className="text-sm mt-4" data={data} />
 
-    {data.showadvanced && <ResetButtons />}
+    <ResetButtons visible={data.showadvanced} />
   </div>);
 }
 
