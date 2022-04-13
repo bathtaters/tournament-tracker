@@ -9,7 +9,7 @@ export default function LockScreen() {
   const { isLocked, caption } = useSelector((state) => state.global.lockScreen)
 
   return isLocked && (
-    <OverlayContainer className={overlayStyle}>
+    <OverlayContainer className={overlayStyle} z={100}>
       <WheelWrapperStyle>
 
         <LoadingSpinner size={18} weight={8} />
