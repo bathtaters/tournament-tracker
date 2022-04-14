@@ -12,7 +12,7 @@ export const elementDefaults = {
 // Row/Column wrapper
 export function RowStyle({ isRow, children }) {
   return (
-    <div className={"m-2 flex justify-start items-baseline flex-"+(isRow ? "row flex-wrap-reverse" : "col")}>
+    <div className={"m-2 flex justify-start items-baseline flex-"+(isRow ? "row flex-wrap" : "col")}>
       {children}
     </div>
   );
