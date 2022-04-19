@@ -14,20 +14,20 @@ export function DaySubtitleStyle({ children }) {
 }
 
 export function MissingDataStyle({ children }) {
-  return (<div className="text-center text-sm font-light dim-color italic pointer-events-none opacity-60">{children}</div>)
+  return (<div className="text-center text-sm font-light text-base-content opacity-90 italic pointer-events-none">{children}</div>)
 }
 
 
 // DAY-ENTRY.JS STYLES \\
 
 function BaseTitleStyle({ status, children }) {
-  const statusClass = status === 1 ? '' : statusInfo[status + 1].class;
+  const statusClass = statusInfo[status].class;
   return (<div className={statusClass+' text-sm font-normal break-words text-center line-clamp-2 leading-none'}>{children}</div>);
 }
 
 export function EntryTitleStyle({ status, children }) {
   return (
-    <div className="link pointer-events-none w-full">
+    <div className="pointer-events-none w-full">
       <BaseTitleStyle status={status}>{children}</BaseTitleStyle>
     </div>
   );
@@ -35,7 +35,7 @@ export function EntryTitleStyle({ status, children }) {
 
 export function EntryLinkStyle({ to, status, children }) {
   return (
-    <Link to={to} className="w-full">
+    <Link to={to} className="w-full link link-hover">
       <BaseTitleStyle status={status}>{children}</BaseTitleStyle>
     </Link>
   );

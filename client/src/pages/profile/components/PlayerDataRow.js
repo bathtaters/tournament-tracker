@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 
 import InputBox from "./InputBox";
-import { EditButton, LabelStyle, InputStyle, ButtonsStyle } from "../styles/PlayerDataStyles";
+import { EditButton, LabelStyle, ButtonsStyle } from "../styles/PlayerDataStyles";
 
 import { useUpdatePlayerMutation } from "../profile.fetch";
 import { editClickController, saveController } from "../services/profile.services";
@@ -26,16 +26,15 @@ function PlayerDataRow({ rowData, data, id }) {
 
   // Render
   return (<>
-      <LabelStyle>{rowData.title}</LabelStyle>
+      <LabelStyle id={rowData.key}>{rowData.title}</LabelStyle>
 
-      <InputStyle>
-        <InputBox 
-          value={isEditing ? editData : data}
-          isEditing={rowData.editable && isEditing}
-          onChange={changeData}
-          formatter={rowData.formatString}
-        />
-      </InputStyle>
+      <InputBox 
+        id={rowData.key}
+        value={isEditing ? editData : data}
+        isEditing={rowData.editable && isEditing}
+        onChange={changeData}
+        formatter={rowData.formatString}
+      />
 
       { rowData.editable ?
         <ButtonsStyle>

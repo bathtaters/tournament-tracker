@@ -1,8 +1,8 @@
 import { ModalTitleStyle } from "./CommonStyles";
-import ModalStyle, { CloseButton, overlayClasses } from "./ModalStyle";
+import { ModalStyle, CloseButton } from "./ModalStyle";
 
 export function AlertButton({ className, ...props }) {
-  return <input type="button" className={'mx-2 ' + (className || '')} {...props} />
+  return <input type="button" className={'mx-2 btn btn-sm sm:btn-md ' + (className || 'btn-warning')} {...props} />
 }
 
 export const AlertTitleStyle = ModalTitleStyle
@@ -17,4 +17,4 @@ export function AlertButtonWrapperStyle({ children }) {
 
 export const alertModalClass = "text-center p-4 max-w-xs sm:max-w-sm "
 
-export { ModalStyle, CloseButton, overlayClasses  }
+export { ModalStyle, CloseButton }

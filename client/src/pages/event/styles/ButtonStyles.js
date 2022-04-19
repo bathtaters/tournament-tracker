@@ -8,6 +8,7 @@ export function RoundButton({ value, onClick }) {
         onClick={onClick}
         type="button"
         value={value}
+        className="btn btn-primary btn-wide btn-md sm:btn-lg"
       />
     </div>
   );
@@ -17,7 +18,7 @@ export function EditEventButton({ onClick }) {
   return (
     <div className="text-center my-6">
       <input
-        className="dim-color font-light"
+        className="btn btn-secondary btn-outline btn-xs sm:btn-sm font-light"
         onClick={onClick}
         type="button"
         value="Edit Settings"

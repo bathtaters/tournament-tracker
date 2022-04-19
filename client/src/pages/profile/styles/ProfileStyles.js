@@ -13,7 +13,7 @@ export function ProfileStyle({ children }) {
 }
 
 export function ProfilePicStyle({ children }) {
-  return (<div className="w-36 h-40 alt-bgd m-2 flex">{children}</div>);
+  return (<div className="w-36 h-40 mask mask-squircle bg-base-300 p-4 pb-7 flex">{children}</div>);
 }
 
 export function PlayerDataStyle({ children }) {

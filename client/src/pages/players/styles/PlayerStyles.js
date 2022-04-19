@@ -16,6 +16,6 @@ export function FooterStyle({ children }) {
 export { ModalTitleStyle };
 
 export const statsClass = {
-  base: (canDelete) => 'neg-border border-2 rounded-md' + (canDelete ? '' : ' border-opacity-0'),
+  base: (canDelete) => 'border-2 rounded-md py-4 px-6 ' + (canDelete ? 'border-error' : 'border-transparent'),
   hover: (canDelete) => canDelete ? 'neg-bgd' : '',
 };

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 
-import { HeaderRow, BaseRow, OverlayRow } from "./components/DataTableRows";
-import { WrapperStyle, GridStyle, OverlayStyle, MissingStyle } from "./styles/DataTableStyles";
+import { HeaderRow, TableRow } from "./components/DataTableRows";
+import { TableStyle, MissingStyle } from "./styles/DataTableStyles";
 
 import { colCount } from "./services/dataTable.services"
 
@@ -42,31 +42,23 @@ function DataTable({
     (ev) => onRowHover(rowId, ev, extra, idx) : undefined
   
   const colCnt = useMemo(() => colCount(colLayout), [])
-
-  const overlayClass = `${rowClass} ${cellClass}`
   
   // Render
   return (
-      <WrapperStyle>
-        <GridStyle className={className} colLayout={colLayout}>
-          <HeaderRow colLayout={colLayout} className={hdrClass} />
-          { !rowIds?.length ? <MissingStyle colCount={colCnt}>{children}</MissingStyle> :
-            rowIds.map((id, idx) => 
-              <BaseRow key={id+'__S'} id={id} index={idx} colLayout={colLayout} extra={extra} className={cellClass} />
-            )
-          }
-        </GridStyle>
-
-        <OverlayStyle className={className} hdrClass={hdrClass}>
-          { rowIds?.map((id, idx) => 
-            <OverlayRow
-              key={id+'__L'} id={id} rowLink={rowLink} className={overlayClass}
+    <TableStyle className={className} colLayout={colLayout}>
+      <HeaderRow className={hdrClass} colLayout={colLayout} />
+      <tbody>{
+        !rowIds?.length ? <MissingStyle colCount={colCnt}>{children}</MissingStyle> :
+        
+          rowIds.map((id, idx) => 
+            <TableRow
+              key={id} id={id} index={idx} colLayout={colLayout} extra={extra}
+              className={rowClass} cellClass={cellClass} rowLink={rowLink} 
               onClick={clickHandler(id, idx)} onHover={hoverHandler(id, idx)}
             />
-          )}
-        </OverlayStyle>
-
-      </WrapperStyle>
+          )
+      }</tbody>
+    </TableStyle>
   )
 }
 

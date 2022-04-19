@@ -2,29 +2,32 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 export function HeaderStyle({ children }) {
-  return (
-    <div className="h-28"> {/* Spacing underneath header */}
-
-      <div className="fixed top-0 z-40 w-full alt-bgd bg-opacity-90 p-2 px-2">
-        <div className="flex justify-around items-center h-24 max-w-3xl m-auto relative">{children}</div>
-      </div>
-
-    </div>
-  );
+  return (<div className="navbar bg-base-300 sm:h-24 justify-center"><div className="navbar-center w-full max-w-6xl">{children}</div></div>)
 }
 
 export function TitleStyle({ title }) {
   return (
-    <h3 className="base-color font-medium text-center px-2 line-clamp-2 text-ellipsis overflow-hidden">
+    <h3 className="text-primary-content font-medium flex-1 px-2 sm:ml-2 line-clamp-2 text-ellipsis overflow-hidden">
       {title}
     </h3>
   );
 }
 
-export function LinkStyle({ to, text }) {
-  return (<h4><NavLink to={to}>{text}</NavLink></h4>);
+export const settingsClass = "btn btn-ghost btn-md text-xl sm:text-2xl px-1"
+
+export const reloadClass = {
+  loading: "text-secondary pointer-events-none animate-spin ease-linear",
+  button:  "text-secondary cursor-pointer hover:text-secondary-focus",
 }
 
-export function OverlayStyle({ edge = "left", spacing = "2", children }) {
-  return (<div className={`absolute top-0 ${edge}-0 z-50 m-${spacing}`}>{children}</div>);
+export function LinkContainer({ children }) {
+  return (<div className="flex-none"><ul className="menu menu-horizontal p-0">{children}</ul></div>);
+}
+
+export function LinkStyle({ to, text }) {
+  return (<li className="mx-1"><NavLink to={to}>{text}</NavLink></li>);
+}
+
+export function OverlayStyle({ edge = "right", spacing = "1", children }) {
+  return (<div className={`absolute -top-2 ${edge}-0 z-50 m-${spacing} overflow-hidden`}>{children}</div>);
 }

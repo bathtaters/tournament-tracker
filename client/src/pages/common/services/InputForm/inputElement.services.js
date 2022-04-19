@@ -1,10 +1,28 @@
 import { elementDefaults } from "../../styles/InputFormStyles";
 
-// Get user classes ?? default classes
-export const getClasses = (props) => Object.keys(elementDefaults).reduce((classes, key) => {
-  classes[key] = props[key] ?? elementDefaults[key];
-  return classes;
-}, {});
+// Get styling data
+const inputTypes = ['text', 'number', 'date']
+export const getClasses = (props) => {
+  // Assign defaults to missing classes
+  let elementClasses = {}
+  Object.keys(elementDefaults).forEach((key) => {
+    elementClasses[key] = props[key] ?? elementDefaults[key];
+  })
+  
+  // Add DaisyUI classes
+  if (!props.type || inputTypes.includes(props.type)) elementClasses.inputClass += ' input input-bordered w-full'
+  else elementClasses.inputClass += ` ${props.type}`
+
+  return { 
+    ...elementClasses,
+
+    // Get label positioning (default: top)
+    labelType: {
+      first: !props.labelPosition || props.labelPosition === 'top' || props.labelPosition === 'left',
+      nest: props.labelPosition === 'left' || props.labelPosition === 'right',
+    }
+  }
+}
 
 
 // Combined getter
@@ -16,6 +34,8 @@ export default function getProps({
 }) {
 
   const elementId = getElementId(id, label);
+
+  if (type === 'toggle') type = 'checkbox'
 
   const props = {
     id: elementId,

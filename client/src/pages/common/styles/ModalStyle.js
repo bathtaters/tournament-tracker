@@ -1,26 +1,23 @@
 import React from "react";
 
-// Classes to pass to Overlay component
-export const overlayClasses = "p-8 flex justify-center items-center";
-
-// Modal window style
-function ModalStyle({ className, children }, ref) {
+// Modal window style (fwdRef for FocusTrap)
+export const ModalStyle = React.forwardRef(function ModalStyle({ className, onClick, z = 70, children }, ref) {
   return (
-    <div className={`relative max-h-full overflow-auto p-8 alt-bgd shadow-lg rounded-lg ${className}`} ref={ref}>
-      {children}
+    <div className={`modal modal-open modal-bottom sm:modal-middle z-[${z}]`} onClick={onClick} ref={ref}>
+      <div className={`modal-box bg-base-200 relative p-8 max-w-3xl ${className}`} onClick={(e) => e.stopPropagation()}>
+        {children}
+      </div>
     </div>
   )
-}
+})
 
 // Close Button
 export function CloseButton({ onClick }) {
   return (<input
     type="button"
-    value="x"
+    value="✕"
     aria-label="Close"
     onClick={onClick}
-    className="absolute top-0 right-0 m-1 border-0"
-  />);
+    className="btn btn-ghost btn-circle btn-sm focus-visible:outline-none focus-visible:bg-neutral-500/30 absolute top-0 right-0"
+    />);
 }
-
-export default React.forwardRef(ModalStyle); // Must use fwdRef for FocusTrap

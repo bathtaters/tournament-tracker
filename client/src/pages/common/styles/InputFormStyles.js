@@ -3,23 +3,29 @@ import PropTypes from 'prop-types';
 
 // Input Element
 export const elementDefaults = {
-  className:  "text-sm sm:text-lg font-light m-1 flex items-baseline",
-  labelClass: "mx-2 w-max whitespace-nowrap",
-  inputClass: "max-color pt-1 px-2",
-  buttonClass: "font-light base-color w-14 h-8 mx-1 sm:w-20 sm:h-11 sm:mx-4",
+  className:  "font-light mx-1 sm:mx-4",
+  labelClass: "whitespace-nowrap",
+  inputClass: "",
+  buttonClass: "btn-primary mx-1 sm:mx-4",
+}
+
+// Form wrapper
+export function FormContainer({ onSubmit, children }) {
+  return (<form onSubmit={onSubmit}>{children}</form>)
 }
 
 // Row/Column wrapper
 export function RowStyle({ isRow, children }) {
   return (
-    <div className={"m-2 flex justify-start items-baseline flex-"+(isRow ? "row flex-wrap" : "col")}>
+    <div className={`m-1 flex justify-start items-baseline flex-${isRow ? "row flex-wrap" : "col"}`}>
       {children}
     </div>
   );
 }
 
 // Input Element wrapper
-export function ElementStyle({ isFragment, className, children }) {
+export function ElementStyle({ isFragment, isLabel, className, children }) {
+  if (isLabel) return (<label className={'label '+className}>{children}</label>);
   if (isFragment) return (<>{children}</>);
   return (<div className={className}>{children}</div>);
 }
@@ -32,7 +38,7 @@ export function ButtonContainer({ children }) {
 export function ButtonElement({ label, onClick, className = elementDefaults.buttonClass, isSubmit = false }) {
   return (
     <input
-      className={className}
+      className={'btn '+className}
       value={label}
       type={isSubmit ? "submit" : "button"}
       onClick={onClick}

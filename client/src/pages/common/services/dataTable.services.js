@@ -4,12 +4,8 @@ export const colCount = (layout) =>
   layout.reduce((sum,col) => sum + (!col.span || typeof col.span !== 'number' ? 1 : col.span), 0)
 
 
-// Build stats grid-template
-export const layoutTemplate = (layout) => (layout || []).map(({ span }) =>
-  typeof span === 'string' ? span :
-  !span || span === 1 ? 'minmax(0, 1fr)'
-    : `repeat(${span}, minmax(0, 1fr))`
-).join(' ')
+// Get cell key from row & col IDs
+export const cellKey = (rowId, colId) => `${rowId || '_NA_'}_${colId || '_NONE_'}`
 
 
 // Get value of cell based on col (AKA column layout data)

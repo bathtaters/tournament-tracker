@@ -4,7 +4,7 @@ import PropTypes from "prop-types"
 import DataTable from "../common/DataTable"
 import Loading from "../common/Loading"
 import RawData from "../common/RawData"
-import { WrapperStyle } from "./styles/PlayerEventStyles"
+import { WrapperStyle, tableHdrStyle } from "./styles/PlayerEventStyles"
 
 import eventsLayout from "./playerEvents.layout"
 import { useEventQuery, usePlayerEventsQuery, usePlayerMatchesQuery, usePrefetchEvent } from "./playerEvents.fetch"
@@ -23,7 +23,7 @@ function PlayerEvents({ id }) {
   const [ loading, err ] = [ isLoading || matchLoad || eventLoad,  error || matchErr || eventErr ];
   if (loading || err || !events || !Array.isArray(eventIds)) return (
     <WrapperStyle title="Schedule">
-      <DataTable colLayout={eventsLayout} className="mx-4" hdrClass="dim-color text-left text-xl">
+      <DataTable colLayout={eventsLayout} className="mx-4" hdrClass={tableHdrStyle}>
         <Loading loading={loading} error={err} altMsg="Not found" />
       </DataTable>
     </WrapperStyle>
@@ -39,7 +39,7 @@ function PlayerEvents({ id }) {
         rowLink="event/"
         className="mx-4"
         cellClass="py-1"
-        hdrClass="dim-color text-left text-xl"
+        hdrClass={tableHdrStyle}
         onRowHover={prefetch}
       >
         – None –

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import SettingsButton from "./components/SettingsButton";
 import ReloadButton from "./components/ReloadButton";
-import { HeaderStyle, TitleStyle, LinkStyle, OverlayStyle } from "./styles/HeaderStyles";
+import { HeaderStyle, TitleStyle, LinkStyle, LinkContainer, OverlayStyle } from "./styles/HeaderStyles";
 
 import valid from "../../assets/validation.json";
 const defaultTitle = valid.defaults.settings.title;
@@ -12,15 +12,15 @@ function Header({ title }) {
   return (
     <HeaderStyle>
 
-      <LinkStyle to="/home" text="Schedule" />
+      <SettingsButton />
 
       <TitleStyle title={title || defaultTitle} />
 
-      <LinkStyle to="/players" text="Players" />
+      <LinkContainer>
+        <LinkStyle to="/home" text="Schedule" />
 
-      <OverlayStyle edge="left">
-        <SettingsButton />
-      </OverlayStyle>
+        <LinkStyle to="/players" text="Players" />
+      </LinkContainer>
 
       <OverlayStyle edge="right">
         <ReloadButton />

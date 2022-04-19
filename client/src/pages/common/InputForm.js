@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useForm } from "react-hook-form";
 
 import FormRow from "./components/InputForm/FormRow";
-import { ButtonContainer, ButtonElement } from "./styles/InputFormStyles";
+import { FormContainer, ButtonContainer, ButtonElement } from "./styles/InputFormStyles";
 import { changeController, transformFunction, transformObject }  from "./services/InputForm/inputForm.services";
 
 
@@ -33,7 +33,7 @@ function InputForm({
 
   // Render
   return (
-    <form onSubmit={handleSubmit(submitController)}>
+    <FormContainer onSubmit={handleSubmit(submitController)}>
 
       <div className={className}>
         <FormRow
@@ -53,7 +53,7 @@ function InputForm({
         {buttons.map(ButtonElement)}
       </ButtonContainer>
 
-    </form>
+    </FormContainer>
   );
 }
 

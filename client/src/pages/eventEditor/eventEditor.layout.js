@@ -7,7 +7,8 @@ const lockAt = (statusVal) => (_, base) => base.eventStatus != null && base.even
 export const editorLayout = [ 'custom', [
   {
     label: 'Title', id: 'title', type: 'text',
-    className: "text-base sm:text-xl font-medium m-2",
+    labelClass: "font-normal",
+    inputClass: "input-md",
     transform: (title,data) => title.trim() ? title.trim() : (data && data.title) || valid.defaults.event.title
   },{ 
     label: 'Total Rounds', id: 'roundcount',
@@ -24,7 +25,7 @@ export const editorLayout = [ 'custom', [
 
 export const editorButtonLayout = (eventid, clickDelete, clickCancel) => (eventid ? [{
   label: "Delete", onClick: clickDelete,
-  className: "font-normal base-color-inv neg-bgd w-14 h-8 mx-1 sm:w-20 sm:h-11 sm:mx-4 opacity-80"
+  className: "font-normal btn-error mx-1 sm:mx-4"
 }] : []).concat(
   { label: "Cancel", onClick: clickCancel }
 );

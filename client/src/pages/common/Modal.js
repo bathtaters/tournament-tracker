@@ -2,8 +2,7 @@ import React, { useState, useImperativeHandle, forwardRef, useCallback } from "r
 import { createPortal } from "react-dom";
 import FocusTrap from "focus-trap-react";
 
-import OverlayContainer from "./components/OverlayContainer";
-import ModalStyle, { CloseButton, overlayClasses } from "./styles/ModalStyle";
+import { ModalStyle, CloseButton } from "./styles/ModalStyle";
 import { closeController, msgController, refController } from "./services/modal.services";
 import { useHotkeys } from "./services/basic.services";
 import { useOpenAlert, useAlertStatus } from "./common.hooks"
@@ -11,7 +10,7 @@ import { useOpenAlert, useAlertStatus } from "./common.hooks"
 const modalRoot = document.getElementById('modal-root');
 
 // Modal base component
-function Modal({ children, className = '', bgdClose = true, startOpen = false, startLocked = false, lockAlert }, ref) {
+function Modal({ children, className = '', bgClose = true, startOpen = false, startLocked = false, lockAlert }, ref) {
 
   // Modal actions
   const openAlert = useOpenAlert();
@@ -32,14 +31,13 @@ function Modal({ children, className = '', bgdClose = true, startOpen = false, s
 
   // Render into modalRoot
   return createPortal(isOpen && (
-    <OverlayContainer className={overlayClasses} z={70} onClick={bgdClose ? () => close() : null}>
       <FocusTrap paused={alertIsOpen} focusTrapOptions={{ escapeDeactivates: false }}>
-        <ModalStyle className={className}>
+        <ModalStyle onClick={bgClose ? () => close() : null} className={className}>
           <CloseButton onClick={closeWithMsg} />
           {children}
         </ModalStyle>
       </FocusTrap>
-    </OverlayContainer>),
+    ),
     modalRoot
   )
 }

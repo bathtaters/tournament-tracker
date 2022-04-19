@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import LoadingSpinner from "../../common/components/LoadingSpinner"
+import { reloadClass } from "../styles/HeaderStyles";
 import { useForceRefetch, useFetchingProvider } from "../header.fetch";
 
 function ReloadButton(props) {
@@ -11,13 +11,10 @@ function ReloadButton(props) {
   // Force refetch of all data
   const forceRefetch = useForceRefetch();
 
-  return ('force' in props ? props.force : isFetching) ? 
-    
-    // Loading ring
-    <LoadingSpinner {...props} /> :
+  // Generate class
+  const buttonClass = `${props.force ?? isFetching ? reloadClass.loading : reloadClass.button} ${props.className ?? ''}`
 
-    // Reload button
-    <h4 className={'link '+props.className} onClick={forceRefetch}>↻</h4>;
+  return <h4 className={buttonClass} onClick={forceRefetch}>↻</h4>
 }
 
 ReloadButton.propTypes = { 

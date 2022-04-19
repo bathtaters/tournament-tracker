@@ -1,29 +1,36 @@
 import React from "react"
-import { HeaderStyle, CellStyle, OverlayRowStyle, headerBase } from "../styles/DataTableStyles"
+import { HeaderStyle, CellStyle, headerBase } from "../styles/DataTableStyles"
 import { useLinkId } from "../services/idUrl.services"
-import { getCellValue } from "../services/dataTable.services"
+import { getCellValue, cellKey } from "../services/dataTable.services"
 
 
 export const HeaderRow = React.memo(function HeaderRow({ colLayout, className }) {
-  return colLayout.map(({ label, span, hdrClass }) =>
-    <HeaderStyle label={label} span={span} className={`${className || ''} ${hdrClass ?? headerBase}`} key={label || '_none'} />
+  return (
+    <thead><tr>{
+      colLayout.map(({ label, span, hdrClass }) =>
+        <HeaderStyle label={label} span={span} className={`${className || ''} ${hdrClass ?? headerBase}`} key={label || '_none'} />
+      )
+    }</tr></thead>
   )
 })
 
 
-export function BaseRow({ id, extra, index, colLayout, className }) {
-  return colLayout.map((col) => {
-    const cellClass = typeof col.className === 'function' ? col.className(id, extra) : col.className
-    return (
-      <CellStyle key={id+'_'+(col.label || '_none')} baseClass={className} {...col} className={cellClass}>
-        { getCellValue(col, id, index, extra) }
-      </CellStyle>
-    )
-  })
-}
-
-
-export function OverlayRow({ id, rowLink, onClick, onHover, className }) {
+export function TableRow({ id, index, colLayout, extra, className, cellClass, rowLink, onClick, onHover }) {
   const linkUrl = useLinkId(rowLink != null && id, rowLink)
-  return <OverlayRowStyle to={linkUrl} className={className} onClick={onClick} onHover={onHover} />
+  return (
+    <tr className={`${className || ''} ${linkUrl ? 'hover cursor-pointer' : ''}`} onMouseEnter={onHover}>{
+
+      colLayout.map((col) => {
+
+        const colClass = typeof col.className === 'function' ? col.className(id, extra) : col.className
+        
+        return (
+          <CellStyle key={cellKey(id,col.label)} baseClass={cellClass} to={linkUrl} onClick={onClick} {...col} className={colClass}>
+            { getCellValue(col, id, index, extra) }
+          </CellStyle>
+        )
+      })
+
+    }</tr>
+  )
 }

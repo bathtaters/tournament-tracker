@@ -7,13 +7,13 @@ export function WrapperStyle({ children }) {
 export const ListStyle = React.forwardRef(function ListStyle({ textbox, children }, ref) {
   // Set width of list based on width of textbox
   useLayoutEffect(() => {
-    ref.current.style.width = textbox.current?.offsetWidth ? (textbox.current.offsetWidth-2)+'px' : 'inherit'
-    ref.current.style.marginLeft = '1px' // offset for rounded edges
+    ref.current.style.width = textbox.current?.offsetWidth ? (textbox.current.offsetWidth-8)+'px' : 'inherit'
+    ref.current.style.marginLeft = '4px' // offset for rounded edges
   }, [textbox.current?.offsetWidth])
 
   return (
     <div className="absolute z-auto top-auto max-h-screen">
-      <div className="fixed border dim-border shadow-lg max-h-32 overflow-y-auto overflow-x-hidden" ref={ref}>
+      <div className="fixed border border-base-300 shadow-neutral shadow-md max-h-32 overflow-y-auto overflow-x-hidden" ref={ref}>
         <ul>{children}</ul>
       </div>
     </div>
@@ -21,10 +21,10 @@ export const ListStyle = React.forwardRef(function ListStyle({ textbox, children
 });
 
 export function EntryStyle({ className, isSelected, children }) {
-  const selectClass = isSelected ? " base-bgd-inv base-color-inv" : "";
+  const selectClass = isSelected ? " bg-primary text-primary-content" : " bg-base-100 text-base-content";
 
   return (
-  <li className={"base-bgd dim-color py-0.5 px-2 w-full break-words line-clamp-1 " + className + selectClass}>
+  <li className={"py-0.5 px-2 w-full break-words line-clamp-1 " + className + selectClass}>
     {children}
   </li>
   );

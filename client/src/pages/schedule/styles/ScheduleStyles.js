@@ -13,7 +13,7 @@ export function DaysContainerStyle({ children }) {
 
 export function HeaderButton({ value, disabled, onClick }) {
   return (<input
-    className="sm:w-20 sm:h-11"
+    className="btn btn-primary btn-sm sm:btn-md"
     type="button"
     value={value}
     onClick={onClick}
@@ -22,7 +22,7 @@ export function HeaderButton({ value, disabled, onClick }) {
 }
 
 export const dayClass = {
-  past:   { titleCls: "dim-color-inv", borderCls: "dimmer-border" },
-  today:  { titleCls: "max-color",     borderCls: "pos-border"    },
-  future: { titleCls: "base-color",    borderCls: "base-border"   },
+  past:   { titleCls: "text-base-content", borderCls: "border-base-content" },
+  today:  { titleCls: "text-accent",       borderCls: "border-accent"       },
+  future: { titleCls: "text-primary",      borderCls: "border-primary"      },
 };

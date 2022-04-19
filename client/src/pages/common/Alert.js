@@ -7,7 +7,7 @@ import RawData from "./RawData";
 import OverlayContainer from "./components/OverlayContainer";
 import {
   AlertTitleStyle, AlertMessageStyle, AlertButtonWrapperStyle, AlertButton, 
-  ModalStyle, CloseButton, overlayClasses, alertModalClass,
+  ModalStyle, CloseButton, alertModalClass,
 } from "./styles/AlertStyles";
 
 import { getButtonProps, useCloseAlert, breakMessage } from "./services/alert.services";
@@ -45,26 +45,24 @@ function Alert() {
 
   // Render Alert Component to AlertRoot
   return createPortal(isOpen && (
-    <OverlayContainer className={overlayClasses} z={90}>
-      <FocusTrap focusTrapOptions={{ escapeDeactivates: false }}>
-        <ModalStyle className={alertModalClass + (className ?? '')}>
-          { Boolean(showClose ?? !buttons?.length) && <CloseButton onClick={() => close(showClose || undefined)} /> }
+    <FocusTrap focusTrapOptions={{ escapeDeactivates: false }}>
+      <ModalStyle className={alertModalClass + (className ?? '')} z={90}>
+        { Boolean(showClose ?? !buttons?.length) && <CloseButton onClick={() => close(showClose || undefined)} /> }
 
-          {title && <AlertTitleStyle>{title}</AlertTitleStyle>}
+        {title && <AlertTitleStyle>{title}</AlertTitleStyle>}
 
-          {message && <AlertMessageStyle>{breakMessage(message)}</AlertMessageStyle>}
+        {message && <AlertMessageStyle>{breakMessage(message)}</AlertMessageStyle>}
 
-          {buttons &&
-            <AlertButtonWrapperStyle>
-              { buttons.map((button,i) => <AlertButton {...getButtonProps(button, close, i)} />) }
-            </AlertButtonWrapperStyle>
-          }
+        {buttons &&
+          <AlertButtonWrapperStyle>
+            { buttons.map((button,i) => <AlertButton {...getButtonProps(button, close, i)} />) }
+          </AlertButtonWrapperStyle>
+        }
 
-          <RawData data={alertOptions} className="text-xs" />
+        <RawData data={alertOptions} className="text-xs" />
 
-        </ModalStyle>
-      </FocusTrap>
-    </OverlayContainer>
+      </ModalStyle>
+    </FocusTrap>
   ), alertRoot)
 }
 

@@ -7,5 +7,5 @@ export function WheelWrapperStyle({ children }) {
 }
 
 export function CaptionStyle({ children }) {
-  return <h4 className="absolute top-6 left-0 right-0 text-center base-color">{children}</h4>
+  return <h4 className="absolute top-6 left-0 right-0 text-center text-base-content">{children}</h4>
 }

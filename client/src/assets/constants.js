@@ -3,11 +3,11 @@
 export const dragType = { event: "json/eventday", player: "json/matchplayer" };
 
 export const statusInfo = [
-  {label: 'N/A', class: "dim-color"},
-  {label: 'Not Started', class: "max-color"},
-  {label: 'Active', class: "neg-color"},
-  {label: 'Complete', class: "pos-color"},
-  {label: 'N/A', class: "dim-color"},
+  {label: 'N/A', class: "text-base-content"},
+  {label: 'Not Started', class: "text-primary"},
+  {label: 'Active', class: "text-accent"},
+  {label: 'Complete', class: "text-base-content"},
+  {label: 'N/A', class: "text-base-content"},
 ];
 
 export const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];

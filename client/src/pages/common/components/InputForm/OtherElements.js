@@ -14,9 +14,10 @@ export function Spacer({ className }) {
 
 // InputElement
 
-export function ElementLabel({ id, label, className }) {
+export function ElementLabel({ id, label, isLabel, className }) {
   if (!label) return null;
-  return (<label className={className} htmlFor={id}>{label}</label>);
+  if (isLabel) return (<label className={'label label-text '+className} htmlFor={id}>{label}</label>);
+  return (<span className={'label-text '+className} htmlFor={id}>{label}</span>);
 }
 
 export function ElementInput({ inputProps = {}, className }) {

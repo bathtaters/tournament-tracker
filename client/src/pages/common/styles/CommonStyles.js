@@ -13,5 +13,5 @@ export function PageTitleStyle({ className = "", children }) {
 }
 
 export function ModalTitleStyle({ className = "", children }) {
-  return (<h3 className={`font-light max-color text-center mb-3 ${className}`}>{children}</h3>)
+  return (<h3 className={`font-light text-accent-content text-center mb-3 ${className}`}>{children}</h3>)
 }

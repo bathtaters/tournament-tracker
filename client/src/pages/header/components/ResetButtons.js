@@ -6,7 +6,7 @@ import { useResetHandler } from "../services/settings.services";
 function SettingsButtons({ onClick, value }) {
   return (
     <input
-      className="w-20 h-8 mx-1 sm:w-28 sm:h-11 sm:mx-4"
+      className="btn btn-error mx-1 sm:mx-4"
       type="button"
       value={value}
       onClick={onClick}

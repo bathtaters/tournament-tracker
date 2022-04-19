@@ -14,25 +14,20 @@ export const COMMON_CLS = 'common';
 export const classDefault = {
   border: {
     baseWidth: 'border',
-    baseColor: 'dimmer-border',
+    baseColor: 'base-content',
     baseStyle: 'solid',
-    baseOpacity: '50',
-    disabledColor: '',
+    disabledColor: 'transparent',
     disabledStyle: '',
-    disabledOpacity: '0',
-    dropColor: 'max-border',
+    dropColor: 'accent',
     dropStyle: '',
-    dropOpacity: '100',
-    illegalColor: 'neg-border',
+    illegalColor: 'error',
     illegalStyle: '', 
-    illegalOpacity: '100',
   },
-  bgd: {
-    baseColor: 'max-bgd',
-    baseOpacity: '20',
-    disabledOpacity: '0',
-    hoverOpacity: '50',
-    illegalOpacity: ''
+  bg: {
+    baseColor: 'neutral',
+    disabledColor: 'transparent',
+    hoverColor: 'neutral-focus',
+    illegalColor: '',
   },
   additional: {
     enabled: [],

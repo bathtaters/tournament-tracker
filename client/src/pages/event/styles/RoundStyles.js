@@ -8,7 +8,7 @@ export function RoundStyle({ title, isMissing, className='', children }) {
 
       <div className="flex flex-col">{
         !isMissing ? children : (
-          <div className="dim-color text-center font-thin italic">Missing</div>
+          <div className="text-base-content text-center font-thin italic">Missing</div>
         )
       }</div>
 

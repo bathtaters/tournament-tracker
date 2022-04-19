@@ -3,11 +3,13 @@ import dragHandle from "./dragHandle.services";
 import { extractMatches } from "./dragDrop.utils";
 import { COMMON_CLS, classDefault, optimizeClassSwapping } from "./dragDrop.constants";
 
+// Use !important before classes
+const useImportant = false;
 
 // Combine custom classes w/ defaults
-function getDefaultClasses(customBorder, customBgd, additional) {
+function getDefaultClasses(customBorder, customBg, additional) {
   const border  = Object.assign({}, classDefault.border, customBorder);
-  const bgd     = Object.assign({}, classDefault.bgd,    customBgd);
+  const bg     = Object.assign({}, classDefault.bg,    customBg);
   const other   = Object.assign({}, classDefault.additional);
   
   // Add in additional classes
@@ -17,72 +19,66 @@ function getDefaultClasses(customBorder, customBgd, additional) {
     else if (Array.isArray(additional[c]))      other[c].push(...additional[c]);
   });
 
-  return { border, bgd, ...other }
+  return { border, bg, ...other }
 }
 
 
 // Get class array from UI class objects
 function toClassArray(base, type, isBorder = false) {
   // Set prefix
-  const prefix = '!' + (isBorder ? 'border' : 'bg');
+  const prefix = (useImportant ? '!' : '') + (isBorder ? 'border' : 'bg');
   if (!type) type = 'base';
 
   // Set defaults (NOTE: behavior specific to params)
-  let color, style;
-  if (isBorder) {
-    color = base[type+'Color'] || base.baseColor;
-    style = base[type+'Style'] || base.baseStyle;
-  }
-  let opacity = base[type+'Opacity'] || base.baseOpacity;
+  const color = base[type+'Color'] || base.baseColor;
+  const style = isBorder && (base[type+'Style'] || base.baseStyle);
 
   // Build array
   let classes = [];
-  if (color)   classes.push(color);
+  if (color)   classes.push(prefix + '-' + color);
   if (style)   classes.push(prefix + '-' + style);
-  if (opacity) classes.push(prefix + '-opacity-' + opacity);
   return classes;
 }
 
 
 // Get class data
 export default function dragClassController(
-  borderClass, bgdClass, additionalClasses, droppable, draggable,
+  borderClass, bgClass, additionalClasses, droppable, draggable,
   storeData, onDrop, canDrop, storeTestData, dataType
 ) {
   // Get default classes
-  const classes = getDefaultClasses(borderClass, bgdClass, additionalClasses);
+  const classes = getDefaultClasses(borderClass, bgClass, additionalClasses);
 
   // Build Class arrays
   classes.enabled = classes.enabled
     .concat(toClassArray(classes.border, 'base', true))
-    .concat(toClassArray(classes.bgd))
-    .concat(draggable ? classes.drag : [])
-    .concat(draggable ? ['hover:!bg-opacity-'+classes.bgd.hoverOpacity] : []);
+    .concat(toClassArray(classes.bg))
+    .concat(draggable ? classes.drag : []);
 
   classes.disabled = classes.disabled
     .concat(toClassArray(classes.border, 'disabled', true))
-    .concat(toClassArray(classes.bgd,    'disabled'));
+    .concat(toClassArray(classes.bg,    'disabled'));
     
   classes.drop    = !droppable ? [] : classes.drop
     .concat(toClassArray(classes.border, 'drop', true))
-    .concat(toClassArray(classes.bgd,    'hover'));
+    .concat(toClassArray(classes.bg,    'hover'));
     
   classes.illegal = !droppable ? [] : classes.illegal
     .concat(toClassArray(classes.border, 'illegal', true))
-    .concat(toClassArray(classes.bgd,    'illegal'));
+    .concat(toClassArray(classes.bg,    'illegal'));
   
   // Move matching classes to 'common' class array to optimize class swapping
   extractMatches(classes, optimizeClassSwapping);
   
   // Build class strings
   let result = {
-    static:  `${classes.border.baseWidth} ${classes.bgd.baseColor}`,
+    static:  `${classes.border.baseWidth} ${classes.bg.baseColor}`,
     enable:  `${classes.enabled.join(' ')} ${classes[COMMON_CLS].join(' ')}`,
     disable: classes.disabled.join(' '),
   };
 
   // Remove excess data
-  delete classes.bgd;
+  delete classes.bg;
   delete classes.border;
 
   // Build drag actions

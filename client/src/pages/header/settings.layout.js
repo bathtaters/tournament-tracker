@@ -5,8 +5,8 @@ const defaultTitle = valid.defaults.settings.title;
 // Settings layout object for InputForm
 const basicLayout = [
   { label: 'Title', id: 'title', type: 'text', defaultValue: '',
-    className: "text-base sm:text-xl font-medium m-2 flex w-full items-baseline",
-    inputClass: "max-color pt-1 px-2 w-full",
+    className: "w-full m-2",
+    inputClass: "input-lg w-full",
     transform: (title,data) => title.trim() ? title.trim() : (data && data.title) || defaultTitle
   },
 
@@ -22,11 +22,11 @@ const basicLayout = [
 
   [
     [
-      { label: 'Show Advanced', id: 'showadvanced', type: 'checkbox' },
-      { label: 'Show Raw Data', id: 'showrawjson', type: 'checkbox', advanced: true },
+      { label: 'Show Advanced', id: 'showadvanced', type: 'toggle', inputClass: 'toggle-accent' },
+      { label: 'Show Raw Data', id: 'showrawjson', type: 'toggle', inputClass: 'toggle-accent', advanced: true },
     ],[
-      { label: 'Auto-Report Byes', id: 'autobyes', type: 'checkbox', advanced: true },
-      { label: 'Incomplete Events in Player Stats', id: 'includeincomplete', type: 'checkbox', advanced: true },
+      { label: 'Auto-Report Byes', id: 'autobyes', type: 'toggle', advanced: true },
+      { label: 'Incomplete Events in Player Stats', id: 'includeincomplete', type: 'toggle', advanced: true },
     ],
   ]
 ];

@@ -8,7 +8,7 @@ import { getHandler, getClasses } from './services/DragBlock/dragDrop.utils'
 
 function DragBlock({
   className = "", additionalClasses = {},
-  borderClass = {}, bgdClass = {},
+  borderClass = {}, bgClass = {},
   storeData, onDrop, canDrop, storeTestData,
   dataType='text/json', disabled = false,
   draggable = true, droppable = true,
@@ -19,10 +19,10 @@ function DragBlock({
   // Build memoized data
   const classes = useMemo(() => 
     dragClassController(
-      borderClass, bgdClass, additionalClasses, droppable, draggable,
+      borderClass, bgClass, additionalClasses, droppable, draggable,
       storeData, onDrop, canDrop, storeTestData, dataType
     ), [
-      borderClass, bgdClass, additionalClasses, droppable, draggable,
+      borderClass, bgClass, additionalClasses, droppable, draggable,
       storeData, onDrop, canDrop, storeTestData, dataType
     ]
   );
@@ -54,7 +54,7 @@ DragBlock.propTypes = {
   className: PropTypes.string,
   additionalClasses: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
   borderClass: PropTypes.objectOf(PropTypes.string),
-  bgdClass: PropTypes.objectOf(PropTypes.string),
+  bgClass: PropTypes.objectOf(PropTypes.string),
   
   storeData: PropTypes.oneOfType([PropTypes.func,PropTypes.object]),
   onDrop: PropTypes.func,

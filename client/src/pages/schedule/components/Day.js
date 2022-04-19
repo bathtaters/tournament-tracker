@@ -25,7 +25,7 @@ function Day({ events, isEditing, isSlotted, setEventModal, day, eventData }) {
       onDrop={dropHandler}
       canDrop={canDrop}
       className={dragAndDropClass.outer}
-      borderClass={{disabledColor:borderCls, disabledOpacity:'100', baseOpacity:'100'}}
+      borderClass={{disabledColor: borderCls.slice(7)}}
       dataType={dataType}
       disabled={(isSlotted && day !== noDate) || !isEditing}
       draggable={false}
