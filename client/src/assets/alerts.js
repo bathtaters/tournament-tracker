@@ -7,7 +7,7 @@ const defPlayer = 'This player';
 export const modalCloseAlert = (customAlert = {}) => ({
   title: "Close Window?",
   message: "Unsaved changes will be lost.",
-  buttons: ["Yes", "No"], // [0]=Y
+  buttons: ["Close", { value: "Back", className: "btn-info" }], // [0]=Y
   ...customAlert
 })
 
@@ -63,7 +63,7 @@ export const swapPlayerAlert = {
   title: "Confirm Swap",
   message: "One or both matches have already been reported.",
   // "these players" = (nameA ? nameA + ' w/ ' + nameB : 'these players')
-  buttons: ["Swap","Cancel"], // [0]=Y
+  buttons: [{ value: "Swap", className: "btn-error" }, "Cancel"], // [0]=Y
 }
 
 
