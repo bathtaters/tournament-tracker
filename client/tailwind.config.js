@@ -1,10 +1,10 @@
-// const colors = require('tailwindcss/colors');
-
 module.exports = {
   content: ['./src/**/*.js', './public/index.html'],
   theme: {
     extend: {
-      // colors: { green: colors.emerald, },
+      zIndex: {
+
+      },
       screens: {
         'print': {'raw': 'print'},
       },
@@ -17,5 +17,10 @@ module.exports = {
   },
   plugins: [
     require('@tailwindcss/line-clamp'),
+    require('daisyui'),
   ],
+  daisyui: {
+    themes: ['corporate', 'business'],
+    darkTheme: 'business',
+  }
 }
