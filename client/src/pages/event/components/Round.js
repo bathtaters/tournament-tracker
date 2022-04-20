@@ -38,7 +38,7 @@ function Round({ data, round, deleteRound }) {
       </EditRoundStyle>
     </RoundStyle>
 
-    {isEditing && <OverlayContainer z={30} />}
+    {isEditing && <OverlayContainer z="z-30" />}
   </>);
 }
 

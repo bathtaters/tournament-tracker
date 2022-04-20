@@ -46,7 +46,7 @@ function Alert() {
   // Render Alert Component to AlertRoot
   return createPortal(isOpen && (
     <FocusTrap focusTrapOptions={{ escapeDeactivates: false }}>
-      <ModalStyle className={alertModalClass + (className ?? '')} z={90}>
+      <ModalStyle className={alertModalClass + (className ?? '')} z="z-90">
         { Boolean(showClose ?? !buttons?.length) && <CloseButton onClick={() => close(showClose || undefined)} /> }
 
         {title && <AlertTitleStyle>{title}</AlertTitleStyle>}
