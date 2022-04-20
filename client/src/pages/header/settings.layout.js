@@ -16,8 +16,8 @@ const basicLayout = [
   ],
 
   [
-    { label: 'Auto-fill Size', id: 'autofillsize', type: 'number', advanced: true },
     { label: 'Daily Slots', id: 'dayslots', type: 'number' },
+    { label: 'Auto-fill Size', id: 'autofillsize', type: 'number', advanced: true },
   ],
 
   [
