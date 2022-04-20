@@ -30,6 +30,16 @@ export function ElementStyle({ isFragment, isLabel, className, children }) {
   return (<div className={className}>{children}</div>);
 }
 
+// Apply Disabled Lock to Input Elements
+export function InputStyle({ disabled, children }) {
+  return (
+    <label className={disabled ? "input-group" : ""}>
+      { children }
+      { disabled && <span className="bg-base-200">🔒</span> }
+    </label>
+  )
+}
+
 // Input Form Buttons
 export function ButtonContainer({ children }) {
   return (<div className="mt-4 w-full flex justify-center items-baseline flex-wrap">{children}</div>);

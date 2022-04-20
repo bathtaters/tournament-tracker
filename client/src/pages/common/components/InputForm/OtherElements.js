@@ -1,5 +1,5 @@
 import React from "react";
-import { RowStyle } from "../../styles/InputFormStyles"
+import { RowStyle, InputStyle } from "../../styles/InputFormStyles"
 
 // FormRow
 
@@ -22,5 +22,9 @@ export function ElementLabel({ id, label, isLabel, className }) {
 
 export function ElementInput({ inputProps = {}, className }) {
   if (inputProps.type === 'number') inputProps.pattern = "\\d*";
-  return (<input {...inputProps} className={className} />);
+  return (
+    <InputStyle disabled={inputProps.disabled}>
+      <input {...inputProps} className={className} />
+    </InputStyle>
+  );
 }
