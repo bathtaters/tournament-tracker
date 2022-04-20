@@ -5,7 +5,7 @@ function SuggestTextBox({ value, className, isHidden, setListVisible, change }, 
     <input
       type="text"
       value={value}
-      className={`input ${className} ${isHidden ? 'hidden' : ''}`}
+      className={`input input-bordered ${className} ${isHidden ? 'hidden' : ''}`}
       onBlur={() => setListVisible(false)}
       onFocus={() => setListVisible(true)}
       onChange={change}
