@@ -1,14 +1,13 @@
 import React, { useMemo } from "react";
 
 import EventStats from "./EventStats";
-import SettingsIcon from "./subcomponents/SettingsIcon";
+import { statusInfo } from "../../../assets/constants";
 import { EditEventButton } from "../styles/ButtonStyles"; 
 import { ContainerStyle, HeaderStyle, ValueStyle, DetailStyle } from "../styles/DashboardStyles";
 
 
 function EventDashboard({ data, openStats }) {
-  const headerValue = data.status === 2 ? 'Round ' + data.roundactive :
-    data.status === 1 ? 'Unstarted' : data.status === 3 ? 'Finished' : 'Event'
+  const headerValue = data.status === 2 ? 'Round ' + data.roundactive : statusInfo[data?.status ?? 0].label
   
   const headerDetail = useMemo(() =>
     data ? `${data.playerspermatch}-Player, ${data.roundcount} Rounds, Best of ${(data.wincount ?? 0) * 2 - 1}` : '',
