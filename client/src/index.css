@@ -28,4 +28,9 @@
     
     /* NavLink styling */
     a.active, a.active-parent, a.active-parent .link { @apply cursor-default; }
+
+    /* Colored hovering */
+    .table tr.hover.hover-error:hover td {
+        @apply bg-error;
+    }
 }
