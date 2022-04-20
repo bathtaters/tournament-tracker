@@ -11,7 +11,7 @@ export const statsStyle = {
 
 export function EventStatsStyle({ title, children }) {
   return (
-    <div className="m-4">
+    <div className="p-4">
       <h3 className="font-light text-center">{title}</h3>
       {children}
     </div>
