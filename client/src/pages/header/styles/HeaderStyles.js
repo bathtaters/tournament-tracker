@@ -7,7 +7,7 @@ export function HeaderStyle({ children }) {
 
 export function TitleStyle({ title }) {
   return (
-    <h3 className="text-primary-content font-medium flex-1 px-2 sm:ml-2 line-clamp-2 text-ellipsis overflow-hidden">
+    <h3 className="text-primary font-medium flex-1 px-2 sm:ml-2 line-clamp-2 text-ellipsis overflow-hidden">
       {title}
     </h3>
   );

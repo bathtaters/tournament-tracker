@@ -2,8 +2,8 @@ import { formatPercent } from '../../assets/formatting';
 
 // Stats table classes
 const hdrClass = 'text-md sm:text-lg',
-  indexStyle = { size: 'base', color: 'neutral-content',  weight: 'light',  align: 'right'  },
-  titleStyle = { size: 'lg',   color: 'accent-content',  weight: 'light',  align: 'left'   };
+  indexStyle = { size: 'base', color: 'primary',  weight: 'light',  align: 'right'  },
+  titleStyle = { size: 'lg',   color: 'secondary',  weight: 'light',  align: 'left'   };
 
 // Stats columns
 const statsLayout = [

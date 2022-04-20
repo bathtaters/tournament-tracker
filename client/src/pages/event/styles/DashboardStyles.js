@@ -13,7 +13,7 @@ export function DashboardStyle({ children }) {
 
 // Dashboard Styles
 export const ContainerStyle = ({ children }) => (<div className="text-center font-light">{children}</div>);
-export const StatusStyle = ({ children }) => (<h4 className="font-thin text-accent-content">{children}</h4>);
+export const StatusStyle = ({ children }) => (<h4 className="font-thin text-secondary">{children}</h4>);
 export const DetailStyle = ({ children }) => (<h5 className="pt-0 italic text-base-content">{children}</h5>);
 
 export const textStyle = {

@@ -2,7 +2,7 @@ import React from "react";
 
 export function ReportTitleStyle({ children }) {
   return (
-    <h3 className="font-light text-accent-content text-center mb-4">{children}</h3>
+    <h3 className="font-light text-center mb-4">{children}</h3>
   );
 }
 

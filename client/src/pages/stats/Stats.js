@@ -32,7 +32,7 @@ function Stats({ eventid, onPlayerClick, className = '', highlightClass = '', hi
         rowLink="profile/"
         rowClass={highlightClass}
         className={className}
-        hdrClass="text-center text-accent-content mb-2"
+        hdrClass="text-center mb-2"
         onRowClick={onPlayerClick}
       >
         No players exist
