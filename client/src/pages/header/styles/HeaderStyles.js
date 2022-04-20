@@ -5,10 +5,10 @@ export function HeaderStyle({ children }) {
   return (<div className="navbar bg-base-300 sm:h-24 justify-center"><div className="navbar-center w-full max-w-6xl">{children}</div></div>)
 }
 
-export function TitleStyle({ title }) {
+export function TitleStyle({ children }) {
   return (
-    <h3 className="text-primary font-medium flex-1 px-2 sm:ml-2 line-clamp-2 text-ellipsis overflow-hidden">
-      {title}
+    <h3 className="text-primary dark:text-primary-content font-medium flex-1 px-2 sm:ml-2 line-clamp-2 text-ellipsis overflow-hidden">
+      {children}
     </h3>
   );
 }

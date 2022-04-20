@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types';
+import { Link } from "react-router-dom";
 
 import SettingsButton from "./components/SettingsButton";
 import ReloadButton from "./components/ReloadButton";
@@ -14,7 +15,9 @@ function Header({ title }) {
 
       <SettingsButton />
 
-      <TitleStyle title={title || defaultTitle} />
+      <TitleStyle>
+        <Link to="/home">{title || defaultTitle}</Link>
+      </TitleStyle>
 
       <LinkContainer>
         <LinkStyle to="/home" text="Schedule" />
