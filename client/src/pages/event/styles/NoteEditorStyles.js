@@ -36,9 +36,9 @@ export function CharCountStyle({ visible, children }) {
 
 
 // Edit/Save Button
-const editNotesClass = "absolute top-0 right-1 z-20 p-1 cursor-"
+const editNotesClass = "absolute top-0 right-0 z-20"
 export function EditNotesButton({ isEdit, onClick, isFetching }) {
-  if (isFetching) return <div className={editNotesClass+"wait"}><LoadingSpinner /></div>
+  if (isFetching) return <div className={editNotesClass+" py-1 px-2 sm:px-3 cursor-wait"}><LoadingSpinner size="1rem" /></div>
   return (
     <input
       value={isEdit ? "💾" : "🖊"} type="button" onClick={onClick}
