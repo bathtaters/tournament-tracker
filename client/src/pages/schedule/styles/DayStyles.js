@@ -21,8 +21,11 @@ export function MissingDataStyle({ children }) {
 // DAY-ENTRY.JS STYLES \\
 
 function BaseTitleStyle({ status, children }) {
-  const statusClass = statusInfo[status].class;
-  return (<div className={statusClass+' text-sm font-normal break-words text-center line-clamp-2 leading-none'}>{children}</div>);
+  return (
+    <div className={`${statusInfo[status].textClass} text-sm font-normal break-words text-center line-clamp-2 leading-none`}>
+      {children}
+    </div>
+  );
 }
 
 export function EntryTitleStyle({ status, children }) {
@@ -46,7 +49,7 @@ export function EntryLinkStyle({ to, status, children }) {
 
 export function EditEventButton({ status, onClick, children }) {
   return (<div
-    className={'absolute top-0 right-1 text-sm font-normal cursor-pointer hover:'+statusInfo[status].class}
+    className={'absolute top-0 right-1 text-sm font-normal cursor-pointer hover:'+statusInfo[status].textClass}
     onClick={onClick}
   >
     {"✐"}

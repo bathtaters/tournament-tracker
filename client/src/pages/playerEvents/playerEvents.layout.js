@@ -16,7 +16,7 @@ const eventsLayout = [
   },
   {
     label: 'Status', span: 2, cellStyle: {align: 'left', size: 'md', color: ''}, default: statusInfo[0].label, hdrClass: 'text-left',
-    className: (id, {events}) => statusInfo[events[id]?.status ?? 0].class,
+    className: (id, {events}) => statusInfo[events[id]?.status ?? 0].textClass,
     get: (id, {events, matches}) => statusInfo[events[id]?.status ?? 0].label + (matches[id]?.isDrop ? " (Dropped)" : ""),
   },
   {
