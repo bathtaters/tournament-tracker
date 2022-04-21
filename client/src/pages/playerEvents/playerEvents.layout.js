@@ -1,6 +1,6 @@
 import { dayClasses } from "../schedule/services/date.utils";
 import { statusInfo } from "../../assets/constants"
-import { formatRecord } from "../../assets/formatting";
+import { formatRecord, formatMatchStatus } from "../../assets/formatting";
 
 // Player Schedule Columns
 const eventsLayout = [
@@ -17,7 +17,7 @@ const eventsLayout = [
   {
     label: 'Status', span: 2, cellStyle: {align: 'left', size: 'md', color: ''}, default: statusInfo[0].label, hdrClass: 'text-left',
     className: (id, {events}) => statusInfo[events[id]?.status ?? 0].textClass,
-    get: (id, {events, matches}) => statusInfo[events[id]?.status ?? 0].label + (matches[id]?.isDrop ? " (Dropped)" : ""),
+    get: (id, {events, matches}) => formatMatchStatus(statusInfo[events[id]?.status ?? 0].label, matches[id]?.isDrop),
   },
   {
     label: 'Record', cellStyle: {size: 'lg'},
