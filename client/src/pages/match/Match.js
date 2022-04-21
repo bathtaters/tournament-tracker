@@ -59,7 +59,7 @@ function Match({ eventid, matchId, wincount, isEditing }) {
         <MatchWins 
           matchData={matchData}
           wincount={wincount}
-          isEditing={isEditing || isLocked}
+          isEditing={isEditing}
           clearReport={clearReport}
           setVal={setVal}
           openReport={()=>reportModal.current.open()}
