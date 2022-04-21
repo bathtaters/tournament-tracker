@@ -17,8 +17,8 @@ export function RoundButton({ value, onClick }) {
 
 export function EditEventButton({ onClick }) {
   return (
-    <div class="stat-figure">
-      <button type="button" className="btn btn-secondary" onClick={onClick}>
+    <div className="stat-figure">
+      <button type="button" className="btn btn-secondary btn-sm btn-square" onClick={onClick}>
         <SettingsIcon />
       </button>
     </div>
