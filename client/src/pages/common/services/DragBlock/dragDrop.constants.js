@@ -14,19 +14,19 @@ export const COMMON_CLS = 'common';
 export const classDefault = {
   border: {
     baseWidth: 'border',
-    baseColor: 'base-content',
-    baseStyle: 'solid',
-    disabledColor: 'transparent',
+    baseColor: 'border-base-content',
+    baseStyle: 'border-solid',
+    disabledColor: 'border-transparent',
     disabledStyle: '',
-    dropColor: 'accent',
+    dropColor: 'border-accent',
     dropStyle: '',
-    illegalColor: 'error',
+    illegalColor: '',
     illegalStyle: '', 
   },
   bg: {
-    baseColor: 'neutral',
-    disabledColor: 'transparent',
-    hoverColor: 'neutral-focus',
+    baseColor: 'bg-base-300',
+    disabledColor: 'bg-transparent',
+    hoverColor: 'bg-base-400',
     illegalColor: '',
   },
   additional: {

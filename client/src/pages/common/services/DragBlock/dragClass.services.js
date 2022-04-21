@@ -3,9 +3,6 @@ import dragHandle from "./dragHandle.services";
 import { extractMatches } from "./dragDrop.utils";
 import { COMMON_CLS, classDefault, optimizeClassSwapping } from "./dragDrop.constants";
 
-// Use !important before classes
-const useImportant = false;
-
 // Combine custom classes w/ defaults
 function getDefaultClasses(customBorder, customBg, additional) {
   const border  = Object.assign({}, classDefault.border, customBorder);
@@ -25,19 +22,13 @@ function getDefaultClasses(customBorder, customBg, additional) {
 
 // Get class array from UI class objects
 function toClassArray(base, type, isBorder = false) {
-  // Set prefix
-  const prefix = (useImportant ? '!' : '') + (isBorder ? 'border' : 'bg');
   if (!type) type = 'base';
 
   // Set defaults (NOTE: behavior specific to params)
-  const color = base[type+'Color'] || base.baseColor;
-  const style = isBorder && (base[type+'Style'] || base.baseStyle);
-
-  // Build array
-  let classes = [];
-  if (color)   classes.push(prefix + '-' + color);
-  if (style)   classes.push(prefix + '-' + style);
-  return classes;
+  return [
+    base[type+'Color'] || base.baseColor,
+    isBorder && (base[type+'Style'] || base.baseStyle),
+  ].filter(Boolean)
 }
 
 
