@@ -30,7 +30,7 @@ function MatchPlayer({ id, playerData, matchData, handleSwap, handleDrop, canSwa
         {(playerData && playerData.name) || '?'}
       </NameStyle>
       
-      <PlayerInfoStyle isDrop={isDrop} onClick={isEditing ? clickDrop : null}>
+      <PlayerInfoStyle isDrop={isDrop}>
         { isDrop ? 'Dropped' : formatRecord(record) }
 
         <PlayerDropStyle visible={isEditing && matchData.reported}>
