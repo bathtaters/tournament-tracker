@@ -3,11 +3,11 @@
 export const dragType = { event: "json/eventday", player: "json/matchplayer" };
 
 export const statusInfo = [
-  { label: 'N/A',         badge: "badge-warning", textClass: "text-warning"      },
-  { label: 'Unstarted',   badge: "badge-primary", textClass: "text-primary dark:text-primary-content" },
-  { label: 'Active',      badge: "badge-accent",  textClass: "text-accent-content dark:text-accent"   },
-  { label: 'Finished',    badge: "badge-ghost",   textClass: "text-base-content" },
-  { label: 'N/A',         badge: "badge-warning", textClass: "text-warning"      },
+  { label: 'N/A',         badge: "badge-warning", linkClass: "link-warning", textClass: "text-warning"      },
+  { label: 'Unstarted',   badge: "badge-primary", linkClass: "link-primary", textClass: "text-primary dark:text-primary-content" },
+  { label: 'Active',      badge: "badge-accent",  linkClass: "link-accent",  textClass: "text-accent-content dark:text-accent"   },
+  { label: 'Finished',    badge: "badge-ghost",   linkClass: "",             textClass: "text-base-content" },
+  { label: 'N/A',         badge: "badge-warning", linkClass: "link-warning", textClass: "text-warning"      },
 ];
 
 export const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];

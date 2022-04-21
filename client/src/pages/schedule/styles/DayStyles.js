@@ -20,26 +20,20 @@ export function MissingDataStyle({ children }) {
 
 // DAY-ENTRY.JS STYLES \\
 
-function BaseTitleStyle({ status, children }) {
-  return (
-    <div className={`${statusInfo[status].textClass} text-sm font-normal break-words text-center line-clamp-2 leading-none`}>
-      {children}
-    </div>
-  );
-}
+const baseEntryClass = 'w-full text-sm font-normal text-center break-words line-clamp-2 leading-none'
 
 export function EntryTitleStyle({ status, children }) {
   return (
-    <div className="pointer-events-none w-full">
-      <BaseTitleStyle status={status}>{children}</BaseTitleStyle>
+    <div className={`${baseEntryClass} ${statusInfo[status].textClass} pointer-events-none`}>
+      {children}
     </div>
   );
 }
 
 export function EntryLinkStyle({ to, status, children }) {
   return (
-    <Link to={to} className="w-full link link-hover">
-      <BaseTitleStyle status={status}>{children}</BaseTitleStyle>
+    <Link to={to} className={`${baseEntryClass} link link-hover ${statusInfo[status].linkClass} ${statusInfo[status].textClass}`}>
+      {children}
     </Link>
   );
 }
@@ -47,7 +41,7 @@ export function EntryLinkStyle({ to, status, children }) {
 
 // Other \\
 
-export function EditEventButton({ status, onClick, children }) {
+export function EditEventButton({ status, onClick }) {
   return (<div
     className={'absolute top-0 right-0 btn btn-circle btn-xs btn-ghost '+statusInfo[status].textClass}
     onClick={onClick}
