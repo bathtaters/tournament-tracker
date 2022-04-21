@@ -22,7 +22,7 @@ export function HeaderButton({ value, disabled, onClick }) {
 }
 
 export const dayClass = {
-  past:   { titleCls: "text-base-content", borderCls: "border-base-content" },
-  today:  { titleCls: "text-accent",       borderCls: "border-accent"       },
-  future: { titleCls: "text-primary",      borderCls: "border-primary"      },
+  past:   { titleCls: "text-base-content",                      borderCls: "border-base-content" },
+  today:  { titleCls: "text-accent-content dark:text-accent",   borderCls: "border-accent"       },
+  future: { titleCls: "text-primary dark:text-primary-content", borderCls: "border-primary"      },
 };

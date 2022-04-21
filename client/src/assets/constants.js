@@ -5,7 +5,7 @@ export const dragType = { event: "json/eventday", player: "json/matchplayer" };
 export const statusInfo = [
   { label: 'N/A',         badge: "badge-warning", textClass: "text-warning"      },
   { label: 'Unstarted',   badge: "badge-primary", textClass: "text-primary dark:text-primary-content" },
-  { label: 'Active',      badge: "badge-accent",  textClass: "text-accent"       },
+  { label: 'Active',      badge: "badge-accent",  textClass: "text-accent-content dark:text-accent"   },
   { label: 'Finished',    badge: "badge-ghost",   textClass: "text-base-content" },
   { label: 'N/A',         badge: "badge-warning", textClass: "text-warning"      },
 ];
