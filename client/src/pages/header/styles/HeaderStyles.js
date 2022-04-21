@@ -2,12 +2,19 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 export function HeaderStyle({ children }) {
-  return (<div className="navbar bg-base-300 sm:h-24 justify-center"><div className="navbar-center w-full max-w-6xl">{children}</div></div>)
+  return (<>
+    <div className="navbar fixed top-0 left-0 right-0 z-50 bg-base-200 bg-opacity-90 h-16 sm:h-24 justify-center">
+      <div className="navbar-center w-full max-w-6xl">
+        {children}
+      </div>
+    </div>
+    <div className="h-16 sm:h-24" />
+  </>)
 }
 
 export function TitleStyle({ children }) {
   return (
-    <h3 className="text-primary dark:text-primary-content font-medium flex-1 px-2 sm:ml-2 line-clamp-2 text-ellipsis overflow-hidden">
+    <h3 className="text-primary dark:text-primary-content font-medium flex-1 px-2 line-clamp-2 leading-none text-ellipsis overflow-hidden">
       {children}
     </h3>
   );
