@@ -11,7 +11,7 @@ export function MatchStyle({ children, settings }) {
 }
 
 // Style to pass to DragBlock in PlayerBox
-export const playerBoxStyle = "inline-block group grow rounded-2xl p-2 mx-1 mb-1";
+export const playerBoxStyle = "inline-block grow rounded-2xl p-2 mx-1 mb-1";
 
 export function PlayerStyle({ children }) {
   return (
@@ -39,18 +39,18 @@ export function VsStyle({ children }) {
 
 export function PlayerInfoStyle({ isDrop, children }) {
   return (
-    <div className="text-xs font-thin mt-0 pt-0 pointer-events-none mb-1 relative">
+    <div className="text-xs font-thin mt-0 pt-0 mb-1 relative group">
       <div className={isDrop ? "text-error" : "text-base-content"}>
         {children}
       </div>
     </div>
   );
 }
-
+// bg-base-focus rounded-md border border-base-content
 export function PlayerDropStyle({ children, visible }) {
   if (!visible) return null;
   return (
-    <div className="hidden group-hover:block hover:block absolute left-0 right-0 top-4 bg-base-focus rounded-md border border-base-content">
+    <div className="hidden group-hover:block hover:block absolute top-0 right-0 left-0">
       {children}
     </div>
   );

@@ -15,7 +15,7 @@ export function ReportButton({ disabled, onClick }) {
 export function ClearReportButton({ onClick }) {
   return (
     <div
-      className="text-red-500 absolute bottom-0 right-1 text-xs font-thin cursor-pointer hover:text-error"
+      className="text-error absolute bottom-0 right-1 text-xs font-thin cursor-pointer hover:text-error"
       onClick={onClick}
     >
       ∅
@@ -25,8 +25,10 @@ export function ClearReportButton({ onClick }) {
 
 export function DropButton({ onClick, isDrop }) {
   return (
-    <div className="link link-hover link-secondary text-center font-light p-0.5 pointer-events-auto" onClick={onClick}>
-      { isDrop ? 'Undrop' : 'Drop' }
-    </div>
+    <input
+      className={"btn btn-xs w-full " + (isDrop ? 'btn-secondary' : 'btn-error')}
+      value={ isDrop ? 'Join' : 'Drop' }
+      type="button" onClick={onClick}
+    />
   )
 }
