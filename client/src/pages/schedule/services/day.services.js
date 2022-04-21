@@ -5,7 +5,7 @@ import { dragType } from "../../../assets/constants";
 export const dataType = dragType.event;
 
 // Drag & Drop tester
-export const canDrop = (types, target, self) => types.includes(dataType) && (target !== noDate || self !== noDate);
+export const canDrop = (types, target, self) => types[0] === dataType && target !== self;
 
 // Drop handler
 // a & b = { id, day, slot } or { day: noDate } (Unscheduled box)

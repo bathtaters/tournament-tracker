@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo } from "react";
 import PropTypes from 'prop-types';
 
 import DayEntry from "./DayEntry";
@@ -21,7 +21,7 @@ function Day({ events, isEditing, isSlotted, setEventModal, day, eventData }) {
   return (
     <DragBlock
       storeData={{ day }}
-      storeTestData="day"
+      storeTestData={day}
       onDrop={dropHandler}
       canDrop={canDrop}
       className={dragAndDropClass.outer}
