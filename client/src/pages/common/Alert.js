@@ -1,10 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { createPortal } from "react-dom";
 import FocusTrap from "focus-trap-react";
 
 import RawData from "./RawData";
-import OverlayContainer from "./components/OverlayContainer";
 import {
   AlertTitleStyle, AlertMessageStyle, AlertButtonWrapperStyle, AlertButton, 
   ModalStyle, CloseButton, alertModalClass,
@@ -25,9 +23,6 @@ import { useHotkeys } from "./services/basic.services";
   Buttons = { value: returnValue, id: uniqueId, label: displayText, ...propsForwardedToInputTag }
 \* *** *** **** *** *** */
 
-// Render into root separate root to allow Alerts on top of modals
-const alertRoot = document.getElementById('alert-root');
-
 // Alert base component
 function Alert() {
   // Get alert settings
@@ -44,7 +39,7 @@ function Alert() {
   }, { skip: !isOpen, deps: [close] })
 
   // Render Alert Component to AlertRoot
-  return createPortal(isOpen && (
+  return isOpen && (
     <FocusTrap focusTrapOptions={{ escapeDeactivates: false }}>
       <ModalStyle className={alertModalClass + (className ?? '')} z="z-90">
         { Boolean(showClose ?? !buttons?.length) && <CloseButton onClick={() => close(showClose || undefined)} /> }
@@ -63,7 +58,7 @@ function Alert() {
 
       </ModalStyle>
     </FocusTrap>
-  ), alertRoot)
+  )
 }
 
 export default Alert

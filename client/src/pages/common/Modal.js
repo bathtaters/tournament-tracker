@@ -1,13 +1,10 @@
 import React, { useState, useImperativeHandle, forwardRef, useCallback } from "react";
-import { createPortal } from "react-dom";
 import FocusTrap from "focus-trap-react";
 
 import { ModalStyle, CloseButton } from "./styles/ModalStyle";
 import { closeController, msgController, refController } from "./services/modal.services";
 import { useHotkeys } from "./services/basic.services";
 import { useOpenAlert, useAlertStatus } from "./common.hooks"
-
-const modalRoot = document.getElementById('modal-root');
 
 // Modal base component
 function Modal({ children, className = '', bgClose = true, startOpen = false, startLocked = false, lockAlert }, ref) {
@@ -30,15 +27,13 @@ function Modal({ children, className = '', bgClose = true, startOpen = false, st
   }, { skip: alertIsOpen || !isOpen, deps: [close] });
 
   // Render into modalRoot
-  return createPortal(isOpen && (
-      <FocusTrap paused={alertIsOpen} focusTrapOptions={{ escapeDeactivates: false }}>
-        <ModalStyle onClick={bgClose ? () => close() : null} className={className}>
-          <CloseButton onClick={closeWithMsg} />
-          {children}
-        </ModalStyle>
-      </FocusTrap>
-    ),
-    modalRoot
+  return isOpen && (
+    <FocusTrap paused={alertIsOpen} focusTrapOptions={{ escapeDeactivates: false }}>
+      <ModalStyle onClick={bgClose ? () => close() : null} className={className}>
+        <CloseButton onClick={closeWithMsg} />
+        {children}
+      </ModalStyle>
+    </FocusTrap>
   )
 }
 
