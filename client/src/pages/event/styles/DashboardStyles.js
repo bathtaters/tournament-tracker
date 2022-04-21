@@ -13,8 +13,8 @@ export function DashboardStyle({ children }) {
 
 // Dashboard Styles
 export const HeaderStyle    = ({ children }) => <div className="stat text-right">{children}</div>
-export const ValueStyle     = ({ children }) => <div class="stat-value">{children}</div>
-export const DetailStyle    = ({ children }) => <div class="stat-desc">{children}</div>
+export const ValueStyle     = ({ children }) => <div className="stat-value">{children}</div>
+export const DetailStyle    = ({ children }) => <div className="stat-desc">{children}</div>
 
 export function ContainerStyle({ children }) {
   return (
