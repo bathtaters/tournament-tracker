@@ -1,4 +1,4 @@
-import { fetchApi } from "../header.fetch";
+import { fetchApi } from "../settings.fetch";
 
 // Update cache for settingsUpdate
 export function settingsUpdate(body, { dispatch, queryFulfilled }) {

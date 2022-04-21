@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 
 import { reloadClass } from "../styles/HeaderStyles";
-import { useForceRefetch, useFetchingProvider } from "../header.fetch";
+import { useForceRefetch, useFetchingProvider } from "../../common/common.fetch";
 
 function ReloadButton(props) {
   // Check for active queries

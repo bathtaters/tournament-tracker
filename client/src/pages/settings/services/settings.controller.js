@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { useSettingsQuery, useUpdateSettingsMutation } from "../header.fetch"
+import { useSettingsQuery, useUpdateSettingsMutation } from "../settings.fetch"
 import { updateLocals, getNewSettings } from "./settings.services";
 
 import { settings } from "../../../assets/config"

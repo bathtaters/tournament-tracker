@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 
 import { useOpenAlert, useLockScreen } from "../../common/common.hooks"
-import { useResetDbMutation } from "../header.fetch"
-import { doReset } from './headerFetch.services'
+import { useResetDbMutation } from "../settings.fetch"
+import { doReset } from './settingsFetch.services'
 import { getLocalSettings, setLocalVar } from "../../common/services/fetch.services"
 
 import { resetDbAlert, resetDbAlertConfirm } from "../../../assets/alerts"

@@ -1,15 +1,15 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import ResetButtons from "./ResetButtons";
-import InputForm from "../../common/InputForm";
-import RawData from "../../common/RawData";
-import Loading from "../../common/Loading";
+import ResetButtons from "./components/ResetButtons";
+import InputForm from "../common/InputForm";
+import RawData from "../common/RawData";
+import Loading from "../common/Loading";
 
-import { TitleStyle } from "../styles/SettingsStyles";
-import settingsLayout from "../settings.layout";
+import { TitleStyle } from "./styles/SettingsStyles";
+import settingsLayout from "./settings.layout";
 
-import useSettingsController from "../services/settings.controller";
+import useSettingsController from "./services/settings.controller";
 
 
 function Settings({ modal }) {
