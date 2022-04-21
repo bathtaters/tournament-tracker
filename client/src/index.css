@@ -25,6 +25,7 @@
     /* Add missing styles */
     .min-h-32 { min-height: 8rem; }
     .min-w-48 { min-width: 14rem; }
+    .bg-base-400 { @apply bg-gray-400 dark:bg-black; }
     
     /* NavLink styling */
     a.active, a.active-parent, a.active-parent .link { @apply cursor-default; }
