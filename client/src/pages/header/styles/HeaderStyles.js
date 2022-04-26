@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 
 export function HeaderStyle({ children }) {
   return (<>
-    <div className="navbar fixed top-0 left-0 right-0 z-50 bg-base-200 bg-opacity-90 h-16 sm:h-24 justify-center">
-      <div className="navbar-center w-full max-w-6xl">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-base-200 bg-opacity-90">
+      <div className="navbar h-16 sm:h-24 max-w-4xl m-auto">
         {children}
       </div>
     </div>
@@ -12,29 +12,36 @@ export function HeaderStyle({ children }) {
   </>)
 }
 
+export function DropdownStyle({ children }) {
+  return <div className="navbar-start flex-shrink-0 w-auto"><div className="dropdown dropdown-hover">{children}</div></div>
+}
+
 export function TitleStyle({ children }) {
   return (
-    <h3 className="text-primary dark:text-primary-content font-medium flex-1 px-2 line-clamp-2 leading-none text-ellipsis overflow-hidden">
-      {children}
-    </h3>
+    <div className="navbar-center flex-auto">
+      <h3 className="text-primary dark:text-primary-content font-medium m-auto px-2 text-center line-clamp-2 leading-none text-ellipsis overflow-hidden">
+        {children}
+      </h3>
+    </div>
   );
 }
 
-export const settingsClass = "btn btn-ghost btn-md text-xl sm:text-2xl px-1"
-
-export const reloadClass = {
-  loading: "text-secondary pointer-events-none animate-spin ease-linear",
-  button:  "text-secondary cursor-pointer hover:text-secondary-focus",
+export function ReloadStyle({ children }) {
+  return (<div className="navbar-end flex-shrink-0 w-auto">{children}</div>);
 }
 
-export function LinkContainer({ children }) {
-  return (<div className="flex-none"><ul className="menu menu-horizontal p-0">{children}</ul></div>);
+export function MenuStyle({ children }) {
+  return (
+    <ul className="menu menu-compact dropdown-content p-2 shadow bg-base-300 rounded-box w-52">
+      {children}
+    </ul>
+  )
 }
 
 export function LinkStyle({ to, text }) {
-  return (<li className="mx-1"><NavLink to={to}>{text}</NavLink></li>);
+  return (<li className="mx-1"><NavLink to={to}><h4 className="w-full text-xl sm:text-2xl">{text}</h4></NavLink></li>);
 }
 
-export function OverlayStyle({ edge = "right", spacing = "1", children }) {
-  return (<div className={`absolute -top-2 ${edge}-0 z-50 m-${spacing} overflow-hidden`}>{children}</div>);
-}
+export const headerButtonStyle = "btn btn-ghost btn-circle"
+
+export const reloadingClass = "animate-spin ease-linear"
