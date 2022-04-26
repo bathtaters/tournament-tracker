@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 
 import Settings from "../../settings/Settings";
 import Modal from "../../common/Modal";
+import SettingsIcon from "../../common/icons/SettingsIcon";
 import { HeaderStyle, TitleStyle, HeaderButton } from "../styles/ScheduleStyles";
 
 function ScheduleHeader({ isEditing, isLoading, setEdit, openModal }) {
@@ -10,16 +11,20 @@ function ScheduleHeader({ isEditing, isLoading, setEdit, openModal }) {
   return (
     <HeaderStyle>
       <HeaderButton
-        value={isEditing ? '⚙' : '＋'}
         onClick={() => isEditing ? modal.current.open() : openModal()}
         disabled={isLoading}
-      />
+      >
+        {isEditing ? <SettingsIcon /> : '＋'}
+      </HeaderButton>
+
       <TitleStyle>Schedule</TitleStyle>
+
       <HeaderButton
-        value={isEditing ? 'Back' : 'Edit'}
         onClick={()=>setEdit(!isEditing)}
         disabled={isLoading}
-      />
+      >
+        {isEditing ? 'Back' : 'Edit'}
+      </HeaderButton>
 
       <Modal ref={modal}>
         <Settings modal={modal} />
