@@ -1,19 +1,16 @@
 // For ExtractMatches
 
 // Run class optimization
-export const optimizeClassSwapping = true;
-
+export const optimizeClassSwapping = true
 // Class keys to combine
-export const combineKeys = [ 'enabled', 'drop', 'illegal' ];
+export const combineKeys = [ 'enabled', 'disabled', 'drop', 'illegal' ]
 // Output key for common classes
-export const COMMON_CLS = 'common';
-
+export const COMMON_CLS = 'common'
 
 // Default classes
-
 export const classDefault = {
   border: {
-    baseWidth: 'border',
+    baseWeight: 'border',
     baseColor: 'border-base-content',
     baseStyle: 'border-solid',
     disabledColor: 'border-transparent',
@@ -32,8 +29,8 @@ export const classDefault = {
   additional: {
     enabled: [],
     disabled: [],
-    drag: [],
+    drag: ['cursor-move'],
     drop: [],
-    illegal: ['cursor-not-allowed'],
+    illegal: [],
   },
-};
+}

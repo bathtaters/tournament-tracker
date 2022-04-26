@@ -1,50 +1,33 @@
 import React, { useMemo } from "react";
 import PropTypes from 'prop-types';
 
-import { preventDef } from './services/DragBlock/dragHandle.services';
-import dragClassController from './services/DragBlock/dragClass.services';
-import { getHandler, getClasses } from './services/DragBlock/dragDrop.utils'
+import dragClassController, { getClasses } from './services/DragBlock/dragClass.services';
+import useDndController from './services/DragBlock/dragBlock.controller';
 
 
 function DragBlock({
+  type="text/json", item, onDrop, dropCheck,
   className = "", additionalClasses = {},
   borderClass = {}, bgClass = {},
-  storeData, onDrop, canDrop, storeTestData,
-  dataType='text/json', disabled = false,
-  draggable = true, droppable = true,
-  onHover = null, onHoverOff = null,
-  children, 
+  draggable = true, droppable = true, disabled = false,
+  onHover = null, children, 
 }) {
 
-  // Build memoized data
+  // Build memoized classes
   const classes = useMemo(() => 
-    dragClassController(
-      borderClass, bgClass, additionalClasses, droppable, draggable,
-      storeData, onDrop, canDrop, storeTestData, dataType
-    ), [
-      borderClass, bgClass, additionalClasses, droppable, draggable,
-      storeData, onDrop, canDrop, storeTestData, dataType
-    ]
+    dragClassController(borderClass, bgClass, additionalClasses, droppable, draggable),
+    [borderClass, bgClass, additionalClasses, droppable, draggable]
   );
 
-  if (!droppable && !draggable) disabled = true;
+  // Setup Drag & Drop backend
+  const { disable, isOver, canDrop, ref } = useDndController(type, item, onDrop, dropCheck, droppable, draggable, disabled)
   
   // Render Draggable tag
   return (
-    <div
-      className={getClasses(classes, className, disabled)}
-      
-      draggable={(!disabled && draggable) || null}
-      onDragOver={preventDef}
-      onMouseEnter={onHover}
-      onMouseLeave={onHoverOff}
-
-      onDragStart={getHandler(classes.onDragStart, disabled)}
-      onDragEnter={getHandler(classes.onDragEnter, disabled)}
-      onDragLeave={getHandler(classes.onDragLeave, disabled)}
-      onDrop={     getHandler(classes.onDrop,      disabled)}
-    >
-      {children}
+    <div ref={ref} className={getClasses(className, classes, disable, isOver, canDrop)}>
+      <div onMouseEnter={onHover}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -67,7 +50,6 @@ DragBlock.propTypes = {
   droppable: PropTypes.bool,
 
   onHover: PropTypes.func,
-  onHoverOff: PropTypes.func,
   children: PropTypes.node,
 }
 
