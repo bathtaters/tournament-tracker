@@ -1,5 +1,5 @@
 import React from "react";
-import SettingsIcon from "../components/subcomponents/SettingsIcon";
+import SettingsIcon from "../../common/icons/SettingsIcon";
 
 export function RoundButton({ value, onClick }) {
   return (
@@ -19,7 +19,7 @@ export function EditEventButton({ onClick }) {
   return (
     <div className="stat-figure">
       <button type="button" className="btn btn-secondary btn-sm btn-square" onClick={onClick}>
-        <SettingsIcon />
+        <SettingsIcon className="h-6 w-6 stroke-current" />
       </button>
     </div>
   )
