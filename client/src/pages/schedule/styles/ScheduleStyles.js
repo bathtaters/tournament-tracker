@@ -11,14 +11,17 @@ export function DaysContainerStyle({ children }) {
   return (<div className="flex flex-wrap justify-center mt-4">{children}</div>);
 }
 
-export function HeaderButton({ value, disabled, onClick }) {
-  return (<input
-    className="btn btn-primary btn-sm sm:btn-md"
-    type="button"
-    value={value}
-    onClick={onClick}
-    disabled={disabled}
-  />);
+export function HeaderButton({ children, disabled, onClick }) {
+  return (
+    <button
+      className="btn btn-primary btn-sm sm:btn-md"
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  );
 }
 
 export const dayClass = {
