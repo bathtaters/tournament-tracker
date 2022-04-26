@@ -25,4 +25,4 @@ export const swapController = (swapPlayers, eventid, openAlert) => async (player
 };
 
 // Test if swap is allowed
-export const canSwap = (types, a, b) => a !== b && types[0].includes(dataType);
+export const canSwap = (type, a, b) => type === dataType && a.playerid !== b.playerid;

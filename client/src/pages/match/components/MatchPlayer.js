@@ -17,12 +17,11 @@ function MatchPlayer({ id, playerData, matchData, handleSwap, handleDrop, canSwa
     { Boolean(index) && <VsStyle>vs.</VsStyle> }
 
     <DragBlock
-      storeData={{ id: matchData.id, playerid: id, reported: matchData.players?.length !== 1 && matchData.reported }}
+      type={dataType}
+      item={{ id: matchData.id, playerid: id, reported: matchData.players?.length !== 1 && matchData.reported }}
       onDrop={handleSwap}
-      canDrop={canSwap}
-      storeTestData={id}
+      dropCheck={canSwap}
       className={playerBoxStyle}
-      dataType={dataType}
       disabled={!isEditing}
     >
 

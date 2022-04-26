@@ -23,15 +23,14 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent }) {
 
   return (
     <DragBlock
-      storeData={{ id, day, slot }}
-      storeTestData={slot ? `${day}#${slot}` : day}
+      type={dataType}
+      item={{ id, day, slot }}
       onDrop={dropHandler}
-      canDrop={canDrop}
+      dropCheck={canDrop}
       className={dragAndDropClass.inner}
-      dataType={dataType}
       disabled={!isEditing}
-      onHover={loadEvent(id)}
       draggable={Boolean(data)}
+      onHover={loadEvent(id)}
     >
       { !data ? 
         <div /> :

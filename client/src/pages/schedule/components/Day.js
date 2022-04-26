@@ -20,13 +20,12 @@ function Day({ events, isEditing, isSlotted, setEventModal, day, eventData }) {
 
   return (
     <DragBlock
-      storeData={{ day }}
-      storeTestData={day}
+      type={dataType}
+      item={{ day }}
       onDrop={dropHandler}
-      canDrop={canDrop}
+      dropCheck={canDrop}
       className={dragAndDropClass.outer}
       borderClass={{disabledColor: borderCls}}
-      dataType={dataType}
       disabled={(isSlotted && day !== noDate) || !isEditing}
       draggable={false}
     >
