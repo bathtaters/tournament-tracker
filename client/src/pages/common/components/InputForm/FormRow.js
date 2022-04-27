@@ -1,10 +1,11 @@
 import React from "react";
 import InputElement  from "./InputElement";
 import { RowWrapper, Spacer } from "./OtherElements";
-import { getDefaultValue, getRowKey } from "../../services/InputForm/inputForm.services";
+
+import { getRowKey } from "../../services/InputForm/inputForm.services";
 
 // Row Map
-function FormRow({ row, data, baseData, isFragment, register, onChange, custom, depth = 0, keySuff = ':0' }) {
+function FormRow({ row, data, baseData, isFragment, backend, onChange, custom, depth = 0, keySuff = ':0' }) {
 
   // React element (or no data) => itself
   if (!row || React.isValidElement(row)) return row || null;
@@ -17,7 +18,7 @@ function FormRow({ row, data, baseData, isFragment, register, onChange, custom, 
           row={r} depth={depth+1}
           keySuff={keySuff+':'+i}
           key={getRowKey(r,i,keySuff)}
-          {...{ data, baseData, isFragment, register, onChange, custom }}
+          {...{ data, baseData, isFragment, backend, onChange, custom }}
         />
       )}
     </RowWrapper>
@@ -33,13 +34,12 @@ function FormRow({ row, data, baseData, isFragment, register, onChange, custom, 
   if (row.type === 'spacer') return <Spacer className={row.className} />;
   
   // Else => Input element
-  row.defaultValue = getDefaultValue(row, baseData);
-
   return (
     <InputElement
-      stored={[data,baseData]}
-      register={register}
-      limits={row.id && baseData && baseData.limits && baseData.limits[row.id]}
+      data={data}
+      baseData={baseData}
+      backend={backend}
+      limits={baseData?.limits?.[row.id]}
       onChange={onChange}
       {...row}
     />

@@ -1,10 +1,10 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import PropTypes from 'prop-types';
-import { useForm } from "react-hook-form";
 
 import FormRow from "./components/InputForm/FormRow";
+import FormError from "./components/InputForm/FormError";
 import { FormContainer, ButtonContainer, ButtonElement } from "./styles/InputFormStyles";
-import { changeController, transformFunction, transformObject }  from "./services/InputForm/inputForm.services";
+import useFormController  from "./services/InputForm/inputForm.controller";
 
 
 function InputForm({
@@ -13,27 +13,18 @@ function InputForm({
   // Backend data
   data = {}, baseData = {},
   // Styling
-  className = "", submitLabel = "Save", rowFirst = false, isGrid,
+  className = "flex justify-center", submitLabel = "Save", rowFirst = false, isGrid,
   // Event handlers
   onSubmit, onEdit, onChange
 }) {
 
-  // Local state
-  const { register, handleSubmit } = useForm();
-  const [ isChanged, setChanged  ] = useState(false);
-
-  // Transform data based on rows
-  const transformData = useCallback(transformFunction(transformObject(rows), data, baseData), [rows, baseData]);
-  
-  // First edit handler
-  const handleChange = useCallback(changeController(isChanged, onEdit, setChanged, onChange), [isChanged, onEdit, setChanged, onChange]);
-
-  // Submit handler
-  const submitController = (data) => onSubmit ? onSubmit(transformData(data)) : transformData(data);
+  const { handleSubmit, handleChange, backend } = useFormController({ rows, data, baseData, onSubmit, onEdit, onChange })
 
   // Render
   return (
-    <FormContainer onSubmit={handleSubmit(submitController)}>
+    <FormContainer onSubmit={handleSubmit}>
+
+      <FormError errors={backend.errors} rows={rows} limits={baseData?.limits} />
 
       <div className={className}>
         <FormRow
@@ -41,7 +32,7 @@ function InputForm({
           data={data || {}}
           baseData={baseData}
           isFragment={isGrid}
-          register={register}
+          backend={backend}
           onChange={handleChange}
           custom={children}
           depth={+rowFirst}
