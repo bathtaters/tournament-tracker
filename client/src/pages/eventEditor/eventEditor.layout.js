@@ -1,15 +1,16 @@
 import valid from "../../assets/validation.json";
 
 // Settings Window Layout/Validation
-const lockAt = (statusVal) => (_, base) => base.eventStatus != null && base.eventStatus >= statusVal;
+const lockAt = (statusVal) => (data) => data?.status != null && data?.status >= statusVal;
 
 // Layout object for InputForm
 export const editorLayout = [ 'custom', [
   {
     label: 'Title', id: 'title', type: 'text',
+    required: true,
     labelClass: "font-normal",
     inputClass: "input-md",
-    transform: (title,data) => title.trim() ? title.trim() : (data && data.title) || valid.defaults.event.title
+    setValueAs: (title) => title.trim() || valid.defaults.event.title,
   },{ 
     label: 'Total Rounds', id: 'roundcount',
     type: 'number', disabled: lockAt(3),

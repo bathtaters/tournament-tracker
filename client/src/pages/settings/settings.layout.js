@@ -4,19 +4,20 @@ const defaultTitle = valid.defaults.settings.title;
 
 // Settings layout object for InputForm
 const basicLayout = [
-  { label: 'Title', id: 'title', type: 'text', defaultValue: '',
+  {
+    label: 'Title', id: 'title', type: 'text', defaultValue: '', required: true,
     className: "w-full m-2",
     inputClass: "input-lg w-full",
-    transform: (title,data) => title.trim() ? title.trim() : (data && data.title) || defaultTitle
+    setValueAs: (title) => title.trim() || defaultTitle,
   },
 
   [
-    { label: 'Start Date', id: 'datestart', type: 'date' },
-    { label: 'End Date', id: 'dateend', type: 'date' }
+    { label: 'Start Date', id: 'datestart', type: 'date', required: true, },
+    { label: 'End Date', id: 'dateend', type: 'date', required: true, }
   ],
 
   [
-    { label: 'Daily Slots', id: 'dayslots', type: 'number' },
+    { label: 'Daily Slots', id: 'dayslots', type: 'number', required: true, },
     { label: 'Auto-fill Size', id: 'autofillsize', type: 'number', advanced: true },
   ],
 
