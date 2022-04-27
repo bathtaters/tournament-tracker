@@ -11,6 +11,9 @@ import settingsLayout from "./settings.layout";
 
 import useSettingsController from "./services/settings.controller";
 
+import { getBaseData } from "../../core/services/validation.services";
+const baseData = getBaseData('settings');
+
 
 function Settings({ modal }) {
   const { data, onSubmit, onChange, showLoading, error } = useSettingsController(modal)
@@ -25,6 +28,7 @@ function Settings({ modal }) {
     <InputForm
       rows={settingsLayout[data.showadvanced ? 'basic' : 'advanced']}
       data={data}
+      baseData={baseData}
       onSubmit={onSubmit}
       onEdit={modal.current.lock}
       onChange={onChange}

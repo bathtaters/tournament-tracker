@@ -11,8 +11,8 @@ import Loading from "../common/Loading";
 import useEditEventController from "./services/editEvent.controller";
 import { editorLayout } from "./eventEditor.layout";
 
-import valid from "../../assets/validation.json";
-const baseData = { defaultValues: valid.defaults.event, limits: valid.limits.event };
+import { getBaseData } from "../../core/services/validation.services";
+const baseData = getBaseData('event');
 
 
 function EditEvent({ eventid, modal }) {
