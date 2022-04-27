@@ -1,3 +1,6 @@
+// Import templates
+import { basicTemplate } from "./formatting";
+
 // -- String Sets -- \\
 
 export const dragType = { event: "json/eventday", player: "json/matchplayer" };
@@ -31,6 +34,14 @@ export const reportLockCaption = "Updating standings...";
 
 
 // -- Server error adapters -- \\
+
+export const formErrorMessages = {
+  min: basicTemplate`Must have at least ${'min'} ${'label'}.`,
+  max: basicTemplate`Can't have more than ${'max'} ${'label'}.`,
+  minLength: basicTemplate`${'label'} should be at least ${'min'} characters.`,
+  maxLength: basicTemplate`${'label'} can't be more than ${'max'} characters.`,
+}
+
 
 // FORMAT = endpoint: (arg) => `Endpoint ${arg}`,
 export const errorTitle = {
