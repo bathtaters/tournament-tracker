@@ -9,6 +9,8 @@ export default function reportLayout(playerList, players, wincount) {
       id: 'wins.'+idx, type: 'number',
       label: (players[pid] && players[pid].name) || pid,
       labelClass: reportStyles.wins,
+      inputClass: ' ',
+      inputWrapperClass: reportStyles.counterWrappers,
       defaultValue: valid.defaults.match.draws,
       min: valid.limits.match.draws.min,
       max: wincount,
@@ -17,8 +19,9 @@ export default function reportLayout(playerList, players, wincount) {
     // Each player - drop
     },{ 
       label: 'Drop', id: 'drops.'+pid, type: 'toggle',
+      className: reportStyles.drop,
+      labelClass: reportStyles.dropLabel,
       inputClass: reportStyles.dropInput,
-      labelClass: reportStyles.drop,
       labelPosition: 'right',
     },
 
@@ -28,6 +31,8 @@ export default function reportLayout(playerList, players, wincount) {
     {
       label: 'Draws', id: 'draws', type: 'number', 
       labelClass: reportStyles.draw,
+      inputClass: ' ',
+      inputWrapperClass: reportStyles.counterWrappers,
       defaultValue: valid.defaults.match.draws,
       min: valid.limits.match.draws.min,
       max: valid.limits.match.draws.max,

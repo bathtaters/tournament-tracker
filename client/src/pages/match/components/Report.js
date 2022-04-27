@@ -2,7 +2,7 @@ import React from "react"
 import PropTypes from 'prop-types'
 
 import InputForm from "../../common/InputForm"
-import { ReportTitleStyle, reportStyles } from "../styles/ReportStyles"
+import { ReportStyle, ReportTitleStyle, reportStyles } from "../styles/ReportStyles"
 
 import { reportAdapter } from "../services/match.services"
 
@@ -16,7 +16,7 @@ function Report({ title, match, report, layout, modal }) {
 
   // Render
   return (
-    <div>
+    <ReportStyle>
       <ReportTitleStyle>Report for {title}</ReportTitleStyle>
       <InputForm
         rows={layout}
@@ -26,7 +26,7 @@ function Report({ title, match, report, layout, modal }) {
         isGrid={true}
         className={reportStyles.form}
       />
-    </div>
+    </ReportStyle>
   )
 }
 
