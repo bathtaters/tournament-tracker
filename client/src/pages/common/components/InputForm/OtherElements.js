@@ -1,4 +1,5 @@
 import React from "react";
+import NumberPicker from "./NumberPicker";
 import { RowStyle, InputStyle } from "../../styles/InputFormStyles"
 
 // FormRow
@@ -20,10 +21,12 @@ export function ElementLabel({ id, label, isLabel, className }) {
   return (<span className={'label-text '+className} htmlFor={id}>{label}</span>);
 }
 
-export function ElementInput({ inputProps = {}, className }) {
-  if (inputProps.type === 'number') inputProps.pattern = "\\d*";
+export function ElementInput({ inputProps = {}, backend, className, wrapperClass }) {
+  if (inputProps.type === 'number' && !inputProps.disabled)
+    return <NumberPicker inputProps={inputProps} backend={backend} className={className} wrapperClass={wrapperClass} />;
+
   return (
-    <InputStyle disabled={inputProps.disabled}>
+    <InputStyle disabled={inputProps.disabled} className={wrapperClass}>
       <input {...inputProps} className={className} />
     </InputStyle>
   );

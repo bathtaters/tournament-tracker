@@ -34,4 +34,11 @@
     .table tr.hover.hover-error:hover td {
         @apply bg-error;
     }
+
+    /* Remove input number up/down arrows */
+    input[type='number'].hide-arrows::-webkit-inner-spin-button,
+    input[type='number'].hide-arrows::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 }
