@@ -43,7 +43,6 @@ exports.escapedLength = ({ options, errorMessage }) => ({
       isEsc ? reserve++ : count++
     }
     if (reserve) count += reserve
-    console.debug(' #### check esc count: ',count,options)
     return (!options.min || count >= options.min) && (!options.max || count <= options.max)
   }
 })
