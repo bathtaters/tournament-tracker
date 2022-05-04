@@ -35,11 +35,14 @@ export const reportLockCaption = "Updating standings...";
 
 // -- Server error adapters -- \\
 
+// Data to extract from form element for error message
+export const formErrorData = ({ min, max, minLength, maxLength, value, id }) => ({ min, max, minLength, maxLength, value, id })
+
 export const formErrorMessages = {
   min: basicTemplate`Must have at least ${'min'} ${'label'}.`,
   max: basicTemplate`Can't have more than ${'max'} ${'label'}.`,
-  minLength: basicTemplate`${'label'} should be at least ${'min'} characters.`,
-  maxLength: basicTemplate`${'label'} can't be more than ${'max'} characters.`,
+  minLength: basicTemplate`${'label'} should be at least ${'minLength'} characters.`,
+  maxLength: basicTemplate`${'label'} can't be more than ${'maxLength'} characters.`,
 }
 
 
