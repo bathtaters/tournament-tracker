@@ -14,7 +14,7 @@ export const editorLayout = [ 'custom', [
   },{ 
     label: 'Total Rounds', id: 'roundcount',
     type: 'number', disabled: lockAt(3),
-    min: data => data ? data.roundactive : valid.limits.event.roundcount.min
+    min: (data) => data?.roundactive
   },{
     label: 'Wins Needed', id: 'wincount',
     type: 'number', disabled: lockAt(2),
