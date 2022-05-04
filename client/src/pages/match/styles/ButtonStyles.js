@@ -1,4 +1,5 @@
 import React from "react";
+import CancelIcon from "../../common/icons/Cancelcon";
 
 export function ReportButton({ disabled, onClick }) {
   return (
@@ -14,12 +15,12 @@ export function ReportButton({ disabled, onClick }) {
 
 export function ClearReportButton({ onClick }) {
   return (
-    <div
-      className="text-error absolute bottom-0 right-1 text-xs font-thin cursor-pointer hover:text-error"
-      onClick={onClick}
+    <button
+      className="absolute bottom-0 right-0 btn btn-ghost btn-circle btn-xs w-4 h-4 min-h-0 m-0.5"
+      type={"button"} onClick={onClick}
     >
-      ∅
-    </div>
+      <CancelIcon className="w-10/12 h-10/12 fill-error" />
+    </button>
   );
 }
 
