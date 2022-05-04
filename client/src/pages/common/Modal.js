@@ -1,4 +1,4 @@
-import React, { useState, useImperativeHandle, forwardRef, useCallback } from "react";
+import React, { useState, useImperativeHandle, forwardRef, useCallback, useLayoutEffect } from "react";
 import FocusTrap from "focus-trap-react";
 
 import { ModalStyle, CloseButton } from "./styles/ModalStyle";
@@ -25,6 +25,12 @@ function Modal({ children, className = '', bgClose = true, startOpen = false, st
     13: () => document.activeElement?.click(), // Enter: Click if on a clickable object
     27: !isLock && close,  // Esc: Close Modal
   }, { skip: alertIsOpen || !isOpen, deps: [close] });
+
+  // Freeze background scrolling
+  useLayoutEffect(() => {
+    if (isOpen) document.body.classList.add('overflow-hidden');
+    else document.body.classList.remove('overflow-hidden');
+  }, [isOpen])
 
   // Render into modalRoot
   return isOpen && (
