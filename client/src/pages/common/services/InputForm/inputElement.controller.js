@@ -14,12 +14,12 @@ function getLimits(limits, min, max, data, isNumber) {
   // Min
   if (typeof min === 'function') elemLimits['min'+suffix] = min(data);
   else if (typeof min === 'number') elemLimits['min'+suffix] = min;
-  else if (typeof limits?.min === 'number') elemLimits['min'+suffix] = limits.min;
+  if (elemLimits['min'+suffix] == null && typeof limits?.min === 'number') elemLimits['min'+suffix] = limits.min;
   
   // Max
   if (typeof max === 'function') elemLimits['max'+suffix] = max(data);
   else if (typeof max === 'number') elemLimits['max'+suffix] = max;
-  else if (typeof limits?.max === 'number') elemLimits['max'+suffix] = limits.max;
+  if (elemLimits['max'+suffix] == null && typeof limits?.max === 'number') elemLimits['max'+suffix] = limits.max;
 
   return elemLimits;
 }
