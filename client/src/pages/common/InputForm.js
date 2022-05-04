@@ -24,7 +24,7 @@ function InputForm({
   return (
     <FormContainer onSubmit={handleSubmit}>
 
-      <FormError errors={backend.errors} rows={rows} limits={baseData?.limits} />
+      <FormError errors={backend.errors} rows={rows} />
 
       <div className={className}>
         <FormRow
