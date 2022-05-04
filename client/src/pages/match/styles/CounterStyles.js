@@ -10,7 +10,7 @@ export function DrawsStyle({ hidden, children }) {
 
 export function WinsStyle({ children }) {
   return (
-    <div className="flex justify-evenly text-center text-base-content mb-2">{children}</div>
+    <div className="flex justify-evenly text-center text-base-content mb-1">{children}</div>
   );
 }
 
@@ -20,6 +20,11 @@ export function ByeStyle({ children }) {
 
 // Get Win Counter class from matchData
 export const winClass = (wins, isEditing, {maxwins, isbye}) => 
-  'text-base'+
-  (isEditing || !isbye ? '' : ' invisible')+
-  (!isEditing && wins && wins === maxwins ? ' text-success' : '');
+  'text-base h-6' + (
+    isEditing ? ' btn-primary btn-circle btn-xs' :
+    isbye ? ' invisible' :
+    wins && wins === maxwins ? ' text-success' : ''
+  );
+
+export const drawsClass = (isEditing) => 'font-light lowercase min-h-0 h-4 ' +
+  (isEditing ? 'btn-primary btn-xs rounded-xl' : '');

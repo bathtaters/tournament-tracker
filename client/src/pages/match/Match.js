@@ -11,7 +11,7 @@ import RawData from "../common/RawData"
 import Loading from "../common/Loading"
 
 import { MatchStyle, PlayerStyle } from "./styles/MatchStyles"
-import { DrawsStyle, WinsStyle } from "./styles/CounterStyles"
+import { DrawsStyle, WinsStyle, drawsClass } from "./styles/CounterStyles"
 
 import reportLayout from "./report.layout"
 import { formatDraws } from "./services/match.services"
@@ -21,7 +21,7 @@ import useMatchController from "./services/match.controller"
 function Match({ eventid, matchId, wincount, isEditing }) {
   // Get component data
   const {
-    matchData, rankings, players, settings, title, isLocked, reportModal,
+    matchData, rankings, players, settings, title, reportModal,
     setVal, clearReport, report, swapProps, maxDraws, showLoading, error,
   } = useMatchController(eventid, matchId)
   
@@ -46,11 +46,12 @@ function Match({ eventid, matchId, wincount, isEditing }) {
       { matchData.reported &&
         <DrawsStyle hidden={!isEditing && (!matchData.draws || matchData.isbye)}>
           <Counter
+            className={drawsClass(isEditing)}
             isEditing={isEditing}
             maxVal={maxDraws}
-            setVal={setVal('draws')}
             suff={formatDraws}
-            val={+(matchData.draws || 0)}
+            setVal={setVal('draws')}
+            val={+(matchData.draws ?? 0)}
           />
         </DrawsStyle>
       }
