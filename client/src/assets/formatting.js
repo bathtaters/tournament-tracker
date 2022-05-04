@@ -1,7 +1,7 @@
 // Format data for display
 
 export const basicTemplate = (statics, ...dictKeys) => (dict = {}) => 
-  dictKeys.reduce((string, key, i) => string + (dict[key] ?? '') + statics[i + 1], statics[0])
+  dictKeys.reduce((string, key, i) => string + (dict[key] ?? key) + statics[i + 1], statics[0])
 
 export const formatQueryError = (err) => 'Please refresh page'
 
