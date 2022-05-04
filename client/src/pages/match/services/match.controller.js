@@ -14,8 +14,10 @@ import { swapController, canSwap } from "./swap.services"
 
 import { clearReportAlert } from '../../../assets/alerts'
 import { reportLockCaption } from "../../../assets/constants"
-import valid from "../../../assets/validation.json"
 
+// Get max possible draws
+import { getLimit } from "../../../core/services/validation.services"
+const maxDraws = getLimit('match','setDrawsMax') ?? 0
 
 export default function useMatchController(eventid, matchId) {
   // Base Hooks
@@ -50,15 +52,12 @@ export default function useMatchController(eventid, matchId) {
   return {
     // Base data
     matchData, rankings, players, settings,
-    title, isLocked, reportModal,
+    title, isLocked, reportModal, maxDraws,
     // Mutators
     clearReport, report,
 
     // Change reported values
     setVal: (key) => (value) => update({ id: matchData.id, eventid, key, value }),
-
-    // Get max possible draws
-    maxDraws: valid.limits.match.setDrawsMax || 0,
 
     // Data for swapping players
     swapProps: { matchData, canSwap,

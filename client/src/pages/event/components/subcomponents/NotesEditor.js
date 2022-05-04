@@ -5,8 +5,8 @@ import { NotesWrapperStyle, NotesStyle, NotesOverlayStyle, CharCountStyle, EditN
 import useTextEditor from "../../services/notesEditor.services"
 import { useSetEventMutation } from "../../event.fetch"
 
-import valid from "../../../../assets/validation.json"
-const charLimit = valid.limits.event.notes.max
+import { getLimit } from "../../../../core/services/validation.services"
+const charLimit = getLimit('event','notes').max
 
 
 function NotesEditor({ id, notes }) {

@@ -6,8 +6,7 @@ import MenuIcon from "../common/icons/MenuIcon";
 import ReloadButton from "./components/ReloadButton";
 import { HeaderStyle, DropdownStyle, TitleStyle, ReloadStyle, MenuStyle, LinkStyle, headerButtonStyle } from "./styles/HeaderStyles";
 
-import valid from "../../assets/validation.json";
-const defaultTitle = valid.defaults.settings.title;
+import { defaultSettings } from "../common/services/fetch.services";
 
 
 
@@ -25,7 +24,7 @@ function Header({ title }) {
       </DropdownStyle>
 
       <TitleStyle>
-        <Link to="/home">{title || defaultTitle}</Link>
+        <Link to="/home">{title || defaultSettings.title}</Link>
       </TitleStyle>
 
       <ReloadStyle>

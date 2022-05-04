@@ -1,6 +1,5 @@
 import { deepFilter } from "./services/settings.services";
-import valid from "../../assets/validation.json";
-const defaultTitle = valid.defaults.settings.title;
+import { defaultSettings } from "../common/services/fetch.services";
 
 // Settings layout object for InputForm
 const basicLayout = [
@@ -8,7 +7,7 @@ const basicLayout = [
     label: 'Title', id: 'title', type: 'text', defaultValue: '', required: true,
     className: "w-full m-2",
     inputClass: "input-lg w-full",
-    setValueAs: (title) => title.trim() || defaultTitle,
+    setValueAs: (title) => title.trim() || defaultSettings.title,
   },
 
   [

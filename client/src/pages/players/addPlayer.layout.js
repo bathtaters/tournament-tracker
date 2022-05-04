@@ -1,11 +1,11 @@
-import valid from "../../assets/validation.json";
+import { getDefault } from "../../core/services/validation.services";
 
 // Add Player window
 export default {
   basic: [
     {
       label: 'Name', id: 'name', type: 'text',
-      defaultValue: valid.defaults.player.name,
+      defaultValue: getDefault('player','name'),
       transform: name => name.trim()
     },
   ],

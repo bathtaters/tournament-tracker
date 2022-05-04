@@ -1,4 +1,4 @@
-import valid from "../../assets/validation.json";
+import { getDefault } from "../../core/services/validation.services";
 
 // Settings Window Layout/Validation
 const lockAt = (statusVal) => (data) => data?.status != null && data?.status >= statusVal;
@@ -10,7 +10,7 @@ export const editorLayout = [ 'custom', [
     required: true,
     labelClass: "font-normal",
     inputClass: "input-md",
-    setValueAs: (title) => title.trim() || valid.defaults.event.title,
+    setValueAs: (title) => title.trim() || getDefault('event', 'title'),
   },{ 
     label: 'Total Rounds', id: 'roundcount',
     type: 'number', disabled: lockAt(3),

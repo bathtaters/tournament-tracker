@@ -1,5 +1,6 @@
 import { reportStyles } from "./styles/ReportStyles";
-import valid from "../../assets/validation.json";
+import { getBaseData } from "../../core/services/validation.services";
+const matchBase = getBaseData('match')
 
 export default function reportLayout(playerList, players, wincount) {
   return playerList.map((pid,idx) => [
@@ -11,8 +12,8 @@ export default function reportLayout(playerList, players, wincount) {
       labelClass: reportStyles.wins,
       inputClass: ' ',
       inputWrapperClass: reportStyles.counterWrappers,
-      defaultValue: valid.defaults.match.draws,
-      min: valid.limits.match.draws.min,
+      defaultValue: matchBase.defaults.draws,
+      min: matchBase.limits.draws.min,
       max: wincount,
       isFragment: true,
 
@@ -33,9 +34,9 @@ export default function reportLayout(playerList, players, wincount) {
       labelClass: reportStyles.draw,
       inputClass: ' ',
       inputWrapperClass: reportStyles.counterWrappers,
-      defaultValue: valid.defaults.match.draws,
-      min: valid.limits.match.draws.min,
-      max: valid.limits.match.draws.max,
+      defaultValue: matchBase.defaults.draws,
+      min: matchBase.limits.draws.min,
+      max: matchBase.limits.draws.max,
       isFragment: true,
     },
     'spacer'

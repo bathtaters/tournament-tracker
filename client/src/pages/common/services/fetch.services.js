@@ -1,6 +1,8 @@
 import { fetchApi } from "../common.fetch"
-import valid from "../../../assets/validation.json"
 import { settings } from "../../../assets/config"
+import { getBaseData } from "../../../core/services/validation.services"
+
+export const defaultSettings = getBaseData('settings').defaults
 
 // Handle local data
 export const getLocalVar = (key) => JSON.parse(localStorage.getItem(key))
@@ -21,7 +23,7 @@ export function getSettings(server) {
   if (!server) server = {}
   const local = getLocalSettings()
   console.log('SETTINGS', { server, local })
-  return { ...valid.defaults.settings, ...server, ...local, saved: Object.keys(server), }
+  return { ...defaultSettings, ...server, ...local, saved: Object.keys(server), }
 }
 
 // Event status
