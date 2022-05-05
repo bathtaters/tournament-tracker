@@ -1,12 +1,14 @@
 import React from "react"
+import { ModalTitleStyle } from "../../common/styles/CommonStyles"
 
 export const tableHdrStyle = "text-left text-xl"
 
-export function WrapperStyle({ title, children }) {
+export function WrapperStyle({ children }) {
   return (
     <div className="my-8">
-      <h3 className="mb-2 font-thin">{title}</h3>
       {children}
     </div>
   )
 }
+
+export const HeaderStyle = ({ children }) => <ModalTitleStyle>{children}</ModalTitleStyle>

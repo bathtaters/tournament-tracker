@@ -4,7 +4,7 @@ import PropTypes from "prop-types"
 import DataTable from "../common/DataTable"
 import Loading from "../common/Loading"
 import RawData from "../common/RawData"
-import { WrapperStyle, tableHdrStyle } from "./styles/PlayerEventStyles"
+import { WrapperStyle, HeaderStyle, tableHdrStyle } from "./styles/PlayerEventStyles"
 
 import eventsLayout from "./playerEvents.layout"
 import { useEventQuery, usePlayerEventsQuery, usePlayerMatchesQuery, usePrefetchEvent } from "./playerEvents.fetch"
@@ -31,7 +31,9 @@ function PlayerEvents({ id }) {
 
   // Render
   return (
-    <WrapperStyle title="Schedule">
+    <WrapperStyle>
+      <HeaderStyle>Schedule</HeaderStyle>
+
       <DataTable
         colLayout={eventsLayout}
         rowIds={eventIds}
