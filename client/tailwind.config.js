@@ -35,15 +35,15 @@ module.exports = {
       {
         corporate: {
           ...require("daisyui/src/colors/themes")["[data-theme=corporate]"],
-          'neutral': '#B8B8B8',
-          'neutral-focus': '#AAA',
+          'neutral': '#D8D8D8',
+          'neutral-focus': '#BBB',
           'neutral-content': '#444',
         },
       },
       {
         business: {
           ...require("daisyui/src/colors/themes")["[data-theme=business]"],
-          'neutral': '#181818',
+          'neutral': '#1A1A1A',
           'neutral-focus': 'black',
           'neutral-content': '#777',
         },
