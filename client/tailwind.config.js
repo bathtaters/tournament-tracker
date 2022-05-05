@@ -9,13 +9,20 @@ module.exports = {
         '90':  '90',
         '100': '100',
       },
-      screens: {
-        'print': {'raw': 'print'},
+      minHeight: {
+        '32': '8rem',
       },
+      minWidth: {
+        '48': '14rem',
+      },
+      screens: { 'print': {'raw': 'print'}, },
       fontFamily: {
         sans: [ 'Roboto', 'sans-serif' ],
         serif: [ 'Garamond', 'serif' ],
         heading: [ 'Josefin Sans', 'sans-serif' ],
+      },
+      gridTemplateColumns: {
+        'profile': 'max-content 1fr auto',
       },
     },
   },
@@ -24,7 +31,24 @@ module.exports = {
     require('daisyui'),
   ],
   daisyui: {
-    themes: ['corporate', 'business'],
+    themes: [
+      {
+        corporate: {
+          ...require("daisyui/src/colors/themes")["[data-theme=corporate]"],
+          'neutral': '#B8B8B8',
+          'neutral-focus': '#AAA',
+          'neutral-content': '#444',
+        },
+      },
+      {
+        business: {
+          ...require("daisyui/src/colors/themes")["[data-theme=business]"],
+          'neutral': '#181818',
+          'neutral-focus': 'black',
+          'neutral-content': '#777',
+        },
+      },
+    ],
     darkTheme: 'business',
   }
 }

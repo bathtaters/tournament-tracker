@@ -9,6 +9,7 @@
 
 /* Base Styles */
 @layer base {
+    html { @apply h-full w-full; }
     body {
         @apply relative  leading-none  font-sans;
         @apply text-xs   sm:text-base  print:text-xs;
@@ -22,17 +23,17 @@
 }
 
 @layer components {
-    /* Add missing styles */
-    .min-h-32 { min-height: 8rem; }
-    .min-w-48 { min-width: 14rem; }
-    .bg-base-400 { @apply bg-gray-400 dark:bg-black; }
-    
     /* NavLink styling */
     a.active, a.active-parent, a.active-parent .link { @apply cursor-default; }
 
     /* Colored hovering */
     .table tr.hover.hover-error:hover td {
         @apply bg-error;
+    }
+
+    /* Fix daisyUI table formatting */
+    .table > thead > tr > th:first-child {
+        @apply static;
     }
 
     /* Remove input number up/down arrows */
