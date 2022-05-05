@@ -2,9 +2,9 @@ import React from "react";
 
 export function RoundStyle({ title, isMissing, className='', children }) {
   return (
-    <div className={'m-4 relative ' + className}>
+    <div className={'m-3 relative ' + className}>
 
-      <h3 className="font-light text-center">{title}</h3>
+      <h3 className="font-normal text-center">{title}</h3>
 
       <div className="flex flex-col">{
         !isMissing ? children : (
