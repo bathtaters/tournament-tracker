@@ -1,5 +1,8 @@
 import { useMemo } from "react"
 
+// Prevent tooltip when value is outside of min/max limit
+export const invalidHandler = (ev) => ev.target.value.length && ev.preventDefault()
+
 // NumberPicker controller
 const useNumberPicker = ({ id, min, max }, { get, set }) => useMemo(() => ({
 
