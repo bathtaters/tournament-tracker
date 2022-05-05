@@ -15,8 +15,8 @@ export const elementDefaults = {
 export const typeDefaults = {
   text: 'input input-bordered w-full invalid:input-warning',
   date: 'input input-bordered w-full invalid:input-warning',
-  number: 'input input-bordered w-full invalid:input-warning p-1 text-center hide-arrows',
-  numberSize: 'w-12 sm:w-16'
+  number: 'input input-bordered w-full invalid:input-warning p-1 text-center hide-arrows ',
+  numberSize: 'w-12 sm:w-16 h-8 sm:h-12'
 }
 
 // Form wrapper
@@ -39,7 +39,7 @@ export function FormErrorStyle({ children }) {
 // Row/Column wrapper
 export function RowStyle({ isRow, children }) {
   return (
-    <div className={`m-1 flex justify-start ${isRow ? "flex-row flex-wrap" : "flex-col"}`}>
+    <div className={`m-1 flex justify-start ${isRow ? "flex-col sm:flex-row" : "flex-col"}`}>
       {children}
     </div>
   );
@@ -57,7 +57,7 @@ export function InputStyle({ disabled, className, children }) {
   return (
     <label className={(disabled ? "input-group " : "") + className}>
       { children }
-      { disabled && <span className="bg-base-200 text-secondary"><LockIcon /></span> }
+      { disabled && <div className="bg-base-200 flex text-secondary pr-1 sm:pr-2"><LockIcon /></div> }
     </label>
   )
 }
