@@ -25,7 +25,7 @@ export function HeaderButton({ children, disabled, onClick }) {
 }
 
 export const dayClass = {
-  past:   { titleCls: "text-base-content",                      borderCls: "border-base-content" },
+  past:   { titleCls: "text-base-content",                      borderCls: "border-neutral-content" },
   today:  { titleCls: "text-accent-content dark:text-accent",   borderCls: "border-accent"       },
   future: { titleCls: "text-primary dark:text-primary-content", borderCls: "border-primary"      },
 };

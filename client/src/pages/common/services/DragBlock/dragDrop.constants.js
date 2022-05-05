@@ -11,7 +11,7 @@ export const COMMON_CLS = 'common'
 export const classDefault = {
   border: {
     baseWeight: 'border',
-    baseColor: 'border-base-content',
+    baseColor: 'border-neutral-content',
     baseStyle: 'border-solid',
     disabledColor: 'border-transparent',
     disabledStyle: '',
