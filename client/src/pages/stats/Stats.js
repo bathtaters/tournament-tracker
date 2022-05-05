@@ -24,7 +24,7 @@ function Stats({ eventid, onPlayerClick, className = '', highlightClass = '', hi
   
   // Render
   return (
-    <div>
+    <div className="w-full overflow-auto">
       <DataTable
         colLayout={statsLayout}
         rowIds={playerList}
