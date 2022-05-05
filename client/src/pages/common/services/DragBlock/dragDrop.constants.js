@@ -21,9 +21,9 @@ export const classDefault = {
     illegalStyle: '', 
   },
   bg: {
-    baseColor: 'bg-base-300',
+    baseColor: 'bg-neutral',
     disabledColor: 'bg-transparent',
-    hoverColor: 'bg-base-400',
+    hoverColor: 'bg-neutral-focus',
     illegalColor: '',
   },
   additional: {
