@@ -7,7 +7,7 @@ import { useHotkeys } from "./services/basic.services";
 import { useOpenAlert, useAlertStatus } from "./common.hooks"
 
 // Modal base component
-function Modal({ children, className = '', bgClose = true, startOpen = false, startLocked = false, lockAlert }, ref) {
+function Modal({ children, className = 'sm:max-w-3xl', bgClose = true, startOpen = false, startLocked = false, lockAlert }, ref) {
 
   // Modal actions
   const openAlert = useOpenAlert();
