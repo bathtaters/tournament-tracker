@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { statusInfo } from '../../../assets/constants';
+import EditIcon from "../../common/icons/EditIcon";
 
 // DAY.JS STYLES \\
 
@@ -42,14 +43,16 @@ export function EntryLinkStyle({ to, status, children }) {
 // Other \\
 
 export function EditEventButton({ status, onClick }) {
-  return (<div
-    className={'absolute top-0 right-0 btn btn-circle btn-xs btn-ghost '+statusInfo[status].textClass}
-    onClick={onClick}
-  >
-    {"✐"}
-  </div>);
+  return (
+    <button
+      onClick={onClick} type="button"
+      className={'absolute top-0 right-0 btn btn-circle btn-xs btn-ghost '+statusInfo[status].textClass}
+    >
+      <EditIcon />
+    </button>
+  )
 }
-
+// {"✐"}
 export const dragAndDropClass = {
   outer: "p-2 m-1 rounded-md w-40 min-h-32",
   inner: "relative flex justify-center items-center overflow-hidden h-9 m-1 px-2 rounded-xl",
