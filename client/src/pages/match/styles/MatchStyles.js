@@ -2,16 +2,16 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export function MatchStyle({ children, settings }) {
-  const height = settings && settings.showadvanced && settings.showrawjson ? ' h-64 ' : ' h-32 ';
+  const height = settings?.showadvanced && settings.showrawjson ? 'h-64' : 'h-32';
   return (
-    <div className={"m-1 border border-base-content rounded-md flex justify-evenly flex-col relative "+height}>
+    <div className={"m-1 shadow-lg shadow-base-300 rounded-md bg-base-100 flex justify-evenly flex-col relative "+height}>
       {children}
     </div>
   );
 }
 
 // Style to pass to DragBlock in PlayerBox
-export const playerBoxStyle = "inline-block grow rounded-2xl p-2 mx-1 mb-1";
+export const playerBoxStyle = "inline-block grow rounded-sm px-2 py-1 mx-2 my-1";
 
 export function PlayerStyle({ children }) {
   return (
@@ -31,7 +31,7 @@ export function NameStyle({ linkTo, children }) {
 
 export function VsStyle({ children }) {
   return (
-    <div className="inline-block shrink font-thin text-sm text-base-content p-2 align-middle pointer-events-none">
+    <div className="inline-block shrink font-thin text-sm text-neutral-content p-2 align-middle pointer-events-none">
       {children}
     </div>
   );
@@ -40,7 +40,7 @@ export function VsStyle({ children }) {
 export function PlayerInfoStyle({ isDrop, children }) {
   return (
     <div className="text-xs font-thin mt-0 pt-0 mb-1 relative group">
-      <div className={isDrop ? "text-error" : "text-base-content"}>
+      <div className={isDrop ? "text-error" : "text-neutral-content"}>
         {children}
       </div>
     </div>
@@ -50,7 +50,7 @@ export function PlayerInfoStyle({ isDrop, children }) {
 export function PlayerDropStyle({ children, visible }) {
   if (!visible) return null;
   return (
-    <div className="hidden group-hover:block hover:block absolute top-0 right-0 left-0">
+    <div className="hidden group-hover:block hover:block absolute -bottom-1 right-0 left-0">
       {children}
     </div>
   );
