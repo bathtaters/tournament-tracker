@@ -3,6 +3,8 @@ import { basicTemplate } from "./formatting";
 
 // -- String Sets -- \\
 
+export const footerText = "bathtaters – 2022";
+
 export const dragType = { event: "json/eventday", player: "json/matchplayer" };
 
 export const statusInfo = [

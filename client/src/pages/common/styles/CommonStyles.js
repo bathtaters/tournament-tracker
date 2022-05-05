@@ -1,11 +1,11 @@
 import React from 'react';
 
 export function AppWrapperStyle({ children }) {
-  return (<div className="min-h-screen relative">{children}</div>);
+  return (<div className="min-h-screen relative flex flex-col justify-start items-center">{children}</div>);
 }
 
 export function PageWrapperStyle({ children }) {
-  return (<div className="m-auto p-4 max-w-3xl">{children}</div>);
+  return (<div className="p-4 max-w-3xl flex-grow">{children}</div>);
 }
 
 export function PageTitleStyle({ className = "", children }) {

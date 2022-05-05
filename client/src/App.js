@@ -4,6 +4,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 import Header from "./pages/header/Header";
+import Footer from "./pages/footer/Footer";
 import Routing from "./Routing";
 import Loading from "./pages/common/Loading";
 import Alert from "./pages/common/Alert";
@@ -27,6 +28,7 @@ function App() {
             <Alert />
             <Header title={data && data.title} />
             <PageWrapperStyle><Routing /></PageWrapperStyle>
+            <Footer />
             <LockScreen />
           </DndProvider>
         </ErrorBoundary>
