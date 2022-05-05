@@ -24,7 +24,7 @@ export function EntryStyle({ className, isSelected, children }) {
   const selectClass = isSelected ? " bg-primary text-primary-content" : " bg-base-100 text-base-content";
 
   return (
-  <li className={"py-0.5 px-2 w-full break-words line-clamp-1 " + className + selectClass}>
+  <li className={"py-0.5 px-2 w-full break-words line-clamp-1 cursor-default " + className + selectClass}>
     {children}
   </li>
   );
