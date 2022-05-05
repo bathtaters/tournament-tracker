@@ -1,7 +1,7 @@
 import React from "react"
 
 import Counter from "../../common/Counter"
-import { winClass, ByeStyle } from "../styles/CounterStyles"
+import { winClass, ByeStyle, WinsSeperator } from "../styles/CounterStyles"
 import { ReportButton, ClearReportButton } from "../styles/ButtonStyles"
 
 import { winValue } from "../services/match.services"
@@ -31,7 +31,7 @@ function WinsBox({ matchData, wincount, index, isEditing, setVal }) {
   if (matchData.players?.length === 1 && !isEditing) return <ByeStyle>Bye</ByeStyle>
 
   return (<>
-    { index !== 0 && <span className="inline-block">{' – '}</span> }
+    <WinsSeperator visible={index} />
 
     <Counter
       isEditing={isEditing}
