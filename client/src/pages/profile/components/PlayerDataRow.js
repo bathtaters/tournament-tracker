@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 
 import InputBox from "./InputBox";
-import { EditButton, LabelStyle, ButtonsStyle } from "../styles/PlayerDataStyles";
+import { RowStyle, EditButton, LabelStyle, InputGroupStyle } from "../styles/PlayerDataStyles";
 
 import { useUpdatePlayerMutation } from "../profile.fetch";
 import { editClickController, saveController } from "../services/profile.services";
@@ -25,30 +25,29 @@ function PlayerDataRow({ rowData, data, id }) {
   useHotkeys({ 13/* ENTER */: handleClick}, { skip: !isEditing })
 
   // Render
-  return (<>
+  return (
+    <>
       <LabelStyle id={rowData.key}>{rowData.title}</LabelStyle>
 
-      <InputBox 
-        id={rowData.key}
-        value={isEditing ? editData : data}
-        isEditing={rowData.editable && isEditing}
-        onChange={changeData}
-        formatter={rowData.formatString}
-      />
+      <InputGroupStyle>
+        <InputBox 
+          id={rowData.key}
+          value={isEditing ? editData : data}
+          isEditing={rowData.editable && isEditing}
+          onChange={changeData}
+          formatter={rowData.formatString}
+        />
 
-      { rowData.editable ?
-        <ButtonsStyle>
-          <EditButton value={isEditing ? 'save' : 'edit'} onClick={handleClick} />
+        { rowData.editable && <>
+          <EditButton value={isEditing ? 'save' : 'edit'} isEditing={isEditing} onClick={handleClick} />
 
-          { isEditing && <>
-            <span>{' / '}</span>
-            <EditButton value="cancel" onClick={()=>setEdit(false)} />
-          </> }
-        </ButtonsStyle>
-        : 
-        <div />
-      }
-  </>);
+          { isEditing && <EditButton value="undo" onClick={()=>setEdit(false)} /> }
+        </> }
+      </InputGroupStyle>
+
+      <div />
+    </>
+  );
 }
 
 export default PlayerDataRow;
