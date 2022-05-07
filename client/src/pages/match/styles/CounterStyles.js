@@ -26,10 +26,10 @@ export function ByeStyle({ children }) {
 // Get Win Counter class from matchData
 export const winClass = (wins, isEditing, {maxwins, isbye}) => 
   'text-base h-6 ' + (
-    isEditing ? 'btn-outline btn-square btn-xs' :
+    isEditing ? 'btn-ghost btn-circle btn-xs' :
     isbye ? 'invisible' :
     wins && wins === maxwins ? 'text-success p-px' : 'p-px'
   );
 
 export const drawsClass = (isEditing) => 'font-light lowercase min-h-0 h-4' +
-  (isEditing ? ' btn-outline btn-xs' : '');
+  (isEditing ? ' btn-ghost rounded-xl btn-xs' : '');

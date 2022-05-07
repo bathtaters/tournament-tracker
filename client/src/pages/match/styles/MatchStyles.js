@@ -11,7 +11,7 @@ export function MatchStyle({ children, settings }) {
 }
 
 // Style to pass to DragBlock in PlayerBox
-export const playerBoxStyle = "inline-block grow rounded-sm px-2 py-1 mx-2 my-1";
+export const playerBoxStyle = "inline-block grow rounded-lg px-2 py-1 mx-2 my-1";
 
 export function PlayerStyle({ children }) {
   return (
