@@ -3,6 +3,7 @@ import {
   useEventQuery, usePlayerQuery,
   useSettingsQuery, useStatsQuery
 } from '../common/common.fetch';
+import { useMatchQuery } from '../match/match.fetch';
 import { useSetEventMutation } from '../eventEditor/eventEditor.fetch';
 
 import { nextRoundUpdate, clearRoundUpdate } from './services/eventFetch.services'
@@ -29,5 +30,5 @@ export const eventApi = fetchApi.injectEndpoints({
 });
 const refetchStats = (id) => fetchApi.util.invalidateTags(getTags('Stats',{all:0})({id}))
 
-export { useEventQuery, usePlayerQuery, useSettingsQuery, useStatsQuery, useSetEventMutation, refetchStats };
+export { useEventQuery, usePlayerQuery, useSettingsQuery, useStatsQuery, useSetEventMutation, useMatchQuery, refetchStats };
 export const { useNextRoundMutation, useClearRoundMutation } = eventApi;

@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useSettingsQuery, refetchStats } from '../event.fetch';
+import { useMatchQuery, usePlayerQuery, useSettingsQuery, refetchStats } from '../event.fetch';
 
 // Round Editor controller
-export function useRoundEditor({ id, roundactive, anyreported }, round) {
+export function useRoundEditor({ id, roundactive, anyreported, matches }, round) {
   // Setup
   const dispatch = useDispatch()
   const { data } = useSettingsQuery()
   const [isEditing, setIsEditing] = useState(false)
+
+  // Copy matches
+  const { data: matchData } = useMatchQuery(id)
+  const { data: playerData } = usePlayerQuery()
+  const handleCopy = !playerData || !matchData || round + 1 !== roundactive ? null :
+    () => navigator.clipboard.writeText(roundText(matches[round], matchData, playerData))
 
   // Refetch Stats
   const setEditing = (isEditing) => {
@@ -17,7 +23,7 @@ export function useRoundEditor({ id, roundactive, anyreported }, round) {
 
   const showAdvanced = data?.showadvanced || (roundactive === round + 1 && !anyreported)
 
-  return { isEditing, setEditing, showAdvanced, showDelete: data?.showadvanced }
+  return { isEditing, setEditing, showAdvanced, handleCopy, showDelete: data?.showadvanced }
 }
 
 
@@ -42,3 +48,10 @@ export const fakeRound = (eventData) => {
   }
   return round;
 };
+
+// Format text of the round's matchups
+const roundText = (matchList, matches, players) => matchList.map(
+  (matchId) => matches[matchId]?.players.map(
+    (playerId) => players[playerId]?.name
+  ).join(' vs. ')
+).join('\n')

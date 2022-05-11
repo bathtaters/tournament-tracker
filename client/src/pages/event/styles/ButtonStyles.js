@@ -1,5 +1,6 @@
 import React from "react";
 import EditIcon from "../../common/icons/EditIcon";
+import CopyIcon from "../../common/icons/CopyIcon";
 
 export function RoundButton({ value, onClick }) {
   return (
@@ -22,5 +23,13 @@ export function EditEventButton({ onClick }) {
         <EditIcon className="h-4 w-4 stroke-current" />
       </button>
     </div>
+  )
+}
+
+export function CopyRoundButton({ onClick }) {
+  return (
+    <button type="button" className="btn btn-xs btn-square btn-ghost opacity-40" onClick={onClick}>
+      <CopyIcon />
+    </button>
   )
 }

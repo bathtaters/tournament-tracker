@@ -9,13 +9,14 @@ import OverlayContainer from '../../common/components/OverlayContainer';
 import { useRoundEditor } from '../services/event.services';
 
 function Round({ data, round, deleteRound }) {
-  const { isEditing, setEditing, showAdvanced, showDelete } = useRoundEditor(data, round)
+  const { isEditing, setEditing, showAdvanced, handleCopy, showDelete } = useRoundEditor(data, round)
 
   return (<>
     <RoundStyle 
       title={'Round '+(round+1)}
       className={isEditing ? 'z-40' : ''}
       isMissing={!data.matches[round]}
+      handleCopy={handleCopy}
     >
       {(data.matches[round] || []).map((matchId) => 
         <Match
