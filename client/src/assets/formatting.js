@@ -15,3 +15,16 @@ export const formatRecord = (record, braces=true) => (braces?'[ ':'')+(record ||
 export const formatNum = (num) => num == null ? '-' : num;
 
 export const formatPercent = (decimal) => decimal == null ? '- %' : (Math.round(decimal * 1000) / 10) + '%';
+
+// Copy Round format
+export const formatCopyRound = (matchList, matches, players) => matchList.map(
+  (matchId) => matches[matchId]?.players.map(
+    // Names
+    (playerId, idx) => players[playerId]?.name
+      // Wins
+      + (matches[matchId].reported ? ` (${matches[matchId].wins?.[idx]})` : '')
+  ).join(' vs. ')
+  // Draws
+    + (!matches[matchId]?.draws || !matches[matchId].reported ? '' :
+      ` (+${matches[matchId].draws} draw${matches[matchId].draws > 1 ? 's' : ''})`)
+).join('\n')

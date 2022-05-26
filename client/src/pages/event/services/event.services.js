@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useMatchQuery, usePlayerQuery, useSettingsQuery, refetchStats } from '../event.fetch';
+import { formatCopyRound } from "../../../assets/formatting";
 
 // Round Editor controller
 export function useRoundEditor({ id, roundactive, anyreported, matches }, round) {
@@ -13,7 +14,7 @@ export function useRoundEditor({ id, roundactive, anyreported, matches }, round)
   const { data: matchData } = useMatchQuery(id)
   const { data: playerData } = usePlayerQuery()
   const handleCopy = !playerData || !matchData || round + 1 !== roundactive ? null :
-    () => navigator.clipboard.writeText(roundText(matches[round], matchData, playerData))
+    () => navigator.clipboard.writeText(formatCopyRound(matches[round], matchData, playerData))
 
   // Refetch Stats
   const setEditing = (isEditing) => {
@@ -49,9 +50,3 @@ export const fakeRound = (eventData) => {
   return round;
 };
 
-// Format text of the round's matchups
-const roundText = (matchList, matches, players) => matchList.map(
-  (matchId) => matches[matchId]?.players.map(
-    (playerId) => players[playerId]?.name
-  ).join(' vs. ')
-).join('\n')
