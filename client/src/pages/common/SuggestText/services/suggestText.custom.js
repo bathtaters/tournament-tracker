@@ -39,7 +39,8 @@ export const listClassDef = {
 // Layout-based styling
 export const layoutClasses = {
   containerWrapper: "relative p-1 inline-block",
-  listWrapper: "absolute z-10 bottom-12 mb-0.5 rounded-lg overflow-y-auto overflow-x-hidden",
+  listWrapper: "absolute z-10 top-auto mb-0.5 rounded-lg overflow-y-auto overflow-x-hidden",
   listSideInset: 4, // for rounded edge (px)
   listTopMargin: 8, // space away from top of page (px)
+  overrideMaxHeight: '12rem', // Overrides automatic setting of max-height
 }

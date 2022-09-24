@@ -35,10 +35,10 @@ export function ListStyle({ divRef, textbox, children, label, className = listCl
   // List height
   useLayoutListener(['resize','scroll'], () => {
     if (divRef.current)
-      divRef.current.style.maxHeight = `${
+      divRef.current.style.maxHeight = layoutClasses.overrideMaxHeight || `${
         divRef.current.getBoundingClientRect().bottom - layoutClasses.listTopMargin
       }px`
-  }, [divRef.current?.getBoundingClientRect()?.bottom])  
+  }, [layoutClasses.overrideMaxHeight || divRef.current?.getBoundingClientRect()?.bottom])  
   
   return (
     <div className={`${layoutClasses.listWrapper} ${className}`} ref={divRef}><Ab /> 
