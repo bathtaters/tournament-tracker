@@ -22,8 +22,8 @@ function Modal({ children, className = 'sm:max-w-3xl', bgClose = true, startOpen
   
   // Link HotKeys -> Functions
   useHotkeys({
-    13: () => document.activeElement?.click(), // Enter: Click if on a clickable object
-    27: !isLock && close,  // Esc: Close Modal
+    Enter: () => document.activeElement?.click(), // Enter: Click if on a clickable object
+    Escape: !isLock && close,  // Esc: Close Modal
   }, { skip: alertIsOpen || !isOpen, deps: [close] });
 
   // Freeze background scrolling

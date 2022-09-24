@@ -22,7 +22,7 @@ function PlayerDataRow({ rowData, data, id }) {
   const setEdit = useCallback((edit = true) => { edit && setEditData(data); setEditing(edit); }, [data]);
   const handleClick = editClickController(isEditing, saveData, setEdit);
 
-  useHotkeys({ 13/* ENTER */: handleClick}, { skip: !isEditing })
+  useHotkeys({ Enter: handleClick }, { skip: !isEditing })
 
   // Render
   return (

@@ -23,17 +23,19 @@ export const nextTempId = (type, exists) => {
 // Generates 'onClick' events for mouse & touch screen (usage: <Tag {...onClickAll(cb)} /> )
 export const onClickAll = (callback) => ({ onMouseDown: callback, onTouchStart: callback })
 
+
 // Listen & handle hotkeys
-// hotkeyMap = { [keyCode]: () => action(), ... } !! MUST BE STATIC
+// hotkeyMap = { [key]: () => action(), ... } !! MUST BE STATIC
 export function useHotkeys(hotkeyMap, { skip, deps } = {}) {
   const hotkeyHandler = useCallback((ev) => {
-    // console.debug(' >> KeyCode: ',ev.keyCode); // print keycodes
+    // console.debug(' >> KeyName: ',ev.key); // print names of keys
 
-    if (!hotkeyMap[ev.keyCode]) return;
+    if (!hotkeyMap[ev.key]) return;
     ev.preventDefault();
 
-    if (typeof hotkeyMap[ev.keyCode] === 'function') hotkeyMap[ev.keyCode](ev);
-    else console.error('Malformed keyMap for', ev.keyCode, hotkeyMap[ev.keyCode]);
+    if (typeof hotkeyMap[ev.key] === 'function') hotkeyMap[ev.key](ev);
+    else console.error('Malformed keyMap for', ev.key, hotkeyMap[ev.key]);
+
   // eslint-disable-next-line
   }, deps);
 
@@ -42,6 +44,7 @@ export function useHotkeys(hotkeyMap, { skip, deps } = {}) {
     else document.removeEventListener('keydown', hotkeyHandler, false);
 
     return () => document.removeEventListener('keydown', hotkeyHandler, false);
+  
   // eslint-disable-next-line
   }, deps && deps.concat(skip));
 }

@@ -34,8 +34,8 @@ function Alert() {
 
   // Setup hotkeys
   useHotkeys({
-    13: () => document.activeElement?.click(), // Enter: Click if on a clickable object
-    27: escValue ?? true ? () => close(escValue || undefined) : null,
+    Enter: () => document.activeElement?.click(), // Enter: Click if on a clickable object
+    Escape: escValue ?? true ? () => close(escValue || undefined) : null,
   }, { skip: !isOpen, deps: [close] })
 
   // Render Alert Component to AlertRoot
