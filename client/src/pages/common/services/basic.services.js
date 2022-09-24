@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState } from "react";
+import { debugLogging } from "../../../assets/config";
 
 // Checks that 2 arrays are equal (Must be 1D arrays, 2 falsy vars will also be equal)
 export const equalArrays = (a,b) =>
@@ -34,7 +35,7 @@ export function useHotkeys(hotkeyMap, { skip, deps } = {}) {
     ev.preventDefault();
 
     if (typeof hotkeyMap[ev.key] === 'function') hotkeyMap[ev.key](ev);
-    else console.error('Malformed keyMap for', ev.key, hotkeyMap[ev.key]);
+    else if (debugLogging) console.error('Malformed keyMap for', ev.key, hotkeyMap[ev.key]);
 
   // eslint-disable-next-line
   }, deps);

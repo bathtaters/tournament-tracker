@@ -1,5 +1,5 @@
 import { fetchApi } from "../common.fetch"
-import { settings } from "../../../assets/config"
+import { debugLogging, settings } from "../../../assets/config"
 import { getBaseData } from "../../../core/services/validation.services"
 
 export const defaultSettings = getBaseData('settings').defaults
@@ -22,7 +22,7 @@ export const getLocalSettings = () => settings.storeLocal.reduce((data, key) => 
 export function getSettings(server) {
   if (!server) server = {}
   const local = getLocalSettings()
-  console.log('SETTINGS', { server, local })
+  debugLogging && console.log('SETTINGS', { server, local })
   return { ...defaultSettings, ...server, ...local, saved: Object.keys(server), }
 }
 
@@ -33,9 +33,9 @@ const getStatus = event =>
   event.roundactive > event.roundcount ? 3 : 2;
 
 export const getEvent = (res, meta, args) => {
-  if (meta.response.status === 204) return console.warn(`EVENT <${args}> does not exist`);
+  if (meta.response.status === 204) return debugLogging && console.warn(`EVENT <${args}> does not exist`);
   if (res.id) res.status = getStatus(res);
   else Object.keys(res).forEach(id => res[id].status = getStatus(res[id]));
-  console.log('EVENT',res);
+  debugLogging && console.log('EVENT',res);
   return res;
 };

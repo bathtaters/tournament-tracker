@@ -1,5 +1,6 @@
 // Builder for providesTags and invalidatesTags
 // Returns function that will work as either property
+import { debugLogging } from "../../assets/config";
 
 // Constants
 const DEF_KEY = 'id';
@@ -37,7 +38,7 @@ export default function getTags(types, { key=DEF_KEY, all=true, addBase=[], addA
   // Return callback for [provides|invalidates]Tags
   return (res,err,arg) => {
     // Handle error
-    if (err) console.error('Query error on '+JSON.stringify(types)+':'+JSON.stringify(arg), err);
+    if (err && debugLogging) console.error('Query error on '+JSON.stringify(types)+':'+JSON.stringify(arg), err);
 
     let tags = [...baseTags], i;
 

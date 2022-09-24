@@ -7,20 +7,21 @@ import { useMatchQuery } from '../match/match.fetch';
 import { useSetEventMutation } from '../eventEditor/eventEditor.fetch';
 
 import { nextRoundUpdate, clearRoundUpdate } from './services/eventFetch.services'
+import { debugLogging } from '../../assets/config';
 
 export const eventApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
 
     nextRound: build.mutation({
       query: ({ id, roundactive }) => ({ url: `event/${id}/round/${roundactive+1}`, method: 'POST' }),
-      transformResponse: res => console.log('ROUND+',res) || res,
+      transformResponse: debugLogging ? res => console.log('ROUND+',res) || res : undefined,
       invalidatesTags: getTags(['Event','Match','Stats'], {all:0,addBase:['PlayerDetail'],addAll:['Stats']}),
       onQueryStarted: nextRoundUpdate,
     }),
 
     clearRound: build.mutation({
       query: ({ id, roundactive }) => ({ url: `event/${id}/round/${roundactive}`, method: 'DELETE' }),
-      transformResponse: res => console.log('ROUND-',res) || res,
+      transformResponse: debugLogging ? res => console.log('ROUND-',res) || res : undefined,
       invalidatesTags: getTags(['Event','Match','Stats'], {all:0,addBase:['PlayerDetail'],addAll:['Stats']}),
       onQueryStarted: clearRoundUpdate,
     }),

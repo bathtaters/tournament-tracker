@@ -3,6 +3,7 @@ import { useNextRoundMutation, useClearRoundMutation } from "../event.fetch";
 
 import { deleteRoundAlert } from "../../../assets/alerts";
 import { roundButtonText, roundButtonLockCaption } from "../../../assets/constants";
+import { debugLogging } from "../../../assets/config";
 
 // Get Round Button label
 //  none|begin|end|back|next|wait|done
@@ -51,7 +52,7 @@ export function useDeleteRound({ id, anyreported, roundactive } = {}) {
   const openAlert = useOpenAlert()
   
   // Confirm id isn't missing
-  return () => !id ? console.warn('Delete round is missing id.') :
+  return () => !id ? debugLogging && console.warn('Delete round is missing id.') :
     
     // If no data saved yet, go back w/o asking
     !anyreported ? prevRound({ id, roundactive }) :

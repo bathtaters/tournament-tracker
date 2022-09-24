@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import { alert } from "../../assets/config"
+import { alert, debugLogging } from "../../assets/config"
 
 export const initialState = { isOpen: false }
 
@@ -7,13 +7,17 @@ export const alertSlice = createSlice({
   name: 'alert',
   initialState, 
   reducers: {
-    openAlert:  (state, action) => 
-      state.isOpen ? console.warn('Cannot open alert while already open', state, action.payload) || state :
-        Object.assign(state, action.payload, { result: undefined, isOpen: true }),
+    openAlert:  (state, action) => {
+      if (!state.isOpen) return Object.assign(state, action.payload, { result: undefined, isOpen: true })
+      debugLogging && console.warn('Cannot open alert while already open', state, action.payload)
+      return state
+    },
 
-    closeAlert: (state, action) =>
-      state.isOpen ? { ...initialState, result: action.payload ?? state.defaultResult } :
-        console.warn('Cannot close alert while already closed', state, action.payload) || state,
+    closeAlert: (state, action) => {
+      if (state.isOpen) return { ...initialState, result: action.payload ?? state.defaultResult }
+      debugLogging && console.warn('Cannot close alert while already closed', state, action.payload)
+      return state
+    },   
   }
 })
 

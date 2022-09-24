@@ -3,6 +3,7 @@ import { openAlert } from '../store/alertSlice'
 
 import { errorTitle, errorMessage } from '../../assets/constants'
 import { errorAlertBase } from '../../assets/alerts'
+import { debugLogging } from '../../assets/config'
 
 // Build alert
 const capitalize = (str) => str && str.slice(0,1).toUpperCase() + str.slice(1)
@@ -25,7 +26,7 @@ const errorMiddleware = ({ dispatch }) => (next) => (action) => {
     const status = action.payload.status
     const statusMsg = status && typeof status !== 'number' && status
 
-    console.error('Error handler:', action.meta.arg, action.payload)
+    debugLogging && console.error('Error handler:', action.meta.arg, action.payload)
 
     // Open alert
     dispatch(openAlert(getErrorAlert(

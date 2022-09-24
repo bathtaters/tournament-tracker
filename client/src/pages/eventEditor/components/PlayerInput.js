@@ -9,7 +9,7 @@ import usePlayerInputController from "../services/playerInput.controller";
 const PlayerInput = forwardRef(function PlayerInput({autofillSize, hideAutofill, autofill, handlePlayerChange, ...props}, ref) {
   
   const { isHidden, suggestions, submitHandler, addButtonHandler } = usePlayerInputController(props, ref);
-  console.log(suggestions)
+  
   return (
     <PlayerRowStyle>
 

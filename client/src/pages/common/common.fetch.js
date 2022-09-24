@@ -1,6 +1,7 @@
 import { fetchApi, getTags, tagTypes, ALL_ID } from '../../core/store/fetchApi';
 import { useFetchingStatus, useFetchingProvider, useForceRefetch } from '../../core/services/global.services';
 import { getEvent, getSettings } from './services/fetch.services';
+import { debugLogging } from '../../assets/config';
 
 export const commonApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
@@ -19,13 +20,13 @@ export const commonApi = fetchApi.injectEndpoints({
 
     stats: build.query({
       query: (eventid) => `event/${eventid || 'all'}/stats`,
-      transformResponse: res => console.log('BRKRS',res) || res,
+      transformResponse: debugLogging ? (res) => console.log('BRKRS',res) || res : undefined,
       providesTags: getTags({Stats: (r,i,a)=> (r && r.eventids && r.eventids[0]) || a},{limit:1}),
     }),
 
     player:  build.query({
       query: (id=null) => `player/${id || 'all'}`,
-      transformResponse: res => console.log('PLAYER',res) || res,
+      transformResponse: debugLogging ? (res) => console.log('PLAYER',res) || res : undefined,
       providesTags: getTags('Player'),
     }),
 

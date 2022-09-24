@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { validList, getNonStaticSoloIdx } from "./suggestText.utils"
-import { hideListWhenEmpty, hideStaticWhenEmpty, adaptEntry, adaptInput, testEntry } from "./suggestText.custom"
+import { hideListWhenEmpty, hideStaticWhenEmpty, adaptEntry, adaptInput, testEntry, logInvalidEntries } from "./suggestText.custom"
 
 // Filter Suggestions logic
 export function getSuggestions(list, value, setSuggestions, setExact) {
@@ -21,7 +21,8 @@ export function getSuggestions(list, value, setSuggestions, setExact) {
   let matches = list.filter(entry => {
     if (entry.isStatic) return !hideStaticWhenEmpty || len // Static entry filter
 
-    const entryAdapt = adaptEntry(entry) || console.warn('List item is invalid',entry)
+    const entryAdapt = adaptEntry(entry)
+    if (logInvalidEntries && !entryAdapt) console.warn('List item is invalid',entry)
     
     if (entryAdapt === inputAdapt) exact = entry // get exact matches
     return testEntry(inputAdapt, entryAdapt, entry)

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { getDefaultValues, updateDefaults, eraseProps } from "./inputForm.services"
+import { debugLogging } from "../../../../assets/config"
 
 const dotRegex = /\S\.\S/
 const submitFilter = (val,key) => val === undefined || dotRegex.test(key)
@@ -25,7 +26,7 @@ export default function useFormController({ rows, data, baseData, onSubmit, onEd
   // eslint-disable-next-line
   const submitController = useCallback(handleSubmit(
     (data, ev) => onSubmit(eraseProps(data, submitFilter), ev),
-    console.error
+    debugLogging ? console.error : () => {}
   ), [onSubmit, handleSubmit])
 
   return {

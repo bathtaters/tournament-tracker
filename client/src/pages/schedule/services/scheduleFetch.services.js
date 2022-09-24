@@ -1,9 +1,10 @@
 import { getDays, noDate, sortedEvents } from "./date.utils"
+import { debugLogging } from "../../../assets/config"
 
 // Convert Schedule output from server to array
 export function scheduleAdapter({ schedule, settings }) {
   // Skip if no data
-  if (!schedule || !settings) return console.log('SCHEDULE MISSING', {schedule, settings})
+  if (!schedule || !settings) return debugLogging && console.log('SCHEDULE MISSING', {schedule, settings})
   
   // Get base data
   const emptyDay = [...Array(settings.dayslots).values()]
@@ -24,7 +25,7 @@ export function scheduleAdapter({ schedule, settings }) {
   // Add remaining events to Unscheduled
   Object.values(schedule).forEach(day => day.eventslots && output[0].events.push(...Object.keys(day.eventslots)))
 
-  console.log('SCHEDULE', output)
+  debugLogging && console.log('SCHEDULE', output)
   return output
 }
 
