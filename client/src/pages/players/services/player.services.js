@@ -13,20 +13,22 @@ export const createPlayerController = (playerData, createPlayer) => {
 
 
 // Click on player name handler
-const playerClickController = (deleteMode, deletePlayer, openAlert) => (playerid, e, { players, stats }) => {
-  if (!deleteMode) return; // Pass click to default handler
-  e.preventDefault()
+const usePlayerClickController = (deleteMode, deletePlayer, openAlert) => 
+  useCallback((playerid, e, { players, stats }) => {
+    if (!deleteMode) return; // Pass click to default handler
+    e.preventDefault()
 
-  // Get data
-  const name = players[playerid]?.name, hasEvents = stats[playerid]?.eventids?.length;
+    // Get data
+    const name = players[playerid]?.name, hasEvents = stats[playerid]?.eventids?.length;
 
-  // Check player can be deleted
-  if (hasEvents) return openAlert(cantDeletePlayerAlert(name))
+    // Check player can be deleted
+    if (hasEvents) return openAlert(cantDeletePlayerAlert(name))
 
-  // Delete player
-  openAlert(deletePlayerAlert(name), 0).then(r => r && deletePlayer(playerid))
-}
+    // Delete player
+    openAlert(deletePlayerAlert(name), 0).then(r => r && deletePlayer(playerid))
+  }, [deleteMode, deletePlayer, openAlert]);
 
+  
 // Players base logic
 export default function usePlayersController() {
   // Init globals
@@ -42,9 +44,7 @@ export default function usePlayersController() {
   // Actions
   const toggleDelete = () => setDeleteMode(!deleteMode)
 
-  const handlePlayerClick = useCallback(
-    playerClickController(deleteMode, deletePlayer, openAlert), [deleteMode, deletePlayer, openAlert]
-  )
+  const handlePlayerClick = usePlayerClickController(deleteMode, deletePlayer, openAlert)
 
   return { deleteMode, advanceMode, modal, handlePlayerClick, toggleDelete }
 }

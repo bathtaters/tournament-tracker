@@ -7,6 +7,7 @@ const submitFilter = (val,key) => val === undefined || dotRegex.test(key)
 
 export default function useFormController({ rows, data, baseData, onSubmit, onEdit, onChange }) {
   // Generate defaultValues
+  // eslint-disable-next-line
   const defaultValues = useMemo(() => getDefaultValues(rows, baseData?.defaults), []) // Must guarantee that rows/baseData doesn't change
 
   // Hooks
@@ -17,9 +18,11 @@ export default function useFormController({ rows, data, baseData, onSubmit, onEd
   })
   
   // First edit handler
+  // eslint-disable-next-line
   useEffect(() => { if (onEdit && isDirty) onEdit() }, [isDirty])
 
   // Submit handler
+  // eslint-disable-next-line
   const submitController = useCallback(handleSubmit(
     (data, ev) => onSubmit(eraseProps(data, submitFilter), ev),
     console.error

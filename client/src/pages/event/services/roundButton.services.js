@@ -21,7 +21,7 @@ const isNext = ({ allreported, status }) =>  allreported || status === 1
 
 // Check if RoundButton should be disabled
 const disableRound = ({ allreported, anyreported, status, players }) =>
-  status > 2 || !players?.length || (allreported === false && anyreported == true)
+  status > 2 || !players?.length || (allreported === false && anyreported === true)
 
 
 // Round Button controller

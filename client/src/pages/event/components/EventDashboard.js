@@ -11,6 +11,7 @@ function EventDashboard({ data, openStats }) {
   
   const headerDetail = useMemo(() =>
     data ? `${data.playerspermatch}-Player, ${data.roundcount} Rounds, Best of ${(data.wincount ?? 0) * 2 - 1}` : '',
+    // eslint-disable-next-line
     [data?.playerspermatch, data?.roundcount, data?.wincount]
   )
 

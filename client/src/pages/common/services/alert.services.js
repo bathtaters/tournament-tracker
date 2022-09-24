@@ -16,14 +16,14 @@ export function useOpenAlert() {
       const expected = typeof expectedIndex === 'number' && getReturnValue(options.buttons[expectedIndex], expectedIndex)
       return dispatch(openAlert(optionFilter(options))).unwrap().then((result) => expected ? result === expected : result)
     },
-    [openAlert]
+    [dispatch]
   )
 }
 
 // Hook returning function to force alert to close
 export function useCloseAlert() {
   const dispatch = useDispatch()
-  return useCallback((result) => dispatch(closeAlert(result)), [closeAlert])
+  return useCallback((result) => dispatch(closeAlert(result)), [dispatch])
 }
 
 // Hook returning function to get alert open/close status (True = Open)

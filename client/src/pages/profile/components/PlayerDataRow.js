@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 
 import InputBox from "./InputBox";
-import { RowStyle, EditButton, LabelStyle, InputGroupStyle } from "../styles/PlayerDataStyles";
+import { EditButton, LabelStyle, InputGroupStyle } from "../styles/PlayerDataStyles";
 
 import { useUpdatePlayerMutation } from "../profile.fetch";
 import { editClickController, saveController } from "../services/profile.services";

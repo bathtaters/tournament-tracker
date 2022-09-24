@@ -12,4 +12,4 @@ const teamOnlyRows = [
   },
 ];
 
-export default (isTeam) => commonRows.concat(isTeam ? teamOnlyRows : playerOnlyRows);
+export default function getProfileLayout(isTeam) { return commonRows.concat(isTeam ? teamOnlyRows : playerOnlyRows); }

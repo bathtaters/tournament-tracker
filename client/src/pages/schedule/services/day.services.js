@@ -14,18 +14,18 @@ export function useUpdateSchedule() {
 
   return useCallback((a,b) => {
     // Skip rules
-    if (a.id === b.id || b.day === noDate && a.day === noDate) return;
+    if (a.id === b.id || (b.day === noDate && a.day === noDate)) return;
     
     // Swap data
     swapKeys(a,b,'day');
     swapKeys(a,b,'slot');
-    [a,b].map(d => { if (!d.slot) delete d.slot });
+    [a,b].forEach((d) => { if (!d.slot) delete d.slot });
     
     // Fetch updates
     updateEvent(a)
     if (b.id) updateEvent(b)
 
-  }, [updateEvent, noDate])
+  }, [updateEvent])
 }
 
 // Drop Helper

@@ -41,6 +41,7 @@ function DataTable({
   const hoverHandler = (rowId, idx) => typeof onRowHover === 'function' ?
     (ev) => onRowHover(rowId, ev, extra, idx) : undefined
   
+  // eslint-disable-next-line
   const colCnt = useMemo(() => colCount(colLayout), [])
   
   // Render
