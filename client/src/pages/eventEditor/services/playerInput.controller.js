@@ -28,7 +28,7 @@ export default function usePlayerInputController({ data, remainingPlayers, onFir
   }
 
   // Click add button
-  function submitHandler(entry, text) {
+  function submitHandler(text, entry) {
     // Show/Hide field
     if (isHidden) return setHide(false)
     if (!entry) return setHide(!isHidden)
