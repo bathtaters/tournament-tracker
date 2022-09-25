@@ -5,16 +5,16 @@ import Modal from "../../common/Modal";
 import SettingsIcon from "../../common/icons/SettingsIcon";
 import { HeaderStyle, TitleStyle, HeaderButton } from "../styles/ScheduleStyles";
 
-function ScheduleHeader({ isEditing, isLoading, setEdit, openModal }) {
+function ScheduleHeader({ isEditing, isLoading, showSettings, setEdit, openModal }) {
   const modal = useRef(null);
     
   return (
     <HeaderStyle>
       <HeaderButton
-        onClick={() => isEditing ? modal.current.open() : openModal()}
+        onClick={() => showSettings && isEditing ? modal.current.open() : openModal()}
         disabled={isLoading}
       >
-        {isEditing ? <SettingsIcon /> : '＋'}
+        {showSettings && isEditing ? <SettingsIcon /> : '＋'}
       </HeaderButton>
 
       <TitleStyle>Schedule</TitleStyle>

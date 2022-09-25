@@ -30,7 +30,7 @@ function Schedule() {
   // Render
   return (
     <div>
-      <ScheduleHeader isEditing={isEditing} isLoading={noData} setEdit={setEdit} openModal={openEventModal} />
+      <ScheduleHeader isEditing={isEditing} isLoading={noData} showSettings={settings.showadvanced} setEdit={setEdit} openModal={openEventModal} />
 
       <DaysContainerStyle>
         { noData ?
