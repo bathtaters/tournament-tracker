@@ -25,14 +25,14 @@ const store = configureStore({
   
   // Enable remote dev tools
   devTools: false,
-  enhancers: [
+  enhancers: process.env.NODE_ENV === "development" ? [
     devToolsEnhancer({
       name: 'tournament-tracker',
       hostname: '192.168.0.179',
       port: 8000,
       realtime: true, 
     })
-  ],
+  ] : undefined,
 })
 
 thunkExtra.store = store
