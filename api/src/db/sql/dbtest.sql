@@ -1,5 +1,5 @@
 -- Select DB
-USE tournamenttracker;
+USE %DB%;
 
 -- Erase all entries
 SET sql_safe_updates = FALSE;
