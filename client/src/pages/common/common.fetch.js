@@ -21,7 +21,7 @@ export const commonApi = fetchApi.injectEndpoints({
     stats: build.query({
       query: (eventid) => `event/${eventid || 'all'}/stats`,
       transformResponse: debugLogging ? (res) => console.log('BRKRS',res) || res : undefined,
-      providesTags: getTags({Stats: (r,i,a)=> (r && r.eventids && r.eventids[0]) || a},{limit:1}),
+      providesTags: getTags({ Stats: (res,err,id) => id || 'TOTAL' }, { limit: 1 }),
     }),
 
     player:  build.query({

@@ -15,14 +15,14 @@ export const eventApi = fetchApi.injectEndpoints({
     nextRound: build.mutation({
       query: ({ id, roundactive }) => ({ url: `event/${id}/round/${roundactive+1}`, method: 'POST' }),
       transformResponse: debugLogging ? res => console.log('ROUND+',res) || res : undefined,
-      invalidatesTags: getTags(['Event','Match','Stats'], {all:0,addBase:['PlayerDetail'],addAll:['Stats']}),
+      invalidatesTags: getTags(['Event','Match','Stats','PlayerMatch'], {all:0,addAll:['Stats']}),
       onQueryStarted: nextRoundUpdate,
     }),
 
     clearRound: build.mutation({
       query: ({ id, roundactive }) => ({ url: `event/${id}/round/${roundactive}`, method: 'DELETE' }),
       transformResponse: debugLogging ? res => console.log('ROUND-',res) || res : undefined,
-      invalidatesTags: getTags(['Event','Match','Stats'], {all:0,addBase:['PlayerDetail'],addAll:['Stats']}),
+      invalidatesTags: getTags(['Event','Match','Stats','PlayerMatch'], {all:0,addAll:['Stats']}),
       onQueryStarted: clearRoundUpdate,
     }),
 

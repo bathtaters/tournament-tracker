@@ -15,14 +15,14 @@ export const playerApi = fetchApi.injectEndpoints({
     createPlayer: build.mutation({
       query: (body) => ({ url: `player`, method: 'POST', body, }),
       transformResponse: debugLogging ? res => console.log('ADD_PLAYER',res) || res : undefined,
-      invalidatesTags: getTags('Player', { addAll:['Stats'] }),
+      invalidatesTags: getTags('Player'),
       onQueryStarted: createUpdate,
     }),
 
     deletePlayer: build.mutation({
       query: id => ({ url: `player/${id}`, method: 'DELETE' }),
       transformResponse: debugLogging ? res => console.log('DEL_PLAYER',res) || res : undefined,
-      invalidatesTags: getTags('Player', { addAll:['Stats'] }),
+      invalidatesTags: getTags('Player'),
       onQueryStarted: deleteUpdate,
     }),
     

@@ -20,28 +20,28 @@ export const eventApi = fetchApi.injectEndpoints({
       query: ({ id, eventid, clear = false, ...body }) =>
         ({ url: `match/${id}`, method: clear ? 'DELETE' : 'POST', body }),
       transformResponse: debugLogging ? res => console.log('REPORT',res) || res : undefined,
-      invalidatesTags: getTags(['Match','Event','Stats'],{key:'eventid',addBase:['PlayerDetail'],all:0}),
+      invalidatesTags: getTags(['Match','Event','Stats'],{key:'eventid',all:0}),
       onQueryStarted: reportUpdate,
     }),
 
     updateMatch: build.mutation({
       query: ({ id, eventid, ...body }) => ({ url: `match/${id}`, method: 'PATCH', body }),
       transformResponse: debugLogging ? res => console.log('UPD_MATCH',res) || res : undefined,
-      invalidatesTags: getTags(['Match','Event','Stats'],{key:'eventid',addBase:['PlayerDetail'],all:0}),
+      invalidatesTags: getTags(['Match','Event','Stats'],{key:'eventid',all:0}),
       onQueryStarted: matchUpdate,
     }),
 
     updateDrops: build.mutation({
       query: ({ id, playerid, eventid, ...body }) => ({ url: `match/${id}/drop`, method: 'PATCH', body: { ...body, id: playerid } }),
       transformResponse: debugLogging ? res => console.log('UPD_DROPS',res) || res : undefined,
-      invalidatesTags: getTags(['Match','Event','Stats'],{key:'eventid',addBase:['PlayerDetail'],all:0}),
+      invalidatesTags: getTags(['Match','Event','Stats'],{key:'eventid',all:0}),
       onQueryStarted: dropsUpdate,
     }),
 
     swapPlayers: build.mutation({
       query: ({ eventid, ...body}) => ({ url: `match/swap`, method: 'POST', body }),
       transformResponse: debugLogging ? res => console.log('SWAP',res) || res : undefined,
-      invalidatesTags: getTags(['Event','Match'],{key:'eventid',addBase:['PlayerDetail'],all:0}),
+      invalidatesTags: getTags(['Event','Match'],{key:'eventid',all:0}),
       onQueryStarted: swapPlayersUpdate,
     }),
 

@@ -11,14 +11,14 @@ export const eventEditorApi = fetchApi.injectEndpoints({
         ({ url: `event/${id}`, method: 'PATCH', body }) :
         ({ url: `event`,       method: 'POST',  body }),
       transformResponse: debugLogging ? res => console.log('SET_EVENT',res) || res : undefined,
-      invalidatesTags: getTags(['Event','Stats'],{addBase:['Schedule','PlayerDetail']}),
+      invalidatesTags: getTags(['Event','PlayerEvent'],{addBase:['Schedule',{type:'Stats',id:'TOTAL'}]}),
       onQueryStarted: eventSet,
     }),
 
     deleteEvent: build.mutation({
       query: id => ({ url: `event/${id}`, method: 'DELETE' }),
       transformResponse: debugLogging ? res => console.log('DEL_EVENT',res) || res : undefined,
-      invalidatesTags: getTags(['Event','Stats'],{addBase:['Schedule','PlayerDetail']}),
+      invalidatesTags: getTags(['Event','PlayerEvent'],{addBase:['Schedule',{type:'Stats',id:'TOTAL'}]}),
       onQueryStarted: deleteUpdate,
     }),
 
