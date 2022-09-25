@@ -1,5 +1,5 @@
 import { settingsUpdate } from './services/settingsFetch.services';
-import { fetchApi, tagTypes, ALL_ID, useSettingsQuery, useForceRefetch, useFetchingProvider } from '../common/common.fetch';
+import { fetchApi, tagTypes, useSettingsQuery, useForceRefetch, useFetchingProvider } from '../common/common.fetch';
 import { debugLogging } from '../../assets/config';
 
 export const headerApi = fetchApi.injectEndpoints({
@@ -8,7 +8,7 @@ export const headerApi = fetchApi.injectEndpoints({
     updateSettings: build.mutation({
       query: (body) => ({ url: 'settings', method: 'PATCH', body }),
       transformResponse: debugLogging ? res => console.log('UPD_SETTINGS',res) || res : undefined,
-      invalidatesTags: ['Settings','Schedule', { type: 'Stats', id: ALL_ID }],
+      invalidatesTags: ['Settings','Schedule'],
       onQueryStarted: settingsUpdate,
     }),
     

@@ -26,7 +26,6 @@ const basicLayout = [
       { label: 'Show Raw Data', id: 'showrawjson', type: 'toggle', inputClass: 'toggle-accent', advanced: true },
     ],[
       { label: 'Auto-Report Byes', id: 'autobyes', type: 'toggle', advanced: true },
-      { label: 'Incomplete Events in Player Stats', id: 'includeincomplete', type: 'toggle', advanced: true },
     ],
   ]
 ];

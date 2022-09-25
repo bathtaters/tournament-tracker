@@ -29,7 +29,6 @@ module.exports = {
       datestart: today,
       dateend: tomorrow,
       autobyes: true,
-      includeincomplete: false,
     },
     player: {
       name: "New Player",
