@@ -10,10 +10,7 @@ export function scheduleAdapter({ schedule, settings }) {
   const emptyDay = [...Array(settings.dayslots).values()]
   const dateRange = getDays(settings.datestart, settings.dateend)
 
-  // Setup Unscheduled array
-  let output = [{ day: noDate, events: sortedEvents(schedule[noDate]?.eventslots) }]
-  delete schedule[noDate]
-
+  let output = []
   dateRange.forEach((day) => {
     // Add entry for each day w/in range
     output.push({ day, events: sortedEvents(schedule[day]?.eventslots, emptyDay) })
@@ -21,9 +18,13 @@ export function scheduleAdapter({ schedule, settings }) {
     // Clear entry from schedule
     delete schedule[day]
   })
+
+  // Append Unscheduled array
+  output.push({ day: noDate, events: sortedEvents(schedule[noDate]?.eventslots) })
+  delete schedule[noDate]
   
   // Add remaining events to Unscheduled
-  Object.values(schedule).forEach(day => day.eventslots && output[0].events.push(...Object.keys(day.eventslots)))
+  Object.values(schedule).forEach(day => day.eventslots && output[output.length - 1].events.push(...Object.keys(day.eventslots)))
 
   debugLogging && console.log('SCHEDULE', output)
   return output
