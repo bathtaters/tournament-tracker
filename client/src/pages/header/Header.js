@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
 import MenuIcon from "../common/icons/MenuIcon";
+import logo from "../../assets/images/logo.png"
 
 import ReloadButton from "./components/ReloadButton";
 import { HeaderStyle, DropdownStyle, TitleStyle, ReloadStyle, MenuStyle, LinkStyle, headerButtonStyle } from "./styles/HeaderStyles";
@@ -24,7 +25,7 @@ function Header({ title }) {
       </DropdownStyle>
 
       <TitleStyle>
-        <Link to="/home">{title || defaultSettings.title}</Link>
+        <Link to="/home" className="h-full"><img className="h-full w-auto" src={logo} alt={title || defaultSettings.title} /></Link>
       </TitleStyle>
 
       <ReloadStyle>

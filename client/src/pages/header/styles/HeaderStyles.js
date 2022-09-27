@@ -18,8 +18,8 @@ export function DropdownStyle({ children }) {
 
 export function TitleStyle({ children }) {
   return (
-    <div className="navbar-center flex-auto">
-      <h3 className="text-primary dark:text-primary-content font-medium m-auto px-2 text-center line-clamp-2 leading-none text-ellipsis overflow-hidden">
+    <div className="navbar-center flex-auto h-full">
+      <h3 className="text-primary dark:text-primary-content font-medium m-auto px-2 text-center line-clamp-2 leading-none text-ellipsis overflow-hidden h-full">
         {children}
       </h3>
     </div>
