@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import InputBox from "./InputBox";
 import { EditButton, LabelStyle, InputGroupStyle } from "../styles/PlayerDataStyles";
 
-import { useUpdatePlayerMutation } from "../profile.fetch";
+import { useSettingsQuery, useUpdatePlayerMutation } from "../profile.fetch";
 import { editClickController, saveController } from "../services/profile.services";
 import { useHotkeys } from "../../common/services/basic.services";
 
@@ -11,6 +11,8 @@ import { useHotkeys } from "../../common/services/basic.services";
 function PlayerDataRow({ rowData, data, id }) {
   // Global state
   const [ updatePlayer ] = useUpdatePlayerMutation();
+  const { data: settings } = useSettingsQuery()
+  const advanceMode = settings?.showadvanced
   
   // Local state
   const [isEditing, setEditing] = useState(false);
@@ -38,7 +40,7 @@ function PlayerDataRow({ rowData, data, id }) {
           formatter={rowData.formatString}
         />
 
-        { rowData.editable && <>
+        { advanceMode && rowData.editable && <>
           <EditButton value={isEditing ? 'save' : 'edit'} isEditing={isEditing} onClick={handleClick} />
 
           { isEditing && <EditButton value="undo" onClick={()=>setEdit(false)} /> }

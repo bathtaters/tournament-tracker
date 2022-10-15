@@ -13,14 +13,15 @@ function Players() {
 
   return (
     <div>
-      <TitleStyle>Player Stats</TitleStyle>
+      <TitleStyle>Players</TitleStyle>
 
       <StatsStyle>
         <Stats
-          className={statsClass.base(deleteMode)}
+          className={`${statsClass.base(deleteMode)}${advanceMode ? ' table-zebra' : ''}`}
           highlightClass={statsClass.hover(deleteMode)}
           onPlayerClick={handlePlayerClick}
           hideTeams={true}
+          hideStats={!advanceMode}
         />
       </StatsStyle>
 
