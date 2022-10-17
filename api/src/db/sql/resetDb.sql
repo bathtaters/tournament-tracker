@@ -42,6 +42,7 @@ CREATE TABLE event (
     wincount SMALLINT NOT NULL DEFAULT 2,
     playerspermatch SMALLINT NOT NULL DEFAULT 2,
     notes STRING NOT NULL DEFAULT '',
+    link STRING NOT NULL DEFAULT '',
 
     -- Clock base (clocklimit set by user, others set by start/stop/etc)
     clocklimit INTERVAL NOT NULL DEFAULT '60 mins',
@@ -80,14 +81,14 @@ GRANT SELECT ON TABLE * TO db_read;
 
 CREATE VIEW eventDetail (
     id, title, players, playerspermatch,
-    day, slot, roundactive, roundcount, wincount, notes,
+    day, slot, roundactive, roundcount, wincount, notes, link,
     allreported,
     anyreported,
     byes,
     drops
 ) AS SELECT
     event.id, event.title, event.players, playerspermatch,
-    day, slot, roundactive, roundcount, wincount, notes,
+    day, slot, roundactive, roundcount, wincount, notes, link,
     BOOL_AND(reported),
     BOOL_OR(reported) FILTER(
         WHERE match.round = roundactive AND ARRAY_LENGTH(match.players, 1) != 1),
