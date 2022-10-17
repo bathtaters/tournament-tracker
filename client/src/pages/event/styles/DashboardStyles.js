@@ -18,7 +18,7 @@ export const DetailStyle    = ({ children }) => <div className="stat-desc">{chil
 
 export const EventLinkStyle = ({ text, link }) => (
   <div className="text-center">
-    <a className="link link-secondary link-hover" href={link} title={text} target="_blank">{text}</a>
+    <a className="link link-secondary link-hover" href={link} title={text} target="_blank" rel="noreferrer">{text}</a>
   </div>
 )
 
