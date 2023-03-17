@@ -13,6 +13,7 @@ dbServer.json
 
 # production
 /client/build
+/deploy.sh
 
 # generated
 /client/src/assets/validation.json
