@@ -115,7 +115,7 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
       ptr.isDate = { options: dateOptions.date, errorMessage: errorText.date }
       ptr.trim = true
       break
-    case 'object': ptr.isObject = { errorMessage: errorText.object } // pass to default
+    case 'object': ptr.isObject = { strict: false, errorMessage: errorText.object } // pass to default
     case 'any':  // pass to default
     default: break
   }
