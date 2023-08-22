@@ -1,6 +1,6 @@
 # Server Credentials
 
-`serverCfg.json` should be created in this directory using this template:
+`dbServer.json` should be created in this directory using this template:
 ```
 {
 	"connectionString": "%PROTO://%NAME:%PASS@%DOM:%PORT/%DB?sslmode=%MODE&sslrootcert=%CERT&options=%OPTS",

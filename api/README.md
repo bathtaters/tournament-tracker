@@ -1,5 +1,7 @@
 # Tournament Tracker API
 
+###### NOTE: See `/api/src/config/dbServer.md` before running for the first time.
+
 ### Current Major Version: v0
 _Represented below by api/v[n]_
 
