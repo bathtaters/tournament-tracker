@@ -17,8 +17,8 @@ exports.usingKey = (key, useSet, useKey = null, { isIn = 'body', optional = fals
 // Validate by 'set'
 // optionalBody = all body keys are optional, unless body key is in params
 //  also remove any keys in params from body
-exports.bySet = (set) => (params, body = [], optionalBody = false, check = true) => 
-  checkSchema(getSchemaAdapter(set, { params, body }, optionalBody))
+exports.bySet = (set) => (params, body = [], optionalBody = false, check = true, paramsKey = 'params') => 
+  checkSchema(getSchemaAdapter(set, { [paramsKey]: params, body }, optionalBody))
     .concat(check ? checkValidation : [])
   
 
