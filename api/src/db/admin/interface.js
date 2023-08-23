@@ -65,7 +65,7 @@ const rmvRow = (table, rowId, client = null) =>
 
 
 // UPDATE
-const updateRow = (table, rowId, updateObj, { returning = null, client = null } = {}) => {
+const updateRow = (table, rowId, updateObj, { returning, client, idCol } = {}) => {
     // strTest(table) || strTest(returning);
     const keys = Object.keys(updateObj || {});
 
@@ -75,7 +75,7 @@ const updateRow = (table, rowId, updateObj, { returning = null, client = null } 
     return (client || direct).query(
         `UPDATE ${table} SET ${
             keys.map((col,idx) => `${col} = $${idx+2}`).join(', ')
-        } WHERE id = $1 RETURNING ${returning || 'id'};`,
+        } WHERE ${idCol || 'id'} = $1 RETURNING ${returning || 'id'};`,
 
         [rowId, ...Object.values(updateObj || {})]
 
