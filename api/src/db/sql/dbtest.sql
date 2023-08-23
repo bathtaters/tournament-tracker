@@ -25,15 +25,15 @@ INSERT INTO player (name) VALUES
     ('Ian'),  ('Foff'), ('Stack'), ('Henry');
 
 -- Setup Teams
-INSERT INTO player (name, isteam, members) VALUES
-    ('NI', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
-        isteam IS FALSE AND name = ANY('{"Nick","Ian"}'))),
-    ('MF', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
-        isteam IS FALSE AND name = ANY('{"Matt","Foff"}'))),
-    ('CS', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
-        isteam IS FALSE AND name = ANY('{"Cosme","Stack"}'))),
-    ('TH', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
-        isteam IS FALSE AND name = ANY('{"Taylor","Henry"}')));
+-- INSERT INTO player (name, isteam, members) VALUES
+--     ('NI', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
+--         isteam IS FALSE AND name = ANY('{"Nick","Ian"}'))),
+--     ('MF', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
+--         isteam IS FALSE AND name = ANY('{"Matt","Foff"}'))),
+--     ('CS', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
+--         isteam IS FALSE AND name = ANY('{"Cosme","Stack"}'))),
+--     ('TH', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
+--         isteam IS FALSE AND name = ANY('{"Taylor","Henry"}')));
 
 -- Setup Events
 INSERT INTO event (title, day, roundcount) VALUES
