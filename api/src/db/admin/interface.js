@@ -81,7 +81,7 @@ const updateRow = (table, rowId, updateObj, { returning, client, idCol } = {}) =
 
     ).then(getSolo()).then(getReturn).then(getFirst())
     .then(ret => ({
-        id: rowId,
+        [idCol || 'id']: rowId,
         ...(updateObj || {}),
         ...(ret || {error: 'Missing return value.'})
     }));
