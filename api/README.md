@@ -36,8 +36,8 @@ _Represented below by api/v[n]_
 
 | URL | Method | Body | Return | Description |
 |------|------|------|------|------|
-|/|GET|{ session }|{ playerData }|Get session player|
-|/|POST|{ name, password }|{ session }|Create session|
+|/|POST|{ session }|{ playerData }|Get session player|
+|/|PUT|{ name, password }|{ session }|Create session|
 |/|DELETE|{ session }|{ success }|Destroy session|
 
 ---
