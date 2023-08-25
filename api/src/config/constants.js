@@ -26,5 +26,6 @@ module.exports = {
     "Wins",
     "Losses",
     "Draws"
-  ]
+  ],
+  playerAccess: [ 'guest', 'admin', 'player' ],
 };

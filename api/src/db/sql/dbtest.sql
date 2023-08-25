@@ -20,9 +20,10 @@ INSERT INTO settings (id, value, type) VALUES
 
 
 -- Setup Players
+INSERT INTO player (name, access) VALUES ('Nick', 1);
 INSERT INTO player (name) VALUES
-    ('Nick'), ('Matt'), ('Cosme'), ('Taylor'),
-    ('Ian'),  ('Foff'), ('Stack'), ('Henry');
+    ('Matt'), ('Cosme'), ('Henry'), ('Taylor'),
+    ('Ian'),  ('Foff'),  ('Stack'), ('Robert');
 
 -- Setup Teams
 -- INSERT INTO player (name, isteam, members) VALUES

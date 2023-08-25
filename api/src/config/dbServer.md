@@ -16,11 +16,13 @@
 		"mode": "verify-full",
 		"cert": "$HOME/.postgresql/root.crt",
 		"opts": ""
-	}
+	},
+	"pwsalt": "[random string]"
 }
 ```
 
 ------------
 
+***WARNING: Changing pwsalt will invalidate all passwords in database!*** 
 Connection string replaces`%VAR`with`users[n].var`or`server.var`.
 It also replaces`$VAR`with`process.env.var`.

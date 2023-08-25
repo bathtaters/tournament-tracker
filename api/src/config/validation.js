@@ -32,8 +32,11 @@ module.exports = {
     },
     player: {
       name: "New Player",
+      password: null,
+      access: 2,
       isteam: false,
       members: null,
+      session: null,
     },
     event: {
       title: "New Game",
@@ -69,6 +72,8 @@ module.exports = {
     },
     player: {
       name: sharedLimits.title,
+      password: { min: 6, max: 64 },
+      access: { min: 0, max: 2 },
       members: { min: 2, max: 12 },
     },
     event: {
@@ -109,8 +114,11 @@ module.exports = {
     player: {
       id: "uuid",
       name: "string",
+      password: "string?",
+      access: "number",
       isteam: "boolean",
-      members: "uuid[]?"
+      members: "uuid[]?",
+      session: "uuid?"
     },
     event: {
       id: "uuid",

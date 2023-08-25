@@ -20,6 +20,9 @@ CREATE TABLE player (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     name STRING NULL,
+    password STRING NULL,
+    access SMALLINT NOT NULL DEFAULT 2,
+    session UUID NULL,
 
     -- Team
     isteam BOOLEAN NOT NULL DEFAULT FALSE,
@@ -27,7 +30,9 @@ CREATE TABLE player (
 
     -- Index
     INDEX team_idx (isteam) STORING (name, members),
-    INVERTED INDEX member_idx (members) WHERE isteam IS TRUE
+    INVERTED INDEX member_idx (members) WHERE isteam IS TRUE,
+    -- Rules
+    CONSTRAINT unique_name UNIQUE (name)
 );
 
 CREATE TABLE event (

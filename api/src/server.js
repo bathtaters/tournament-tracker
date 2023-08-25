@@ -9,10 +9,11 @@ app.use(require('./middleware/log.middleware'));
 app.use(require('./middleware/unescape.middleware'));
 
 // Setup routes
-app.use(`/api/v${version}`,        require('./routes/base.routes'));
-app.use(`/api/v${version}/event`,  require('./routes/event.routes'));
-app.use(`/api/v${version}/match`,  require('./routes/match.routes'));
-app.use(`/api/v${version}/player`, require('./routes/player.routes'));
+app.use(`/api/v${version}`,         require('./routes/base.routes'));
+app.use(`/api/v${version}/event`,   require('./routes/event.routes'));
+app.use(`/api/v${version}/match`,   require('./routes/match.routes'));
+app.use(`/api/v${version}/player`,  require('./routes/player.routes'));
+app.use(`/api/v${version}/session`, require('./routes/session.routes'));
 app.use('/api/version', (_, res) => res.sendAndLog({ version }));
 
 // Error handling

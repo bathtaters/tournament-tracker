@@ -32,6 +32,16 @@ _Represented below by api/v[n]_
 
 ---
 
+### _Session_ - [Domain]/api/v[n]/session/...
+
+| URL | Method | Body | Return | Description |
+|------|------|------|------|------|
+|/|GET|{ session }|{ playerData }|Get session player|
+|/|POST|{ name, password }|{ session }|Create session|
+|/|DELETE|{ session }|{ success }|Destroy session|
+
+---
+
 ### _Event_ - [Domain]/api/v[n]/event/...
 
 | URL | Method | Body | Return | Description |
@@ -85,7 +95,10 @@ settings:
 
 player:
 	id UUID = random
-	name STRING
+	name UNIQUE STRING
+	password STRING = NULL
+    access SMALLINT = 2 ('player')
+    session UUID = NULL
 	isteam BOOLEAN = 0
 	members [player.id] = NULL
 
