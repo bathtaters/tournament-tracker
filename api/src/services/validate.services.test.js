@@ -287,7 +287,7 @@ describe('getSchema', () => {
     })
     it('object', () => {
       const result = services.getSchema('test','object',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isObject', {errorMessage: expect.any(String)})
+      expect(result.test).toHaveProperty('isObject', {errorMessage: expect.any(String), strict: false})
     })
   })
 
