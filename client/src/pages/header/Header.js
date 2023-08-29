@@ -4,7 +4,7 @@ import Logo from "./styles/Logo";
 import MenuIcon from "../common/icons/MenuIcon";
 
 import ReloadButton from "./components/ReloadButton";
-import { HeaderStyle, DropdownStyle, TitleStyle, ReloadStyle, MenuStyle, LinkStyle, headerButtonStyle } from "./styles/HeaderStyles";
+import { HeaderStyle, DropdownStyle, TitleStyle, MenuStyle, MenuLinkStyle, headerButtonStyle, MenuItemStyle } from "./styles/HeaderStyles";
 
 
 function Header({ title }) {
@@ -14,9 +14,11 @@ function Header({ title }) {
         <MenuIcon className={headerButtonStyle} />
 
         <MenuStyle>
-          <LinkStyle to="/home" text="Schedule" />
+          <MenuLinkStyle to="/home" text="Schedule" />
 
-          <LinkStyle to="/players" text="Players" />
+          <MenuLinkStyle to="/players" text="Players" />
+
+          <MenuItemStyle><ReloadButton /></MenuItemStyle>
         </MenuStyle>
       </DropdownStyle>
 

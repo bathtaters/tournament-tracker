@@ -26,9 +26,6 @@ export function TitleStyle({ children }) {
   );
 }
 
-export function ReloadStyle({ children }) {
-  return (<div className="navbar-end flex-shrink-0 w-auto">{children}</div>);
-}
 
 export function MenuStyle({ children }) {
   return (
@@ -38,8 +35,16 @@ export function MenuStyle({ children }) {
   )
 }
 
-export function LinkStyle({ to, text }) {
-  return (<li className="mx-1"><NavLink to={to}><h4 className="w-full text-xl sm:text-2xl">{text}</h4></NavLink></li>);
+export function MenuItemStyle({ children }) {
+  return (<li className="mx-1"><h4 className="w-full text-xl sm:text-2xl block">{children}</h4></li>);
+}
+
+export function MenuLinkStyle({ to, text }) {
+  return (
+    <MenuItemStyle>
+      <NavLink className="block" to={to}>{text}</NavLink>
+    </MenuItemStyle>
+  );
 }
 
 export const headerButtonStyle = "btn btn-ghost btn-circle"
