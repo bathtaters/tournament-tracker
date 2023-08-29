@@ -1,10 +1,11 @@
 import React from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
+import LoginMenu from "./components/LoginMenu";
+import ReloadButton from "./components/ReloadButton";
+import { HeaderStyle, DropdownStyle, TitleStyle, MenuStyle, MenuLinkStyle, headerButtonStyle, MenuItemStyle } from "./styles/HeaderStyles";
 import Logo from "./styles/Logo";
 import MenuIcon from "../common/icons/MenuIcon";
 
-import ReloadButton from "./components/ReloadButton";
-import { HeaderStyle, DropdownStyle, TitleStyle, MenuStyle, MenuLinkStyle, headerButtonStyle, MenuItemStyle } from "./styles/HeaderStyles";
 
 
 function Header({ title }) {
@@ -26,9 +27,7 @@ function Header({ title }) {
         <Logo to="/home" title={title} />
       </TitleStyle>
 
-      <ReloadStyle>
-        <ReloadButton className={headerButtonStyle} />
-      </ReloadStyle>
+      <LoginMenu />
     </HeaderStyle>  
   );
 }

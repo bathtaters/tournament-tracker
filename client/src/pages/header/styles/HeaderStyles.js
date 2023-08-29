@@ -12,8 +12,14 @@ export function HeaderStyle({ children }) {
   </>)
 }
 
-export function DropdownStyle({ children }) {
-  return <div className="navbar-start flex-shrink-0 w-auto"><div className="dropdown dropdown-hover">{children}</div></div>
+export function DropdownStyle({ isRight, children }) {
+  return (
+    <div className={`${isRight ? "navbar-end" : "navbar-start"} flex-shrink-0 w-auto`}>
+      <div className={`dropdown dropdown-hover ${isRight ? "dropdown-end" : "dropdown-start"}`}>
+        {children}
+      </div>
+    </div>
+  );
 }
 
 export function TitleStyle({ children }) {
@@ -26,12 +32,13 @@ export function TitleStyle({ children }) {
   );
 }
 
-
-export function MenuStyle({ children }) {
+export function MenuStyle({ onSubmit, children }) {
   return (
-    <ul className="menu menu-compact dropdown-content p-2 shadow bg-base-300 rounded-box w-52">
-      {children}
-    </ul>
+    <form onSubmit={onSubmit}>
+      <ul className="menu menu-compact dropdown-content p-2 shadow bg-base-300 rounded-box w-52">
+        {children}
+      </ul>
+    </form>
   )
 }
 
@@ -47,6 +54,6 @@ export function MenuLinkStyle({ to, text }) {
   );
 }
 
-export const headerButtonStyle = "btn btn-ghost btn-circle"
+export const headerButtonStyle = "btn btn-ghost btn-circle mask mask-circle"
 
 export const reloadingClass = "animate-spin ease-linear"
