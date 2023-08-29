@@ -17,7 +17,7 @@ export function ProfileStyle({ children }) {
 export function ProfilePicStyle({ children }) {
   return <div className="w-36 h-40 mask mask-squircle bg-neutral flex">{children}</div>
 }
-export const defaultPicClass = "w-full h-full p-4 fill-neutral-content"
+export const defaultPicClass = "w-full h-full p-[15%] fill-neutral-content"
 
 export function PlayerDataStyle({ children }) {
   return (
