@@ -21,7 +21,7 @@ CREATE TABLE player (
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     name STRING,
     password STRING NULL,
-    access SMALLINT NOT NULL DEFAULT 2,
+    access SMALLINT NOT NULL DEFAULT 1,
     session UUID NULL,
 
     -- Team

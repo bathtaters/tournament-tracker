@@ -33,7 +33,7 @@ module.exports = {
     player: {
       name: "New Player",
       password: null,
-      access: 2,
+      access: 1,
       isteam: false,
       members: null,
       session: null,
@@ -73,7 +73,7 @@ module.exports = {
     player: {
       name: sharedLimits.title,
       password: { min: 6, max: 64 },
-      access: { min: 0, max: 2 },
+      access: { min: 0, max: 3 },
       members: { min: 2, max: 12 },
     },
     event: {

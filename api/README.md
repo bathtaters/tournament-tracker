@@ -97,7 +97,7 @@ player:
 	id UUID = random
 	name UNIQUE STRING
 	password STRING = NULL
-    access SMALLINT = 2 ('player')
+    access SMALLINT = 1 ('player')
     session UUID = NULL
 	isteam BOOLEAN = 0
 	members [player.id] = NULL
