@@ -6,9 +6,9 @@ import logoDark from "../../../assets/images/logo2023_dark.png"
 
 import { defaultSettings } from "../../common/services/fetch.services";
 
-function Logo({ title, link }) {
+function Logo({ title, to }) {
   return (
-    <Link to={link} className="h-full">
+    <Link to={to} className="h-full">
       <img className="h-full w-auto block dark:hidden" src={logoLight} alt={title || defaultSettings.title} />
       <img className="h-full w-auto hidden dark:block" src={logoDark} alt={title || defaultSettings.title} />
     </Link>
