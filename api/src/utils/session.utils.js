@@ -5,7 +5,7 @@ const SALT = require('../config/dbServer.json').pwsalt || 'SALT'
 exports.newSessionID = () => randomUUID();
 
 // Strip password from player data
-exports.stripPassword = ({ password, session, ...player }) => player;
+exports.stripPassword = ({ password, session, lower_name, ...player }) => player;
 
 // Test password
 exports.passwordsMatch = (a, b) => timingSafeEqual(Buffer.from(a,'base64url'), Buffer.from(b,'base64url'));

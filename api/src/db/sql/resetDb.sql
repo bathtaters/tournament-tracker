@@ -19,7 +19,7 @@ CREATE TABLE settings (
 CREATE TABLE player (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
-    name STRING NULL,
+    name STRING,
     password STRING NULL,
     access SMALLINT NOT NULL DEFAULT 2,
     session UUID NULL,
@@ -31,8 +31,10 @@ CREATE TABLE player (
     -- Index
     INDEX team_idx (isteam) STORING (name, members),
     INVERTED INDEX member_idx (members) WHERE isteam IS TRUE,
+
     -- Rules
-    CONSTRAINT unique_name UNIQUE (name)
+    lower_name STRING AS (lower(name)) STORED,
+    CONSTRAINT unique_name UNIQUE (lower_name)
 );
 
 CREATE TABLE event (

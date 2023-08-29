@@ -11,9 +11,26 @@ const get = id => db.getRow('player', id).then(r => Array.isArray(r) ? r.map(uti
 const list = () => db.getRow('player',null,'id').then(r => r && r.map(p => p.id));
 
 // Start/End/Fetch User Sessions
-const startSession = name => db.updateRow('player', name, { session: util.newSessionID() }, { idCol: 'name', returning: 'session' }).then(r => r.session);
-const fetchSession = session => db.getRow('player', session, null, { idCol: 'session', getOne: true }).then(r => r && util.stripPassword(r));
-const endSession = session => db.updateRow('player', session, { session: null }, { idCol: 'session' });
+const startSession = name => db.updateRow(
+    'player',
+    name.toLowerCase(),
+    { session: util.newSessionID() },
+    { idCol: 'lower_name', returning: 'session' }
+).then(r => r.session);
+
+const fetchSession = session => db.getRow(
+    'player',
+    session,
+    null,
+    { idCol: 'session', getOne: true }
+).then(r => r && util.stripPassword(r));
+
+const endSession = session => db.updateRow(
+    'player',
+    session,
+    { session: null },
+    { idCol: 'session' }
+);
 
 // Get Event detail for player
 const getPlayerEvents = playerids => db.query(playerids.map(() => strings.eventFilter), playerids.map(id => [id]), true)
@@ -26,7 +43,7 @@ const add = playerData => db.addRow('player', { ...defs, ...playerData });
 
 // Check password (Or set if no password) -- Return 0 on success, reason string on failure
 async function checkPassword(name, password) {
-    const stored = await db.getRow('player', name, ['id','password'], { idCol: 'name', getOne: true });
+    const stored = await db.getRow('player', name, ['id','password'], { idCol: 'name', getOne: true, looseMatch: true });
     if (!stored || !stored.id) return 'Player not found.';
 
     let guess;
@@ -36,7 +53,7 @@ async function checkPassword(name, password) {
     if (!stored.password) {
         const ret = await db.updateRow('player', stored.id, { password: guess }, { returning: 'password' });
         console.log(`  > Player <${stored.id}>: Inital password set.`);
-        return util.passwordsMatch(password, ret.password) ? 'Password saved, you may now login.' : 'Save password failed, contact administrator.';
+        return util.passwordsMatch(guess, ret.password) ? 'Password saved, you may now login.' : 'Save password failed, contact administrator.';
     }
     return util.passwordsMatch(guess, stored.password) ? 0 : 'Incorrect password.';
 }
