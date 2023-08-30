@@ -21,7 +21,7 @@ import useMatchController from "./services/match.controller"
 function Match({ eventid, matchId, wincount, isEditing }) {
   // Get component data
   const {
-    matchData, rankings, players, settings, title, reportModal,
+    matchData, rankings, players, showRaw, title, reportModal,
     setVal, clearReport, report, swapProps, maxDraws, showLoading, error,
   } = useMatchController(eventid, matchId)
   
@@ -30,7 +30,7 @@ function Match({ eventid, matchId, wincount, isEditing }) {
   
   // Render component
   return (
-    <MatchStyle settings={settings}>
+    <MatchStyle showRaw={showRaw}>
       <PlayerStyle>
         { matchData.players.map((playerid, index) => (
           <MatchPlayer

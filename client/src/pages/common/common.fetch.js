@@ -50,3 +50,9 @@ export const useAccessLevel = () => {
   const { data } = useSessionState();
   return data?.access || 0;
 };
+
+export const useShowRaw = () => {
+  const { data, isLoading, isError } = commonApi.endpoints.settings.useQueryState();
+  const access = useAccessLevel();
+  return !isLoading && !isError && access > 2 && data.showrawjson;
+};
