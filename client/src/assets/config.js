@@ -22,8 +22,5 @@ export const alert = {
 
 export const settings = {
   // Store these settings locally (per user settings)
-  storeLocal: ['showadvanced','showrawjson'],
+  storeLocal: ['showrawjson'],
 }
-
-// Activate 'advanced mode'
-export const advKeyCombo = '`adv';

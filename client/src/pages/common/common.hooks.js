@@ -33,7 +33,7 @@ export function usePropState(propVal, equalsTest = (state,prop) => state === pro
   useEffect(() => {
     setLocal((stateVal) => equals(stateVal, propVal) ? stateVal : propVal)
   // eslint-disable-next-line
-  }, [JSON.stringify(propVal), ...depends])
+  }, [propVal, ...depends])
 
   return [ localVal, setLocal ]
 }
@@ -87,57 +87,4 @@ export function useOnClickOutsideRef(onClick, { depends = [], skip }) {
   }, [...depends, onClick, skip, Boolean(ref.current)])
 
   return ref
-}
-
-
-/** Call callback when 'combo' keys are pressed,
- * pressDelay controls allowed delay between presses.  */
-export function useKeyCombo(combo, callback, pressDelay = 500) {
-  const pressed = useRef('');
-  const timeout = useRef(null);
-
-
-  // Reset pressed key cache
-  const resetPressed = useCallback(() => {
-    pressed.current = '';
-
-    if (!timeout.current) return;
-    
-    clearTimeout(timeout.current);
-    timeout.current = null;
-  }, []);
-
-
-  // Add pressed key to cache -- and call callback if cache == combo
-  const appendPressed = useCallback((newKey) => {
-    
-    pressed.current += newKey;
-    if (timeout.current) clearTimeout(timeout.current);
-
-    if (pressed.current.length < combo.length) {
-      timeout.current = setTimeout(resetPressed, pressDelay);
-      return;
-    }
-
-    resetPressed();
-    callback();
-
-  }, [combo, callback, pressDelay, resetPressed]);
-
-
-  // Listen for keypresses
-  useEffect(() => {
-
-    const keyListener = (ev) => {
-      if (ev.key !== combo[pressed.current.length]) resetPressed('');
-      else appendPressed(ev.key);
-    };
-  
-    document.addEventListener('keydown', keyListener);
-    return () => { document.removeEventListener('keydown', keyListener); };
-
-  }, [combo, resetPressed, appendPressed]);
-
-
-  return resetPressed;
 }

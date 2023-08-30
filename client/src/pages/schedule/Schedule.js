@@ -1,5 +1,4 @@
 import React, { useState, useRef, useCallback } from "react";
-import { useDispatch } from "react-redux";
 
 import ScheduleHeader from "./components/ScheduleHeader";
 import Day from "./components/Day";
@@ -10,25 +9,14 @@ import RawData from "../common/RawData";
 import { DaysContainerStyle } from "./styles/ScheduleStyles";
 
 import { useScheduleQuery, useSettingsQuery, useEventQuery } from "./schedule.fetch";
-import { setLocalVar } from "../common/services/fetch.services";
-import { useKeyCombo } from "../common/common.hooks";
-import { advKeyCombo } from "../../assets/config";
+import { useAccessLevel } from "../common/common.fetch";
 
 function Schedule() {
-  const dispatch = useDispatch();
-
   // Global state
   const { data,            isLoading: schedLoad,    error: schedErr    } = useScheduleQuery();
   const { data: settings,  isLoading: settingsLoad, error: settingsErr } = useSettingsQuery();
   const { data: eventData, isLoading: eventsLoad,   error: eventsErr   } = useEventQuery();
-
-  // Activate advanced mode
-  const flipAdvanced = useCallback(() => {
-    setLocalVar('showadvanced', !settings.showadvanced, dispatch)
-  }, [dispatch, settings.showadvanced]);
-
-  useKeyCombo(advKeyCombo, flipAdvanced);
-  
+  const access = useAccessLevel();
   
   // Local state
   const modal = useRef(null);
@@ -44,7 +32,7 @@ function Schedule() {
   // Render
   return (
     <div>
-      <ScheduleHeader isEditing={isEditing} isLoading={noData} showSettings={settings.showadvanced} setEdit={setEdit} openModal={openEventModal} />
+      <ScheduleHeader isEditing={isEditing} isLoading={noData} showSettings={access > 1} setEdit={setEdit} openModal={openEventModal} />
 
       <DaysContainerStyle>
         { noData ?

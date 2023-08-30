@@ -45,3 +45,8 @@ export const commonApi = fetchApi.injectEndpoints({
 export { fetchApi, tagTypes, ALL_ID, getTags, useFetchingStatus, useFetchingProvider, useForceRefetch };
 export const { useSessionQuery, usePlayerQuery, useSettingsQuery, useEventQuery, useStatsQuery, usePrefetch } = commonApi;
 export const useSessionState = commonApi.endpoints.session.useQueryState;
+
+export const useAccessLevel = () => {
+  const { data } = useSessionState();
+  return data?.access || 0;
+};

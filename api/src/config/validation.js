@@ -22,7 +22,6 @@ module.exports = {
   defaults: {
     settings: {
       title: "Tournament Tracker",
-      showadvanced: false,
       showrawjson: false,
       dayslots: 3,
       autofillsize: 8,
@@ -103,7 +102,6 @@ module.exports = {
     settings: {
       setting: "string",
       title: "string",
-      showadvanced: "boolean",
       showrawjson: "boolean",
       autofillsize: "int",
       autobyes: "boolean",
