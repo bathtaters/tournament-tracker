@@ -50,4 +50,9 @@
         -webkit-appearance: none;
         @apply m-0;
     }
+
+    /* Hide arrow in disabled dropdown */
+    .select:disabled {
+        background-image: none;
+    }
 }
