@@ -15,6 +15,8 @@ export const statusInfo = [
   { label: 'N/A',         badge: "badge-warning", linkClass: "link-warning", textClass: "text-warning"      },
 ];
 
+export const playerAccess = [ 'Guest', 'Player', 'Judge', 'Gonti' ];
+
 export const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 export const roundButtonText = {
