@@ -7,7 +7,7 @@ export function LoginMenuButton({ src }) {
     return (
         <label tabIndex="0" className={headerButtonStyle}>
             {src ?
-                <img className="bg-gray-400 h-full w-auto" src={src} />
+                <img className="bg-gray-400 h-full w-auto" src={src} alt="User menu" />
                 :
                 <DefaultProfilePic className={defaultPicClass} />
             }
