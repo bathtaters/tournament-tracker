@@ -7,6 +7,7 @@ import ReloadButton from "./components/ReloadButton";
 import { HeaderStyle, DropdownStyle, TitleStyle, MenuStyle, MenuLinkStyle, headerButtonStyle, MenuItemStyle } from "./styles/HeaderStyles";
 import Logo from "./styles/Logo";
 import MenuIcon from "../common/icons/MenuIcon";
+import SettingsIcon from "../common/icons/SettingsIcon";
 import { useAccessLevel } from "../common/common.fetch";
 
 
@@ -26,7 +27,7 @@ function Header({ title }) {
 
           <MenuItemStyle><ReloadButton /></MenuItemStyle>
 
-          {access > 2 && <MenuLinkStyle onClick={() => modal.current.open()}>Settings</MenuLinkStyle>}
+          {access > 2 && <MenuLinkStyle onClick={() => modal.current.open()}>Settings <SettingsIcon /></MenuLinkStyle>}
         </MenuStyle>
       </DropdownStyle>
 

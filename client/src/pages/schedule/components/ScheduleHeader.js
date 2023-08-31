@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 
 import Settings from "../../settings/Settings";
 import Modal from "../../common/Modal";
-import SettingsIcon from "../../common/icons/SettingsIcon";
 import { HeaderStyle, TitleStyle, HeaderButton } from "../styles/ScheduleStyles";
 
 function ScheduleHeader({ isEditing, isLoading, access, setEdit, openModal }) {

@@ -55,7 +55,7 @@ export function MenuItemStyle({ lessPadding, disabled, children }) {
 export function MenuLinkStyle(props) {
   return (
     <MenuItemStyle>
-      <NavLink className="block" {...props} />
+      <NavLink className="flex flex-row justify-between items-center" {...props} />
     </MenuItemStyle>
   );
 }
