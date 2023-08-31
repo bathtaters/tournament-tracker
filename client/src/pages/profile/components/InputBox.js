@@ -1,15 +1,21 @@
 import React from "react";
 
-import { InputStyle } from "../styles/PlayerDataStyles";
+import { InputStyle, SelectOptionStyle } from "../styles/PlayerDataStyles";
 import { usePlayerQuery } from "../profile.fetch";
 
-function InputBox({ id, value, isEditing, onChange, formatter }) {
-  const { data: playerData } = usePlayerQuery(null, { skip: !formatter });
+function InputBox({ id, value, isEditing, onChange, type, formatter }) {
+  const { data: playerData } = usePlayerQuery(null, { skip: typeof formatter !== 'function' });
 
-  const formatted = isEditing || !formatter ? value : formatter(value, playerData)
+  if (Array.isArray(formatter)) {
+    return (
+      <SelectOptionStyle id={id} disabled={!isEditing} onChange={onChange} value={value} options={formatter} />
+    )
+  }
+
+  const formatted = isEditing || !formatter ? value : formatter(value, playerData);
 
   // Edit box
-  return (<InputStyle id={id} disabled={!isEditing} onChange={onChange} value={formatted} />);
+  return (<InputStyle id={id} type={type} disabled={!isEditing} onChange={onChange} value={formatted} />);
 }
 
 export default InputBox;
