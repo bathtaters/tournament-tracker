@@ -9,7 +9,7 @@ function LoginMenu() {
 
     if (user?.id) return (
         <LoginMenuStyle loading={loading}>
-            <MenuLinkStyle to={`/profile/${idToUrl(user.id)}`} text={user.name} />
+            <MenuLinkStyle to={`/profile/${idToUrl(user.id)}`}>{user.name}</MenuLinkStyle>
             <RawData data={user} />
             <DropdownButton onClick={logout}>Logout</DropdownButton>
         </LoginMenuStyle>
