@@ -52,10 +52,10 @@ export function MenuItemStyle({ lessPadding, disabled, children }) {
   )
 }
 
-export function MenuLinkStyle({ to, text }) {
+export function MenuLinkStyle(props) {
   return (
     <MenuItemStyle>
-      <NavLink className="block" to={to}>{text}</NavLink>
+      <NavLink className="block" {...props} />
     </MenuItemStyle>
   );
 }

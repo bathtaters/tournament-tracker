@@ -12,10 +12,10 @@ function ScheduleHeader({ isEditing, isLoading, access, setEdit, openModal }) {
     <HeaderStyle>
       {access > 1 &&
         <HeaderButton
-          onClick={() => access > 2 && isEditing ? modal.current.open() : openModal()}
+          onClick={()=>openModal()}
           disabled={isLoading}
         >
-          {access > 2 && isEditing ? <SettingsIcon /> : '＋'}
+          ＋
         </HeaderButton>
       }
 
