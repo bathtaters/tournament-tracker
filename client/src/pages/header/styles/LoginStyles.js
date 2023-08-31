@@ -15,7 +15,7 @@ export function LoginMenuButton({ src }) {
     );
 }
 
-const MenuLoading = () => <i className="opacity-50"><MenuLinkStyle text="Hang on..." /></i>;
+const MenuLoading = () => <MenuItemStyle disabled={true}>Hang on...</MenuItemStyle>;
 
 export function LoginMenuStyle({ loading, onSubmit, children }) {
     return (
@@ -31,7 +31,7 @@ export function LoginMenuStyle({ loading, onSubmit, children }) {
 
 export function DropdownInput({ label, props }) {
     return (
-        <MenuItemStyle>
+        <MenuItemStyle lessPadding={true}>
             <input
                 className="input w-full"
                 placeholder={label}
@@ -44,7 +44,7 @@ export function DropdownInput({ label, props }) {
 
 export function DropdownButton({ children, onClick }) {
     return (
-        <MenuItemStyle>
+        <MenuItemStyle lessPadding={true}>
             <button className="btn btn-primary content-center w-full h-full" type={onClick ? "button" : "submit"} onClick={onClick}>
                 {children}
             </button>

@@ -42,8 +42,14 @@ export function MenuStyle({ onSubmit, children }) {
   )
 }
 
-export function MenuItemStyle({ children }) {
-  return (<li className="mx-1"><h4 className="w-full text-xl sm:text-2xl block">{children}</h4></li>);
+export function MenuItemStyle({ lessPadding, disabled, children }) {
+  return (
+    <li className={`px-1${disabled ? ' disabled' : ''}`}>
+      <h4 className={`w-full text-xl sm:text-2xl block${lessPadding ? ' p-1 bg-ignore' : ''}`}>
+        {children}
+      </h4>
+    </li>
+  )
 }
 
 export function MenuLinkStyle({ to, text }) {

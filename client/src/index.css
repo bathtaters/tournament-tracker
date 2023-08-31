@@ -55,4 +55,9 @@
     .select:disabled {
         background-image: none;
     }
+
+    /* Class to ignore background effects */
+    .bg-ignore {
+        @apply hover:bg-transparent active:bg-transparent focus:bg-transparent;
+    }
 }
