@@ -13,7 +13,7 @@ function ReloadButton(props) {
   // Force refetch of all data
   const forceRefetch = useForceRefetch();
 
-  return <button type="button" className="flex flex-row justify-between w-full" disabled={isFetching} onClick={forceRefetch}>
+  return <button type="button" className="flex flex-row justify-between items-center w-full" disabled={isFetching} onClick={forceRefetch}>
     <span>Refresh</span>
     <ReloadIcon className={isFetching ? reloadingClass : ''} />
   </button>
