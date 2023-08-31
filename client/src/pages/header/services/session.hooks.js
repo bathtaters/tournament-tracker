@@ -8,8 +8,8 @@ import { localKeys } from "../../../assets/constants";
 export function useUserSession() {
     const { data, isLoading } = useSessionQuery(undefined, { skip: !getLocalVar(localKeys.session) });
 
-    const [ apiLogin, { isLoading: loginLoading  } ] = useLoginMutation();
-    const [ logout,   { isLoading: logoutLoading } ] = useLogoutMutation();
+    const [ apiLogin,  { isLoading: loginLoading  } ] = useLoginMutation();
+    const [ apiLogout, { isLoading: logoutLoading } ] = useLogoutMutation();
     const [ name,     setName ] = useState('');
     const [ password, setPass ] = useState('');
 
@@ -18,6 +18,7 @@ export function useUserSession() {
         apiLogin({ name, password });
         setPass('');
     };
+    const logout = () => apiLogout(getLocalVar(localKeys.session));
 
     return {
         login,
