@@ -12,11 +12,13 @@ import settingsLayout from "./settings.layout";
 import useSettingsController from "./services/settings.controller";
 
 import { getBaseData } from "../../core/services/validation.services";
+import { useAccessLevel } from "../common/common.fetch";
 const baseData = getBaseData('settings');
 
 
 function Settings({ modal }) {
   const { data, onSubmit, onChange, showLoading, error } = useSettingsController(modal)
+  const access = useAccessLevel()
 
   // Catch loading/error
   if (showLoading) return (<div><Loading loading={!error} error={error} tagName="h3" /></div>);
@@ -26,7 +28,7 @@ function Settings({ modal }) {
     <TitleStyle>Settings</TitleStyle>
 
     <InputForm
-      rows={settingsLayout[data.showadvanced ? 'basic' : 'advanced']}
+      rows={settingsLayout[access > 2 ? 'advanced' : 'basic']}
       data={data}
       baseData={baseData}
       onSubmit={onSubmit}
@@ -37,7 +39,7 @@ function Settings({ modal }) {
 
     <RawData className="text-sm mt-4" data={data} />
 
-    <ResetButtons visible={data.showadvanced} />
+    <ResetButtons visible={access > 2} />
   </div>);
 }
 

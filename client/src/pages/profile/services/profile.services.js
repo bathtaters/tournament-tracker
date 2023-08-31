@@ -11,9 +11,10 @@ export function editClickController(isEditing, saveData, setEdit) {
   }
 }
 
-export const saveController = (id, key, value, data, updateData) => () => {
-  if (!value.trim() || value.trim() === data) return;
-  return updateData({ [key]: value, id });
+export const saveController = (id, { key, required }, value, data, updateData) => () => {
+  if (required && (!value || !value.trim())) return;
+  if (value && value.trim() === data) return;
+  return updateData({ [key]: value || null, id });
 }
 
 

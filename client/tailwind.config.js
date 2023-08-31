@@ -34,7 +34,7 @@ module.exports = {
     themes: [
       {
         corporate: {
-          ...require("daisyui/src/colors/themes")["[data-theme=corporate]"],
+          ...require("daisyui/src/theming/themes")["[data-theme=corporate]"],
           'neutral': '#D8D8D8',
           'neutral-focus': '#BBB',
           'neutral-content': '#444',
@@ -42,7 +42,7 @@ module.exports = {
       },
       {
         business: {
-          ...require("daisyui/src/colors/themes")["[data-theme=business]"],
+          ...require("daisyui/src/theming/themes")["[data-theme=business]"],
           'neutral': '#1A1A1A',
           'neutral-focus': 'black',
           'neutral-content': '#777',

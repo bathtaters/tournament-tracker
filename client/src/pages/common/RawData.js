@@ -2,14 +2,13 @@ import React from "react";
 import PropTypes from 'prop-types';
 
 import RawDataStyle from "./styles/RawDataStyle";
-import { useSettingsQuery } from "./common.fetch";
+import { useShowRaw } from "./common.fetch";
 
 // Display raw data
 function RawData({ data, className = "" }) {
-  const { data: settings, isLoading, error } = useSettingsQuery();
+  const showRaw = useShowRaw();
 
-  if (isLoading || error || !settings || !settings.showadvanced || !settings.showrawjson || !data)
-    return null;
+  if (!showRaw || !data) return null;
 
   const styleData = JSON.stringify(data).replace(/:/g,': ').replace(/,/g,', ');
   

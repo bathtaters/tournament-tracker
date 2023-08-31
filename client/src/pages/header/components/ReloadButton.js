@@ -13,10 +13,10 @@ function ReloadButton(props) {
   // Force refetch of all data
   const forceRefetch = useForceRefetch();
 
-  // Generate class
-  const buttonClass = `${isFetching ? reloadingClass : ''} ${props.className ?? ''}`
-
-  return <button type="button" className={buttonClass} disabled={isFetching} onClick={forceRefetch}><ReloadIcon /></button>
+  return <button type="button" className="flex flex-row justify-between w-full" disabled={isFetching} onClick={forceRefetch}>
+    <span>Refresh</span>
+    <ReloadIcon className={isFetching ? reloadingClass : ''} />
+  </button>
 }
 
 ReloadButton.propTypes = { 

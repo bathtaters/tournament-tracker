@@ -39,14 +39,13 @@ export function updateSchedule(schedule, id, { day, slot }) {
   for (let i = 0; i < schedule.length; i++) {
     const idx = schedule[i].events.indexOf(id);
     if (idx === -1) continue;
-    if (!i) schedule[i].events.splice(idx,1);
+    if (i === schedule.length - 1) schedule[i].events.splice(idx,1);
     else schedule[i].events[idx] = null;
     break;
   }
   
   // Add new
-  const addIdx = !day ? -1 : schedule.findIndex(d => d.day === day);
-  if (addIdx < 0) schedule[0].events.push(id);
-  else if (slot) schedule[addIdx].events[slot - 1] = id;
-  else schedule[addIdx].events.push(id);
+  if (!day) schedule[schedule.length - 1].events.push(id);
+  else if (slot) schedule[schedule.findIndex(d => d.day === day)].events[slot - 1] = id;
+  else schedule[schedule.findIndex(d => d.day === day)].events.push(id);
 }

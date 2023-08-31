@@ -26,14 +26,19 @@
     /* NavLink styling */
     a.active, a.active-parent, a.active-parent .link { @apply cursor-default; }
 
-    /* Colored hovering */
-    .table tr.hover.hover-error:hover td {
-        @apply bg-error;
-    }
-
     /* Fix daisyUI table formatting */
     .table > thead > tr > th:first-child {
         @apply static;
+    }
+
+    .table-zebra tbody tr:nth-child(even) {
+        @apply bg-base-200/50;
+    }
+    .table-zebra tbody tr.hover\:bg-base-200:nth-child(even):hover {
+        @apply bg-base-200;
+    }
+    .table-zebra tbody tr.hover\:bg-error:nth-child(even):hover {
+        @apply bg-error;
     }
 
     /* Remove input number up/down arrows */
@@ -44,5 +49,10 @@
     input[type='number'].hide-arrows::-webkit-outer-spin-button {
         -webkit-appearance: none;
         @apply m-0;
+    }
+
+    /* Hide arrow in disabled dropdown */
+    .select:disabled {
+        background-image: none;
     }
 }

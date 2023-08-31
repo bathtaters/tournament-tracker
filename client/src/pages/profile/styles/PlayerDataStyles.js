@@ -30,3 +30,17 @@ export function InputStyle({ children, ...props }) {
     />
   )
 }
+
+export function SelectOptionStyle({ options, value, ...props  }) {
+  return (
+    <select
+      className="select select-sm select-primary select-bordered flex-grow min-w-0 disabled:opacity-100 disabled:cursor-text"
+      value={value}
+      {...props}
+    >
+      {Object.entries(options).map(([key,val]) => (
+        <option key={val} value={key} >{val}</option>
+      ))}
+    </select>
+  )
+}

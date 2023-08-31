@@ -21,12 +21,8 @@ const basicLayout = [
   ],
 
   [
-    [
-      { label: 'Show Advanced', id: 'showadvanced', type: 'toggle', inputClass: 'toggle-accent' },
-      { label: 'Show Raw Data', id: 'showrawjson', type: 'toggle', inputClass: 'toggle-accent', advanced: true },
-    ],[
-      { label: 'Auto-Report Byes', id: 'autobyes', type: 'toggle', advanced: true },
-    ],
+    { label: 'Show Raw Data', id: 'showrawjson', type: 'toggle', inputClass: 'toggle-accent', advanced: true },
+    { label: 'Auto-Report Byes', id: 'autobyes', type: 'toggle', advanced: true },
   ]
 ];
 
@@ -34,8 +30,8 @@ const basicLayout = [
 const buttons = (clickCancel) => [{ label: "Cancel", onClick: clickCancel }];
 
 const settingsLayout = { 
-  basic: basicLayout,
-  advanced: deepFilter(basicLayout, s => !s.advanced),
+  basic: deepFilter(basicLayout, s => !s.advanced),
+  advanced: basicLayout,
   buttons,
 };
 

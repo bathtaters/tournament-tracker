@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator')
 
-const errorFormatter = ({ param, msg, value }) =>  `${param} ${msg}: ${JSON.stringify(value)}`
+const errorFormatter = ({ path, msg, value }) =>  `${path} ${msg}: ${JSON.stringify(value)}`
 
 // Test validation middleware (Run after running other validators)
 const checkValidation = (req, _, next) => {

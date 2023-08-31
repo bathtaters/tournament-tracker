@@ -1,13 +1,10 @@
 import React from "react";
-import PropTypes from 'prop-types';
-import { Link } from "react-router-dom";
-import MenuIcon from "../common/icons/MenuIcon";
-import logo from "../../assets/images/logo.png"
-
+import PropTypes from "prop-types";
+import LoginMenu from "./components/LoginMenu";
 import ReloadButton from "./components/ReloadButton";
-import { HeaderStyle, DropdownStyle, TitleStyle, ReloadStyle, MenuStyle, LinkStyle, headerButtonStyle } from "./styles/HeaderStyles";
-
-import { defaultSettings } from "../common/services/fetch.services";
+import { HeaderStyle, DropdownStyle, TitleStyle, MenuStyle, MenuLinkStyle, headerButtonStyle, MenuItemStyle } from "./styles/HeaderStyles";
+import Logo from "./styles/Logo";
+import MenuIcon from "../common/icons/MenuIcon";
 
 
 
@@ -18,19 +15,19 @@ function Header({ title }) {
         <MenuIcon className={headerButtonStyle} />
 
         <MenuStyle>
-          <LinkStyle to="/home" text="Schedule" />
+          <MenuLinkStyle to="/home" text="Schedule" />
 
-          <LinkStyle to="/players" text="Players" />
+          <MenuLinkStyle to="/players" text="Players" />
+
+          <MenuItemStyle><ReloadButton /></MenuItemStyle>
         </MenuStyle>
       </DropdownStyle>
 
       <TitleStyle>
-        <Link to="/home" className="h-full"><img className="h-full w-auto" src={logo} alt={title || defaultSettings.title} /></Link>
+        <Logo to="/home" title={title} />
       </TitleStyle>
 
-      <ReloadStyle>
-        <ReloadButton className={headerButtonStyle} />
-      </ReloadStyle>
+      <LoginMenu />
     </HeaderStyle>  
   );
 }

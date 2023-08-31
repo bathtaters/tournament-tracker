@@ -1,11 +1,11 @@
 import React from "react";
 
-function EditRound({ roundNum, isEditing, showAdvanced, setEditing, deleteRound }) {
+function EditRound({ roundNum, isEditing, showEdit, setEditing, deleteRound }) {
   // Editing Round
   if (isEditing) return (<>
     <span className="link link-hover link-secondary" onClick={()=>setEditing(false)}>Back</span>
     
-    { deleteRound && <>
+    { showEdit && deleteRound && <>
       <span className="mx-1">/</span>
       <span className="link link-hover link-secondary" onClick={deleteRound}>Delete</span>
     </> }
@@ -13,7 +13,7 @@ function EditRound({ roundNum, isEditing, showAdvanced, setEditing, deleteRound 
   </>); 
 
   // Edit Round Button
-  if (showAdvanced) return (
+  if (showEdit) return (
     <span className="link link-hover link-secondary" onClick={()=>setEditing(true)}>
       {'Edit Round '+(roundNum+1)}
     </span>
