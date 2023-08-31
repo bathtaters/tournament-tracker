@@ -35,7 +35,6 @@ export default function usePlayersController() {
   // Init globals
   const access = useAccessLevel()
   const [ deletePlayer ] = useDeletePlayerMutation()
-  const advanceMode = access > 2
   
   // Setup locals
   const modal = useRef(null)
@@ -47,5 +46,5 @@ export default function usePlayersController() {
 
   const handlePlayerClick = usePlayerClickController(deleteMode, deletePlayer, openAlert)
 
-  return { deleteMode, advanceMode, modal, handlePlayerClick, toggleDelete }
+  return { deleteMode, access, modal, handlePlayerClick, toggleDelete }
 }
