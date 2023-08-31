@@ -21,7 +21,7 @@ import useMatchController from "./services/match.controller"
 function Match({ eventid, matchId, wincount, isEditing }) {
   // Get component data
   const {
-    matchData, rankings, players, showRaw, title, reportModal,
+    matchData, rankings, players, showRaw, title, reportModal, showReport,
     setVal, clearReport, report, swapProps, maxDraws, showLoading, error,
   } = useMatchController(eventid, matchId)
   
@@ -64,6 +64,7 @@ function Match({ eventid, matchId, wincount, isEditing }) {
           clearReport={clearReport}
           setVal={setVal}
           openReport={()=>reportModal.current.open()}
+          showReport={showReport}
         />
       </WinsStyle>
 

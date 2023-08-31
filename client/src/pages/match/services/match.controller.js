@@ -7,7 +7,7 @@ import {
   useUpdateDropsMutation,
   useStatsQuery, usePlayerQuery
 } from "../match.fetch"
-import { useShowRaw } from "../../common/common.fetch"
+import { useSessionState, useShowRaw } from "../../common/common.fetch"
 
 import { getMatchTitle } from "./match.services"
 import { swapController, canSwap } from "./swap.services"
@@ -28,6 +28,7 @@ export default function useMatchController(eventid, matchId) {
   const { data: matches,  isLoading: loadingMatch,   error: matchError  } = useMatchQuery(eventid)
   const { data: rankings, isLoading: loadingRank,    error: rankError   } = useStatsQuery(eventid)
   const { data: players,  isLoading: loadingPlayers, error: playerError } = usePlayerQuery()
+  const { data: user } = useSessionState()
   const showRaw = useShowRaw()
 
   // Mutation Hooks
@@ -53,6 +54,8 @@ export default function useMatchController(eventid, matchId) {
     // Base data
     matchData, rankings, players, showRaw,
     title, isLocked, reportModal, maxDraws,
+    showReport: user?.id && (user.access > 1 || matchData.players.includes(user.id)),
+    
     // Mutators
     clearReport, report,
 

@@ -8,6 +8,10 @@ export function ReportTitleStyle({ children }) {
   );
 }
 
+export function IncompleteStyle() {
+  return <div className="opacity-70 italic font-thin">TBD</div>
+}
+
 export const reportStyles = {
   form: "grid grid-cols-4 grid-flow-row gap-1 items-center my-8 max-w-md m-auto",
   wins: "text-lg sm:text-xl font-medium mx-2 justify-end",

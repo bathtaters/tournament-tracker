@@ -32,7 +32,7 @@ function Schedule() {
   // Render
   return (
     <div>
-      <ScheduleHeader isEditing={isEditing} isLoading={noData} showSettings={access > 1} setEdit={setEdit} openModal={openEventModal} />
+      <ScheduleHeader isEditing={isEditing} isLoading={noData} access={access} setEdit={setEdit} openModal={openEventModal} />
 
       <DaysContainerStyle>
         { noData ?
@@ -44,7 +44,7 @@ function Schedule() {
             day={day}
             events={events}
             eventData={eventData}
-            isEditing={isEditing}
+            isEditing={access > 1 && isEditing}
             isSlotted={Boolean(settings.dayslots)}
             setEventModal={openEventModal}
           />
