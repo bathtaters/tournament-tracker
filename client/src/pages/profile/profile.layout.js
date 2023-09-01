@@ -5,19 +5,19 @@ export const READ = 1, WRITE = 2;
 
 // Player Data layout
 const commonRows = [
-  { title: 'Name',     key: 'name',     editable: true, required: true },
+  { label: 'Name',     id: 'name',     required: true },
 ];
 
 const playerOnlyRows = [
-  { title: 'Access',   key: 'access',   editable: true, formatString: playerAccess },
-  { title: 'Password', key: 'password', editable: true, type: 'password' },
-  { title: 'Session',  key: 'session',  editable: true },
+  { label: 'Access',   id: 'access',   type: playerAccess },
+  { label: 'Password', id: 'password', type: 'password', setValueAs: () => '12345678' },
+  { label: 'Session',  id: 'session'  },
 ];
 
 const teamOnlyRows = [
   {
-    title: 'Members', key: 'members',
-    formatString: (r,p) => p ? r.map(m => p[m] ? p[m].name : '?').join(' & ') : '',
+    label: 'Members', id: 'members', disabled: true,
+    setValueAs: (r,p) => p ? r.map(m => p[m] ? p[m].name : '?').join(' & ') : '',
   },
 ];
 

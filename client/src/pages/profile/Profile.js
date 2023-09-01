@@ -35,13 +35,13 @@ function Profile() {
         <ProfilePic />
 
         <PlayerDataStyle>
-          {profileLayout(playerData.isteam).map(row =>
+          {profileLayout(playerData.isteam).map((row) =>
             <PlayerDataRow
-              key={row.key}
+              key={row.id}
               rowData={row}
-              data={playerData[row.key]}
+              data={playerData[row.id]}
               id={playerId}
-              access={acl[row.key]}
+              access={acl[row.id]}
             />
           )}
         </PlayerDataStyle>

@@ -32,20 +32,18 @@ function PlayerDataRow({ rowData, data, id, access }) {
   // Render
   return (
     <>
-      <LabelStyle id={rowData.key}>{rowData.title}</LabelStyle>
+      <LabelStyle id={rowData.id}>{rowData.label || rowData.id}</LabelStyle>
 
       <InputGroupStyle>
         {access & READ ? <>
             <InputBox 
-              id={rowData.key}
               value={isEditing ? editData : data ?? ''}
-              isEditing={rowData.editable && isEditing}
+              disabled={!isEditing}
               onChange={changeData}
-              formatter={rowData.formatString}
-              type={rowData.type}
+              {...rowData}
             />
 
-            { Boolean(access & WRITE) && rowData.editable && <>
+            { Boolean(access & WRITE) && !rowData.disabled && <>
               <EditButton value={isEditing ? 'save' : 'edit'} isEditing={isEditing} onClick={handleClick} />
 
               { isEditing && <EditButton value="undo" onClick={()=>setEdit(false)} /> }
@@ -53,7 +51,7 @@ function PlayerDataRow({ rowData, data, id, access }) {
           </>
 
           :
-          rowData.editable && <>
+          !rowData.disabled && <>
             <EditButton value="reset" isEditing={true} onClick={handleClick} />
           </>
         }
