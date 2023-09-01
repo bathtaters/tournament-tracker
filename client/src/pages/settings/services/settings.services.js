@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useOpenAlert, useLockScreen } from "../../common/common.hooks"
@@ -22,10 +23,11 @@ export function useResetHandler() {
 }
 
 // Push live updates to cache
-export const updateLocals = (localIds, dispatch) => ({ target }) => {
-  if (!localIds.includes(target.id)) return;
-  setLocalVar(target.id, target.type === 'checkbox' || target.type === 'toggle' ? target.checked : target.value, dispatch)
-}
+export const useUpdateLocals = (localIds, dispatch) => 
+  useCallback(({ target }) => {
+    if (!localIds.includes(target.id)) return;
+    setLocalVar(target.id, target.type === 'checkbox' || target.type === 'toggle' ? target.checked : target.value, dispatch)
+  }, [localIds, dispatch])
 
 // Get updated values + push local updates
 export function getNewSettings(newData, serverData, dispatch) {

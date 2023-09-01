@@ -1,4 +1,5 @@
 const players = require('../db/models/player');
+const { encryptPassword } = require('../utils/session.utils');
 const { arrToObj } = require('../utils/shared.utils');
 
 /* GET player database. */
@@ -28,7 +29,10 @@ const createPlayer = (req, res) => players.add(req.body).then(res.sendAndLog);
 const removePlayer = (req, res) => players.rmv(req.params.id).then(res.sendAndLog);
 
 // Rename
-const updatePlayer = (req, res) => players.set(req.params.id, req.body).then(res.sendAndLog);
+const updatePlayer = async (req, res) => {
+  if (req.body.password) req.body.password = await encryptPassword(req.body.password);
+  return players.set(req.params.id, req.body).then(res.sendAndLog);
+}
 
 
 module.exports = { 

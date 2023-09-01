@@ -1,6 +1,7 @@
 /* *** ADVANCED SQL UI *** */
 const fs = require("fs/promises");
 const db = require('./connect');
+const dbConfig = require('../../config/dbServer.json')
 
 // Execute query
 function query(text, args = [], splitArgs = null) {
@@ -20,7 +21,7 @@ async function loadFiles(pathArray) {
     // Read files into array
     let sqlFileText = await Promise.all(pathArray.map(path => path &&
         fs.readFile(path)
-        .then(file => file.toString().split(';'))
+        .then(file => file.toString().replace(/%DB%/g,dbConfig.server.db).split(';'))
         .catch(e => { throw new Error(`Unable to read SQL file '${path}': ${e.message || e.description || e}`) })
     ));
     
@@ -31,7 +32,7 @@ async function loadFiles(pathArray) {
         l && l.replace(/--[^\n]*(?:\n|$)/g,'').replace(/\s+/g,' ').trim()
     ).filter(Boolean);
 
-    // logger.debug(sqlFileText);
+    // console.debug(sqlFileText);
     return sqlFileText;
 }
 

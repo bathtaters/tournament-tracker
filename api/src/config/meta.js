@@ -10,4 +10,5 @@ module.exports = {
   apiVersion: (pkg.version || '1').split('.',1)[0],
   rootPath: join(__dirname,'..','..'), // Update if this file moves
   sqlFilesPath: join(__dirname,'..','db','sql'), // Update if this file moves
+  morganLog: 'common', // morgan log format or 'debug' for custom logging
 }

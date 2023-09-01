@@ -1,14 +1,14 @@
 SET sql_safe_updates = FALSE;
 
 USE defaultdb;
-DROP DATABASE IF EXISTS tournamenttracker CASCADE;
+DROP DATABASE IF EXISTS %DB% CASCADE;
 COMMIT;
 
 BEGIN;
 SET sql_safe_updates = TRUE;
-CREATE DATABASE IF NOT EXISTS tournamenttracker;
+CREATE DATABASE IF NOT EXISTS %DB%;
 
-USE tournamenttracker;
+USE %DB%;
 
 CREATE TABLE settings (
     id STRING PRIMARY KEY NOT NULL,
@@ -19,7 +19,10 @@ CREATE TABLE settings (
 CREATE TABLE player (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
-    name STRING NULL,
+    name STRING,
+    password STRING NULL,
+    access SMALLINT NOT NULL DEFAULT 1,
+    session UUID NULL,
 
     -- Team
     isteam BOOLEAN NOT NULL DEFAULT FALSE,
@@ -27,7 +30,11 @@ CREATE TABLE player (
 
     -- Index
     INDEX team_idx (isteam) STORING (name, members),
-    INVERTED INDEX member_idx (members) WHERE isteam IS TRUE
+    INVERTED INDEX member_idx (members) WHERE isteam IS TRUE,
+
+    -- Rules
+    lower_name STRING AS (lower(name)) STORED,
+    CONSTRAINT unique_name UNIQUE (lower_name)
 );
 
 CREATE TABLE event (
@@ -42,6 +49,7 @@ CREATE TABLE event (
     wincount SMALLINT NOT NULL DEFAULT 2,
     playerspermatch SMALLINT NOT NULL DEFAULT 2,
     notes STRING NOT NULL DEFAULT '',
+    link STRING NOT NULL DEFAULT '',
 
     -- Clock base (clocklimit set by user, others set by start/stop/etc)
     clocklimit INTERVAL NOT NULL DEFAULT '60 mins',
@@ -70,7 +78,7 @@ CREATE TABLE match (
 );
 
 -- Perms
-GRANT ALL ON DATABASE tournamenttracker TO db_admin;
+GRANT ALL ON DATABASE %DB% TO db_admin;
 GRANT ALL ON TABLE * TO db_admin;
 GRANT INSERT, UPDATE, DELETE, SELECT ON TABLE * TO db_rw;
 GRANT SELECT ON TABLE * TO db_read;
@@ -80,14 +88,14 @@ GRANT SELECT ON TABLE * TO db_read;
 
 CREATE VIEW eventDetail (
     id, title, players, playerspermatch,
-    day, slot, roundactive, roundcount, wincount, notes,
+    day, slot, roundactive, roundcount, wincount, notes, link,
     allreported,
     anyreported,
     byes,
     drops
 ) AS SELECT
     event.id, event.title, event.players, playerspermatch,
-    day, slot, roundactive, roundcount, wincount, notes,
+    day, slot, roundactive, roundcount, wincount, notes, link,
     BOOL_AND(reported),
     BOOL_OR(reported) FILTER(
         WHERE match.round = roundactive AND ARRAY_LENGTH(match.players, 1) != 1),

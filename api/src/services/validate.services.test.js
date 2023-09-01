@@ -223,7 +223,6 @@ describe('getSchema', () => {
   describe('types', () => {
     // Copy constants from validateServices
     const strictDates = true
-    const dateOptions = { format: 'YYYY-MM-DD', strict: strictDates, delimiters: ['-'] }
 
 
     it('UUID', () => {
@@ -280,12 +279,15 @@ describe('getSchema', () => {
     })
     it('date', () => {
       const result = services.getSchema('test','date',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isDate', {options: dateOptions, errorMessage: expect.any(String)})
+      expect(result.test).toHaveProperty('isISO8601', {
+        options: {strict: strictDates, strictSeparator: true},
+        errorMessage: expect.any(String)
+      })
       expect(result.test).toHaveProperty('trim', true)
     })
     it('object', () => {
       const result = services.getSchema('test','object',null,['isIn'],false)
-      expect(result.test).toHaveProperty('isObject', {errorMessage: expect.any(String)})
+      expect(result.test).toHaveProperty('isObject', {errorMessage: expect.any(String), strict: false})
     })
   })
 

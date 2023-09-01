@@ -7,9 +7,10 @@ import RawData from "../common/RawData";
 import Loading from "../common/Loading";
 
 import { WrapperStyle, ProfileStyle, PlayerDataStyle } from "./styles/ProfileStyles";
-import profileLayout from "./profile.layout";
+import profileLayout, { getProfileACL } from "./profile.layout";
 
 import { usePlayerQuery } from "./profile.fetch";
+import { useSessionState } from "../common/common.fetch";
 import { useParamId } from "../common/services/idUrl.services";
 
 
@@ -17,6 +18,9 @@ function Profile() {
   const playerId = useParamId('id');
   const { data: allPlayers, isLoading, error } = usePlayerQuery();
   const playerData = allPlayers?.[playerId];
+  
+  const { data: user } = useSessionState();
+  const acl = getProfileACL(user || undefined, playerData || undefined);
 
   if (isLoading || error || !playerData) return (
     <WrapperStyle>
@@ -31,18 +35,20 @@ function Profile() {
         <ProfilePic />
 
         <PlayerDataStyle>
-          {profileLayout(playerData.isteam).map(row =>
+          {profileLayout(playerData.isteam).map((row) =>
             <PlayerDataRow
-              key={row.key}
+              key={row.id}
               rowData={row}
-              data={playerData[row.key]}
+              data={playerData[row.id]}
               id={playerId}
+              access={acl[row.id]}
             />
           )}
         </PlayerDataStyle>
       </ProfileStyle>
 
       <RawData data={playerData} />
+      <RawData data={acl} />
       
       <PlayerEvents id={playerId} />
 

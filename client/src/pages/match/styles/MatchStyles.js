@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export function MatchStyle({ children, settings }) {
-  const height = settings?.showadvanced && settings.showrawjson ? 'h-64' : 'h-32';
+export function MatchStyle({ children, showRaw }) {
+  const height = showRaw ? 'h-64' : 'h-32';
   return (
     <div className={"m-1 shadow-lg shadow-base-300 rounded-md bg-base-100 flex justify-evenly flex-col relative "+height}>
       {children}

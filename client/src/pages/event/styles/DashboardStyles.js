@@ -16,6 +16,12 @@ export const HeaderStyle    = ({ children }) => <div className="stat font-headin
 export const ValueStyle     = ({ children }) => <div className="stat-value font-medium">{children}</div>
 export const DetailStyle    = ({ children }) => <div className="stat-desc">{children}</div>
 
+export const EventLinkStyle = ({ text, link }) => (
+  <div className="text-center">
+    <a className="link link-secondary link-hover" href={link} title={text} target="_blank" rel="noreferrer">{text}</a>
+  </div>
+)
+
 export function ContainerStyle({ children }) {
   return (
     <div className="font-light self-start my-4 mx-2 stats stats-vertical shadow-lg shadow-base-300">

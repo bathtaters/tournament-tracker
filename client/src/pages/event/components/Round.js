@@ -9,7 +9,7 @@ import OverlayContainer from '../../common/components/OverlayContainer';
 import { useRoundEditor } from '../services/event.services';
 
 function Round({ data, round, deleteRound }) {
-  const { isEditing, setEditing, showAdvanced, handleCopy, showDelete } = useRoundEditor(data, round)
+  const { isEditing, setEditing, showEdit, handleCopy } = useRoundEditor(data, round)
 
   return (<>
     <RoundStyle 
@@ -32,9 +32,9 @@ function Round({ data, round, deleteRound }) {
         <EditRound 
           roundNum={round}
           setEditing={setEditing}
-          deleteRound={showDelete && deleteRound}
+          deleteRound={deleteRound}
           isEditing={isEditing}
-          showAdvanced={showAdvanced}
+          showEdit={showEdit}
         />
       </EditRoundStyle>
     </RoundStyle>

@@ -26,5 +26,5 @@ module.exports = {
     "Wins",
     "Losses",
     "Draws"
-  ]
+  ],
 };

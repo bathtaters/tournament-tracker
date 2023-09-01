@@ -1,7 +1,7 @@
 import { getDefault } from "../../core/services/validation.services";
 
 // Add Player window
-export default {
+const addPlayerLayout = {
   basic: [
     {
       label: 'Name', id: 'name', type: 'text',
@@ -11,3 +11,5 @@ export default {
   ],
   buttons: (clickCancel) => [{ label: "Cancel", onClick: clickCancel }]
 };
+
+export default addPlayerLayout;

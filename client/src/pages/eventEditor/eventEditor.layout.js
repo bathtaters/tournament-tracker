@@ -21,6 +21,10 @@ export const editorLayout = [ 'custom', [
   },{
     label: 'Players per Game', id: 'playerspermatch',
     type: 'number', disabled: lockAt(2),
+  },{ 
+    label: 'Event URL', id: 'link', type: 'url',
+    labelClass: "text-sm",
+    inputClass: "input-sm",
   },
 ]];
 

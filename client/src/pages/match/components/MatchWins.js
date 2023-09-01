@@ -3,13 +3,19 @@ import React from "react"
 import Counter from "../../common/Counter"
 import { winClass, ByeStyle, WinsSeperator } from "../styles/CounterStyles"
 import { ReportButton, ClearReportButton } from "../styles/ButtonStyles"
+import { IncompleteStyle } from "../styles/ReportStyles"
 
 import { winValue } from "../services/match.services"
 
 // All win counters
-function MatchWins({ matchData, wincount, isEditing, clearReport, setVal, openReport }) {
+function MatchWins({ matchData, wincount, isEditing, clearReport, setVal, openReport, showReport }) {
 
-  if (!matchData.reported) return <ReportButton disabled={isEditing} onClick={openReport} />
+  if (!matchData.reported) return (
+    showReport ?
+      <ReportButton disabled={isEditing} onClick={openReport} />
+      :
+      <IncompleteStyle />
+  )
 
   return (<>
     { matchData.players.map((id, index) => (

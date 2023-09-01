@@ -1,10 +1,11 @@
 // Builder for providesTags and invalidatesTags
 // Returns function that will work as either property
+import { debugLogging } from "../../assets/config";
 
 // Constants
 const DEF_KEY = 'id';
 export const ALL_ID = '_LIST'; 
-export const tagTypes = ['Settings', 'Schedule', 'Event', 'Match', 'Player', 'PlayerDetail', 'Stats'];
+export const tagTypes = ['Settings', 'Schedule', 'Event', 'Match', 'Player', 'PlayerEvent', 'PlayerMatch', 'Stats'];
 
 // Helper, gets value from key string (keyStr='propA.propB.0' would get <obj>.propA.propB[0])
 const getVal = (obj,keyStr) => keyStr ? obj && [obj].concat(keyStr.split('.')).reduce(function(a, b) { return a && a[b] }) : obj;
@@ -37,7 +38,7 @@ export default function getTags(types, { key=DEF_KEY, all=true, addBase=[], addA
   // Return callback for [provides|invalidates]Tags
   return (res,err,arg) => {
     // Handle error
-    if (err) console.error('Query error on '+JSON.stringify(types)+':'+JSON.stringify(arg), err);
+    if (err && debugLogging) console.error('Query error on '+JSON.stringify(types)+':'+JSON.stringify(arg), err);
 
     let tags = [...baseTags], i;
 
@@ -55,7 +56,7 @@ export default function getTags(types, { key=DEF_KEY, all=true, addBase=[], addA
     // JSON response
     } else if (res && typeof res === 'object' && Object.keys(res).length) {
       for (const type in types) {
-        if (typeof types[type] !== 'function' && getVal(res, types[type])) {
+        if (types[type] && typeof types[type] !== 'function' && getVal(res, types[type])) {
           tags.push({ type, id: getVal(res, types[type]) });
           continue;
         }

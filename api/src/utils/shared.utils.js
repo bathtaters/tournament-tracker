@@ -12,12 +12,12 @@ const logger = require('./log.adapter');
  * Convert array of objects into a result object using 'key' field in each entry as that entry's key
  * @param {String} key - Key of array entry property to use as unique key in result object
  * @param {Object} options - Additional options for conversion
- * @param {Boolean} [options.delKey=true] - Truthy will delete entry['key'] after assigning it to result object['key']
+ * @param {Boolean} [options.delKey=false] - Truthy will delete entry['key'] after assigning it to result object['key']
  * @param {Boolean} [options.combo=false] - Truthy will combine matching keys as array, otherwise throws error
  * @param {String} [options.valKey] - If entered will use entry['valKey'] instead of entry in result object 
  * @returns {convertArray:Object} function to convert input array into result object
  */
-exports.arrToObj = (key, { delKey=true, valKey=null, combo=false }={}) =>
+exports.arrToObj = (key, { delKey=false, valKey=null, combo=false }={}) =>
   obj => typeof obj !== 'object' ? 
     obj && logger.warn('Expected object:',typeof obj,obj) || obj
     :

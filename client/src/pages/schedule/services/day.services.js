@@ -14,20 +14,28 @@ export function useUpdateSchedule() {
 
   return useCallback((a,b) => {
     // Skip rules
-    if (a.id === b.id || b.day === noDate && a.day === noDate) return;
+    if (a.id === b.id || (b.day === noDate && a.day === noDate)) return;
     
     // Swap data
     swapKeys(a,b,'day');
     swapKeys(a,b,'slot');
-    [a,b].map(d => { if (!d.slot) delete d.slot });
     
     // Fetch updates
-    updateEvent(a)
-    if (b.id) updateEvent(b)
+    updateEvent(a);
+    if (b.id) updateEvent(b);
 
-  }, [updateEvent, noDate])
+  }, [updateEvent])
 }
 
 // Drop Helper
-const swapKeys = (a,b,key) =>
-  [a[key], b[key]] = [b[key], a[key]].map(d => key === 'day' && d === noDate ? null : d);
+const swapKeys = (a,b,key) => {
+  let tmp = a[key];
+  if (a.id) {
+    if (!b[key]) delete a[key];
+    else a[key] = b[key] === noDate ? null : b[key];
+  }
+  if (b.id) {
+    if (!tmp) delete b[key];
+    else b[key] = tmp === noDate ? null : tmp;
+  }
+}

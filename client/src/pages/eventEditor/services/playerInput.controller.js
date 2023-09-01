@@ -3,6 +3,7 @@ import { suggestListLayout } from "../eventEditor.layout";
 import { playerExists } from "./playerEditor.utils";
 import { duplicatePlayerAlert, createPlayerAlert, playerCreateError } from "../../../assets/alerts";
 import { useOpenAlert } from "../../common/common.hooks";
+import { debugLogging } from "../../../assets/config";
 
 
 export default function usePlayerInputController({ data, remainingPlayers, onFirstEdit, pushPlayer, createPlayer }, ref) {
@@ -28,7 +29,7 @@ export default function usePlayerInputController({ data, remainingPlayers, onFir
   }
 
   // Click add button
-  function submitHandler(entry, text) {
+  function submitHandler(text, entry) {
     // Show/Hide field
     if (isHidden) return setHide(false)
     if (!entry) return setHide(!isHidden)
@@ -38,7 +39,7 @@ export default function usePlayerInputController({ data, remainingPlayers, onFir
 
     // Add Player
     if (entry.id) return pushPlayer(entry.id)
-    if (!entry.isStatic) console.warn('Missing player created automatically', entry)
+    if (!entry.isStatic && debugLogging) console.warn('Missing player created automatically', entry)
     return handleNewPlayer(text)
   }
 

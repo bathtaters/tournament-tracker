@@ -18,7 +18,7 @@ export const HeaderRow = React.memo(function HeaderRow({ colLayout, className })
 export function TableRow({ id, index, colLayout, extra, className, cellClass, rowLink, onClick, onHover }) {
   const linkUrl = useLinkId(rowLink != null && id, rowLink)
   return (
-    <tr className={`${className || ''} ${linkUrl ? 'hover cursor-pointer' : ''}`} onMouseEnter={onHover}>{
+    <tr className={`${className || 'hover:bg-base-200'} ${linkUrl ? 'cursor-pointer' : ''}`} onMouseEnter={onHover}>{
 
       colLayout.map((col) => {
 
