@@ -27,11 +27,13 @@ export function usePrefetchEvent() {
 // Push prop updates to state
 export function usePropState(propVal, equalsTest = (state,prop) => state === prop, depends = []) {
   const [ localVal, setLocal ] = useState(propVal)
+  // eslint-disable-next-line
   const equals = useCallback(equalsTest, depends)
 
   useEffect(() => {
     setLocal((stateVal) => equals(stateVal, propVal) ? stateVal : propVal)
-  }, [JSON.stringify(propVal), ...depends])
+  // eslint-disable-next-line
+  }, [propVal, ...depends])
 
   return [ localVal, setLocal ]
 }
@@ -47,6 +49,7 @@ export function useServerValue(value, setServerCallback, updateBundleDelay = 500
 
     const timer = setTimeout(() => setServerCallback(localVal), updateBundleDelay)
     return () => clearTimeout(timer)
+  // eslint-disable-next-line
   }, [localVal], )
 
   // Return value & setter
@@ -60,7 +63,8 @@ export function useScaleToFitRef(depends = [], { padding = 0, minHeight = 32 } =
   useLayoutEffect(() => {
     ref.current.style.height = 'inherit' // initial value
     ref.current.style.height = Math.max(ref.current.scrollHeight + padding, minHeight) + 'px'
-  }, depends) // Re-render on depends change
+  // eslint-disable-next-line
+  }, depends.concat(padding, minHeight)) // Re-render on depends change
 
   return ref
 }
@@ -78,7 +82,8 @@ export function useOnClickOutsideRef(onClick, { depends = [], skip }) {
 
     // Cleanup listener
     return () => { document.removeEventListener("mousedown", onOutsideClick) }
-    
+  
+  // eslint-disable-next-line
   }, [...depends, onClick, skip, Boolean(ref.current)])
 
   return ref

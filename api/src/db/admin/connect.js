@@ -26,7 +26,7 @@ async function openConnection(asUser = 'api', cfg = null) {
       console.error('DB Does Not Exist! Creating now...');
       try { await resetDatabase(true, false, runOperation); } catch (err) { throw err; }
     }
-    throw new Error(`Unable to connect to DB: "${connStr}": ${e.message || e.description || e}`);
+    else throw new Error(`Unable to connect to DB: "${connStr}": ${e.message || e.description || e}`);
   }
   return logger.info('Connected to DB server.');
 }

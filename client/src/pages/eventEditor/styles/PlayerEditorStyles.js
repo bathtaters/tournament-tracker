@@ -21,8 +21,6 @@ export function PlayerNameStyle({ isMissing, children }) {
   );
 }
 
-// Classes to send to SuggestText
-export const suggestClass = {
-  box: "align-middle w-40 input-sm",
-  spacer: "align-middle",
+export function SuggestTextSpacer() {
+  return <span className="align-middle" />
 }

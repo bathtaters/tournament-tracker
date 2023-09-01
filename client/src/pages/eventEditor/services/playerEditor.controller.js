@@ -1,4 +1,4 @@
-import { useState, useImperativeHandle, useCallback, useRef } from "react";
+import { useState, useImperativeHandle, useRef } from "react";
 import { usePlayerQuery, useSettingsQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
 import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
 
@@ -22,14 +22,14 @@ export default function usePlayerEditorController(players, status, onEdit, ref) 
   const [ playerList, setPlayerList ] = usePropStateList(players);
 
   // Assign getList function to ref
-  useImperativeHandle(ref, () => ({ getList: retrieveList(playerList, suggestRef, openAlert) }), [playerList, suggestRef.current, openAlert]);
+  useImperativeHandle(ref, () => ({ getList: retrieveList(playerList, suggestRef, openAlert) }), [playerList, openAlert]);
 
 
   // Add/Remove player to/from list
   const { pushPlayer, popPlayer } = playerListController(data, playerList, setPlayerList, openAlert);
   
   // Run onEdit once, when first edit is made
-  const onFirstEdit = useCallback(isChanged ? null : () => { onEdit(); setChanged(true); }, [isChanged, setChanged, onEdit]);
+  const onFirstEdit = isChanged ? null : () => { onEdit(); setChanged(true); };
 
 
   // Break early while awaiting global data

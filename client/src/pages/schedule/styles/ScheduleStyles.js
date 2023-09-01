@@ -2,7 +2,7 @@ import React from "react";
 import { PageTitleStyle } from "../../common/styles/CommonStyles";
 
 export function HeaderStyle({ children }) {
-  return (<div className="flex justify-evenly items-center">{children}</div>);
+  return (<div className="flex justify-evenly items-center gap-4">{children}</div>);
 }
 
 export const TitleStyle = ({ children }) => PageTitleStyle({ className: "inline-block", children });

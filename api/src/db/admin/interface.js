@@ -12,7 +12,7 @@ const query = (text, args, splitArgs) => direct.query(text, args, splitArgs)
 
 
 // SELECT
-const getRows = (table, sqlFilter, args = null, cols = null, client = null) => 
+const getRows = (table, sqlFilter, args, cols, client) => 
     // strTest(table) || strTest(sqlFilter) || strTest(cols) ||
     (client || direct).query(
         `SELECT ${
@@ -22,18 +22,18 @@ const getRows = (table, sqlFilter, args = null, cols = null, client = null) =>
     ).then(getSolo()).then(getReturn);
 
 
-const getRow = (table, rowId = null, cols = null, { idCol = 'id', getOne = true, client = null } = {}) => 
+const getRow = (table, rowId, cols, { idCol = 'id', getOne = true, client, looseMatch } = {}) => 
     // strTest(table) || strTest(cols);
     module.exports.getRows( // exports required for unit testing
         table,
-        rowId ? `WHERE ${idCol} = $1${getOne ? ' LIMIT 1' : ''}` : '',
+        rowId ? `WHERE ${idCol} ${looseMatch ? 'ILIKE' : '='} $1${getOne ? ' LIMIT 1' : ''}` : '',
         rowId && [rowId],
         cols, client
-    ).then(getFirst(getOne && rowId));
+    ).then(getFirst(getOne && !!rowId));
 
 
 // INSERT/UPSERT
-const addRows = (table, objArray, { client = null, upsert = false, returning = 'id' } = {}) => {
+const addRows = (table, objArray, { client, upsert, returning = 'id' } = {}) => {
     // strTest(table);
     if (!objArray) throw new Error("Missing rows to add to "+table+" table.");
     const keys = objArray[0] ? Object.keys(objArray[0]) : [];
@@ -65,7 +65,7 @@ const rmvRow = (table, rowId, client = null) =>
 
 
 // UPDATE
-const updateRow = (table, rowId, updateObj, { returning = null, client = null } = {}) => {
+const updateRow = (table, rowId, updateObj, { returning, client, idCol, looseMatch } = {}) => {
     // strTest(table) || strTest(returning);
     const keys = Object.keys(updateObj || {});
 
@@ -75,13 +75,13 @@ const updateRow = (table, rowId, updateObj, { returning = null, client = null } 
     return (client || direct).query(
         `UPDATE ${table} SET ${
             keys.map((col,idx) => `${col} = $${idx+2}`).join(', ')
-        } WHERE id = $1 RETURNING ${returning || 'id'};`,
+        } WHERE ${idCol || 'id'} ${looseMatch ? 'ILIKE' : '='} $1 RETURNING ${returning || 'id'};`,
 
         [rowId, ...Object.values(updateObj || {})]
 
     ).then(getSolo()).then(getReturn).then(getFirst())
     .then(ret => ({
-        id: rowId,
+        [idCol || 'id']: rowId,
         ...(updateObj || {}),
         ...(ret || {error: 'Missing return value.'})
     }));

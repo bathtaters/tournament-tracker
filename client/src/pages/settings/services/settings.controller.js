@@ -1,7 +1,6 @@
-import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useSettingsQuery, useUpdateSettingsMutation } from "../settings.fetch"
-import { updateLocals, getNewSettings } from "./settings.services";
+import { useUpdateLocals, getNewSettings } from "./settings.services";
 
 import { settings } from "../../../assets/config"
 
@@ -13,7 +12,7 @@ export default function useSettingsController(modal) {
   const [ updateSettings ] = useUpdateSettingsMutation();
 
   // Setup live updates
-  const onChange = useCallback(updateLocals(settings.storeLocal, dispatch), [JSON.stringify(settings.storeLocal)])
+  const onChange = useUpdateLocals(settings.storeLocal, dispatch)
 
   if (isLoading || error || !data || !modal) return { showLoading: true, error }
 

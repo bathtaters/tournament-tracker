@@ -1,5 +1,7 @@
 # Tournament Tracker API
 
+###### NOTE: See `/api/src/config/dbServer.md` before running for the first time.
+
 ### Current Major Version: v0
 _Represented below by api/v[n]_
 
@@ -27,6 +29,16 @@ _Represented below by api/v[n]_
 |/schedule|GET| |{ YYYY-MM-DD: [ eventids ], ... }|All eventids by date|
 |/settings|GET| |{ setting: value, ... }|All stored settings|
 |/settings|PATCH|{ setting: value }|{ success, set: [setting] }|Update setting(s)|
+
+---
+
+### _Session_ - [Domain]/api/v[n]/session/...
+
+| URL | Method | Body | Return | Description |
+|------|------|------|------|------|
+|/|POST|{ session }|{ playerData }|Get session player|
+|/|PUT|{ name, password }|{ session }|Create session|
+|/|DELETE|{ session }|{ success }|Destroy session|
 
 ---
 
@@ -83,7 +95,10 @@ settings:
 
 player:
 	id UUID = random
-	name STRING
+	name UNIQUE STRING
+	password STRING = NULL
+    access SMALLINT = 1 ('player')
+    session UUID = NULL
 	isteam BOOLEAN = 0
 	members [player.id] = NULL
 

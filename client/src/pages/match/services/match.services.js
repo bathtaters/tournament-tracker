@@ -1,9 +1,10 @@
 import { formatMatchTitle } from "../../../assets/formatting"
+import { debugLogging } from "../../../assets/config"
 
 // Get Match Title (To use in ErrMsg & Report dialog)
 export const getMatchTitle = (match, players) =>
   players && match?.players ? formatMatchTitle(match.players, players) :
-    console.warn('Invalid Match Title:',match,players) || 'Untitled'
+    (debugLogging && console.warn('Invalid Match Title:',match,players)) || 'Untitled'
 
     
 // Get value for wins counter

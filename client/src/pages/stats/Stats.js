@@ -5,11 +5,11 @@ import DataTable from "../common/DataTable";
 import RawData from "../common/RawData";
 import Loading from "../common/Loading";
 
-import statsLayout from "./stats.layout";
+import { statsLayout, listLayout } from "./stats.layout";
 import { getPlayerList } from "./services/stats.services";
 import { useStatsQuery, usePlayerQuery } from "../common/common.fetch";
 
-function Stats({ eventid, onPlayerClick, className = '', highlightClass = '', hideTeams }) {
+function Stats({ eventid, onPlayerClick, className = 'table-zebra', highlightClass = '', hideTeams, hideStats }) {
   // Global state
   const { data: stats, isLoading, error } = useStatsQuery(eventid)
   const { data: players, isLoading: playLoad, error: playErr } = usePlayerQuery()
@@ -26,13 +26,13 @@ function Stats({ eventid, onPlayerClick, className = '', highlightClass = '', hi
   return (
     <div className="w-full overflow-auto">
       <DataTable
-        colLayout={statsLayout}
+        colLayout={hideStats ? listLayout : statsLayout}
         rowIds={playerList}
         extra={{ stats, players }}
         rowLink="profile/"
         rowClass={highlightClass}
         className={className}
-        hdrClass="text-center mb-2"
+        hdrClass={hideStats ? "hidden" : "text-center mb-2"}
         onRowClick={onPlayerClick}
       >
         No players exist

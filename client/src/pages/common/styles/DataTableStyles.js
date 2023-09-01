@@ -6,7 +6,7 @@ export const headerBase = "text-center"
 export function TableStyle({ className = '', children }) {
   return (
     <div className="flex justify-start sm:justify-center">
-      <table className={`table table-zebra ${className}`}>
+      <table className={`table ${className}`}>
         {children}
       </table>
     </div>

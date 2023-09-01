@@ -9,12 +9,14 @@ import RawData from "../common/RawData";
 import { DaysContainerStyle } from "./styles/ScheduleStyles";
 
 import { useScheduleQuery, useSettingsQuery, useEventQuery } from "./schedule.fetch";
+import { useAccessLevel } from "../common/common.fetch";
 
 function Schedule() {
   // Global state
   const { data,            isLoading: schedLoad,    error: schedErr    } = useScheduleQuery();
   const { data: settings,  isLoading: settingsLoad, error: settingsErr } = useSettingsQuery();
   const { data: eventData, isLoading: eventsLoad,   error: eventsErr   } = useEventQuery();
+  const access = useAccessLevel();
   
   // Local state
   const modal = useRef(null);
@@ -30,7 +32,7 @@ function Schedule() {
   // Render
   return (
     <div>
-      <ScheduleHeader isEditing={isEditing} isLoading={noData} setEdit={setEdit} openModal={openEventModal} />
+      <ScheduleHeader isEditing={isEditing} isLoading={noData} access={access} setEdit={setEdit} openModal={openEventModal} />
 
       <DaysContainerStyle>
         { noData ?
@@ -42,7 +44,7 @@ function Schedule() {
             day={day}
             events={events}
             eventData={eventData}
-            isEditing={isEditing}
+            isEditing={access > 1 && isEditing}
             isSlotted={Boolean(settings.dayslots)}
             setEventModal={openEventModal}
           />

@@ -1,48 +1,42 @@
-import React, { useCallback, useState } from "react";
-
+import React from "react";
 import InputBox from "./InputBox";
-import { RowStyle, EditButton, LabelStyle, InputGroupStyle } from "../styles/PlayerDataStyles";
-
-import { useUpdatePlayerMutation } from "../profile.fetch";
-import { editClickController, saveController } from "../services/profile.services";
-import { useHotkeys } from "../../common/services/basic.services";
+import { EditButton, LabelStyle, InputGroupStyle } from "../styles/PlayerDataStyles";
+import usePlayerData from "../services/profile.services";
+import { READ, WRITE } from "../profile.layout";
 
 
-function PlayerDataRow({ rowData, data, id }) {
-  // Global state
-  const [ updatePlayer ] = useUpdatePlayerMutation();
-  
-  // Local state
-  const [isEditing, setEditing] = useState(false);
-  const [editData, setEditData] = useState(data);
-  
-  // Actions
-  const changeData = (e) => setEditData(e.target.value);
-  const saveData = saveController(id, rowData.key, editData, data, updatePlayer);
-  const setEdit = useCallback((edit = true) => { edit && setEditData(data); setEditing(edit); }, [data]);
-  const handleClick = editClickController(isEditing, saveData, setEdit);
+function PlayerDataRow({ rowData, data, id, access }) {
 
-  useHotkeys({ 13/* ENTER */: handleClick}, { skip: !isEditing })
+  const { editData, isEditing, handleClick, changeData, setEdit } = usePlayerData(rowData, data, access, id);
+
+  if (!access) return;
 
   // Render
   return (
     <>
-      <LabelStyle id={rowData.key}>{rowData.title}</LabelStyle>
+      <LabelStyle id={rowData.id}>{rowData.label || rowData.id}</LabelStyle>
 
       <InputGroupStyle>
-        <InputBox 
-          id={rowData.key}
-          value={isEditing ? editData : data}
-          isEditing={rowData.editable && isEditing}
-          onChange={changeData}
-          formatter={rowData.formatString}
-        />
+        {access & READ ? <>
+            <InputBox 
+              value={isEditing ? editData : data ?? ''}
+              disabled={!isEditing}
+              onChange={changeData}
+              {...rowData}
+            />
 
-        { rowData.editable && <>
-          <EditButton value={isEditing ? 'save' : 'edit'} isEditing={isEditing} onClick={handleClick} />
+            { Boolean(access & WRITE) && !rowData.disabled && <>
+              <EditButton value={isEditing ? 'save' : 'edit'} isEditing={isEditing} onClick={handleClick} />
 
-          { isEditing && <EditButton value="undo" onClick={()=>setEdit(false)} /> }
-        </> }
+              { isEditing && <EditButton value="undo" onClick={()=>setEdit(false)} /> }
+            </> }
+          </>
+
+          :
+          !rowData.disabled && <>
+            <EditButton value="reset" isEditing={true} onClick={handleClick} />
+          </>
+        }
       </InputGroupStyle>
 
       <div />

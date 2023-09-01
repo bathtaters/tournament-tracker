@@ -7,21 +7,15 @@ const match = require('../db/models/match');
 const toStats = require('../services/stats.services');
 const { arrToObj } = require('../utils/shared.utils');
 
-// Get settings
-const settings = require('../db/models/settings');
-const { asType } = require('../services/settings.services');
-const incompleteDef = require('../config/validation').defaults.settings.includeincomplete;
-
 
 
 // Get Event Stats //
 
 async function getAllStats(_, res) {
-  const includeIncomplete = await settings.get('includeincomplete').then(r => r ? asType(r) : incompleteDef);
   const [matches, players, opps] = await Promise.all([
-    match.getAll(!includeIncomplete).then(matchesByEvent),
+    match.getAll(true).then(matchesByEvent),
     player.list(),
-    event.getOpponents(null, !includeIncomplete).then(oppsByEvent),
+    event.getOpponents(null, true).then(oppsByEvent),
   ]);
 
   return withMissingEventIds(toStats(matches, players, opps, false)).then(res.sendAndLog);

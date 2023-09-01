@@ -3,13 +3,12 @@ import React from "react";
 import { InputStyle } from "../styles/PlayerDataStyles";
 import { usePlayerQuery } from "../profile.fetch";
 
-function InputBox({ id, value, isEditing, onChange, formatter }) {
-  const { data: playerData } = usePlayerQuery(null, { skip: !formatter });
-
-  const formatted = isEditing || !formatter ? value : formatter(value, playerData)
+function InputBox({ value, setValueAs, ...props }) {
+  const { data: playerData } = usePlayerQuery(null, { skip: typeof setValueAs !== 'function' });
+  const formatted = !props.disabled || !setValueAs ? value : setValueAs(value, playerData);
 
   // Edit box
-  return (<InputStyle id={id} disabled={!isEditing} onChange={onChange} value={formatted} />);
+  return (<InputStyle {...props} value={formatted} />);
 }
 
 export default InputBox;
