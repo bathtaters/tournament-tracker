@@ -35,7 +35,7 @@ export function TitleStyle({ children }) {
 export function MenuStyle({ onSubmit, children }) {
   return (
     <form onSubmit={onSubmit}>
-      <ul className="menu menu-compact dropdown-content p-2 shadow bg-base-300 rounded-box w-52">
+      <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-300 rounded-box w-52">
         {children}
       </ul>
     </form>
