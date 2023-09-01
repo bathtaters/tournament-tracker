@@ -1,16 +1,18 @@
 import { playerAccess } from "../../assets/constants";
+import { getBaseData } from "../../core/services/validation.services";
+const limits = getBaseData('player').limits
 
 // Constants
 export const READ = 1, WRITE = 2;
 
 // Player Data layout
 const commonRows = [
-  { label: 'Name',     id: 'name',     required: true },
+  { label: 'Name', id: 'name', required: true, minLength: limits.name.min, maxLength: limits.name.max },
 ];
 
 const playerOnlyRows = [
+  { label: 'Password', id: 'password', type: 'password', setValueAs: () => '12345678', minLength: limits.password.min, maxLength: limits.password.max },
   { label: 'Access',   id: 'access',   type: playerAccess },
-  { label: 'Password', id: 'password', type: 'password', setValueAs: () => '12345678' },
   { label: 'Session',  id: 'session'  },
 ];
 
