@@ -1,4 +1,4 @@
-import { fetchApi } from "../common.fetch"
+import { fetchApi } from "../../../core/store/fetchApi"
 import { debugLogging, settings } from "../../../assets/config"
 import { getBaseData } from "../../../core/services/validation.services"
 

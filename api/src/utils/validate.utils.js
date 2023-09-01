@@ -7,7 +7,7 @@ exports.getTypeArray = (typeStr) => typeStr && typeStr.match(typeRegex)
 // Setup date-only parsing
 const strictDates = true
 exports.dateOptions = {
-  date: { format: 'YYYY-MM-DD', strict: strictDates, delimiters: ['-'] },
+  date: { strict: strictDates, strictSeparator: true },
   time: { strict: strictDates, strictSeparator: strictDates },
 }
 

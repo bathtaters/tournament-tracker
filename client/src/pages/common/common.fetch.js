@@ -1,10 +1,18 @@
 import { fetchApi, getTags, tagTypes, ALL_ID } from '../../core/store/fetchApi';
 import { useFetchingStatus, useFetchingProvider, useForceRefetch } from '../../core/services/global.services';
-import { getEvent, getSettings } from './services/fetch.services';
+import { getEvent, getSettings, getLocalVar } from './services/fetch.services';
 import { debugLogging } from '../../assets/config';
+import { localKeys } from '../../assets/constants';
+
 
 export const commonApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
+
+    session: build.query({
+      query: () => ({ url: '/session', method: 'POST', body: { session: getLocalVar(localKeys.session) } }),
+      transformResponse: debugLogging ? (res) => console.log('SESS',res) || res : undefined,
+      providesTags: ['Session'],
+    }),
 
     settings: build.query({
       query: () => 'settings',
@@ -35,4 +43,16 @@ export const commonApi = fetchApi.injectEndpoints({
 });
 
 export { fetchApi, tagTypes, ALL_ID, getTags, useFetchingStatus, useFetchingProvider, useForceRefetch };
-export const { usePlayerQuery, useSettingsQuery, useEventQuery, useStatsQuery, usePrefetch } = commonApi;
+export const { useSessionQuery, usePlayerQuery, useSettingsQuery, useEventQuery, useStatsQuery, usePrefetch } = commonApi;
+export const useSessionState = commonApi.endpoints.session.useQueryState;
+
+export const useAccessLevel = () => {
+  const { data } = useSessionState();
+  return data?.access || 0;
+};
+
+export const useShowRaw = () => {
+  const { data, isLoading, isError } = commonApi.endpoints.settings.useQueryState();
+  const access = useAccessLevel();
+  return !isLoading && !isError && access > 2 && data.showrawjson;
+};

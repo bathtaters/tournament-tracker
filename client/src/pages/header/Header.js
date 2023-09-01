@@ -1,38 +1,47 @@
-import React from "react";
-import PropTypes from 'prop-types';
-import { Link } from "react-router-dom";
-import MenuIcon from "../common/icons/MenuIcon";
-import logo from "../../assets/images/logo.png"
-
+import React, { useRef } from "react";
+import PropTypes from "prop-types";
+import Modal from "../common/Modal";
+import Settings from "../settings/Settings";
+import LoginMenu from "./components/LoginMenu";
 import ReloadButton from "./components/ReloadButton";
-import { HeaderStyle, DropdownStyle, TitleStyle, ReloadStyle, MenuStyle, LinkStyle, headerButtonStyle } from "./styles/HeaderStyles";
-
-import { defaultSettings } from "../common/services/fetch.services";
-
+import { HeaderStyle, DropdownStyle, TitleStyle, MenuStyle, MenuLinkStyle, headerButtonStyle, MenuItemStyle } from "./styles/HeaderStyles";
+import Logo from "./styles/Logo";
+import MenuIcon from "../common/icons/MenuIcon";
+import SettingsIcon from "../common/icons/SettingsIcon";
+import { useAccessLevel } from "../common/common.fetch";
 
 
 function Header({ title }) {
-  return (
+  const modal = useRef(null);
+  const access = useAccessLevel();
+
+  return (<>
     <HeaderStyle>
       <DropdownStyle>
         <MenuIcon className={headerButtonStyle} />
 
         <MenuStyle>
-          <LinkStyle to="/home" text="Schedule" />
+          <MenuLinkStyle to="/home">Schedule</MenuLinkStyle>
 
-          <LinkStyle to="/players" text="Players" />
+          <MenuLinkStyle to="/players">Players</MenuLinkStyle>
+
+          <MenuItemStyle><ReloadButton /></MenuItemStyle>
+
+          {access > 2 && <MenuLinkStyle onClick={() => modal.current.open()}>Settings <SettingsIcon /></MenuLinkStyle>}
         </MenuStyle>
       </DropdownStyle>
 
       <TitleStyle>
-        <Link to="/home" className="h-full"><img className="h-full w-auto" src={logo} alt={title || defaultSettings.title} /></Link>
+        <Logo to="/home" title={title} />
       </TitleStyle>
 
-      <ReloadStyle>
-        <ReloadButton className={headerButtonStyle} />
-      </ReloadStyle>
+      <LoginMenu />
     </HeaderStyle>  
-  );
+
+    <Modal ref={modal}>
+      <Settings modal={modal} />
+    </Modal>
+  </>);
 }
 
 Header.propTypes = { title: PropTypes.string };

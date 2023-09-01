@@ -1,12 +1,14 @@
 import React, { useMemo } from "react";
-
 import EventStats from "./EventStats";
 import { statusInfo } from "../../../assets/constants";
 import { EditEventButton } from "../styles/ButtonStyles"; 
 import { ContainerStyle, HeaderStyle, ValueStyle, DetailStyle } from "../styles/DashboardStyles";
 
+import { useAccessLevel } from "../../common/common.fetch";
 
 function EventDashboard({ data, openStats }) {
+  const access = useAccessLevel()
+
   const headerValue = data.status === 2 ? 'Round ' + data.roundactive : statusInfo[data?.status ?? 0].label
   
   const headerDetail = useMemo(() =>
@@ -18,7 +20,7 @@ function EventDashboard({ data, openStats }) {
   return (
     <ContainerStyle>
       <HeaderStyle>
-        <EditEventButton onClick={openStats} />
+        {access > 1 && <EditEventButton onClick={openStats} />}
         
         <ValueStyle>{headerValue}</ValueStyle>
 

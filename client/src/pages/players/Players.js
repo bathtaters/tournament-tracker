@@ -9,7 +9,7 @@ import { AddButton, RemoveButton } from "./styles/ButtonStyles";
 import usePlayersController from "./services/player.services";
 
 function Players() {
-  const { deleteMode, advanceMode, modal, handlePlayerClick, toggleDelete } = usePlayersController()
+  const { deleteMode, access, modal, handlePlayerClick, toggleDelete } = usePlayersController()
 
   return (
     <div>
@@ -17,18 +17,18 @@ function Players() {
 
       <StatsStyle>
         <Stats
-          className={`${statsClass.base(deleteMode)}${advanceMode ? ' table-zebra' : ''}`}
+          className={`${statsClass.base(deleteMode)}${access > 2 ? ' table-zebra' : ''}`}
           highlightClass={statsClass.hover(deleteMode)}
           onPlayerClick={handlePlayerClick}
           hideTeams={true}
-          hideStats={!advanceMode}
+          hideStats={access < 3}
         />
       </StatsStyle>
 
       <FooterStyle>
-        <AddButton disabled={deleteMode} onClick={()=>modal.current.open()} />
+        { access > 1 && <AddButton disabled={deleteMode} onClick={()=>modal.current.open()} /> }
 
-        { advanceMode && <RemoveButton onClick={toggleDelete} canDelete={deleteMode} /> }
+        { access > 2 && <RemoveButton onClick={toggleDelete} canDelete={deleteMode} /> }
 
       </FooterStyle>
 

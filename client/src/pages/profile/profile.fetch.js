@@ -1,4 +1,4 @@
-import { fetchApi, getTags, usePlayerQuery, useEventQuery, useSettingsQuery } from '../common/common.fetch';
+import { fetchApi, getTags, usePlayerQuery, useEventQuery, useSettingsQuery, commonApi } from '../common/common.fetch';
 import { playerUpdate } from './services/profile.services';
 import { debugLogging } from '../../assets/config';
 
@@ -17,5 +17,6 @@ export const profileApi = fetchApi.injectEndpoints({
   overrideExisting: true
 });
 
+export const usePlayerState = commonApi.endpoints.player.useQueryState;
 export { usePlayerQuery, useEventQuery, useSettingsQuery };
 export const { useUpdatePlayerMutation } = profileApi;

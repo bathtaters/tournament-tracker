@@ -33,7 +33,7 @@ export function usePropState(propVal, equalsTest = (state,prop) => state === pro
   useEffect(() => {
     setLocal((stateVal) => equals(stateVal, propVal) ? stateVal : propVal)
   // eslint-disable-next-line
-  }, [JSON.stringify(propVal), ...depends])
+  }, [propVal, ...depends])
 
   return [ localVal, setLocal ]
 }

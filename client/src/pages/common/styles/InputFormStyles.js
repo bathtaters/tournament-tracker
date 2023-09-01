@@ -29,10 +29,8 @@ export function FormContainer({ onSubmit, children }) {
 export function FormErrorStyle({ children }) {
   return (
     <div className="alert alert-warning shadow-lg">
-      <div>
-        <WarningIcon className="stroke-current flex-shrink-0 h-6 w-6" />
-        <span>{children}</span>
-      </div>
+      <WarningIcon className="stroke-current flex-shrink-0 h-6 w-6" />
+      <span>{children}</span>
     </div>
   )
 }

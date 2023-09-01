@@ -22,7 +22,6 @@ module.exports = {
   defaults: {
     settings: {
       title: "Tournament Tracker",
-      showadvanced: false,
       showrawjson: false,
       dayslots: 3,
       autofillsize: 8,
@@ -32,8 +31,11 @@ module.exports = {
     },
     player: {
       name: "New Player",
+      password: null,
+      access: 1,
       isteam: false,
       members: null,
+      session: null,
     },
     event: {
       title: "New Game",
@@ -69,6 +71,8 @@ module.exports = {
     },
     player: {
       name: sharedLimits.title,
+      password: { min: 6, max: 64 },
+      access: { min: 0, max: 3 },
       members: { min: 2, max: 12 },
     },
     event: {
@@ -98,7 +102,6 @@ module.exports = {
     settings: {
       setting: "string",
       title: "string",
-      showadvanced: "boolean",
       showrawjson: "boolean",
       autofillsize: "int",
       autobyes: "boolean",
@@ -109,8 +112,11 @@ module.exports = {
     player: {
       id: "uuid",
       name: "string",
+      password: "string?",
+      access: "number",
       isteam: "boolean",
-      members: "uuid[]?"
+      members: "uuid[]?",
+      session: "uuid?"
     },
     event: {
       id: "uuid",
