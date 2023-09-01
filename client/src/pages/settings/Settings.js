@@ -7,7 +7,7 @@ import RawData from "../common/RawData";
 import Loading from "../common/Loading";
 
 import { TitleStyle } from "./styles/SettingsStyles";
-import settingsLayout from "./settings.layout";
+import { layout, buttons } from "./settings.layout";
 
 import useSettingsController from "./services/settings.controller";
 
@@ -28,13 +28,13 @@ function Settings({ modal }) {
     <TitleStyle>Settings</TitleStyle>
 
     <InputForm
-      rows={settingsLayout[access > 2 ? 'advanced' : 'basic']}
+      rows={layout}
       data={data}
       baseData={baseData}
       onSubmit={onSubmit}
       onEdit={modal.current.lock}
       onChange={onChange}
-      buttons={settingsLayout.buttons(modal.current.close)}
+      buttons={buttons(modal.current.close)}
     />
 
     <RawData className="text-sm mt-4" data={data} />
