@@ -14,7 +14,7 @@ export function useFetchingProvider(reducerPath = fetchApi.reducerPath) {
   
   // Set state to actual value
   const dispatch = useDispatch()
-  useEffect(() => { dispatch(setFetch(anyLoading)) }, [anyLoading])
+  useEffect(() => { dispatch(setFetch(anyLoading)) }, [dispatch, anyLoading])
 
   return anyLoading
 }
@@ -32,7 +32,7 @@ export function useLockScreen(isLoading, caption) {
   const dispatch = useDispatch()
   const isLocked = useSelector((state) => state.global.lockScreen.isLocked)
 
-  useEffect(() => { if (!isLoading) dispatch(lockScreenUntilLoaded(caption)) }, [isLoading, caption])
+  useEffect(() => { if (!isLoading) dispatch(lockScreenUntilLoaded(caption)) }, [dispatch, isLoading, caption])
 
   return isLocked
 }

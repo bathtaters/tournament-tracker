@@ -5,7 +5,7 @@ export const ModalStyle = React.forwardRef(function ModalStyle({ className, onCl
   return (
     <div className={`modal modal-open modal-bottom sm:modal-middle h-full w-full ${z}`} onClick={onClick} ref={ref}>
       <div
-        className={`modal-box max-h-full max-w-full sm:overflow-x-hidden bg-base-300 relative p-8 ${className}`}
+        className={`modal-box max-h-full max-w-full sm:overflow-x-hidden relative p-8 ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

@@ -13,6 +13,7 @@ dbServer.json
 
 # production
 /client/build
+/deploy.sh
 
 # generated
 /client/src/assets/validation.json
@@ -20,6 +21,7 @@ dbServer.json
 # misc
 .DS_Store
 .env*.local
+package-lock.json
 
 npm-debug.log*
 yarn-debug.log*

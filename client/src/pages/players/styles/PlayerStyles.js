@@ -17,5 +17,5 @@ export { ModalTitleStyle };
 
 export const statsClass = {
   base: (canDelete) => 'border-2 rounded-md py-4 px-6 ' + (canDelete ? 'border-error' : 'border-transparent'),
-  hover: (canDelete) => canDelete ? 'hover-error' : '',
+  hover: (canDelete) => canDelete ? 'hover:bg-error' : 'hover:bg-base-200',
 };

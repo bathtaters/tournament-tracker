@@ -1,5 +1,7 @@
 // Initialize logging on requests
+const morgan = require('morgan');
 const logger = require('../utils/log.adapter');
+const { morganLog } = require('../config/meta');
 
 function setupLogging(req, res, next) {
   // Log request
@@ -19,4 +21,9 @@ function setupLogging(req, res, next) {
   return next();
 }
 
-module.exports = setupLogging;
+function bypassLogging(req, res, next) {
+  res.sendAndLog = res.send;
+  return next();
+}
+
+module.exports = morganLog && morganLog.toLowerCase() === 'debug' ? setupLogging : [bypassLogging, morgan(morganLog || 'combined')];

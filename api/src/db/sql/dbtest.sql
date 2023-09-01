@@ -1,5 +1,5 @@
 -- Select DB
-USE tournamenttracker;
+USE %DB%;
 
 -- Erase all entries
 SET sql_safe_updates = FALSE;
@@ -20,20 +20,21 @@ INSERT INTO settings (id, value, type) VALUES
 
 
 -- Setup Players
+INSERT INTO player (name, access) VALUES ('Nick', 3);
 INSERT INTO player (name) VALUES
-    ('Nick'), ('Matt'), ('Cosme'), ('Taylor'),
-    ('Ian'),  ('Foff'), ('Stack'), ('Henry');
+    ('Matt'), ('Cosme'), ('Henry'), ('Taylor'),
+    ('Ian'),  ('Foff'),  ('Stack'), ('Robert');
 
 -- Setup Teams
-INSERT INTO player (name, isteam, members) VALUES
-    ('NI', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
-        isteam IS FALSE AND name = ANY('{"Nick","Ian"}'))),
-    ('MF', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
-        isteam IS FALSE AND name = ANY('{"Matt","Foff"}'))),
-    ('CS', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
-        isteam IS FALSE AND name = ANY('{"Cosme","Stack"}'))),
-    ('TH', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
-        isteam IS FALSE AND name = ANY('{"Taylor","Henry"}')));
+-- INSERT INTO player (name, isteam, members) VALUES
+--     ('NI', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
+--         isteam IS FALSE AND name = ANY('{"Nick","Ian"}'))),
+--     ('MF', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
+--         isteam IS FALSE AND name = ANY('{"Matt","Foff"}'))),
+--     ('CS', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
+--         isteam IS FALSE AND name = ANY('{"Cosme","Stack"}'))),
+--     ('TH', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
+--         isteam IS FALSE AND name = ANY('{"Taylor","Henry"}')));
 
 -- Setup Events
 INSERT INTO event (title, day, roundcount) VALUES

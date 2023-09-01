@@ -57,5 +57,6 @@ export function useLinkId (uuid, urlPrefix = '') {
 
 export function useParamId (idParamLabel = 'id') {
   const params = useParams()
+  // eslint-disable-next-line
   return useMemo(() => urlToId(params[idParamLabel]), [params[idParamLabel]])
 }

@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useMatchQuery, usePlayerQuery, useSettingsQuery, refetchStats } from '../event.fetch';
+import { useMatchQuery, usePlayerQuery, refetchStats } from '../event.fetch';
+import { useAccessLevel } from "../../common/common.fetch";
 import { formatCopyRound } from "../../../assets/formatting";
 
 // Round Editor controller
-export function useRoundEditor({ id, roundactive, anyreported, matches }, round) {
+export function useRoundEditor({ id, roundactive, matches }, round) {
   // Setup
   const dispatch = useDispatch()
-  const { data } = useSettingsQuery()
+  const access = useAccessLevel()
   const [isEditing, setIsEditing] = useState(false)
 
   // Copy matches
@@ -22,9 +23,7 @@ export function useRoundEditor({ id, roundactive, anyreported, matches }, round)
     setIsEditing(isEditing)
   }
 
-  const showAdvanced = data?.showadvanced || (roundactive === round + 1 && !anyreported)
-
-  return { isEditing, setEditing, showAdvanced, handleCopy, showDelete: data?.showadvanced }
+  return { isEditing, setEditing, showEdit: access > 1, handleCopy }
 }
 
 

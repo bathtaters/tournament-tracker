@@ -16,5 +16,8 @@ const statsLayout = [
   { label: 'OMW',  get: (id, {stats}) => stats[id]?.oppMatch, format: formatPercent, default: '-', hdrClass },
   { label: 'OGW',  get: (id, {stats}) => stats[id]?.oppGame,  format: formatPercent, default: '-', hdrClass },
 ]
+const listLayout = [
+  { get: (id, {players}) => players[id]?.name, cellStyle: titleStyle, hdrClass: 'text-lg', default: '?' },
+]
 
-export default statsLayout
+export { statsLayout, listLayout  }

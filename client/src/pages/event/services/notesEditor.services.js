@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { usePropState, useOnClickOutsideRef } from "../../common/common.hooks"
 
 export default function useTextEditor(serverText, updateServer, { charLimit = 1000 }) {

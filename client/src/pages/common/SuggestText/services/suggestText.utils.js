@@ -1,5 +1,8 @@
-// Get data from entries
-export const getId  = (entry) => entry?.id || '#' + (entry.value || 'NONE');
+import { useLayoutEffect } from "react"
+
+// Must include when porting SuggestText
+export { useScrollToRef, useHotkeys } from '../../services/basic.services'
+
 
 // Determine if list is valid
 export const validList = (list) => Array.isArray(list) && Boolean(list.length);
@@ -26,4 +29,16 @@ export const getNonStaticSoloIdx = (list) => {
   let nonStatic = []
   list.forEach((entry,idx) => !entry.isStatic && nonStatic.push(idx))
   return nonStatic.length === 1 ? nonStatic[0] : -1
+}
+
+
+
+// Hook that works like 'useLayoutEffect', plus triggers effect on 'listenerType' event
+export function useLayoutListener(listenerTypes, effect, deps) {
+  useLayoutEffect(() => {
+    listenerTypes.forEach((type) => window.addEventListener(type, effect))
+    effect()
+    return () => { listenerTypes.forEach((type) => window.removeEventListener(type, effect)) }
+  // eslint-disable-next-line
+  }, deps)
 }
