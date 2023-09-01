@@ -36,7 +36,7 @@ _Represented below by api/v[n]_
 
 | URL | Method | Body | Return | Description |
 |------|------|------|------|------|
-|/|POST|{ session }|{ playerData }|Get session player|
+|/|POST|{ session }|{ playerData }|Get player data from session token|
 |/|PUT|{ name, password }|{ session }|Create session|
 |/|DELETE|{ session }|{ success }|Destroy session|
 
@@ -97,8 +97,8 @@ player:
 	id UUID = random
 	name UNIQUE STRING
 	password STRING = NULL
-    access SMALLINT = 1 ('player')
-    session UUID = NULL
+	access SMALLINT = 1 ('player')
+	session UUID = NULL
 	isteam BOOLEAN = 0
 	members [player.id] = NULL
 
