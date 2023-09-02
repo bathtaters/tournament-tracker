@@ -1,8 +1,8 @@
 // Init
 const router = require('express').Router();
-const validate = require('../validators/plan.validators');
+const validate = require('../validators/voter.validators');
 const catcher = require('../middleware/catch.middleware');
-const controller = require('../controllers/plan.controllers');
+const controller = require('../controllers/voter.controllers');
 
 // *** Player API commands *** \\
 

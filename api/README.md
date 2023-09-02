@@ -42,15 +42,15 @@ _Represented below by api/v[n]_
 
 ---
 
-### _Plan_ - [Domain]/api/v[n]/plan/...
+### _Voter_ - [Domain]/api/v[n]/voter/...
 
 | URL | Method | Body | Return | Description |
 |------|------|------|------|------|
-|/player/all|GET| |{ playerId: { playerVoteData } }|All vote data by playerID|
-|/player/[id]|GET| |{ playerVoteData }|Vote data for player|
-|/player|POST|{ id }|{ id }|Add player to plan|
-|/player/[id]|DELETE| |{ id }|Remove player from plan|
-|/player/[id]|PATCH|{ newData }|{ id, newData }|Update player's vote data|
+|/all|GET| |{ playerId: { playerVoteData } }|All vote data by playerID|
+|/[id]|GET| |{ playerVoteData }|Vote data for player|
+|/|POST|{ id }|{ id }|Add player as voter|
+|/[id]|DELETE| |{ id }|Remove player as voter|
+|/[id]|PATCH|{ newData }|{ id, newData }|Update player's vote data|
 
 ---
 
@@ -144,7 +144,7 @@ match:
 	drops UUID[] = []
 	reported BOOLEAN = FALSE
 
-planplayer:
+voter:
 	id UUID = player.id
 	days DATE[] = []
 	events UUID[] = []

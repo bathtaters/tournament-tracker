@@ -1,4 +1,4 @@
-const validate = require('./shared.validators').bySet('planplayer')
+const validate = require('./shared.validators').bySet('voter')
 
 module.exports = {
   playerid:     validate('id'),

@@ -78,7 +78,7 @@ CREATE TABLE match (
     INVERTED INDEX player_idx (players)
 );
 
-CREATE TABLE planplayer (
+CREATE TABLE voter (
     id UUID PRIMARY KEY NOT NULL,
     days DATE[] NOT NULL DEFAULT '{}',
     events UUID[] NOT NULL DEFAULT '{}'

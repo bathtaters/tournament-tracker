@@ -66,7 +66,7 @@ module.exports = {
       reported: false,
       undrop: false,
     },
-    planplayer: {
+    voter: {
       days: [],
       events: [],
     },
@@ -106,7 +106,7 @@ module.exports = {
       drops:   sharedLimits.player,
       setDrawsMax: 1,
     },
-    planplayer: {
+    voter: {
       days: sharedLimits.dates,
       events: { min: 0, max: 50 },
     },
@@ -166,7 +166,7 @@ module.exports = {
       undrop: "boolean",
       playerid: "uuid"
     },
-    planplayer: {
+    voter: {
       id: "uuid",
       days: "date[]",
       events: "uuid[]",
