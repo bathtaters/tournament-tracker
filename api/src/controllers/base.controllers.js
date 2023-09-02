@@ -1,3 +1,5 @@
+const { matchedData }  = require('express-validator');
+
 // Models
 const event = require('../db/models/event');
 const match = require('../db/models/match');
@@ -29,8 +31,9 @@ async function getAll(_, res) {
 
 // Settings
 async function getSetting(req,res) {
-  const settingsData = await setting.get(req.param.setting);
-  if (!settingsData) throw new Error(req.param.setting + ' setting not found.');
+  const { setting } = matchedData(req);
+  const settingsData = await setting.get(setting);
+  if (!settingsData) throw new Error(setting + ' setting not found.');
   return res.sendAndLog(asType(settingsData));
 }
 
@@ -44,9 +47,10 @@ async function getSettings(req,res) {
 }
 
 async function setSettings(req,res) {
-  if (!req.body) return res.sendAndLog({ success: false });
+  const settings = matchedData(req);
+  if (!Object.keys(settings).length) return res.sendAndLog({ success: false });
   
-  const settingsArray = toObjArray(req.body);
+  const settingsArray = toObjArray(settings);
 
   const set = await setting.batchSet(settingsArray).then(r => r && r.map(s => s.id));
   return res.sendAndLog({ success: true, set });

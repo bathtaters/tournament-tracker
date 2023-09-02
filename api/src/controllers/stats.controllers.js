@@ -1,3 +1,5 @@
+const { matchedData }  = require('express-validator');
+
 // Models
 const event = require('../db/models/event');
 const player = require('../db/models/player');
@@ -22,7 +24,7 @@ async function getAllStats(_, res) {
 }
 
 async function getStats(req, res) {
-  const id = req.params.id;
+  const { id } = matchedData(req);
   const players = await event.getPlayers(id);
   if (!players) return res.sendStatus(204);
 
