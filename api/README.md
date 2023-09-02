@@ -42,6 +42,18 @@ _Represented below by api/v[n]_
 
 ---
 
+### _Plan_ - [Domain]/api/v[n]/plan/...
+
+| URL | Method | Body | Return | Description |
+|------|------|------|------|------|
+|/player/all|GET| |{ playerId: { playerVoteData } }|All vote data by playerID|
+|/player/[id]|GET| |{ playerVoteData }|Vote data for player|
+|/player|POST|{ id }|{ id }|Add player to plan|
+|/player/[id]|DELETE| |{ id }|Remove player from plan|
+|/player/[id]|PATCH|{ newData }|{ id, newData }|Update player's vote data|
+
+---
+
 ### _Event_ - [Domain]/api/v[n]/event/...
 
 | URL | Method | Body | Return | Description |
@@ -107,6 +119,7 @@ event:
 	title STRING
 	day DATE = NULL
 	slot SMALLINT = 0
+	plan BOOLEAN = false
 	players [player.id] = []
 	roundactive SMALLINT = 0
 	roundcount SMALLINT = 3
@@ -129,4 +142,9 @@ match:
 	draws SMALLINT = 0
 	drops UUID[] = []
 	reported BOOLEAN = FALSE
+
+planplayer:
+	id UUID = player.id
+	days DATE[] = []
+	events UUID[] = []
 ```

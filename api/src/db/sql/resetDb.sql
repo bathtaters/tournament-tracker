@@ -43,6 +43,7 @@ CREATE TABLE event (
     title STRING NULL,
     day DATE NULL,
     slot SMALLINT NOT NULL DEFAULT 0,
+    plan BOOL NOT NULL DEFAULT false,
     players UUID[] NOT NULL DEFAULT '{}',
     roundactive SMALLINT NOT NULL DEFAULT 0,
     roundcount SMALLINT NOT NULL DEFAULT 3,
@@ -75,6 +76,12 @@ CREATE TABLE match (
     -- Indexes
     INDEX event_idx (eventid, round) STORING (players, draws, reported),
     INVERTED INDEX player_idx (players)
+);
+
+CREATE TABLE planplayer (
+    id UUID PRIMARY KEY NOT NULL,
+    days DATE[] NOT NULL DEFAULT '{}',
+    events UUID[] NOT NULL DEFAULT '{}'
 );
 
 -- Perms

@@ -30,6 +30,8 @@ module.exports = {
       datestart: today,
       dateend: tomorrow,
       autobyes: true,
+      planstatus: 1,
+      plandates: [],
     },
     player: {
       name: "New Player",
@@ -43,6 +45,7 @@ module.exports = {
       title: "New Game",
       day: null,
       slot: 0,
+      plan: false,
       players: [],
       roundactive: 0,
       roundcount: 3,
@@ -63,6 +66,10 @@ module.exports = {
       reported: false,
       undrop: false,
     },
+    planplayer: {
+      days: [],
+      events: [],
+    },
   },
 
   limits: {
@@ -71,6 +78,8 @@ module.exports = {
       daterange: { min: 1, max: sharedLimits.dates.max },
       dayslots: sharedLimits.slots,
       autofillsize: sharedLimits.player,
+      planstatus: { min: 0, max: 3 },
+      plandates: sharedLimits.dates,
     },
     player: {
       name: sharedLimits.title,
@@ -97,6 +106,10 @@ module.exports = {
       drops:   sharedLimits.player,
       setDrawsMax: 1,
     },
+    planplayer: {
+      days: sharedLimits.dates,
+      events: { min: 0, max: 50 },
+    },
     swap: {
       swap: { min: 2, max: 2 },
     },
@@ -111,7 +124,9 @@ module.exports = {
       autobyes: "boolean",
       dayslots: "int",
       datestart: "date",
-      dateend: "date"
+      dateend: "date",
+      planstatus: "int",
+      plandates: "date[]",
     },
     player: {
       id: "uuid",
@@ -127,6 +142,7 @@ module.exports = {
       title: "string",
       day: "date?",
       slot: "int",
+      plan: "boolean",
       players: "uuid[]",
       roundactive: "int",
       roundcount: "int",
@@ -148,6 +164,11 @@ module.exports = {
       drops: "uuid[]?",
       reported: "boolean",
       undrop: "boolean"
+    },
+    planplayer: {
+      id: "uuid",
+      days: "date[]",
+      events: "uuid[]",
     },
     swap: {
       swap: "object[]",
