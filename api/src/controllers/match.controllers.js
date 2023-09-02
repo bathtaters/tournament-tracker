@@ -1,3 +1,5 @@
+const { matchedData }  = require('express-validator');
+
 // Model
 const match = require('../db/models/match');
 const defs = require('../config/validation').defaults.match;
@@ -17,7 +19,7 @@ const emptyReport = {
 const getAllMatches = (_, res) => match.get().then(res.sendAndLog);
 
 async function getEventMatches(req, res) {
-  const matchData = await match.getByEvent(req.params.eventid).then(arrToObj('id', {delKey:0}));
+  const matchData = await match.getByEvent(matchedData(req).eventid).then(arrToObj('id', {delKey:0}));
   matchData && Object.values(matchData).forEach(m => m.isDraw = m.wins.filter(w => w == m.maxwins).length !== 1);
   return res.sendAndLog(matchData || {});
 }
@@ -27,53 +29,57 @@ async function getEventMatches(req, res) {
 // Report match
 //   { players: {playerid: wincount, ...} , draws: drawCount, drops: [droppedPlayers] }
 async function reportMatch(req, res) {
-  const ret = await match.update(req.params.id, { ...emptyReport, ...req.body });
-  return res.sendAndLog({ id: req.params.id, eventid: ret && ret.eventid, });
+  const { id, ...body } = matchedData(req);
+  const ret = await match.update(id, { ...emptyReport, ...body });
+  return res.sendAndLog({ id, eventid: ret && ret.eventid, });
 } 
 
 // Clear report
 async function unreportMatch(req, res) {
   // Get player names
-  const matches = await match.get(req.params.id, false, 'players, eventid');
+  const { id } = matchedData(req);
+  const matches = await match.get(id, false, 'players, eventid');
   if (!matches) throw new Error("Match not found or invalid.");
 
   // zero out wins, set reported
-  await match.update(req.params.id, {
+  await match.update(id, {
   ...emptyReport,
     wins: (matches.players || []).map(() => 0),
     reported: false
   });
 
-  return res.sendAndLog({ id: req.params.id, eventid: matches.eventid, });
+  return res.sendAndLog({ id, eventid: matches.eventid, });
 }
 
 // Update partial report data
 async function updateMatch(req, res) {
-  if (!req.body || !req.body.key || !('value' in req.body))
-    throw new Error("No match data provided to update.");
+  const { id, ...body } = matchedData(req);
+  
+  if (!body.key || !('value' in body)) throw new Error("No match data provided to update.");
 
   // Update wins array
   let ret;
-  const idx = req.body.key.match(/^wins\.(\d+)$/);
-  if (idx) ret = await match.updateWins(req.params.id, +idx[1], req.body.value);
+  const idx = body.key.match(/^wins\.(\d+)$/);
+  if (idx) ret = await match.updateWins(id, +idx[1], body.value);
     
   // Update other data
-  else ret = await match.update(req.params.id, { [req.body.key]: req.body.value });
+  else ret = await match.update(id, { [body.key]: body.value });
   
   // Return match & event IDs
-  return res.sendAndLog({ id: req.params.id, eventid: ret?.eventid, });
+  return res.sendAndLog({ id, eventid: ret?.eventid, });
 }
 
 // Drop/Undrop Player
 async function updateDrops(req, res) {
-  if (!req.body || !req.body.id)
-    throw new Error("Not enough data provided to drop/undrop player.");
+  const { id, playerid, undrop } = matchedData(req);
+
+  if (!playerid) throw new Error("Not enough data provided to drop/undrop player.");
 
   // Add/Remove player to drop
-  const ret = await match.dropPlayer(req.params.id, req.body.id, !req.body.undrop)
+  const ret = await match.dropPlayer(id, playerid, !undrop)
   
   // Return match & event IDs
-  return res.sendAndLog({ id: req.params.id, eventid: ret?.eventid });
+  return res.sendAndLog({ id, eventid: ret?.eventid });
 }
 
 

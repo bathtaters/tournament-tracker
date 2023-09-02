@@ -78,7 +78,8 @@ _Represented below by api/v[n]_
 |/[id]|POST|{ players, draws, drops }|{ eventid, id }|Report match result|
 |/[id]|DELETE| |{ eventid, id }|Clears match result|
 |/[id]|PATCH|{ newResult }|{ eventid, id }|Update results|
-|/swap|POST|{ playerA: {id,playerid}, playerB } |{ eventid }|Swap players between matches|
+|/[id]/drop|PATCH|{ playerid, undrop }|{ eventid, id }|Drop/Undrop player from event|
+|/swap|POST|[{id,playerid}, {id,playerid}]|{ eventid }|Swap players between matches|
 
 ---
 

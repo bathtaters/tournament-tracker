@@ -163,7 +163,8 @@ module.exports = {
       draws: "int",
       drops: "uuid[]?",
       reported: "boolean",
-      undrop: "boolean"
+      undrop: "boolean",
+      playerid: "uuid"
     },
     planplayer: {
       id: "uuid",
