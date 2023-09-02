@@ -4,6 +4,8 @@ const sharedLimits = {
   player: { min: 0, max: 32 },
   rounds: { min: 1, max: 20 },
   wins:   { min: 0, max: 10 },
+  dates:  { min: 0, max: 30 },
+  slots:  { min: 0, max: 10 },
 };
 
 sharedLimits.activeRounds = { 
@@ -47,6 +49,7 @@ module.exports = {
       wincount: 2,
       playerspermatch: 2,
       notes: '',
+      link: '',
       clocklimit: '01:00:00',
       clockstart: null,
       clockmod: null,
@@ -65,8 +68,8 @@ module.exports = {
   limits: {
     settings: {
       title: sharedLimits.title,
-      daterange: { min: 1, max: 30 },
-      dayslots: { min: 0, max: 10 },
+      daterange: { min: 1, max: sharedLimits.dates.max },
+      dayslots: sharedLimits.slots,
       autofillsize: sharedLimits.player,
     },
     player: {
@@ -78,12 +81,13 @@ module.exports = {
     event: {
       title: sharedLimits.title,
       players: sharedLimits.player,
+      slot: sharedLimits.slots,
       roundactive: sharedLimits.activeRounds,
       roundcount: sharedLimits.rounds,
       wincount: sharedLimits.wincount,
       playerspermatch: { min: 1, max: 4 },
       notes: { min: 0, max: 256 },
-      clocklimit: {min: '00:01', max: '24:00:00'}
+      clocklimit: {min: '00:01', max: '24:00:00'},
     },
     match: {
       round:   sharedLimits.rounds,
@@ -114,23 +118,25 @@ module.exports = {
       name: "string",
       password: "string?",
       access: "number",
+      session: "uuid?",
       isteam: "boolean",
       members: "uuid[]?",
-      session: "uuid?"
     },
     event: {
       id: "uuid",
       title: "string",
       day: "date?",
+      slot: "int",
       players: "uuid[]",
       roundactive: "int",
       roundcount: "int",
       wincount: "int",
       playerspermatch: "int",
       notes: "string*",
+      link: "string*",
       clocklimit: "interval",
       clockstart: "datetime?",
-      clockmod: "interval?"
+      clockmod: "interval?",
     },
     match: {
       id: "uuid",

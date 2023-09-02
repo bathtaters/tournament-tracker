@@ -112,6 +112,8 @@ event:
 	roundcount SMALLINT = 3
 	wincount SMALLINT = 2,
 	playerspermatch SMALLINT = 2
+	notes STRING NOT NULL DEFAULT '',
+    link STRING NOT NULL DEFAULT '',
 	
 	(clock:)
 	clocklimit INTERVAL = 60min
