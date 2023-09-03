@@ -8,7 +8,7 @@ import Loading from "../../common/Loading";
 
 import usePlayerEditorController from "../services/playerEditor.controller";
 
-function PlayerEditor({ value, onChange, isStarted, onFirstChange = null }) {
+function PlayerEditor({ label = 'Players', value, onChange, isStarted, onFirstChange = null }) {
   // Get data for editor
   const {
     data, inputData,
@@ -18,12 +18,12 @@ function PlayerEditor({ value, onChange, isStarted, onFirstChange = null }) {
 
   // Loading/Error catcher
   if (!data) return (
-    <PlayerEditorStyle><Loading loading={isLoading} error={error} altMsg="Player data not found" /></PlayerEditorStyle>
+    <PlayerEditorStyle label={label}><Loading loading={isLoading} error={error} altMsg="Player data not found" /></PlayerEditorStyle>
   )
 
   // Render
   return (
-    <PlayerEditorStyle playerCount={value?.length}>
+    <PlayerEditorStyle label={label} playerCount={value?.length}>
 
       { value?.map((pid,idx) => 
         <PlayerRow
@@ -41,6 +41,7 @@ function PlayerEditor({ value, onChange, isStarted, onFirstChange = null }) {
 }
 
 PlayerEditor.propTypes = {
+  label: PropTypes.string,
   value: PropTypes.arrayOf(PropTypes.string),
   status: PropTypes.number,
   onEdit: PropTypes.func,
