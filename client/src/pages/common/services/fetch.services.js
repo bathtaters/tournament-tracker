@@ -23,6 +23,7 @@ export function getSettings(server) {
   if (!server) server = {}
   const local = getLocalSettings()
   debugLogging && console.log('SETTINGS', { server, local })
+  if (!('planslots' in server)) server.planslots = server.dayslots
   return { ...defaultSettings, ...server, ...local, saved: Object.keys(server), }
 }
 
