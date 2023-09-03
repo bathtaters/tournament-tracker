@@ -17,6 +17,8 @@ export const statusInfo = [
 
 export const playerAccess = [ 'Guest', 'Player', 'Judge', 'Gonti' ];
 
+export const planTitle = [ 'Plan', 'Vote Setup', 'Rank Games', 'Proposed Schedule' ];
+
 export const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 export const roundButtonText = {

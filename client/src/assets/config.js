@@ -24,3 +24,7 @@ export const settings = {
   // Store these settings locally (per user settings)
   storeLocal: ['showrawjson'],
 }
+
+export const plan = {
+  updateDelay: 3000,
+}
