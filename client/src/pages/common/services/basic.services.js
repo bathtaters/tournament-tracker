@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { debugLogging } from "../../../assets/config";
 
 // Checks that 2 arrays are equal (Must be 1D arrays, 2 falsy vars will also be equal)
@@ -24,6 +24,18 @@ export const nextTempId = (type, exists) => {
 // Generates 'onClick' events for mouse & touch screen (usage: <Tag {...onClickAll(cb)} /> )
 export const onClickAll = (callback) => ({ onMouseDown: callback, onTouchStart: callback })
 
+// Throttle function call
+export function useThrottle(interval) {
+	let timer = useRef(null)
+
+  return useCallback(
+    function throttledCall(func) {
+      if (timer.current) clearTimeout(timer.current)
+      timer.current = setTimeout(func, interval)
+    },
+    [interval]
+  )
+}
 
 // Listen & handle hotkeys
 // hotkeyMap = { [key]: () => action(), ... } !! MUST BE STATIC
