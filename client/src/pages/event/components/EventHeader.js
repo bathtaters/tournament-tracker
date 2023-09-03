@@ -9,7 +9,7 @@ import useRoundButton from "../services/roundButton.services";
 
 function EventHeader({ data, disabled }) {
   const { handleClick, buttonText } = useRoundButton(data, disabled)
-  const access = useAccessLevel()
+  const { access } = useAccessLevel()
 
   return (<>
     { data?.link && <EventLinkStyle text={data.link} link={data.link} /> }

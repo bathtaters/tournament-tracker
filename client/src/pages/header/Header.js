@@ -13,7 +13,7 @@ import { useAccessLevel } from "../common/common.fetch";
 
 function Header({ title }) {
   const modal = useRef(null);
-  const access = useAccessLevel();
+  const { access } = useAccessLevel();
 
   /* Check if admin && planVisible OR if player && planVote && player in plan */
   const planIsVisible = true

@@ -18,7 +18,7 @@ const baseData = getBaseData('settings');
 
 function Settings({ modal }) {
   const { data, onSubmit, onChange, showLoading, error } = useSettingsController(modal)
-  const access = useAccessLevel()
+  const { access } = useAccessLevel()
 
   // Catch loading/error
   if (showLoading) return (<div><Loading loading={!error} error={error} tagName="h3" /></div>);

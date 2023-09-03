@@ -16,7 +16,7 @@ function Schedule() {
   const { data,            isLoading: schedLoad,    error: schedErr    } = useScheduleQuery();
   const { data: settings,  isLoading: settingsLoad, error: settingsErr } = useSettingsQuery();
   const { data: eventData, isLoading: eventsLoad,   error: eventsErr   } = useEventQuery();
-  const access = useAccessLevel();
+  const { access } = useAccessLevel();
   
   // Local state
   const modal = useRef(null);
