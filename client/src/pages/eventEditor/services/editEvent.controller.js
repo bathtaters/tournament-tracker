@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "../eventEditor.fetch";
 
@@ -18,7 +18,7 @@ export default function useEditEventController(eventid, modal) {
   useLockScreen(isUpdating, editEventLockCaptions[+Boolean(eventid)])
   
   // Init hooks
-  const playerList = useRef(null)
+  const [ playerList, updatePlayerList ] = useState(data?.players || [])
   let navigate = useNavigate()
   const openAlert = useOpenAlert()
 
@@ -37,20 +37,19 @@ export default function useEditEventController(eventid, modal) {
 
   // Create/Update event & close modal
   async function submitHandler (event) {
-    const savedPlayers = await playerList.current.getList()
-    if (!savedPlayers) return;
+    if (!playerList) return;
     
     // Build event object
-    if (!event.title.trim() && !savedPlayers.length) return modal.current.close(true)
+    if (!event.title.trim() && !playerList.length) return modal.current.close(true)
     if (eventid) event.id = eventid
-    event.players = savedPlayers
+    event.players = playerList
 
     // Push event to server (Create/Update)
     return setEvent(event).then(() => modal.current.close(true))
   }
 
   return {
-    data, playerList, submitHandler,
+    data, playerList, updatePlayerList, submitHandler,
     // Button layout
     buttons: editorButtonLayout(eventid, deleteHandler, modal.current.close),
   }

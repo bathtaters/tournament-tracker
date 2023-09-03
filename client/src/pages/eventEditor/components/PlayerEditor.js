@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React from "react";
 import PropTypes from 'prop-types';
 
 import PlayerRow from "./PlayerRow";
@@ -8,12 +8,13 @@ import Loading from "../../common/Loading";
 
 import usePlayerEditorController from "../services/playerEditor.controller";
 
-const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit = null }, ref) {
+function PlayerEditor({ value, onChange, isStarted, onFirstChange = null }) {
   // Get data for editor
   const {
-    data, playerList, inputData, suggestRef, popPlayer,
-    notStarted, isUpdating, isLoading, error,
-  } = usePlayerEditorController(players, status, onEdit, ref)
+    data, inputData,
+    suggestRef, popPlayer,
+    isUpdating, isLoading, error,
+  } = usePlayerEditorController(value, onChange, isStarted, onFirstChange)
 
   // Loading/Error catcher
   if (!data) return (
@@ -22,25 +23,25 @@ const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit 
 
   // Render
   return (
-    <PlayerEditorStyle playerCount={playerList.length}>
+    <PlayerEditorStyle playerCount={value?.length}>
 
-      { playerList.map((pid,idx) => 
+      { value?.map((pid,idx) => 
         <PlayerRow
           name={data[pid] && data[pid].name}
           isUpdating={isUpdating}
-          onClick={notStarted && popPlayer(pid, idx)}
+          onClick={!isStarted && popPlayer(pid, idx)}
           key={pid}
         />
       ) }
 
-      { notStarted &&  <PlayerInput {...inputData} ref={suggestRef} /> }
+      { !isStarted && <PlayerInput {...inputData} ref={suggestRef} /> }
 
     </PlayerEditorStyle>
   )
-})
+}
 
 PlayerEditor.propTypes = {
-  players: PropTypes.arrayOf(PropTypes.string),
+  value: PropTypes.arrayOf(PropTypes.string),
   status: PropTypes.number,
   onEdit: PropTypes.func,
 }

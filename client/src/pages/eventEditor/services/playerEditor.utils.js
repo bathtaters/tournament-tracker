@@ -22,7 +22,7 @@ export const randomArray = (arr, size) => {
 
 // Get list of players who are not already selected
 export const getRemaining = (players, playerList) => players ? Object.keys(players)
-  .filter(p => !players[p].isteam && !playerList.includes(p)) : [];
+  .filter(p => !players[p].isteam && !playerList?.includes(p)) : [];
 
 
 // Get name of player from getValue result

@@ -18,7 +18,8 @@ const baseData = getBaseData('event');
 function EditEvent({ eventid, modal }) {
   
   const {
-    data, playerList, buttons, submitHandler,
+    data, playerList, updatePlayerList,
+    buttons, submitHandler,
     isLoading, error, notLoaded
   } = useEditEventController(eventid, modal)
 
@@ -40,10 +41,10 @@ function EditEvent({ eventid, modal }) {
         rowFirst={true}
       >
         <PlayerEditor 
-          players={data?.players}
-          status={data?.status || 0}
-          onEdit={modal.current.lock}
-          ref={playerList}
+          value={playerList}
+          onChange={updatePlayerList}
+          isStarted={data?.status && data?.status > 1}
+          onFirstChange={modal.current.lock}
         />
       </InputForm>
 
