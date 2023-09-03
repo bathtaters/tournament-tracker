@@ -5,7 +5,7 @@ export function AppWrapperStyle({ children }) {
 }
 
 export function PageWrapperStyle({ children }) {
-  return (<div className="p-4 max-w-3xl flex-grow">{children}</div>);
+  return (<div className="p-4 max-w-3xl flex-grow w-full">{children}</div>);
 }
 
 export function PageTitleStyle({ className = "", children }) {
