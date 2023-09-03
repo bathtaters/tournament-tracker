@@ -25,13 +25,14 @@ module.exports = {
     settings: {
       title: "Tournament Tracker",
       showrawjson: false,
-      dayslots: 3,
+      dayslots: 2,
       autofillsize: 8,
       datestart: today,
       dateend: tomorrow,
       autobyes: true,
       planstatus: 1,
       plandates: [],
+      planslots: 2,
     },
     player: {
       name: "New Player",
@@ -80,6 +81,7 @@ module.exports = {
       autofillsize: sharedLimits.player,
       planstatus: { min: 0, max: 3 },
       plandates: sharedLimits.dates,
+      planslots: sharedLimits.slots,
     },
     player: {
       name: sharedLimits.title,
@@ -127,6 +129,7 @@ module.exports = {
       dateend: "date",
       planstatus: "int",
       plandates: "date[]",
+      planslots: "int",
     },
     player: {
       id: "uuid",
