@@ -54,12 +54,12 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, onFocus, r
   const submit = async (forcePick) => {
     const newPick = forcePick || getSubmitValue()
 
-    // Submit
-    const result = await (onSubmit && onSubmit(value, newPick, exact, suggestions))
-
     // Reset form
     setPick(null)
     change({ target: { value: '' } })
+    
+    // Submit
+    const result = await (onSubmit && onSubmit(value, newPick, exact, suggestions))
     return newPick && { ...newPick, result }
   }
 
