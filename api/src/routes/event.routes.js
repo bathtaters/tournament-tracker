@@ -17,7 +17,8 @@ router.get('/all/stats',                   catcher(stats.getAllStats));
 router.get('/:id/stats', validate.eventid, catcher(stats.getStats));
 
 // Set
-router.post(  '/',    validate.createEvent, catcher(controller.createEvent));
+router.post('/plan',  validate.setPlan,     catcher(controller.setPlan));
+router.post('/',      validate.createEvent, catcher(controller.createEvent));
 router.delete('/:id', validate.eventid,     catcher(controller.removeEvent));
 router.patch( '/:id', validate.updateEvent, catcher(controller.updateEvent));
 

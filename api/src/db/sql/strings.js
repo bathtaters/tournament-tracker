@@ -11,6 +11,7 @@ exports.event = {
     maxRound: "SELECT round FROM match WHERE eventid = $1 ORDER BY round DESC LIMIT 1;",
     deleteRound: "DELETE FROM match WHERE eventid = $1 AND round = $2;",
     complete: "LEFT JOIN event ON event.id = eventid WHERE event.roundactive > event.roundcount",
+    plan: "UPDATE event SET plan = NOT(plan) WHERE plan = NOT(id = ANY($1)) RETURNING id;",
 }
 
 exports.player = {

@@ -70,5 +70,6 @@ module.exports = {
     add, popRound, pushRound,
 
     rmv:  id => db.rmvRow('event', id),
-    set: (id, newParams) => db.updateRow('event', id, newParams)
+    set: (id, newParams) => db.updateRow('event', id, newParams),
+    setPlan: (ids) => db.query(strings.plan, [ids]),
 }

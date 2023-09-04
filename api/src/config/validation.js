@@ -117,6 +117,7 @@ module.exports = {
     },
     plan: {
       voters: { min: 0, max: 100 },
+      events: { min: 0, max: 100 },
     }
   },
 
@@ -184,6 +185,7 @@ module.exports = {
     },
     plan: {
       voters: "uuid[]",
+      events: "uuid[]",
     }
   }
 };

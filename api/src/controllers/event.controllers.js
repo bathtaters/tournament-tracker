@@ -47,9 +47,14 @@ async function updateEvent (req, res) {
   return event.set(id, body).then(res.sendAndLog);
 }
 
+// Enable plan for all eventIds, disable plan for all missing eventIds
+function setPlan(req, res) {
+  const { events } = matchedData(req);
+  return event.setPlan(events).then(res.sendAndLog);
+}
 
 module.exports = {
-  getEvent, getAllEvents, 
+  getEvent, getAllEvents, setPlan,
   createEvent, removeEvent, updateEvent,
 };
 
