@@ -26,5 +26,5 @@ export const settings = {
 }
 
 export const plan = {
-  updateDelay: 3000,
+  updateDelay: 1000,
 }

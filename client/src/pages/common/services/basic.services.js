@@ -24,17 +24,26 @@ export const nextTempId = (type, exists) => {
 // Generates 'onClick' events for mouse & touch screen (usage: <Tag {...onClickAll(cb)} /> )
 export const onClickAll = (callback) => ({ onMouseDown: callback, onTouchStart: callback })
 
-// Throttle function call
+// Throttle function call, forces call on unmount
 export function useThrottle(interval) {
-	let timer = useRef(null)
+	let timer = useRef(null), func = useRef(null)
 
-  return useCallback(
-    function throttledCall(func) {
-      if (timer.current) clearTimeout(timer.current)
-      timer.current = setTimeout(func, interval)
-    },
-    [interval]
-  )
+  const execFunc = useCallback(() => {
+    timer.current = null
+    if (func.current) func.current()
+    func.current = null
+  }, [])
+
+  useEffect(() => () => {
+    clearTimeout(timer.current)
+    execFunc()
+  }, [execFunc])
+
+  return useCallback((callFunc) => {
+    func.current = callFunc
+    if (timer.current) clearTimeout(timer.current)
+    timer.current = setTimeout(execFunc, interval)
+  }, [execFunc, interval])
 }
 
 // Listen & handle hotkeys
