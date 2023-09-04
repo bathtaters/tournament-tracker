@@ -1,31 +1,26 @@
-import { useState } from "react"
-import { useVoterQuery } from "../voter.fetch"
-import { usePlanSettings } from "./plan.hooks"
-import { useSessionState } from "../../common/common.fetch"
+import { useEffect, useState } from "react"
+import { usePlanSettings } from "./plan.utils"
 import { planTitle } from "../../../assets/constants"
 
 export const planTabs = [ 'Vote', 'View' ]
 
-
 export default function usePlanVoteController() {
-    const { settings, setStatus } = usePlanSettings()
-    const { data: voters, isLoading, error } = useVoterQuery()
-    const { data: session, isLoading: sessLoading, error: sessErr } = useSessionState()
-
-    const [ tab, selectTab ] = useState(session.access > 2 && !(session.id in voters) ? 1 : 0)
+    const { voter, voters, access, settings, setStatus, isLoading, error } = usePlanSettings()
+    
+    const [ tab, selectTab ] = useState(access > 2 && !voter ? 1 : 0)
+    useEffect(() => { if (access > 2 && !voter) selectTab(1) }, [access, voter])
 
     return {
+        data: tab === 1 ? voters : voter,
+        
+        isLoading, error,
+        redirect: !access || (access < 2 && !voter),
+        
         title: planTitle[settings.planstatus],
-        access: session.access,
+        access: access,
         setStatus,
 
-        data: tab === 1 ? voters : voters[session.id],
-
-        redirect: !session?.id || (session.access < 2 && !(session.id in voters)),
-        isLoading: isLoading || sessLoading,
-        error: error || sessErr,
-
-        showTabs: session.access > 2 && session.id in voters,
+        showTabs: access > 2 && !!voter,
         tab, selectTab,
     }
 }

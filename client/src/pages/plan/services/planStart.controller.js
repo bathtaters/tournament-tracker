@@ -1,12 +1,12 @@
-import { useVoterQuery, useEventQuery, useSetVotersMutation, useSetEventsMutation } from "../voter.fetch"
-import { datePickerToArr, serverDatesToArr } from "./dates.services"
-import { usePlanSettings } from "./plan.hooks"
+import { useSetVotersMutation, useSetEventsMutation } from "../voter.fetch"
+import { usePlanSettings, datePickerToArr, serverDatesToArr } from "./plan.utils"
 import { useServerListValue, useServerValue } from "../../common/common.hooks"
 import { plan as config } from "../../../assets/config"
 
 export default function usePlanStartController() {
 
-    const { settings, setStatus, updateSettings } = usePlanSettings()
+    // Date Controller
+    const { voters, settings, events, setStatus, updateSettings } = usePlanSettings(true)
     const [dates, setDates] = useServerListValue(
         serverDatesToArr(settings, settings?.plandates),
         (plandates) => updateSettings({ plandates }),
@@ -14,6 +14,7 @@ export default function usePlanStartController() {
     )
     const handleDateChange = (dates) => setDates(datePickerToArr(settings, dates))
     
+    // Slot Controller
     const [slots, setSlots] = useServerValue(
         settings?.planslots,
         (planslots) => updateSettings({ planslots }),
@@ -21,8 +22,7 @@ export default function usePlanStartController() {
     )
     const handleSlotChange = (ev) => setSlots(+(ev.target.value))
 
-
-    const { data: voters } = useVoterQuery()
+    // Voters Controller
     const [ setVoters ] = useSetVotersMutation()
     const [players, setPlayers] = useServerListValue(
         voters ? Object.keys(voters) : [],
@@ -31,11 +31,10 @@ export default function usePlanStartController() {
     )
     const handlePlayerChange = (players) => setPlayers(players)
     
-
-    const { data: eventData } = useEventQuery()
+    // Events Controller
     const [ setEventPlan ] = useSetEventsMutation()
-    const [events, setEvents] = useServerListValue(
-        eventData ? Object.keys(eventData).filter((id) => eventData[id].plan) : [],
+    const [planEvents, setEvents] = useServerListValue(
+        events ? Object.keys(events).filter((id) => events[id].plan) : [],
         (ids) => setEventPlan(ids),
         { throttleDelay: config.updateDelay }
     )
@@ -46,6 +45,6 @@ export default function usePlanStartController() {
         dates, handleDateChange,
         slots, handleSlotChange,
         players, handlePlayerChange,
-        events, handleEventChange,
+        events: planEvents, handleEventChange,
     }
 }

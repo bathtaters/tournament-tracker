@@ -5,7 +5,7 @@ import EventList from "./components/EventList"
 import { PlanWrapperStyle, PlanTitleStyle, PlanRowStyle, InputWrapperStyle, PlanFooterStyle, PlanButton } from "./styles/PlanStyles"
 import { RangeInputStyle } from "./styles/PlanStartStyles"
 import usePlanStartController from "./services/planStart.controller"
-import { dateArrToPicker } from "./services/dates.services"
+import { dateArrToPicker } from "./services/plan.utils"
 import { useAccessLevel } from "../common/common.fetch"
 import { planTitle } from "../../assets/constants"
 

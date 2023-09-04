@@ -1,12 +1,10 @@
 import React from "react"
 import { PlanWrapperStyle, PlanTitleStyle, PlanFooterStyle, PlanButton } from "./styles/PlanStyles"
-import { usePlanSettings } from "./services/plan.hooks"
-import { useAccessLevel } from "../common/common.fetch"
+import { usePlanSettings } from "./services/plan.utils"
 import { planTitle } from "../../assets/constants"
 
 function PlanFinish() {
-    const { access } = useAccessLevel()
-    const { settings, setStatus } = usePlanSettings()
+    const { access, settings, setStatus } = usePlanSettings()
 
     // if processing: Display bar
 
