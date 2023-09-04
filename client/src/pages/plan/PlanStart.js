@@ -4,7 +4,7 @@ import PlayerEditor from "../eventEditor/components/PlayerEditor"
 import EventList from "./components/EventList"
 import { PlanWrapperStyle, PlanTitleStyle, PlanRowStyle, InputWrapperStyle, PlanFooterStyle, PlanButton } from "./styles/PlanStyles"
 import { RangeInputStyle } from "./styles/PlanStartStyles"
-import usePlanStart from "./services/planStart.service"
+import usePlanStartController from "./services/planStart.controller"
 import { dateArrToPicker } from "./services/dates.services"
 import { useAccessLevel } from "../common/common.fetch"
 import { planTitle } from "../../assets/constants"
@@ -22,7 +22,7 @@ function PlanStart() {
         slots, handleSlotChange,
         players, handlePlayerChange,
         events, handleEventChange,
-    } = usePlanStart()
+    } = usePlanStartController()
 
     return (
         <PlanWrapperStyle>

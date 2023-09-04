@@ -1,10 +1,10 @@
 import { useVoterQuery, useEventQuery, useSetVotersMutation, useSetEventsMutation } from "../voter.fetch"
 import { datePickerToArr, serverDatesToArr } from "./dates.services"
-import { usePlanSettings } from "../services/plan.hooks"
+import { usePlanSettings } from "./plan.hooks"
 import { useServerListValue, useServerValue } from "../../common/common.hooks"
 import { plan as config } from "../../../assets/config"
 
-export default function usePlanStart() {
+export default function usePlanStartController() {
 
     const { settings, setStatus, updateSettings } = usePlanSettings()
     const [dates, setDates] = useServerListValue(
