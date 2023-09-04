@@ -3,8 +3,8 @@ import { debugLogging } from "../../../assets/config";
 
 // Checks that 2 arrays are equal (Must be 1D arrays, 2 falsy vars will also be equal)
 export const equalArrays = (a,b) =>
-  (!a && !b) || (a && b && 
-    a.length === b.length && 
+  (!a && !b) || (
+    a?.length === b?.length && 
     a.every((v,i) => b[i] === v)
   );
 
