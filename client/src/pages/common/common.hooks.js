@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback, useLayoutEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { usePrefetch } from "./common.fetch";
 import { useLockScreen } from '../../core/services/global.services';
+import { equalArrays } from "./services/basic.services";
 import { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult } from "./services/alert.services";
 export { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult, useLockScreen }
 
@@ -25,18 +26,17 @@ export function usePrefetchEvent() {
 }
 
 // Push prop updates to state
-export function usePropState(propVal, equalsTest = (state,prop) => state === prop, depends = []) {
-  const [ localVal, setLocal ] = useState(propVal)
-  // eslint-disable-next-line
-  const equals = useCallback(equalsTest, depends)
+export function usePropState(propVal, equalsTest = (oldVal,newVal) => oldVal === newVal) {
+  const ref = useRef(propVal)
+  const [ localVal, setLocal ] = useState(ref.current)
 
-  useEffect(() => {
-    setLocal((stateVal) => equals(stateVal, propVal) ? stateVal : propVal)
+  if (!equalsTest(ref.current, propVal)) ref.current = propVal
   // eslint-disable-next-line
-  }, [propVal, ...depends])
+  useEffect(() => setLocal(ref.current), [ref.current])
 
   return [ localVal, setLocal ]
 }
+export const usePropStateList = (propList) => usePropState(propList || [], equalArrays)
 
 // Delay and bundle server updates
 export function useServerValue(value, setServerCallback, updateBundleDelay = 500) {
