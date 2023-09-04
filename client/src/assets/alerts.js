@@ -23,9 +23,9 @@ export const deleteEventAlert = (title) => ({
   buttons: [{ value: "Delete Event", className: "btn-error" }, "Cancel"], // [0]=Y
 })
 
-export const duplicatePlayerAlert = (name) => ({
-  title: "Can't Add",
-  message: (name || defPlayer) + " is already here.",
+export const duplicateItemAlert = (type, name) => ({
+  title: `Can't Add ${type}`,
+  message: `${name || defPlayer} was already added.`,
 })
 
 export const createPlayerAlert = (name) => ({

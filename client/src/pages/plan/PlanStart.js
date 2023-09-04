@@ -46,7 +46,7 @@ function PlanStart() {
             </PlanRowStyle>
 
             <PlanRowStyle>
-                <PlayerEditor label="Voters" value={players} onChange={handlePlayerChange}  />
+                <PlayerEditor type="Voter" value={players} onChange={handlePlayerChange}  />
 
                 <InputWrapperStyle label="Events (0)">
                     <div className="w-full min-h-[24rem] flex-grow flex justify-center items-center border">

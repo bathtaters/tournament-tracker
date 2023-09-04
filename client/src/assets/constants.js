@@ -39,9 +39,9 @@ export const localKeys = {
 // Lock Screen captions
 export const roundButtonLockCaption = "Generating round...";
 export const editEventLockCaptions = ["Creating event...", "Updating event..."];
-export const playerLockCaption = "Creating player...";
 export const resetDataLockCaption = "Resetting data...";
 export const reportLockCaption = "Updating standings...";
+export const createLockCaption = (type) => `Creating ${type}...`;
 
 
 // -- Server error adapters -- \\

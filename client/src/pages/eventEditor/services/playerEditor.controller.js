@@ -1,58 +1,56 @@
-import { useState, useRef } from "react";
-import { usePlayerQuery, useSettingsQuery, useCreatePlayerMutation } from "../eventEditor.fetch";
-import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
-
-import playerListController from "./playerList.services";
-import { getRemaining, randomArray } from "./playerEditor.utils";
-import { playerLockCaption } from "../../../assets/constants";
+import { playerExists, randomArray } from "./playerEditor.utils"
+import { usePlayerQuery, useSettingsQuery, useCreatePlayerMutation } from "../eventEditor.fetch"
+import { useOpenAlert, useLockScreen } from "../../common/common.hooks"
+import { createLockCaption } from "../../../assets/constants"
+import { createPlayerAlert, duplicateItemAlert, playerCreateError } from "../../../assets/alerts"
 
 
-export default function usePlayerEditorController(value, onChange, isStarted, onFirstChange) {
+export default function usePlayerEditorController(type, onChange, fillAll) {
+    
+    // Load DB
+    const { data: settings } = useSettingsQuery()
+    const query = usePlayerQuery()
+    const [ createPlayerMutation, { isLoading: isAddingPlayer } ] = useCreatePlayerMutation()
 
-  // Get Global State
-  const { data, isLoading, error, isFetching } = usePlayerQuery();
-  const { data: settings, isLoading: settLoad, error: settErr } = useSettingsQuery();
-  const [ createPlayer, { isLoading: isAddingPlayer } ] = useCreatePlayerMutation();
-  useLockScreen(isAddingPlayer, playerLockCaption);
-  
-  // Init Local State
-  const suggestRef = useRef(null);
-  const openAlert = useOpenAlert();
-  const [ isChanged, setChanged ] = useState(!onFirstChange);
+    // Init globals
+    const openAlert = useOpenAlert()
+    useLockScreen(isAddingPlayer, createLockCaption(type))
+    
+    // Add new player to DB
+    const createPlayer = async (name) => {
+        // Check for errors
+        if (!name.trim()) return false
+        if (playerExists(name, query.data)) return openAlert(duplicateItemAlert(type, name))
 
-  // Add/Remove player to/from list
-  const { pushPlayer, popPlayer } = playerListController(data, value, onChange, openAlert);
-  
-  // Run onFirstChange once, when first edit is made
-  const onFirstEdit = isChanged ? null : () => { onFirstChange(); setChanged(true); };
+        // Confirm create
+        const answer = await openAlert(createPlayerAlert(name),0)
+        if (!answer) return false
 
-
-  // Break early while awaiting global data
-  if (isLoading || settLoad || error || settErr || !data) return { isLoading: isLoading || settLoad, error: error || settErr }
-
-
-  // If not started, get additional data for editing value
-  const inputData = isStarted ? {} : {
-    // Data from parent
-    data, pushPlayer, onFirstEdit, createPlayer,
-    autofillSize: settings?.autofillsize,
-    hideAutofill: Boolean(value?.length),
-    remainingPlayers: getRemaining(data, value),
-    autofill: onFirstEdit,
-  }
-  
-  if (!isStarted) {
-    // Handle autofill click
-    inputData.autofill = () => {
-      onChange(randomArray(inputData.remainingPlayers, inputData.autofillSize))
-      onFirstEdit && onFirstEdit()
+        // Create & Push player
+        const playerData = { name }
+        const result = await createPlayerMutation(playerData)
+        if (result?.error || !result?.data?.id) throw playerCreateError(result, playerData)
+        return result.data
     }
-  }
-  
+    
+    return {
+        query,
 
-  // Pass to renderer
-  return {
-    data, inputData, suggestRef, popPlayer,
-    isUpdating: isAddingPlayer || isFetching,
-  }
+        autofill: {
+            label: fillAll ?
+                `Fill ${query.data ? Object.keys(query.data).length : 'All'}` :
+                `Random ${settings?.autofillsize || ''}`,
+
+            onClick: fillAll ? 
+                () => onChange(Object.keys(query.data))
+                : settings?.autofillsize && (() => {
+                    onChange(randomArray(Object.keys(query.data), settings?.autofillsize))
+                }),
+        },
+
+        create: {
+            label: 'Add player...',
+            mutation: createPlayer,
+        }
+    }
 }
