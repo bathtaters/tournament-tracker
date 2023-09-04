@@ -15,7 +15,7 @@ import { getBaseData } from "../../core/services/validation.services";
 const baseData = getBaseData('event');
 
 
-function EditEvent({ eventid, modal }) {
+function EditEvent({ eventid, modal, hidePlayers }) {
   
   const {
     data, playerList, updatePlayerList,
@@ -40,12 +40,14 @@ function EditEvent({ eventid, modal }) {
         buttons={buttons}
         rowFirst={true}
       >
-        <PlayerEditor 
-          value={playerList}
-          onChange={updatePlayerList}
-          isStarted={data?.status && data?.status > 1}
-          onFirstChange={modal.current.lock}
-        />
+        {!hidePlayers && 
+          <PlayerEditor 
+            value={playerList}
+            onChange={updatePlayerList}
+            isStarted={data?.status && data?.status > 1}
+            onFirstChange={modal.current.lock}
+          />
+        }
       </InputForm>
 
       <RawData className="text-sm mt-4" data={data} />
