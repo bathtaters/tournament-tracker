@@ -2,7 +2,7 @@ import { playerExists, randomArray } from "./playerEditor.utils"
 import { usePlayerQuery, useSettingsQuery, useCreatePlayerMutation } from "../eventEditor.fetch"
 import { useOpenAlert, useLockScreen } from "../../common/common.hooks"
 import { createLockCaption } from "../../../assets/constants"
-import { createPlayerAlert, duplicateItemAlert, playerCreateError } from "../../../assets/alerts"
+import { createItemAlert, duplicateItemAlert, itemCreateError } from "../../../assets/alerts"
 
 
 export default function usePlayerEditorController(type, onChange, fillAll) {
@@ -23,13 +23,13 @@ export default function usePlayerEditorController(type, onChange, fillAll) {
         if (playerExists(name, query.data)) return openAlert(duplicateItemAlert(type, name))
 
         // Confirm create
-        const answer = await openAlert(createPlayerAlert(name),0)
+        const answer = await openAlert(createItemAlert(type, name),0)
         if (!answer) return false
 
         // Create & Push player
         const playerData = { name }
         const result = await createPlayerMutation(playerData)
-        if (result?.error || !result?.data?.id) throw playerCreateError(result, playerData)
+        if (result?.error || !result?.data?.id) throw itemCreateError(type, result, playerData)
         return result.data
     }
     

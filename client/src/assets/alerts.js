@@ -28,9 +28,9 @@ export const duplicateItemAlert = (type, name) => ({
   message: `${name || defPlayer} was already added.`,
 })
 
-export const createPlayerAlert = (name) => ({
-  title: "New Player?",
-  message: `Would you like to create a profile for ${name || defPlayer}?`,
+export const createItemAlert = (type, name) => ({
+  title: `New ${type}?`,
+  message: `Would you like to create a new ${type.toLowerCase()}${name ? ` called ${name}` : '' }?`,
   buttons: [{ value: "Create",  className: "btn-success" }, "Cancel"], // [0]=Y
 })
 
@@ -99,4 +99,4 @@ export const resetDbAlertConfirm = {
 
 // --- Errors --- \\
 
-export const playerCreateError = ({ error }, { name }) => new Error(error?.data?.error ? error.data.error : '"'+name+'" was not able to be added.')
+export const itemCreateError = (type, { error }, { name }) => new Error(error?.data?.error ? error.data.error : `${type} "${name}" was not able to be added.`)
