@@ -1,5 +1,5 @@
 import { fetchApi, getTags, usePlayerQuery, useEventQuery, useSettingsQuery } from '../common/common.fetch'
-import { addUpdate, removeUpdate, voterUpdate } from './services/voterFetch.services'
+import { updateAll, voterUpdate } from './services/voterFetch.services'
 import { useUpdateSettingsMutation } from '../settings/settings.fetch'
 import { debugLogging } from '../../assets/config'
 
@@ -19,23 +19,15 @@ export const voterApi = fetchApi.injectEndpoints({
         onQueryStarted: voterUpdate,
     }),
 
-    addVoter: build.mutation({
-        query: (id) => ({ url: `voter`, method: 'POST', body: { id }, }),
+    setVoters: build.mutation({
+        query: (voters) => ({ url: `voter`, method: 'POST', body: { voters }, }),
         transformResponse: debugLogging ? res => console.log('ADD_VOTE',res) || res : undefined,
         invalidatesTags: getTags('Voter'),
-        onQueryStarted: addUpdate,
+        onQueryStarted: updateAll,
     }),
-
-    rmvVoter: build.mutation({
-        query: (id) => ({ url: `voter/${id}`, method: 'DELETE' }),
-        transformResponse: debugLogging ? res => console.log('DEL_VOTE',res) || res : undefined,
-        invalidatesTags: getTags('Voter'),
-        onQueryStarted: removeUpdate,
-    }),
-    
   }),
   overrideExisting: true
 })
 
 export { useUpdateSettingsMutation, usePlayerQuery, useEventQuery, useSettingsQuery }
-export const { useVoterQuery, useUpdateVoterMutation, useAddVoterMutation, useRmvVoterMutation } = voterApi
+export const { useVoterQuery, useUpdateVoterMutation, useSetVotersMutation } = voterApi

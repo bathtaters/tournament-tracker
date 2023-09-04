@@ -48,7 +48,7 @@ function PlanStart() {
             </PlanRowStyle>
 
             <PlanRowStyle>
-                <PlayerEditor type="Voter" value={players} onChange={handlePlayerChange} fillAll={true}  />
+                <PlayerEditor type="Voter" value={players.sort()} onChange={handlePlayerChange} fillAll={true}  />
 
                 <EventList value={events} onChange={handleEventChange} />
             </PlanRowStyle>

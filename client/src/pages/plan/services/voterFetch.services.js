@@ -11,13 +11,10 @@ export function voterUpdate({ id, ...body }, { dispatch, queryFulfilled }) {
 };
 
 
-export function addUpdate(id, { dispatch, queryFulfilled }) {
-    const updatePlayer = dispatch(fetchApi.util.updateQueryData('voter', undefined, (draft) => { draft[id] = newVoter(id) }))
-    queryFulfilled.catch(() => { updatePlayer.undo() }) // rollback
-};
-
-
-export function removeUpdate(id, { dispatch, queryFulfilled }) {
-    const updatePlayer = dispatch(fetchApi.util.updateQueryData('voter', undefined, (draft) => { delete draft[id] }));
-    queryFulfilled.catch(() => { updatePlayer.undo() }) // rollback
+export function updateAll(voters, { dispatch, queryFulfilled }) {
+    const updateAll = dispatch(fetchApi.util.updateQueryData('voter', undefined, (draft) => {
+        Object.keys(draft).forEach((id) => { if (!voters.includes(id)) delete draft[id] })
+        voters.forEach((id) => { if (!draft[id]) draft[id] = newVoter(id) })
+    }))
+    queryFulfilled.catch(() => { updateAll.undo() }) // rollback
 };
