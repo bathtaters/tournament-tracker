@@ -8,15 +8,14 @@ import { HeaderStyle, DropdownStyle, TitleStyle, MenuStyle, MenuLinkStyle, heade
 import Logo from "./styles/Logo";
 import MenuIcon from "../common/icons/MenuIcon";
 import SettingsIcon from "../common/icons/SettingsIcon";
-import { useAccessLevel } from "../common/common.fetch";
+import { usePlanSettings } from "../plan/services/plan.utils";
 
 
 function Header({ title }) {
   const modal = useRef(null);
-  const { access } = useAccessLevel();
+  const { access, settings, voter } = usePlanSettings();
 
-  /* Check if admin && planVisible OR if player && planVote && player in plan */
-  const planIsVisible = true
+  const planIsVisible = access > 2 || settings.planstatus === 3 || (settings.planstatus === 2 ? voter : access > 1);
 
   return (<>
     <HeaderStyle>
