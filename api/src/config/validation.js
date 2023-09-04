@@ -115,6 +115,9 @@ module.exports = {
     swap: {
       swap: { min: 2, max: 2 },
     },
+    plan: {
+      voters: { min: 0, max: 100 },
+    }
   },
 
   types: {
@@ -178,6 +181,9 @@ module.exports = {
       swap: "object[]",
       "swap.*.id": "uuid",
       "swap.*.playerid": "uuid",
+    },
+    plan: {
+      voters: "uuid[]",
     }
   }
 };

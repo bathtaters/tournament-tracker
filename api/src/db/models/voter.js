@@ -1,17 +1,17 @@
 /* *** VOTER Object *** */
-const db = require('../admin/interface');
-const defs = require('../../config/validation').defaults.voter;
+const db = require('../admin/interface')
+const sql = require('../sql/strings').voter
 
 // Get single or all vote data
 const get = (id) => db.getRow('voter', id)
 
 // Add player as voter
-const add = (id) => db.addRow('voter', { ...defs, id });
+const add = (ids) => db.query(sql.add, [ids])
 
 // Remove player as voter
-const rmv = (id) => db.rmvRow('voter', id);
+const rmvOther = (ids) => db.query(sql.rmv, [ids])
 
 // Set player's votes
-const set = (id, newData) => db.updateRow('voter', id, newData);
+const set = (id, newData) => db.updateRow('voter', id, newData)
 
-module.exports = { get, add, rmv, set }
+module.exports = { get, add, rmvOther, set }

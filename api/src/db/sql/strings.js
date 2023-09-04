@@ -23,3 +23,8 @@ exports.match = {
     undrop: "UPDATE match SET drops = ARRAY_REMOVE(drops, $2) WHERE id = $1 RETURNING eventid;",
     complete: exports.event.complete,
 }
+
+exports.voter = {
+    add: "INSERT INTO voter (id) SELECT id FROM player WHERE id = ANY($1) ON CONFLICT DO NOTHING RETURNING id;",
+    rmv: "DELETE FROM voter WHERE NOT(id = ANY($1)) RETURNING id;",
+}

@@ -1,7 +1,9 @@
-const validate = require('./shared.validators').bySet('voter')
+const validate = require('./shared.validators')
+const voter = validate.bySet('voter')
+const plan = validate.bySet('plan')
 
 module.exports = {
-  playerid:     validate('id'),
-  newPlayer:    validate(null, 'id'),
-  updatePlayer: validate('id', 'all', 1),
+  playerid:    voter('id'),
+  setVoters:   plan(null, 'voters'),
+  updateVotes: voter('id', 'all', 1),
 }
