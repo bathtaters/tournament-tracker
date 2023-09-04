@@ -2,7 +2,7 @@ import { useState, useRef } from "react"
 import { useOpenAlert } from "../../../common.hooks"
 import { duplicateItemAlert } from "../../../../../assets/alerts"
 
-export default function useEditableListController({ type, value, onChange, query, idKey, nameKey, autofill, isLocked, onFirstChange }) {
+export default function useEditableListController({ type, value, onChange, query, idKey, nameKey, filter, autofill, isLocked, onFirstChange }) {
 
   // Get Global State
   const { data, isLoading, error } = query
@@ -48,7 +48,7 @@ export default function useEditableListController({ type, value, onChange, query
     nameKey,
     autofill,
     // Get list of itemes that are not already selected
-    remaining: data ? Object.keys(data).filter((id) => !value?.includes(id)) : [],
+    remaining: data ? Object.keys(data).filter((id) => !value?.includes(id) && (!filter || filter(data[id], id))) : [],
   }
 
   // Pass to renderer

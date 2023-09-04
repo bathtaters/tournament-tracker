@@ -51,6 +51,7 @@ export default function usePlayerEditorController(type, onChange, fillAll) {
         create: {
             label: 'Add player...',
             mutation: createPlayer,
+            hideOnEmpty: true,
         }
     }
 }

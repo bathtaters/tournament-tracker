@@ -3,10 +3,9 @@
 import { suggestText, debugLogging } from '../../../../assets/config'
 
 // Hide 'static' entries, Hide list when text-box is empty
-export const hideStaticWhenEmpty = suggestText.hideStaticWhenEmpty,
+export const logInvalidEntries = debugLogging, // Log to console when list contains invalid entries
   hideListWhenEmpty = suggestText.hideListWhenEmpty,
-  hideListWhenExact = suggestText.hideListWhenExact,
-  logInvalidEntries = debugLogging // Log to console when list contains invalid entries
+  hideListWhenExact = suggestText.hideListWhenExact
 
 // adapt list entry for display
 export const displayEntry = (entry) => entry?.value

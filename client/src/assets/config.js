@@ -5,7 +5,6 @@ export const debugLogging = false
 export const suggestText = {
   hideListWhenExact: false, // when exact match is entered, hide list
   hideListWhenEmpty: false, // when textbox empty: false = show all / true = show none
-  hideStaticWhenEmpty: true, // when ^ is false, don't show 'static' options (ie. 'add player')
 }
 
 export const counter = {

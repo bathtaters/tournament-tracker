@@ -10,10 +10,10 @@ import { listClassDef } from "./services/suggestText.custom"
 
 const SuggestText = forwardRef(function SuggestText({
   list = [], placeholder, className, listClasses = listClassDef, label = "suggest-text",
-  onChange, onFocus, onSubmit, isHidden, children
+  onChange, onFocus, onSubmit, isHidden, hideStaticWhenEmpty, children
 }, ref) {
 
-  const { boxProps, listProps, showList } = useSuggestTextController(list, isHidden, onChange, onSubmit, onFocus, ref)
+  const { boxProps, listProps, showList } = useSuggestTextController(list, isHidden, onChange, onSubmit, onFocus, hideStaticWhenEmpty, ref)
 
   return (
     <WrapperStyle className={listClasses.main ?? ""}>

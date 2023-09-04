@@ -4,7 +4,7 @@ import { getSelected, getNext, getPrev, validList, getNonStaticSolo, useHotkeys 
 import { displayEntry, enterBehavior, hideListWhenExact, getId } from "./suggestText.custom"
 
 
-function useSuggestTextController(list, isHidden, onChange, onSubmit, onFocus, ref) {
+function useSuggestTextController(list, isHidden, onChange, onSubmit, onFocus, hideStaticWhenEmpty, ref) {
   
   // --- Component State --- \\
 
@@ -27,7 +27,7 @@ function useSuggestTextController(list, isHidden, onChange, onSubmit, onFocus, r
   // Auto update state
   useEffect(() => autoSelect(selected, suggestions, setSelected), [selected, suggestions])
   // eslint-disable-next-line
-  useEffect(() => { startTransition(() => getSuggestions(list, value, setSuggestions, setExact)) }, [list]) // Pass prop updates to state
+  useEffect(() => { startTransition(() => getSuggestions(list, value, setSuggestions, setExact, hideStaticWhenEmpty)) }, [list]) // Pass prop updates to state
 
   // --- Action Handlers --- \\
 

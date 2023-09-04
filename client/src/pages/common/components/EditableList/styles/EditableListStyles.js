@@ -13,11 +13,15 @@ export function ListRowStyle({ children }) {
   return (<div className="min-w-48 my-1">{ children }</div>);
 }
 
-export function ListNameStyle({ isMissing, children }) {
+export function ListNameStyle({ isMissing, onClick, children }) {
+  const Tag = onClick ? 'button' : 'span'
   return (
-    <span className={"align-middle"+(isMissing ? " italic opacity-90" : "")}>
-      { children }
-    </span>
+    <Tag
+      className={`align-middle${isMissing ? ' italic opacity-90' : ''}${onClick ? ' link link-hover' : ''}`} 
+      onClick={onClick}
+    >
+      {children}
+    </Tag>
   )
 }
 

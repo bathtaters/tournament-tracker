@@ -22,6 +22,7 @@ const ListInput = forwardRef(function ListInput(props, ref) {
         list={suggestions}
         isHidden={isHidden}
         onSubmit={submitHandler}
+        hideStaticWhenEmpty={props.create.hideOnEmpty}
         ref={ref}
       />
       <SuggestTextSpacer />

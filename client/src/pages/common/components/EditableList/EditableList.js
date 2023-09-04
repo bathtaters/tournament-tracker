@@ -13,9 +13,11 @@ function EditableList({
   onChange,
   query,
   autofill = { onClick: null, label: 'Autofill' },
-  create = { mutation: null, label: 'Add' },
+  create = { mutation: null, label: 'Add', hideOnEmpty: false },
+  onClick = null,
   isLocked = false,
   onFirstChange = null,
+  filter = null,
   idKey = 'id',
   nameKey = 'name',
 }) {
@@ -24,7 +26,7 @@ function EditableList({
     data, inputData,
     suggestRef, popItem,
     isLoading, error,
-  } = useEditableListController({ type, value, onChange, query, idKey, nameKey, autofill, isLocked, onFirstChange })
+  } = useEditableListController({ type, value, onChange, query, idKey, nameKey, filter, autofill, isLocked, onFirstChange })
 
 
   // Loading/Error catcher
@@ -39,6 +41,7 @@ function EditableList({
         <ListRow
           name={data[id]?.[nameKey]}
           onClick={!isLocked && popItem(id, idx)}
+          onClickName={onClick && onClick(id,idx)}
           key={id}
         />
       ) }
@@ -53,8 +56,15 @@ EditableList.propTypes = {
   type: PropTypes.string,
   value: PropTypes.arrayOf(PropTypes.string).isRequired,
   onChange: PropTypes.func.isRequired,
+  query: PropTypes.object,
+  autofill: PropTypes.object,
+  create: PropTypes.object,
+  onClick: PropTypes.func,
   isLocked: PropTypes.bool,
   onFirstChange: PropTypes.func,
+  filter: PropTypes.func,
+  idKey: PropTypes.string,
+  nameKey: PropTypes.string,
 }
 
 export default EditableList
