@@ -1,36 +1,30 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { usePlanSettings } from "../services/plan.hooks"
-import { useThrottle } from "../../common/services/basic.services"
 import { plan as config } from "../../../assets/config"
-import { dateArrToRange, dateRangeToArr, pickerDates } from "./dates.services"
-
+import { datePickerToArr, serverDatesToArr } from "./dates.services"
+import { useServerListValue, useServerValue } from "../../common/common.hooks"
 
 export default function usePlanStart() {
     const { settings, setStatus, updateSettings } = usePlanSettings()
-    const throttle = useThrottle(config.updateDelay)
 
-    const [dates, setDates] = useState(pickerDates(settings, dateArrToRange(settings?.plandates)))
-    const handleDateChange = (dates) => {
-        setDates(pickerDates(settings, dates))
-        throttle(() => updateSettings({ plandates: dateRangeToArr(dates, settings) }))
-    }
+    const [dates, setDates] = useServerListValue(
+        serverDatesToArr(settings, settings?.plandates),
+        (plandates) => updateSettings({ plandates }),
+        { throttleDelay: config.updateDelay }
+    )
+    const handleDateChange = (dates) => setDates(datePickerToArr(settings, dates))
 
-    const [slots, setSlots] = useState(settings?.planslots)
-    const handleSlotChange = (ev) => {
-        const planslots = +(ev.target.value)
-        setSlots(planslots)
-        throttle(() => updateSettings({ planslots }))
-    }
+    const [slots, setSlots] = useServerValue(
+        settings?.planslots,
+        (planslots) => updateSettings({ planslots }),
+        { throttleDelay: config.updateDelay }
+    )
+    const handleSlotChange = (ev) => setSlots(+(ev.target.value))
 
     const [players, setPlayers] = useState([])
     const handlePlayerChange = (players) => setPlayers(players)
-
-    // FIX THIS --
-    // eslint-disable-next-line
-    useEffect(() => { if (settings?.plandates?.length) setDates(dateArrToRange(settings?.plandates)) }, [settings?.plandates?.[0], settings?.plandates?.[settings?.plandates?.length - 1]])
-    // eslint-disable-next-line
-    useEffect(() => { if (settings?.planslots != null) setSlots(settings?.planslots) }, [settings?.planslots])
-
+    
+    
     return {
         settings, setStatus,
         dates, handleDateChange,

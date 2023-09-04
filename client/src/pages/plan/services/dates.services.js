@@ -1,12 +1,19 @@
 
-export const pickerDates = ({ datestart, dateend } = {}, { startDate, endDate } = {}) => ({
-    startDate: startDate || datestart,
-    endDate:   endDate   || dateend,
-})
+export const datePickerToArr = ({ datestart, dateend } = {}, { startDate, endDate } = {}) => [
+    startDate || datestart,
+    endDate   || dateend,
+]
 
-export function dateRangeToArr({ startDate, endDate }) {
-    let date = new Date(startDate)
-    const end = new Date(endDate)
+export const serverDatesToArr = ({ datestart, dateend } = {}, dateArr = []) => [
+    dateArr[0] || datestart,
+    dateArr[1] || dateend,
+]
+
+export const dateArrToPicker = (dates) => ({ startDate: dates[0], endDate: dates[1] })
+
+export function dateArrToList(dateArr) {
+    let date = new Date(dateArr[0])
+    const end = new Date(dateArr[1])
     
     let arr = []
     while (date <= end) {
@@ -14,13 +21,4 @@ export function dateRangeToArr({ startDate, endDate }) {
         date.setDate(date.getDate() + 1)
     }
     return arr
-}
-
-export function dateArrToRange(dates) {
-    let range = { startDate: dates[0], endDate: dates[0] }
-    dates.forEach((date) => {
-        if (date < range.startDate) range.startDate = date
-        if (date > range.endDate)   range.endDate   = date
-    })
-    return range
 }

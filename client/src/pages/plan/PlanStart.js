@@ -4,6 +4,7 @@ import PlayerEditor from "../eventEditor/components/PlayerEditor"
 import { PlanWrapperStyle, PlanTitleStyle, PlanRowStyle, InputWrapperStyle, PlanFooterStyle, PlanButton } from "./styles/PlanStyles"
 import { RangeInputStyle } from "./styles/PlanStartStyles"
 import usePlanStart from "./services/planStart.service"
+import { dateArrToPicker } from "./services/dates.services"
 import { useAccessLevel } from "../common/common.fetch"
 import { planTitle } from "../../assets/constants"
 
@@ -28,7 +29,7 @@ function PlanStart() {
             <PlanRowStyle>
                 <InputWrapperStyle label="Date Range">
                     <DatePicker
-                        value={dates}
+                        value={dateArrToPicker(dates)}
                         onChange={handleDateChange}
                         minDate={settings?.datestart}
                         maxDate={settings?.dateend}
