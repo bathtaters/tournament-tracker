@@ -24,11 +24,14 @@ export default function usePlanStart() {
     const [players, setPlayers] = useState([])
     const handlePlayerChange = (players) => setPlayers(players)
     
-    
+    const [events, setEvents] = useState([])
+    const handleEventChange = (events) => setEvents(events)
+
     return {
         settings, setStatus,
         dates, handleDateChange,
         slots, handleSlotChange,
         players, handlePlayerChange,
+        events, handleEventChange,
     }
 }

@@ -1,6 +1,7 @@
 import React from "react"
 import DatePicker from "react-tailwindcss-datepicker"
 import PlayerEditor from "../eventEditor/components/PlayerEditor"
+import EventList from "./components/EventList"
 import { PlanWrapperStyle, PlanTitleStyle, PlanRowStyle, InputWrapperStyle, PlanFooterStyle, PlanButton } from "./styles/PlanStyles"
 import { RangeInputStyle } from "./styles/PlanStartStyles"
 import usePlanStart from "./services/planStart.service"
@@ -20,6 +21,7 @@ function PlanStart() {
         dates, handleDateChange,
         slots, handleSlotChange,
         players, handlePlayerChange,
+        events, handleEventChange,
     } = usePlanStart()
 
     return (
@@ -46,13 +48,9 @@ function PlanStart() {
             </PlanRowStyle>
 
             <PlanRowStyle>
-                <PlayerEditor type="Voter" value={players} onChange={handlePlayerChange}  />
+                <PlayerEditor type="Voter" value={players} onChange={handlePlayerChange} fillAll={true}  />
 
-                <InputWrapperStyle label="Events (0)">
-                    <div className="w-full min-h-[24rem] flex-grow flex justify-center items-center border">
-                        <span>UNDER CONSTRUCTION</span>
-                    </div>
-                </InputWrapperStyle>
+                <EventList value={events} onChange={handleEventChange} />
             </PlanRowStyle>
 
             {access > 2 && 
