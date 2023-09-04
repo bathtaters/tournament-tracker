@@ -50,7 +50,7 @@ function PlanStart() {
             <PlanRowStyle>
                 <PlayerEditor type="Voter" value={players.sort()} onChange={handlePlayerChange} fillAll={true}  />
 
-                <EventList value={events} onChange={handleEventChange} />
+                <EventList value={events.sort()} onChange={handleEventChange} />
             </PlanRowStyle>
 
             {access > 2 && 

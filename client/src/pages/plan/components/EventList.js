@@ -1,27 +1,19 @@
 import React from "react"
+import Modal from "../../common/Modal"
 import EditableList from "../../common/components/EditableList/EditableList"
-import { useEventQuery } from "../voter.fetch"
+import EditEvent from "../../eventEditor/EditEvent"
+import useEventList from "../services/eventList.controller"
 
 function EventList({ value, onChange }) {
+    const { modal, editId, listProps } = useEventList(value, onChange)
     
-    const query = useEventQuery()
+    return (<>
+        <EditableList type="Event" {...listProps} />
 
-    const autofill = {
-        label: `Fill ${query.data ? Object.keys(query.data).length : 'All'}`,
-        onClick: () => { onChange(Object.keys(query.data)) },
-    }
-
-    return (
-        <EditableList
-            type="Event"
-            value={value}
-            onChange={onChange}
-            nameKey="title"
-            query={query}
-            autofill={autofill}
-            // create={create}
-        />
-    )
+        <Modal ref={modal}>
+            <EditEvent modal={modal} eventid={editId} hidePlayers={true} />
+        </Modal>
+    </>)
 }
 
 export default EventList
