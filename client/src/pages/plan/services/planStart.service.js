@@ -1,9 +1,8 @@
-import { useState } from "react"
-import { usePlanSettings } from "../services/plan.hooks"
-import { plan as config } from "../../../assets/config"
+import { useVoterQuery, useEventQuery, useSetVotersMutation, useSetEventsMutation } from "../voter.fetch"
 import { datePickerToArr, serverDatesToArr } from "./dates.services"
+import { usePlanSettings } from "../services/plan.hooks"
 import { useServerListValue, useServerValue } from "../../common/common.hooks"
-import { useSetVotersMutation, useVoterQuery } from "../voter.fetch"
+import { plan as config } from "../../../assets/config"
 
 export default function usePlanStart() {
 
@@ -33,7 +32,13 @@ export default function usePlanStart() {
     const handlePlayerChange = (players) => setPlayers(players)
     
 
-    const [events, setEvents] = useState([])
+    const { data: eventData } = useEventQuery()
+    const [ setEventPlan ] = useSetEventsMutation()
+    const [events, setEvents] = useServerListValue(
+        eventData ? Object.keys(eventData).filter((id) => eventData[id].plan) : [],
+        (ids) => setEventPlan(ids),
+        { throttleDelay: config.updateDelay }
+    )
     const handleEventChange = (events) => setEvents(events)
 
     return {

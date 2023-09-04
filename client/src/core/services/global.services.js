@@ -7,6 +7,12 @@ import { setFetch, lockScreenUntilLoaded } from "../store/globalSlice";
 export const useFetchingStatus = () => useSelector((state) => state.global.isFetching)
 
 
+// Get args of all cache items under endpoint
+export const getCachedArgs = (globalState, endpoint) =>
+    Object.values(globalState.dbApi.queries)
+        .filter(({ endpointName, originalArgs }) => originalArgs && endpointName === endpoint)
+        .map(({ originalArgs }) => originalArgs)
+
 // Check if any queries are currently running, set global
 export function useFetchingProvider(reducerPath = fetchApi.reducerPath) {
   // Get actual value
