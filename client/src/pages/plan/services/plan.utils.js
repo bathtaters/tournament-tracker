@@ -12,7 +12,7 @@ export function usePlanSettings() {
     const [ updateSettings ] = useUpdateSettingsMutation()
     const [ updateVoter    ] = useUpdateVoterMutation()
 
-    const setStatus = useCallback((status) => () => updateSettings({ planstatus: status }), [updateSettings])
+    const setStatus = useCallback((planstatus) => () => updateSettings({ planstatus }), [updateSettings])
 
     const setDays   = useCallback((days)   => updateVoter({ id: voter?.id, days   }), [voter?.id, updateVoter])
     const setEvents = useCallback((events) => updateVoter({ id: voter?.id, events }), [voter?.id, updateVoter])
@@ -48,13 +48,21 @@ export const serverDatesToArr = ({ datestart, dateend } = {}, dateArr = []) => [
 export const dateArrToPicker = (dates) => ({ startDate: dates[0], endDate: dates[1] })
 
 export function dateArrToList(dateArr) {
+    if (!dateArr || !dateArr[0] || !dateArr[1]) return []
     let date = new Date(dateArr[0])
     const end = new Date(dateArr[1])
     
     let arr = []
     while (date <= end) {
-        arr.push(date.toISOString().slice(0,10))
+        arr.push(new Date(date))
         date.setDate(date.getDate() + 1)
     }
     return arr
 }
+
+export const formatDate = (date, incYear) => date &&
+    new Date(date).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: incYear ? 'numeric' : undefined
+    })

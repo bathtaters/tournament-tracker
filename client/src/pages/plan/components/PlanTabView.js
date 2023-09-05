@@ -1,22 +1,35 @@
 import React from "react"
-import { useEventQuery, usePlayerQuery } from "../../common/common.fetch"
+import { ViewWrapperStyle, ViewSettingsStyle, ViewCellStyle, ViewCellSectionStyle, ViewAllEventsStyle, ViewEventStyle } from "../styles/PlanTabViewStyles"
+import { usePlayerQuery } from "../voter.fetch"
+import { formatDate } from "../services/plan.utils"
 
-function PlanTabView({ data = {} }) {
-    const { data: players = {} } = usePlayerQuery()
-    const { data: events = {} } = useEventQuery()
+
+function PlanTabView({ voters = {}, events = {}, settings = {} }) {
+    const { data: players } = usePlayerQuery()
+    const dateRange = settings.plandates || []
+
     return (
-        <div className="flex flex-row flex-wrap justify-center items-start gap-4 m-4">
-            {Object.values(data).map((voter) => 
-                <div className="min-w-48 min-h-32 border flex flex-col justify-start items-center p-4 rounded-md" key={voter.id}>
-                    <h4>{players[voter.id]?.name || '...'}</h4>
-                    <h5>Available:</h5>
-                    <div>{voter.days.join(', ')}</div>
-                    <h5>Rank:</h5>
-                    <ol>
-                        {voter.events.map((id) => <li key={id}>{events[id]?.title || '...'}</li>)}
-                    </ol>
-                </div>
-            )}
+        <div>
+            <ViewSettingsStyle header={"Schedule Range"}> 
+                {formatDate(dateRange[0], true)} – {formatDate(dateRange[1], true)}
+            </ViewSettingsStyle>
+            
+            <ViewSettingsStyle header={"Events Per Day"}> {settings.dayslots}</ViewSettingsStyle>
+
+            <ViewWrapperStyle>
+                {Object.values(voters).map((voter) => (
+
+                    <ViewCellStyle key={voter.id} header={players[voter.id]?.name}>
+                        <ViewCellSectionStyle header="Unavailable">
+                            {voter.days.map(formatDate).join(', ') || 'None'}
+                        </ViewCellSectionStyle>
+
+                        <ViewAllEventsStyle header="Vote">
+                            {voter.events.map((id) => <ViewEventStyle key={id} title={events[id]?.title} />)}
+                        </ViewAllEventsStyle>
+                    </ViewCellStyle>
+                ))}
+            </ViewWrapperStyle>
         </div>
     )
 }

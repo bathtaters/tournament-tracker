@@ -9,7 +9,8 @@ import usePlanVoteController, { planTabs } from "./services/planVote.controller"
 
 function PlanVote() {    
     const {
-        data, isLoading, error, redirect,
+        data, events, settings,
+        isLoading, error, redirect,
         title, access, setStatus,
         tab, selectTab, showTabs,
     } = usePlanVoteController()
@@ -30,7 +31,7 @@ function PlanVote() {
             
             { tab === 0 && <PlanTabVote data={data} /> }
 
-            { tab === 1 && <PlanTabView data={data} /> }
+            { tab === 1 && <PlanTabView voters={data} events={events} settings={settings} /> }
 
         </PlanWrapperStyle>
     )
