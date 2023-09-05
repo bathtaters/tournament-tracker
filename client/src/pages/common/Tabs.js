@@ -6,7 +6,7 @@ const TabWrapperStyle = (props) => (
 
 const TabStyle = ({ selected, children, ...props }) => (
     <button className={`tab tab-bordered${selected ? ' tab-active' : ''}`} {...props}>
-        <h3 className=" text-xl">{children}</h3>
+        <h3 className="text-xl">{children}</h3>
     </button>
 )
 
