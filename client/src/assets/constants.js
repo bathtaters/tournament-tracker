@@ -5,7 +5,8 @@ import { basicTemplate } from "./formatting";
 
 export const footerText = "bathtaters – 2022";
 
-export const dragType = { event: "json/eventday", player: "json/matchplayer" };
+export const dragType = { event: "json/eventday", player: "json/matchplayer", vote: "json/vote" };
+export const boxIDs = { RANKED: 'ranked', UNRANKED: 'unranked' };
 
 export const statusInfo = [
   { label: 'N/A',         badge: "badge-warning", linkClass: "link-warning", textClass: "text-warning"      },

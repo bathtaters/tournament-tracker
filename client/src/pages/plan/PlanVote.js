@@ -29,7 +29,7 @@ function PlanVote() {
 
             { showTabs && <Tabs labels={planTabs} value={tab} onChange={selectTab} /> }
             
-            { tab === 0 && <PlanTabVote data={data} /> }
+            { tab === 0 && <PlanTabVote voter={data} events={events} settings={settings} /> }
 
             { tab === 1 && <PlanTabView voters={data} events={events} settings={settings} /> }
 

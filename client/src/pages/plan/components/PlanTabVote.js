@@ -1,26 +1,50 @@
-import React from "react"
+import React, { useState } from "react"
 import { PlanRowStyle } from "../styles/PlanStyles"
-import { useEventQuery } from "../../common/common.fetch"
+import DateMultiSelect from "./DateMultiSelect"
+import { GeneralSectionStyle } from "../styles/PlanTabVoteStyles"
+import EventDragger from "./EventDragger"
+import { useRankState } from "../services/planVote.services"
+import { planEvents } from "../services/plan.utils"
 
-function PlanTabVote({ data }) {
-    const { data: events = {} } = useEventQuery()
-    const eventList = Object.values(events).filter(({ plan }) => plan).map(({ title }) => title)
 
-    return (
-        <div>
-            <div className="w-full my-4 p-4 border">DATE PICKER: {data?.days && data.days.join(', ')}</div>
-            <PlanRowStyle>
-                <div className="w-full min-h-32 border flex flex-col justify-start items-center p-2">
-                    <h5>RANKED CHOICES</h5>
-                    {data?.events && data.events.join(', ')}
-                </div>
-                <div className="w-full min-h-32 border flex flex-col justify-start items-center p-2">
-                    <h5>AVAILABLE EVENTS</h5>
-                    {eventList.join(', ')}
-                </div>
-            </PlanRowStyle>
-        </div>
-    )
+function PlanTabVote({ voter, events, settings }) {
+    
+    const eventList = planEvents(events)
+    
+    const [ dates, setDates ] = useState([])
+    const [ ranked, setRanked ] = useRankState(eventList, voter)
+    
+    const unranked = eventList.filter((id) => !ranked.includes(id))
+    
+
+    return (<>
+        <GeneralSectionStyle header="Pick Available Days">
+            <DateMultiSelect range={settings?.plandates} value={dates} onChange={setDates} />
+        </GeneralSectionStyle>
+
+        <PlanRowStyle>
+            <GeneralSectionStyle header="Ranked Events">
+                <EventDragger
+                    boxId="ranked"
+                    eventIds={ranked}
+                    events={events}
+                    slots={eventList.length}
+                    onDrop={setRanked}
+                    numberSlots={true}
+                />
+            </GeneralSectionStyle>
+
+            <GeneralSectionStyle header="Unranked Events">
+                <EventDragger
+                    boxId="unranked"
+                    eventIds={unranked}
+                    events={events}
+                    slots={Math.min(unranked.length + 1, eventList.length)}
+                    onDrop={setRanked}
+                />
+            </GeneralSectionStyle>
+        </PlanRowStyle>
+    </>)
 }
 
 export default PlanTabVote
