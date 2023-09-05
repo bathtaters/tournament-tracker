@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { suggestListLayout } from "../styles/EditableListStyles"
-import { debugLogging } from "../../../../../assets/config"
+import { debugLogging } from "../../../../assets/config"
 
 
 export default function useListInputController({ data, idKey, nameKey, remaining, onFirstEdit, pushItem, create }, ref) {

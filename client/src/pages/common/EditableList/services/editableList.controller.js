@@ -1,6 +1,6 @@
 import { useState, useRef } from "react"
-import { useOpenAlert } from "../../../common.hooks"
-import { duplicateItemAlert } from "../../../../../assets/alerts"
+import { useOpenAlert } from "../../common.hooks"
+import { duplicateItemAlert } from "../../../../assets/alerts"
 
 export default function useEditableListController({ type, value, onChange, query, idKey, nameKey, filter, autofill, isLocked, onFirstChange }) {
 

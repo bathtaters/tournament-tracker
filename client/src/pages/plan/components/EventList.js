@@ -1,6 +1,6 @@
 import React from "react"
 import Modal from "../../common/Modal"
-import EditableList from "../../common/components/EditableList/EditableList"
+import EditableList from "../../common/EditableList/EditableList"
 import EditEvent from "../../eventEditor/EditEvent"
 import useEventList from "../services/eventList.controller"
 

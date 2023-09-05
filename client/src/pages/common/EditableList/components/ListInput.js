@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react"
-import SuggestText from "../../../SuggestText/SuggestText"
+import SuggestText from "../../SuggestText/SuggestText"
 import { ListRowStyle, SuggestTextSpacer } from "../styles/EditableListStyles"
 import { ListAddButton, ListFillButton } from "../styles/EditableListButtons"
 import useListInputController from "../services/listInput.controller"
