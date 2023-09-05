@@ -1,17 +1,11 @@
 import React from "react"
+export { GeneralSectionStyle } from "./PlanTabVoteStyles"
 
 const emptyPlaceholder = '...'
 
 export const ViewWrapperStyle = ({ children }) => (
     <div className="flex flex-row flex-wrap justify-center items-start gap-4 m-4">
         {children}
-    </div>
-)
-
-export const ViewSettingsStyle = ({ header, children }) => (
-    <div className="w-full text-center">
-        <h4 className="inline-block mr-2 text-secondary">{header}</h4>
-        <span className="font-thin">{children}</span>
     </div>
 )
 
