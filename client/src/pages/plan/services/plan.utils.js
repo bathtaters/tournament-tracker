@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import { useSettingsQuery, useUpdateSettingsMutation, useUpdateVoterMutation, useVoterQuery } from "../voter.fetch"
 import { useEventQuery, useSessionState } from "../../common/common.fetch"
 
@@ -47,22 +47,32 @@ export const serverDatesToArr = ({ datestart, dateend } = {}, dateArr = []) => [
 
 export const dateArrToPicker = (dates) => ({ startDate: dates[0], endDate: dates[1] })
 
-export function dateArrToList(dateArr) {
-    if (!dateArr || !dateArr[0] || !dateArr[1]) return []
-    let date = new Date(dateArr[0])
-    const end = new Date(dateArr[1])
+export function useDateRangeList([ dateStart, dateEnd ]) {
+    return useMemo(() => {
+        if (!dateStart || !dateEnd) return []
     
     let arr = []
+        let date = new Date(dateStart)
+        const end = new Date(dateEnd)
+        
     while (date <= end) {
-        arr.push(new Date(date))
+            arr.push(date.toISOString().slice(0,10))
         date.setDate(date.getDate() + 1)
     }
     return arr
+
+    }, [dateStart, dateEnd])
 }
 
 export const formatDate = (date, incYear) => date &&
     new Date(date).toLocaleDateString(undefined, {
+        timeZone: 'UTC',
         month: 'short',
         day: 'numeric',
         year: incYear ? 'numeric' : undefined
     })
+export const addOrRemove = (values) => (array) => values.reduce(
+    (result, value) => 
+        result.includes(value) ? result.filter((v) => v !== value) : [ ...result, value ],
+    array
+)
