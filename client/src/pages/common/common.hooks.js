@@ -49,9 +49,9 @@ export function useServerValue(value, updateServerCallback, { throttleDelay = 50
 
     // Uses setState((currVal) => newVal) form
     if (typeof newValue === 'function') return setLocal((local) => {
-      newValue = newValue(local)
-      throttle(() => updateServerCallback(newValue))
-      return newValue
+      const val = newValue(local)
+      throttle(() => updateServerCallback(val))
+      return val
     })
 
     // Use setState(newVal) form
