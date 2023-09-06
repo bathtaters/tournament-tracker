@@ -1,7 +1,7 @@
 const parseInterval = require('postgres-interval')
 
-// Decode validation types to [fullStr, typeStr, leaveWhiteSpace (*), isArray ([]), isOptional (?)]
-const typeRegex = /^([^[?*]+)(\*)?(\[\])?(\?)?$/
+// Decode validation types to [fullStr, typeStr, leaveWhiteSpace (*), isArray ([]|[?]), isOptional (?)]
+const typeRegex = /^([^[?*]+)(\*)?(\[\??\])?(\?)?$/
 exports.getTypeArray = (typeStr) => typeStr && typeStr.match(typeRegex)
 
 // Setup date-only parsing

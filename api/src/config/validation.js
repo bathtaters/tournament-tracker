@@ -176,7 +176,7 @@ module.exports = {
     voter: {
       id: "uuid",
       days: "date[]",
-      events: "uuid[]",
+      events: "uuid[?]",
     },
     swap: {
       swap: "object[]",

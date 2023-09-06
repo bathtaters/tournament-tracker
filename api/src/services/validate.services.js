@@ -69,6 +69,10 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
     valid[key+'.*'] = {}
     ptr = valid[key+'.*']
 
+    // Allowable missing array elements
+    if (type[3] === '[?]')
+      ptr.optional = { options: { nullable: true, checkFalsy: false } }
+
     // Set statics for new entry
     ptr.errorMessage = errorText.type(type[1])
     ptr.in = isIn
