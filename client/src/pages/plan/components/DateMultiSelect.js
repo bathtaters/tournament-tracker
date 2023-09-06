@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import React from "react"
 import PropTypes from "prop-types"
 import { DateSelectButton, DateSelectWrapper } from "../styles/DateMultiSelectStyles"
 import { addOrRemove, formatDate, useDateRangeList } from "../services/plan.utils"
@@ -7,10 +7,7 @@ import { addOrRemove, formatDate, useDateRangeList } from "../services/plan.util
 function DateMultiSelect({ range, value, onChange }) {
     const dateList = useDateRangeList(range || [])
 
-    const updateSelected = useCallback(
-        (idx) => onChange(addOrRemove([dateList[idx]])),
-        [dateList, onChange]
-    )
+    const onUpdate = (idx) => onChange(addOrRemove(dateList[idx], value).sort())
 
     return (
         <DateSelectWrapper>
@@ -18,7 +15,7 @@ function DateMultiSelect({ range, value, onChange }) {
                 <DateSelectButton
                     idx={idx}
                     value={value.includes(date)}
-                    onChange={updateSelected}
+                    onChange={onUpdate}
                     key={date}
                 >
                     {formatDate(date)}
@@ -30,7 +27,7 @@ function DateMultiSelect({ range, value, onChange }) {
 
 DateMultiSelect.propTypes = {
     range: PropTypes.arrayOf(PropTypes.string),
-    value: PropTypes.string,
+    value: PropTypes.arrayOf(PropTypes.string),
     onChange: PropTypes.func,
 }
 

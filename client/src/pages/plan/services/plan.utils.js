@@ -101,8 +101,6 @@ export const insert = (array, idx, value) => [
     ...array.slice(idx + 1),
 ]
 
-export const addOrRemove = (values) => (array) => values.reduce(
-    (result, value) => 
-        result.includes(value) ? result.filter((v) => v !== value) : [ ...result, value ],
-    array
-)
+/** Add value to array if it's not there, or remove it if it is */
+export const addOrRemove = (value, array) => 
+    array.includes(value) ? array.filter((v) => v !== value) : [ ...array, value ]
