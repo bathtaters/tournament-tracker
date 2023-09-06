@@ -10,7 +10,7 @@ function EventDragger({ boxId, eventIds, slots, events, onDrop, numberSlots }) {
 
     return (<>
         { arrayPad(eventIds, slots || 0).map((id,slot) => 
-            <DragBlockWrapper number={numberSlots && slot + 1}>
+            <DragBlockWrapper number={numberSlots && slot + 1} key={id || slot}>
 
                 <DragBlock
                     type={dataType}
@@ -19,7 +19,6 @@ function EventDragger({ boxId, eventIds, slots, events, onDrop, numberSlots }) {
                     dropCheck={canDrop}
                     className={dragEventStyle(id && boxId)}
                     draggable={Boolean(id)}
-                    key={id || slot}
                 >
                     {id && events?.[id]?.title}
                 </DragBlock>
