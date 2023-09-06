@@ -24,7 +24,7 @@ function PlanTabVote({ voter, events, settings }) {
     )
 
     // Voter.Events
-    const [ ranked, setRanked ] = useRankState(eventList, voter)
+    const [ ranked, setRanked ] = useRankState(voter, updateVoter)
 
     const unranked = eventList.filter((id) => !ranked.includes(id))
     

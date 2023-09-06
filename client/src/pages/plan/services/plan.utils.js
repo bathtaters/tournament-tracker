@@ -79,10 +79,36 @@ export const formatDate = (date, incYear) => date &&
 
 // ARRAY UTILITIES \\
 
-export const arrayPad = (array, padLength) => padLength < array.length ? array :
-    [ ...array, ...Array(padLength).slice(array.length) ]
+/** Add value to array if it's not there, or remove it if it is */
+export const addOrRemove = (value, array) => 
+    array.includes(value) ? array.filter((v) => v !== value) : [ ...array, value ]
 
-export const swap = (arr, idx) => {
+/** Pad out array to padLength using padVal */
+export const arrayPad = (array, padLength, padVal) => padLength < array.length ? array :
+    [ ...array, ...Array(padLength).fill(padVal).slice(array.length) ]
+
+
+
+const lastTruthyIndex = (array) => {
+    for (let i = array.length - 2; i >= 0; i--) { if (array[i]) return i }
+    return -1
+}
+
+export const arrRemove = (array, idx) => idx === array.length - 1 ?
+    array.slice(0, lastTruthyIndex(array) + 1) :
+    arrInsert(array, idx)
+
+
+export const arrInsert = (array, idx, value) => idx <= array.length ? [
+    ...array.slice(0, idx),
+    value,
+    ...array.slice(idx + 1),
+] : [
+    ...arrayPad(array, idx),
+    value,
+]
+
+export const arrSwap = (arr, idx) => {
     if (idx.length !== 2 || idx[0] === idx[1]) return arr
 
     idx.sort((a, b) => a - b)
@@ -94,13 +120,3 @@ export const swap = (arr, idx) => {
         ...arr.slice(idx[1] + 1),
     ]
 }
-
-export const insert = (array, idx, value) => [
-    ...array.slice(0, idx),
-    value,
-    ...array.slice(idx + 1),
-]
-
-/** Add value to array if it's not there, or remove it if it is */
-export const addOrRemove = (value, array) => 
-    array.includes(value) ? array.filter((v) => v !== value) : [ ...array, value ]

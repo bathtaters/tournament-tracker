@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { boxIDs, dragType } from "../../../assets/constants";
-import { arrayPad, insert, swap } from "./plan.utils";
+import { arrInsert, arrRemove, arrSwap } from "./plan.utils";
+import { useServerListValue } from "../../common/common.hooks";
+import { plan as config } from "../../../assets/config"
 
 // Constants
 export const dataType = dragType.vote
@@ -11,11 +13,13 @@ export const canDrop = (type, a, b) => type === dataType && a.id !== b.id && (a.
 
 
 // Drag controller
-export function useRankState(eventList) {
+export function useRankState(voter, updateVoter) {
 
-    const [ ranked, setRanked ] = useState([])
-
-    useEffect(() => { setRanked((ranked) => arrayPad(ranked, eventList.length)) }, [eventList.length, setRanked])
+    const [ ranked, setRanked ] = useServerListValue(
+        voter?.events,
+        (events) => updateVoter({ id: voter?.id, events }),
+        { throttleDelay: config.updateDelay }
+    )
 
     // from/to form: {id, boxId, slot}
     return [
@@ -24,13 +28,13 @@ export function useRankState(eventList) {
         useCallback(
             (from, to) => {
                 if (from.boxId === to.boxId) {
-                    to.boxId === boxIDs.RANKED && setRanked((ranked) => swap(ranked, [from.slot, to.slot]))
+                    to.boxId === boxIDs.RANKED && setRanked((ranked) => arrSwap(ranked, [from.slot, to.slot]))
                     return;
                 }
                 
                 setRanked((ranked) => to.boxId === boxIDs.RANKED ?
-                    insert(ranked, to.slot, from.id) :
-                    insert(ranked, from.slot, null)
+                    arrInsert(ranked, to.slot, from.id) :
+                    arrRemove(ranked, from.slot)
                 )
             },
             [setRanked]
