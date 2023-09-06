@@ -85,7 +85,7 @@ export const arrayPad = (array, padLength) => padLength < array.length ? array :
 export const swap = (arr, idx) => {
     if (idx.length !== 2 || idx[0] === idx[1]) return arr
 
-    idx.sort()
+    idx.sort((a, b) => a - b)
     return [
         ...arr.slice(0, idx[0]),
         arr[idx[1]],
