@@ -1,15 +1,15 @@
 const { matchedData }  = require('express-validator');
 
 const voter = require('../db/models/voter');
-const { arrToObj } = require('../utils/shared.utils');
+const { arrToObj, toDateStr } = require('../utils/shared.utils');
 
 /* GET player database. */
 
 // Individual player votes
-const getVote = (req, res) => voter.get(matchedData(req).id).then(res.sendAndLog);
+const getVote = (req, res) => voter.get(matchedData(req).id).then(toDateStr).then(res.sendAndLog);
 
 // All player votes
-const getAllVotes = (_, res) => voter.get().then(arrToObj('id')).then(res.sendAndLog);
+const getAllVotes = (_, res) => voter.get().then(arrToObj('id')).then(toDateStr).then(res.sendAndLog);
 
 
 /* SET player database. */
