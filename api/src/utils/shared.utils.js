@@ -74,3 +74,21 @@ exports.filtering = (object, ignoring = ['id']) => {
   });
   return copy;
 };
+
+const isDate = (date) => date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date)
+/**
+ * Rescursively search 'data' for Date objects
+ * and convert them to date strings of form YYYY-MM-DD
+ * @param {any} data 
+ * @returns Copy of data w/ converted dates
+ */
+exports.toDateStr = (data) => {
+  if (typeof data !== 'object' || !data) return data
+  if (isDate(data)) return data.toISOString().slice(0,10)
+
+  if (Array.isArray(data)) return data.map(exports.toDateStr)
+  return Object.entries(data).reduce((obj, [key,val]) => 
+    Object.assign(obj, { [key]: exports.toDateStr(val) }), 
+    {}
+  )
+}
