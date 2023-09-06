@@ -76,6 +76,31 @@ export const formatDate = (date, incYear) => date &&
         year: incYear ? 'numeric' : undefined
     })
 
+function isNextDay(dateA, dateB) {
+    if (!dateA) return true
+
+    let aDate = new Date(dateA)
+    let bDate = new Date(dateB).getDate()
+
+    aDate.setDate(aDate.getDate() + 1)
+    return aDate.getDate() === bDate
+}
+
+export function dateListToRange(dates) {
+    let ranges = [], currRange = []
+    
+    dates.forEach((date) => {
+        if (isNextDay(currRange[currRange.length - 1], date))
+            return currRange[currRange.length ? 1 : 0] = date
+
+        ranges.push(currRange.map((d) => formatDate(d)))
+        currRange = [date]
+    })
+
+    if (currRange.length) ranges.push(currRange.map((d) => formatDate(d)))
+    return ranges
+}
+
 
 // ARRAY UTILITIES \\
 
