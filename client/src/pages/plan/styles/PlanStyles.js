@@ -13,6 +13,12 @@ export const PlanTitleStyle = ({ title, left, right }) => (
     </div>
 )
 
+export const PlanMessageStyle = ({ children }) => (
+    <h3 className="font-thin text-center opacity-80">
+        {children}
+    </h3>
+)
+
 export const PlanRowStyle = ({ children }) => (
     <div className="w-full flex flex-col sm:flex-row justify-stretch gap-4 my-2">
         {children}

@@ -1,6 +1,14 @@
 // Import templates
 import { basicTemplate } from "./formatting";
 
+// -- User Messages -- \\
+
+export const planMessage = {
+  noPlan: "This plan is inactive right now.",
+  notSignedIn: "Please sign in to vote.",
+  notVoter: "You are not a particpant in this plan.",
+};
+
 // -- String Sets -- \\
 
 export const footerText = "bathtaters – 2022";

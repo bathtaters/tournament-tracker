@@ -15,7 +15,7 @@ export default function usePlanVoteController() {
         events, settings,
         
         isLoading, error,
-        redirect: !access || (access < 2 && !voter),
+        isVoter: access && (access > 1 || voter),
         
         title: planTitle[settings.planstatus],
         access: access,

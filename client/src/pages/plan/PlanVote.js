@@ -1,23 +1,29 @@
 import React from "react"
-import { Navigate } from "react-router-dom"
 import Tabs from "../common/Tabs"
 import Loading from "../common/Loading"
 import PlanTabVote from "./components/PlanTabVote"
 import PlanTabView from "./components/PlanTabView"
-import { PlanWrapperStyle, PlanTitleStyle, PlanButton } from "./styles/PlanStyles"
+import { PlanWrapperStyle, PlanTitleStyle, PlanButton, PlanMessageStyle } from "./styles/PlanStyles"
 import usePlanVoteController, { planTabs } from "./services/planVote.controller"
+import { planMessage } from "../../assets/constants"
 
 function PlanVote() {    
     const {
         data, events, settings,
-        isLoading, error, redirect,
+        isLoading, error, isVoter,
         title, access, setStatus,
         tab, selectTab, showTabs,
     } = usePlanVoteController()
     
-    if (isLoading || error) return <Loading loading={isLoading} error={error} altMsg="Loading..." />
-
-    if (redirect) return <Navigate replace to="/home" />
+    if (isLoading || error) return (
+        <Loading loading={isLoading} error={error} altMsg="Loading..." />
+    )
+    
+    if (!isVoter) return (
+        <PlanMessageStyle>
+            {access == null ? planMessage.notSignedIn : planMessage.notVoter}
+        </PlanMessageStyle>
+    )
 
     return (
         <PlanWrapperStyle>
