@@ -36,7 +36,7 @@ function PlanTabView({ voters = {}, events = {}, settings = {} }) {
                     </ViewCellSectionStyle>
 
                     <ViewCellSectionStyle header="Vote" ListTag="ol">
-                        {voter.events.map((id) => <ViewEventStyle key={id} title={events[id]?.title} />)}
+                        {voter.events.map((id,idx) => <ViewEventStyle key={id || idx} title={events[id]?.title} />)}
                     </ViewCellSectionStyle>
                 </ViewCellStyle>
             ))}
