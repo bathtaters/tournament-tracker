@@ -1,10 +1,11 @@
 import React, { useRef } from "react";
-
 import Settings from "../../settings/Settings";
 import Modal from "../../common/Modal";
 import { HeaderStyle, TitleStyle, HeaderButton } from "../styles/ScheduleStyles";
+import { useAccessLevel } from "../../common/common.fetch";
 
-function ScheduleHeader({ isEditing, isLoading, access, setEdit, openModal }) {
+function ScheduleHeader({ isEditing, setEdit, openModal }) {
+  const { access } = useAccessLevel();
   const modal = useRef(null);
     
   return (
@@ -12,7 +13,6 @@ function ScheduleHeader({ isEditing, isLoading, access, setEdit, openModal }) {
       {access > 1 &&
         <HeaderButton
           onClick={()=>openModal()}
-          disabled={isLoading}
         >
           ＋
         </HeaderButton>
@@ -23,7 +23,6 @@ function ScheduleHeader({ isEditing, isLoading, access, setEdit, openModal }) {
       {access > 1 &&
         <HeaderButton
           onClick={()=>setEdit(!isEditing)}
-          disabled={isLoading}
         >
           {isEditing ? 'Back' : 'Edit'}
         </HeaderButton>

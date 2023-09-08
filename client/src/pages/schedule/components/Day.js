@@ -41,7 +41,7 @@ function Day({ events, isEditing, isSlotted, setEventModal, day, eventData }) {
           data={eventData && eventData[eventid]}
           isEditing={isEditing}
           dropHandler={dropHandler}
-          editEvent={()=>setEventModal(eventid)}
+          editEvent={setEventModal && (() => setEventModal(eventid))}
           key={eventid || slot}
         />
       )}
