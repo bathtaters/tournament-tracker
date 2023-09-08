@@ -7,7 +7,7 @@ export function usePlanSettings() {
     const { data: voters,   isLoading: aLoad, error: aErr } = useVoterQuery(null, { skip: !session?.access || session.access < 2 })
     const { data: voter,    isLoading: vLoad, error: vErr } = useVoterQuery(session?.id, { skip: !session?.id })
     const { data: events,   isLoading: eLoad, error: eErr } = useEventQuery()
-    const { data: settings, isLoading: tLoad, error: tErr } = useSettingsQuery() // PlanSettings: { dayslots, planstatus, plandates }
+    const { data: settings, isLoading: tLoad, error: tErr } = useSettingsQuery() // PlanSettings: { planslots, planstatus, plandates }
 
     const [ updateSettings ] = useUpdateSettingsMutation()
     const [ updateVoter    ] = useUpdateVoterMutation()
