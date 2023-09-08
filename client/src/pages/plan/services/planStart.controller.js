@@ -17,7 +17,7 @@ export default function usePlanStartController() {
     
     // Slot Controller
     const [slots, setSlots] = useServerValue(
-        settings?.planslots,
+        settings?.planslots ?? settings?.dayslots,
         (planslots) => updateSettings({ planslots }),
         { throttleDelay: config.updateDelay }
     )
