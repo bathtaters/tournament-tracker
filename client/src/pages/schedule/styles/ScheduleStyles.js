@@ -8,7 +8,7 @@ export function HeaderStyle({ children }) {
 export const TitleStyle = ({ children }) => PageTitleStyle({ className: "inline-block", children });
 
 export function DaysContainerStyle({ children }) {
-  return (<div className="flex flex-wrap justify-center mt-4">{children}</div>);
+  return (<div className="flex flex-wrap justify-center min-h-[24rem] mt-4">{children}</div>);
 }
 
 export function HeaderButton({ children, disabled, onClick }) {

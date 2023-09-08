@@ -66,6 +66,12 @@ export const swapPlayerAlert = {
   buttons: [{ value: "Swap", className: "btn-error" }, "Cancel"], // [0]=Y
 }
 
+export const savePlanAlert = {
+  title: "Replace Schedule",
+  message: "Scheduling these events will unschedule all currently scheduled events.",
+  buttons: [{ value: "Replace", className: "btn-error" }, "Cancel"], // [0]=Y
+}
+
 
 // --- Player Alerts --- \\
 
