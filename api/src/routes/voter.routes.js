@@ -11,6 +11,7 @@ router.get('/all',                         catcher(controller.getAllVotes));
 router.get('/:id',   validate.playerid,    catcher(controller.getVote));
 
 // Sets
+router.delete('/all',                      catcher(controller.resetPlan));
 router.post('/',     validate.setVoters,   catcher(controller.setVoters));
 router.patch('/:id', validate.updateVotes, catcher(controller.updateVote));
 

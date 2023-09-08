@@ -14,4 +14,7 @@ const rmvOther = (ids) => db.query(sql.rmv, [ids])
 // Set player's votes
 const set = (id, newData) => db.updateRow('voter', id, newData)
 
-module.exports = { get, add, rmvOther, set }
+// Remove all voters/planned events and settings
+const reset = () => db.query(sql.reset)
+
+module.exports = { get, add, rmvOther, set, reset }

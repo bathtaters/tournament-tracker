@@ -35,4 +35,9 @@ exports.match = {
 exports.voter = {
     add: "INSERT INTO voter (id) SELECT id FROM player WHERE id = ANY($1) ON CONFLICT DO NOTHING RETURNING id;",
     rmv: "DELETE FROM voter WHERE NOT(id = ANY($1)) RETURNING id;",
+    reset: [
+        "DELETE FROM voter;",
+        "UPDATE event SET plan = FALSE;",
+        "DELETE FROM settings WHERE id = 'plandates' OR id = 'planslots';",
+    ],
 }
