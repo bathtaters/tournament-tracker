@@ -1,7 +1,8 @@
-import { useSetVotersMutation, useSetEventsMutation } from "../voter.fetch"
+import { useSetVotersMutation, useSetEventsMutation, useResetPlanMutation } from "../voter.fetch"
 import { usePlanSettings, datePickerToArr, serverDatesToArr } from "./plan.utils"
-import { useServerListValue, useServerValue } from "../../common/common.hooks"
+import { useOpenAlert, useServerListValue, useServerValue } from "../../common/common.hooks"
 import { plan as config } from "../../../assets/config"
+import { resetPlanAlert } from "../../../assets/alerts"
 
 export default function usePlanStartController() {
 
@@ -40,11 +41,18 @@ export default function usePlanStartController() {
     )
     const handleEventChange = (events) => setEvents(events)
 
+    // Reset Controller
+    const openAlert = useOpenAlert()
+    const [ resetPlan ] = useResetPlanMutation()
+    const handleReset = () => openAlert(resetPlanAlert, 0)
+        .then((answer) => answer && resetPlan())
+
     return {
         settings, setStatus,
         dates, handleDateChange,
         slots, handleSlotChange,
         players, handlePlayerChange,
         events: planEvents, handleEventChange,
+        handleReset,
     }
 }

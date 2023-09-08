@@ -22,6 +22,7 @@ function PlanStart() {
         slots, handleSlotChange,
         players, handlePlayerChange,
         events, handleEventChange,
+        handleReset,
     } = usePlanStartController()
 
     return (
@@ -55,6 +56,7 @@ function PlanStart() {
 
             {access > 2 && 
                 <PlanFooterStyle>
+                    <PlanButton className="btn-error" onClick={handleReset}>Clear All</PlanButton>
                     <PlanButton onClick={setStatus(2)}>Start Vote</PlanButton>
                 </PlanFooterStyle>
             }

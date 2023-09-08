@@ -72,6 +72,12 @@ export const savePlanAlert = {
   buttons: [{ value: "Replace", className: "btn-error" }, "Cancel"], // [0]=Y
 }
 
+export const resetPlanAlert = {
+  title: "Reset Plan",
+  message: "This will erase all vote data and plan settings.",
+  buttons: [{ value: "Erase", className: "btn-error" }, "Cancel"], // [0]=Y
+}
+
 
 // --- Player Alerts --- \\
 

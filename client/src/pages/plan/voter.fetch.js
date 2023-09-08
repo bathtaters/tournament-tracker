@@ -1,5 +1,5 @@
 import { fetchApi, getTags, usePlayerQuery, useEventQuery, useSettingsQuery } from '../common/common.fetch'
-import { voterUpdate, updateVoters, updateEvents } from './services/voterFetch.services'
+import { voterUpdate, updateVoters, updateEvents, updatePlanReset } from './services/voterFetch.services'
 import { useUpdateSettingsMutation } from '../settings/settings.fetch'
 import { debugLogging } from '../../assets/config'
 
@@ -15,7 +15,7 @@ export const voterApi = fetchApi.injectEndpoints({
     updateVoter: build.mutation({
         query: ({ id, ...body }) => ({ url: `voter/${id}`, method: 'PATCH', body }),
         transformResponse: debugLogging ? res => console.log('UPD_VOTE',res) || res : undefined,
-        invalidatesTags: getTags('Voter',{all:0}),
+        invalidatesTags: getTags('Voter'),
         onQueryStarted: voterUpdate,
     }),
 
@@ -32,9 +32,16 @@ export const voterApi = fetchApi.injectEndpoints({
         invalidatesTags: getTags('Event'),
         onQueryStarted: updateEvents,
     }),
+
+    resetPlan: build.mutation({
+        query: () => ({ url: 'voter/all', method: 'DELETE' }),
+        transformResponse: debugLogging ? res => console.log('RESET_VOTE',res) || res : undefined,
+        invalidatesTags: getTags(['Voter'], { addBase: ['Schedule', 'Settings'], addAll: ['Event'] }),
+        onQueryStarted: updatePlanReset,
+    })
   }),
   overrideExisting: true
 })
 
 export { useUpdateSettingsMutation, usePlayerQuery, useEventQuery, useSettingsQuery }
-export const { useVoterQuery, useUpdateVoterMutation, useSetVotersMutation, useSetEventsMutation } = voterApi
+export const { useVoterQuery, useUpdateVoterMutation, useSetVotersMutation, useSetEventsMutation, useResetPlanMutation } = voterApi

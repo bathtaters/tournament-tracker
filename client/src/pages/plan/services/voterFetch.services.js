@@ -37,3 +37,33 @@ export function updateEvents(events, { dispatch, queryFulfilled, getState }) {
 
     queryFulfilled.catch(() => { updateAll.undo(); updateOne.forEach((update) => update.undo()) }) // rollback
 };
+
+export function updatePlanReset(_, { dispatch, queryFulfilled, getState }) {
+    const updateEvents = dispatch(fetchApi.util.updateQueryData('event', undefined, (draft) => {
+        Object.keys(draft).forEach((id) => { draft[id].plan = false })
+    }))
+
+    const updateIndivEvents = getCachedArgs(getState(), 'event').map((event) => 
+        dispatch(fetchApi.util.updateQueryData('event', event, (draft) => { draft.plan = false }))
+    )
+    
+    const updateSettings = dispatch(fetchApi.util.updateQueryData('settings', undefined, (draft) => {
+        delete draft.plandates
+        delete draft.planslots
+    }))
+    
+    const updateVoters = dispatch(fetchApi.util.updateQueryData('voter', undefined, (draft) => {
+        Object.keys(draft).forEach((id) => delete draft[id])
+    }))
+
+    const updateIndivVoters = getCachedArgs(getState(), 'voter').map((voter) => 
+        dispatch(fetchApi.util.updateQueryData('voter', voter, () => ({})))
+    )
+
+    // rollback
+    queryFulfilled.catch(() => {
+        updateEvents.undo(); updateSettings.undo(); updateVoters.undo();
+        updateIndivVoters.forEach((update) => update.undo())
+        updateIndivEvents.forEach((update) => update.undo())
+    })
+};
