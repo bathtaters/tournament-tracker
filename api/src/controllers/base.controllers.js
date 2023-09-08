@@ -57,10 +57,10 @@ async function setSettings(req,res) {
 }
 
 // Schedule data
-const getSchedule = async function(_, res) {
+const getSchedule = (planOnly) => async function(_, res) {
   const [schedule, settingsData] = await Promise.all([
-    event.getSchedule().then(arrToObj('day')),
-    setting.get(['dayslots','datestart','dateend']),
+    event.getSchedule(planOnly).then(arrToObj('day')),
+    setting.get(['dayslots','datestart','dateend','planslots','plandates','showplan']),
   ]);
 
   let settings = {};

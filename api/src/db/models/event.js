@@ -12,7 +12,9 @@ async function get(id, detail=false) {
     return eventData;
 };
 
-const getSchedule = () => db.getRows('schedule');
+const getSchedule = (planOnly) => db.query(`${strings.schedule.prefix}${
+    planOnly ? strings.schedule.planOnly : strings.schedule.useSettings
+}${strings.schedule.suffix}`);
 
 const getOpponents = (eventid, completed=true) => eventid ?
     db.getRow('eventOpps', eventid, null, { idCol: 'eventid', getOne: false }) :

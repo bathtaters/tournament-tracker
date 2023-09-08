@@ -12,10 +12,17 @@ exports.event = {
     deleteRound: "DELETE FROM match WHERE eventid = $1 AND round = $2;",
     complete: "LEFT JOIN event ON event.id = eventid WHERE event.roundactive > event.roundcount",
     plan: "UPDATE event SET plan = NOT(plan) WHERE plan = NOT(id = ANY($1)) RETURNING id;",
+    schedule: {
+        prefix: "SELECT COALESCE(TO_CHAR(day), 'none') as day, JSON_OBJECT_AGG(id::STRING, slot) as eventslots FROM event@date_idx ",
+        useSettings: "WHERE NOT plan OR (SELECT value FROM settings WHERE id = 'showplan') = 'true' ",
+        planOnly: "WHERE plan ",
+        suffix: "GROUP BY day;",
+    },
 }
 
+
 exports.player = {
-    eventFilter: 'SELECT id FROM event WHERE $1::UUID = ANY(players) ORDER BY day ASC;',
+    eventFilter: "SELECT id FROM event WHERE $1::UUID = ANY(players) ORDER BY day ASC;",
 }
 
 exports.match = {

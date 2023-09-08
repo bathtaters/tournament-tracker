@@ -22,8 +22,8 @@ router.get('/settings/:setting', validate.getSetting,  catcher(controller.getSet
 router.patch('/settings',        validate.setSettings, catcher(controller.setSettings));
 
 // Schedule
-router.get('/schedule', catcher(controller.getSchedule));
-
+router.get('/schedule/plan', catcher(controller.getSchedule(true)));
+router.get('/schedule', catcher(controller.getSchedule()));
 
 // RESET TO DEMO DB (Dev only)
 router.post('/reset/full', catcher(controller.resetDB(true)));

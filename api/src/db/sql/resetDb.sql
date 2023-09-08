@@ -135,10 +135,3 @@ FROM match,
     UNNEST(match.players) playerid,
     UNNEST(match.players) oppid
 WHERE oppid != playerid GROUP BY eventid, playerid;
-
-
-CREATE VIEW schedule (day, eventslots)
-AS SELECT
-    COALESCE(TO_CHAR(day), 'none'),
-    JSON_OBJECT_AGG(id::STRING, slot)
-FROM event@date_idx GROUP BY day;
