@@ -33,6 +33,8 @@ module.exports = {
       planstatus: 1,
       plandates: [],
       planslots: 2,
+      planmenu: false,
+      planschedule: false,
     },
     player: {
       name: "New Player",
@@ -134,6 +136,8 @@ module.exports = {
       planstatus: "int",
       plandates: "date[]",
       planslots: "int",
+      planmenu: "boolean",
+      planschedule: "boolean",
     },
     player: {
       id: "uuid",

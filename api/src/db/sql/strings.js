@@ -14,7 +14,7 @@ exports.event = {
     plan: "UPDATE event SET plan = NOT(plan) WHERE plan = NOT(id = ANY($1)) RETURNING id;",
     schedule: {
         prefix: "SELECT COALESCE(TO_CHAR(day), 'none') as day, JSON_OBJECT_AGG(id::STRING, slot) as eventslots FROM event@date_idx ",
-        useSettings: "WHERE NOT plan OR (SELECT value FROM settings WHERE id = 'showplan') = 'true' ",
+        useSettings: "WHERE NOT plan OR (SELECT value FROM settings WHERE id = 'planschedule') = 'true' ",
         planOnly: "WHERE plan ",
         suffix: "GROUP BY day;",
     },

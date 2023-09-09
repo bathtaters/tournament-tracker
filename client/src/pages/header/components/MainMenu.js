@@ -9,7 +9,10 @@ import { usePlanSettings } from "../../plan/services/plan.utils"
 function MainMenu({ modal }) {
     const { access, settings, voter } = usePlanSettings()
 
-    const planIsVisible = access > 2 || settings.planstatus === 3 || (settings.planstatus === 2 ? voter : access > 1)
+    const planIsVisible = access > 2 || (
+        settings.planmenu && settings.planstatus && 
+            (settings.planstatus > 1 ? voter : access > 1)
+    )
 
     return (
         <DropdownStyle>
