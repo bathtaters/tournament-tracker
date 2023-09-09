@@ -1,7 +1,7 @@
 import React from "react";
-import { DropdownStyle, MenuLinkStyle, MenuItemStyle, MenuStyle, headerButtonStyle } from "../styles/HeaderStyles";
-import { ReactComponent as DefaultProfilePic } from "../../../assets/images/blank-user.svg";
+import { DropdownStyle, MenuStyle, MenuLinkStyle, MenuItemStyle, headerButtonStyle } from "./MenuStyles";
 import { defaultPicClass } from "../../profile/styles/ProfileStyles";
+import { ReactComponent as DefaultProfilePic } from "../../../assets/images/blank-user.svg";
 
 export function LoginMenuButton({ initial, src }) {
     return (
