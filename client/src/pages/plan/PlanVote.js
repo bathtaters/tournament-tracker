@@ -11,7 +11,8 @@ function PlanVote() {
     const {
         data, events, settings,
         isLoading, error, isVoter,
-        title, access, setStatus,
+        title, access,
+        handleSetup, handleGenerate,
         tab, selectTab, showTabs,
     } = usePlanVoteController()
     
@@ -29,8 +30,8 @@ function PlanVote() {
         <PlanWrapperStyle>
             <PlanTitleStyle
                 title={title}
-                left={access > 2 && <PlanButton className="btn-secondary" onClick={setStatus(1)}>← Setup</PlanButton>}
-                right={access > 2 && <PlanButton onClick={setStatus(3)}>Generate</PlanButton>}
+                left={access > 2 && <PlanButton className="btn-secondary" onClick={handleSetup}>← Setup</PlanButton>}
+                right={access > 2 && <PlanButton onClick={handleGenerate}>Generate</PlanButton>}
             />
 
             { showTabs && <Tabs labels={planTabs} value={tab} onChange={selectTab} /> }

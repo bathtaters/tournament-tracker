@@ -28,9 +28,23 @@ export const voterApi = fetchApi.injectEndpoints({
 
     setEvents: build.mutation({
         query: (events) => ({ url: `event/plan`, method: 'POST', body: { events }, }),
-        transformResponse: debugLogging ? res => console.log('SET_PLAN',res) || res : undefined,
+        transformResponse: debugLogging ? res => console.log('SET_VOTE_EVENTS',res) || res : undefined,
         invalidatesTags: getTags('Event'),
         onQueryStarted: updateEvents,
+    }),
+
+    genPlan: build.mutation({
+        query: () => ({ url: `plan/generate`, method: 'POST', }),
+        transformResponse: debugLogging ? res => console.log('GEN_PLAN',res) || res : undefined,
+        invalidatesTags: getTags('Event', { addBase: ['Schedule'] }),
+        // onQueryStarted: TODO-updateGenerate,
+    }),
+
+    savePlan: build.mutation({
+        query: () => ({ url: `plan/save`, method: 'POST', }),
+        transformResponse: debugLogging ? res => console.log('SAVE_PLAN',res) || res : undefined,
+        invalidatesTags: getTags('Event', { addBase: ['Schedule'] }),
+        // onQueryStarted: TODO-updateSavePlan,
     }),
 
     resetPlan: build.mutation({
@@ -44,4 +58,7 @@ export const voterApi = fetchApi.injectEndpoints({
 })
 
 export { useUpdateSettingsMutation, usePlayerQuery, useEventQuery, useSettingsQuery }
-export const { useVoterQuery, useUpdateVoterMutation, useSetVotersMutation, useSetEventsMutation, useResetPlanMutation } = voterApi
+export const {
+    useVoterQuery, useUpdateVoterMutation, useSetVotersMutation, useSetEventsMutation,
+    useGenPlanMutation, useSavePlanMutation, useResetPlanMutation,
+} = voterApi

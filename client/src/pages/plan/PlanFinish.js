@@ -1,6 +1,7 @@
 import React from "react"
 import DaysContainer from "../schedule/components/DaysContainer"
 import { PlanWrapperStyle, PlanTitleStyle, PlanFooterStyle, PlanButton } from "./styles/PlanStyles"
+import { useSavePlanMutation } from "./voter.fetch"
 import { usePlanSettings } from "./services/plan.utils"
 import { useOpenAlert } from "../common/common.hooks"
 import { savePlanAlert } from "../../assets/alerts"
@@ -8,11 +9,13 @@ import { planTitle } from "../../assets/constants"
 
 function PlanFinish() {
     const { access, settings, setStatus } = usePlanSettings()
+    const [ savePlan ] = useSavePlanMutation()
     const openAlert = useOpenAlert()
 
-    const handleClick = () =>
-        openAlert(savePlanAlert, 0)
-            .then((answer) => answer && setStatus(1)())
+    const handleClick = async () => {
+        const answer = await openAlert(savePlanAlert, 0)
+        if (answer) savePlan()
+    }
 
     return (
         <PlanWrapperStyle>
