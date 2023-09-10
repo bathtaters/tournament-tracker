@@ -18,14 +18,14 @@ export default function usePlanVoteController() {
         events, settings,
         
         isLoading, error,
-        isVoter: access && (access > 1 || voter),
+        isVoter: access && (access > 2 || voter),
         
         title: planTitle[settings.planstatus],
         access: access,
         handleSetup: setStatus(1),
         handleGenerate: () => generatePlan(),
 
-        showTabs: access > 2 && !!voter,
+        showTabs: Boolean(access && voter && access > 2),
         tab, selectTab,
     }
 }

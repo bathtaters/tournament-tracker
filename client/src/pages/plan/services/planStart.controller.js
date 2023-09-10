@@ -7,7 +7,7 @@ import { resetPlanAlert } from "../../../assets/alerts"
 export default function usePlanStartController() {
 
     // Date Controller
-    const { voters, settings, events, setStatus, updateSettings } = usePlanSettings(true)
+    const { voters, settings, events, setStatus, updateSettings } = usePlanSettings()
     const [dates, setDates] = useServerListValue(
         serverDatesToArr(settings, settings?.plandates),
         (plandates) => updateSettings({ plandates }),

@@ -10,8 +10,8 @@ function MainMenu({ modal }) {
     const { access, settings, voter } = usePlanSettings()
 
     const planIsVisible = access > 2 || Boolean(
-        settings.planmenu && settings.planstatus && 
-            (settings.planstatus > 1 ? voter : access > 1)
+        settings?.planmenu && settings.planstatus && 
+            (settings.planstatus === 2 ? access && voter : settings.planstatus > 2 || access === 2)
     )
 
     return (
