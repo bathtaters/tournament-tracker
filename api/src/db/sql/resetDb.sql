@@ -45,6 +45,7 @@ CREATE TABLE event (
     slot SMALLINT NOT NULL DEFAULT 0,
     plan BOOL NOT NULL DEFAULT false,
     players UUID[] NOT NULL DEFAULT '{}',
+    playercount SMALLINT NOT NULL DEFAULT 0,
     roundactive SMALLINT NOT NULL DEFAULT 0,
     roundcount SMALLINT NOT NULL DEFAULT 3,
     wincount SMALLINT NOT NULL DEFAULT 2,
@@ -94,14 +95,14 @@ GRANT SELECT ON TABLE * TO db_read;
 -- COMBO VIEWS --
 
 CREATE VIEW eventDetail (
-    id, title, players, playerspermatch,
+    id, title, players, playercount, playerspermatch,
     day, slot, roundactive, roundcount, wincount, notes, link,
     allreported,
     anyreported,
     byes,
     drops
 ) AS SELECT
-    event.id, event.title, event.players, playerspermatch,
+    event.id, event.title, event.players, playercount, playerspermatch,
     day, slot, roundactive, roundcount, wincount, notes, link,
     BOOL_AND(reported),
     BOOL_OR(reported) FILTER(

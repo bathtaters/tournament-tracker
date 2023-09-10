@@ -123,12 +123,13 @@ event:
 	slot SMALLINT = 0
 	plan BOOLEAN = false
 	players [player.id] = []
+	playercount SMALLINT = 0
 	roundactive SMALLINT = 0
 	roundcount SMALLINT = 3
-	wincount SMALLINT = 2,
+	wincount SMALLINT = 2
 	playerspermatch SMALLINT = 2
-	notes STRING NOT NULL DEFAULT '',
-    link STRING NOT NULL DEFAULT '',
+	notes STRING NOT NULL DEFAULT ''
+    link STRING NOT NULL DEFAULT ''
 	
 	(clock:)
 	clocklimit INTERVAL = 60min

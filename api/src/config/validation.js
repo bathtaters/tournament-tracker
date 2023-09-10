@@ -50,6 +50,7 @@ module.exports = {
       slot: 0,
       plan: false,
       players: [],
+      playercount: 8,
       roundactive: 0,
       roundcount: 3,
       wincount: 2,
@@ -94,6 +95,7 @@ module.exports = {
     event: {
       title: sharedLimits.title,
       players: sharedLimits.player,
+      playercount: sharedLimits.player,
       slot: sharedLimits.slots,
       roundactive: sharedLimits.activeRounds,
       roundcount: sharedLimits.rounds,
@@ -155,6 +157,7 @@ module.exports = {
       slot: "int",
       plan: "boolean",
       players: "uuid[]",
+      playercount: "int",
       roundactive: "int",
       roundcount: "int",
       wincount: "int",

@@ -32,7 +32,11 @@ const getAllEvents = (_, res) => event.get().then(arrToObj('id',{delKey:0})).the
 // Create/Remove event
 async function createEvent (req, res) {
   const slot = await event.getLastSlot(null).then(s => s + 1);
-  const eventData = { ...defs, ...matchedData(req), slot };
+
+  let body = matchedData(req);
+  if (body.players) body.playercount = body.players.length;
+
+  const eventData = { ...defs, ...body, slot };
   return event.add(eventData).then(res.sendAndLog);
 }
 async function removeEvent (req, res) {
@@ -41,9 +45,12 @@ async function removeEvent (req, res) {
 
 // Manually set event data (Guess day-slot if missing when updating day)
 async function updateEvent (req, res) {
-  const { id, ...body } = matchedData(req);
+  let { id, ...body } = matchedData(req);
+
+  if (body.players) body.playercount = body.players.length;
   if ('day' in body && !('slot' in body))
     body.slot = await event.getLastSlot(body.day, id).then(s => s + 1);
+  
   return event.set(id, body).then(res.sendAndLog);
 }
 
