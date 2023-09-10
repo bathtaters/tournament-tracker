@@ -1,5 +1,6 @@
 import React from "react";
 import NumberPicker from "./NumberPicker";
+import RangeSelector from "./RangeSelector";
 import { RowStyle, InputStyle } from "../../styles/InputFormStyles"
 
 // FormRow
@@ -24,6 +25,9 @@ export function ElementLabel({ id, label, isLabel, className }) {
 export function ElementInput({ inputProps = {}, backend, className, wrapperClass }) {
   if (inputProps.type === 'number' && !inputProps.disabled)
     return <NumberPicker inputProps={inputProps} backend={backend} className={className} wrapperClass={wrapperClass} />;
+
+  if (inputProps.type === 'range' && !inputProps.disabled)
+    return <RangeSelector {...inputProps} className={className} wrapperClass={wrapperClass} />;
 
   return (
     <InputStyle disabled={inputProps.disabled} className={wrapperClass}>

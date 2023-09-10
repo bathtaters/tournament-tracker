@@ -2,8 +2,8 @@ import React from "react"
 import DatePicker from "react-tailwindcss-datepicker"
 import PlayerEditor from "../eventEditor/components/PlayerEditor"
 import EventList from "./components/EventList"
+import RangeSelector from "../common/components/InputForm/RangeSelector"
 import { PlanWrapperStyle, PlanTitleStyle, PlanRowStyle, InputWrapperStyle, PlanFooterStyle, PlanButton } from "./styles/PlanStyles"
-import { RangeInputStyle } from "./styles/PlanStartStyles"
 import usePlanStartController from "./services/planStart.controller"
 import { dateArrToPicker } from "./services/plan.utils"
 import { useAccessLevel } from "../common/common.fetch"
@@ -43,8 +43,8 @@ function PlanStart() {
                     />
                 </InputWrapperStyle>
 
-                <InputWrapperStyle label="Daily Events" subLabel={slots}>
-                    <RangeInputStyle {...slotLimits} value={slots} onChange={handleSlotChange} />
+                <InputWrapperStyle label="Daily Events">
+                    <RangeSelector {...slotLimits} value={slots} onChange={handleSlotChange} />
                 </InputWrapperStyle>
             </PlanRowStyle>
 
