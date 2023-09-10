@@ -8,7 +8,7 @@ const setting = require('../db/models/settings');
 
 // Imports
 const { resetDatabase } = require('../services/db.services');
-const { asType, toObjArray } = require('../services/settings.services');
+const { asType, toObjArray, fromObjArray } = require('../services/settings.services');
 const { arrToObj } = require('../utils/shared.utils');
 const logger = require('../utils/log.adapter');
 
@@ -38,12 +38,9 @@ async function getSetting(req,res) {
 }
 
 async function getSettings(req,res) {
-  const settingsData = await setting.getAll();
-  if (!Array.isArray(settingsData)) throw new Error('Settings not found.');
-  
-  let settings = {};
-  settingsData.forEach(entry => settings[entry.id] = asType(entry));
-  return res.sendAndLog(settings);
+  const settings = await setting.getAll();
+  if (!Array.isArray(settings)) throw new Error('Settings not found.');
+  return res.sendAndLog(fromObjArray(settings));
 }
 
 async function setSettings(req,res) {

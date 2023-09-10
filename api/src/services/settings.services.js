@@ -13,6 +13,7 @@ exports.asType = ({value, type}) => {
     default: return value ? JSON.parse(value) : value;
   }
 };
+
 const toType = (value, type) => {
   switch(type) {
     case 'string': return value;
@@ -27,13 +28,20 @@ const toType = (value, type) => {
     default: return value && JSON.stringify(value);
   }
 };
+
 const getType = (value,forceType) => {
   let type = forceType || typeof value;
   if (type === 'object' && value && typeof value.toISOString === 'function')
     type = 'date';
   return { value: toType(value, type), type, };
 }
+
 exports.toObjArray = settings => 
   Object.keys(settings).map(id =>
     ({ ...getType(settings[id]), id })
   );
+
+exports.fromObjArray = (settingsArr) => (settingsArr || []).reduce((settings, entry) => 
+  ({ ...settings, [entry.id]: exports.asType(entry) }),
+  {}
+)
