@@ -17,6 +17,7 @@ function Plan() {
     if (settings.planstatus === 1 && access > 1) return <PlanStart  />
     if (settings.planstatus === 2)               return <PlanVote   />
     if (settings.planstatus === 3)               return <PlanFinish />
+    if (settings.planstatus === 0 && access > 2) return <PlanStart  />
     
     return <PlanMessageStyle>{planMessage.noPlan}</PlanMessageStyle>
 }

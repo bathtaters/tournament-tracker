@@ -22,12 +22,14 @@ function PlanStart() {
         slots, handleSlotChange,
         players, handlePlayerChange,
         events, handleEventChange,
-        handleReset,
+        status, handleReset,
     } = usePlanStartController()
 
     return (
         <PlanWrapperStyle>
             <PlanTitleStyle title={planTitle[settings?.planstatus]} />
+
+            {status !== 1 && <PlanFooterStyle><PlanButton onClick={setStatus(1)}>Enable Plan</PlanButton></PlanFooterStyle>}
             
             <PlanRowStyle>
                 <InputWrapperStyle label="Date Range">
@@ -57,7 +59,7 @@ function PlanStart() {
             {access > 2 && 
                 <PlanFooterStyle>
                     <PlanButton className="btn-error" onClick={handleReset}>Clear All</PlanButton>
-                    <PlanButton onClick={setStatus(2)}>Start Vote</PlanButton>
+                    {status === 1 && <PlanButton onClick={setStatus(2)}>Start Vote</PlanButton>}
                 </PlanFooterStyle>
             }
         </PlanWrapperStyle>

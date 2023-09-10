@@ -52,7 +52,8 @@ export default function usePlanStartController() {
         dates, handleDateChange,
         slots, handleSlotChange,
         players, handlePlayerChange,
-        events: planEvents, handleEventChange,
-        handleReset,
+        events: planEvents,
+        status: settings?.planstatus,
+        handleEventChange, handleReset,
     }
 }
