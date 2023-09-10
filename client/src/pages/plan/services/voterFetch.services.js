@@ -1,5 +1,6 @@
 import { getCachedArgs } from '../../../core/services/global.services'
 import { fetchApi } from '../../common/common.fetch'
+import { noDate } from '../../schedule/services/date.utils'
 
 const newVoter = (id) => ({ id, dates: [], games: [], })
 
@@ -37,6 +38,56 @@ export function updateEvents(events, { dispatch, queryFulfilled, getState }) {
 
     queryFulfilled.catch(() => { updateAll.undo(); updateOne.forEach((update) => update.undo()) }) // rollback
 };
+
+export function updatePlanGen(_, { dispatch, queryFulfilled }) {
+    const updateSettings = dispatch(fetchApi.util.updateQueryData('settings', undefined, (draft) => ({ ...draft, planstatus: 3 })))
+    queryFulfilled.catch(() => { updateSettings.undo() }) // rollback
+}
+
+export function updatePlanSave(_, { dispatch, queryFulfilled, getState }) {
+    const updateSettings = dispatch(fetchApi.util.updateQueryData('settings', undefined, (draft) => ({ ...draft, planstatus: 0 })))
+
+    const updateEvents = dispatch(fetchApi.util.updateQueryData('event', undefined, (draft) => {
+        Object.keys(draft).forEach((id) => {
+            if (!draft[id].plan) draft[id].day = null
+            else draft[id].plan = false
+        })
+    }))
+
+    const updateIndivEvents = getCachedArgs(getState(), 'event').map((event) => 
+        dispatch(fetchApi.util.updateQueryData('event', event, (draft) => {
+            if (!draft.plan) draft.day = null
+            else draft.plan = false
+        }))
+    )
+
+    const updateSched = dispatch(fetchApi.util.updateQueryData('schedule', false, (draft) => {
+        let events = []
+        Object.keys(draft).forEach((key) => {
+            events.push(...draft[key].events)
+            draft[key].events = []
+        })
+        draft[noDate].events = events
+
+        const allevents = getCachedArgs(getState(), 'event')
+        console.log('UPDATE SCHED', events, allevents)
+
+        getCachedArgs(getState(), 'event').forEach((event) => {
+            if (!events.includes(event.id) && draft[event.day]?.events) draft[event.day].events.push(event.id)
+        })
+    }))
+    
+    const updatePlan = dispatch(fetchApi.util.updateQueryData('schedule', true, (draft) => {
+        Object.keys(draft).forEach((key) => draft[key].events = [])
+    }))
+
+    // rollback
+    queryFulfilled.catch(() => {
+        updateEvents.undo(); updateSettings.undo();
+        updateSched.undo(); updatePlan.undo();
+        updateIndivEvents.forEach((update) => update.undo())
+    })
+}
 
 export function updatePlanReset(_, { dispatch, queryFulfilled, getState }) {
     const updateEvents = dispatch(fetchApi.util.updateQueryData('event', undefined, (draft) => {
