@@ -21,7 +21,7 @@ function EditEvent({ eventid, modal, hidePlayers }) {
     data, playerList, updatePlayerList,
     buttons, submitHandler,
     isLoading, error, notLoaded
-  } = useEditEventController(eventid, modal)
+  } = useEditEventController(eventid, modal, hidePlayers)
 
   // Loading/Error catcher
   if (notLoaded) return <Loading loading={isLoading} error={error} altMsg="Modal error" tagName="h3" />
@@ -32,7 +32,7 @@ function EditEvent({ eventid, modal, hidePlayers }) {
       { Boolean(data?.status) && <StatusStyle status={data.status} /> }
 
       <InputForm
-        rows={editorLayout}
+        rows={editorLayout(hidePlayers)}
         data={data}
         baseData={{ ...baseData, eventStatus: data?.status || 0 }}
         onSubmit={submitHandler}

@@ -8,7 +8,7 @@ import { editEventLockCaptions } from "../../../assets/constants";
 import { useLockScreen, useOpenAlert } from "../../common/common.hooks";
 
 
-export default function useEditEventController(eventid, modal) {
+export default function useEditEventController(eventid, modal, hidePlayers) {
   // Get server data
   const { data, isLoading, error } = useEventQuery(eventid, { skip: !eventid })
 
@@ -36,13 +36,11 @@ export default function useEditEventController(eventid, modal) {
       })
 
   // Create/Update event & close modal
-  async function submitHandler (event) {
-    if (!playerList) return;
-    
+  async function submitHandler (event) {    
     // Build event object
-    if (!event.title.trim() && !playerList.length) return modal.current.close(true)
+    if (!event.title.trim() && !playerList?.length) return modal.current.close(true)
     if (eventid) event.id = eventid
-    event.players = playerList
+    if (!hidePlayers) event.players = playerList
 
     // Push event to server (Create/Update)
     return setEvent(event).then(() => modal.current.close(true))

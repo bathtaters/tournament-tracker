@@ -4,29 +4,35 @@ import { getDefault } from "../../core/services/validation.services";
 const lockAt = (statusVal) => (data) => data?.status != null && data?.status >= statusVal;
 
 // Layout object for InputForm
-export const editorLayout = [ 'custom', [
-  {
-    label: 'Title', id: 'title', type: 'text',
-    required: true,
-    labelClass: "font-normal",
-    inputClass: "input-md",
-    setValueAs: (title) => title.trim() || getDefault('event', 'title'),
-  },{ 
-    label: 'Total Rounds', id: 'roundcount',
-    type: 'number', disabled: lockAt(3),
-    min: (data) => data?.roundactive
-  },{
-    label: 'Wins Needed', id: 'wincount',
+export const editorLayout = (hidePlayers) => [ 
+  hidePlayers ? [{
+    label: 'Player Count', id: 'playercount',
     type: 'number', disabled: lockAt(2),
-  },{
-    label: 'Players per Game', id: 'playerspermatch',
-    type: 'number', disabled: lockAt(2),
-  },{ 
-    label: 'Event URL', id: 'link', type: 'url',
-    labelClass: "text-sm",
-    inputClass: "input-sm",
-  },
-]];
+  }] : 'custom',
+  [
+    {
+      label: 'Title', id: 'title', type: 'text',
+      required: true,
+      labelClass: "font-normal",
+      inputClass: "input-md",
+      setValueAs: (title) => title.trim() || getDefault('event', 'title'),
+    },{ 
+      label: 'Total Rounds', id: 'roundcount',
+      type: 'number', disabled: lockAt(3),
+      min: (data) => data?.roundactive
+    },{
+      label: 'Wins Needed', id: 'wincount',
+      type: 'number', disabled: lockAt(2),
+    },{
+      label: 'Players per Game', id: 'playerspermatch',
+      type: 'number', disabled: lockAt(2),
+    },{ 
+      label: 'Event URL', id: 'link', type: 'url',
+      labelClass: "text-sm",
+      inputClass: "input-sm",
+    },
+  ]
+];
 
 export const editorButtonLayout = (eventid, clickDelete, clickCancel) => (eventid ? [{
   label: "Delete", onClick: clickDelete,
