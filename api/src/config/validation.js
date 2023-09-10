@@ -82,7 +82,7 @@ module.exports = {
       daterange: { min: 1, max: sharedLimits.dates.max },
       dayslots: sharedLimits.slots,
       autofillsize: sharedLimits.player,
-      planstatus: { min: 0, max: 3 },
+      planstatus: { min: 0, max: 4 },
       plandates: sharedLimits.dates,
       planslots: sharedLimits.slots,
     },

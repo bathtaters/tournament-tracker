@@ -12,6 +12,11 @@ export const voterApi = fetchApi.injectEndpoints({
         providesTags: getTags('Voter'),
     }),
 
+    planStatus: build.query({
+        query: () => 'plan/status',
+        transformResponse: (res) => res?.planstatus
+    }),
+
     updateVoter: build.mutation({
         query: ({ id, ...body }) => ({ url: `voter/${id}`, method: 'PATCH', body }),
         transformResponse: debugLogging ? res => console.log('UPD_VOTE',res) || res : undefined,
@@ -59,6 +64,7 @@ export const voterApi = fetchApi.injectEndpoints({
 
 export { useUpdateSettingsMutation, usePlayerQuery, useEventQuery, useSettingsQuery }
 export const {
-    useVoterQuery, useUpdateVoterMutation, useSetVotersMutation, useSetEventsMutation,
+    useVoterQuery, usePlanStatusQuery,
+    useUpdateVoterMutation, useSetVotersMutation, useSetEventsMutation,
     useGenPlanMutation, useSavePlanMutation, useResetPlanMutation,
 } = voterApi

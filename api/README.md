@@ -60,8 +60,9 @@ _Represented below by api/v[n]_
 | URL | Method | Body | Return | Description |
 |------|------|------|------|------|
 |/|DELETE| |{ success }|Remove all voter/events from plan|
-|/generate|POST| | |Auto-set dates for plan events|
-|/save|POST| | |Add plan to schedule, de-scheduling exisiting events|
+|/generate|POST| |[ events ]|Auto-set dates for plan events|
+|/save|POST| |[ events ]|Add plan to schedule, de-scheduling exisiting events|
+|/status|GET| |{ planStatus }|Get plan status number|
 
 ---
 

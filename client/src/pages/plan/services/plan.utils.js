@@ -1,13 +1,34 @@
-import { useCallback, useMemo } from "react"
-import { useSettingsQuery, useUpdateSettingsMutation, useUpdateVoterMutation, useVoterQuery } from "../voter.fetch"
+import { useCallback, useEffect, useMemo } from "react"
+import { useDispatch } from "react-redux"
+import { fetchApi } from "../../common/common.fetch"
+import { useSettingsQuery, usePlanStatusQuery, useUpdateSettingsMutation, useUpdateVoterMutation, useVoterQuery } from "../voter.fetch"
 import { useEventQuery, useSessionState } from "../../common/common.fetch"
+import { plan as config } from "../../../assets/config"
+
+export function usePollStatus(currentStatus) {
+    const dispatch = useDispatch()
+    const { data } = usePlanStatusQuery(undefined, {
+        skip: typeof currentStatus !== 'number',
+        pollingInterval: config.statusPoll,
+        refetchOnFocus: true,
+        refetchOnReconnect: true,
+    })
+
+    useEffect(() => {
+        if (typeof currentStatus === 'number' && typeof data === 'number' && data !== currentStatus) dispatch(
+            fetchApi.util.invalidateTags([ 'Settings', 'Schedule', 'Voter' ])
+        )
+    }, [currentStatus, data, dispatch])
+    
+    return data
+}
 
 export function usePlanSettings() {
     const { data: session,  isLoading: sLoad, error: sErr } = useSessionState()
-    const { data: voters,   isLoading: aLoad, error: aErr } = useVoterQuery(null, { skip: !session?.access || session.access < 2 })
+    const { data: voters,   isLoading: aLoad, error: aErr } = useVoterQuery(undefined, { skip: !session?.access || session.access < 2 })
     const { data: voter,    isLoading: vLoad, error: vErr } = useVoterQuery(session?.id, { skip: !session?.id })
     const { data: events,   isLoading: eLoad, error: eErr } = useEventQuery()
-    const { data: settings, isLoading: tLoad, error: tErr } = useSettingsQuery() // PlanSettings: { planslots, planstatus, plandates }
+    const { data: settings, isLoading: tLoad, error: tErr } = useSettingsQuery()
 
     const [ updateSettings ] = useUpdateSettingsMutation()
     const [ updateVoter    ] = useUpdateVoterMutation()
@@ -16,6 +37,8 @@ export function usePlanSettings() {
 
     const setDays   = useCallback((days)   => updateVoter({ id: voter?.id, days   }), [voter?.id, updateVoter])
     const setEvents = useCallback((events) => updateVoter({ id: voter?.id, events }), [voter?.id, updateVoter])
+
+    usePollStatus(settings?.planstatus)
 
     return {
         access: session?.access,
