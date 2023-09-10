@@ -4,14 +4,13 @@ const validate = require('../validators/voter.validators');
 const catcher = require('../middleware/catch.middleware');
 const controller = require('../controllers/voter.controllers');
 
-// *** Player API commands *** \\
+// *** Voter API commands *** \\
 
 // Gets
 router.get('/all',                         catcher(controller.getAllVotes));
 router.get('/:id',   validate.playerid,    catcher(controller.getVote));
 
 // Sets
-router.delete('/all',                      catcher(controller.resetPlan));
 router.post('/',     validate.setVoters,   catcher(controller.setVoters));
 router.patch('/:id', validate.updateVotes, catcher(controller.updateVote));
 

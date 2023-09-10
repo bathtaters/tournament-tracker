@@ -3,8 +3,8 @@ const db = require('../admin/interface');
 const strings = require('../sql/strings').event;
 
 // Get event data
-async function get(id, detail=false) {
-    if (!id) return db.getRows('event');
+async function get(id, detail = false, planOnly = false) {
+    if (!id) return db.getRows('event', planOnly ? 'WHERE plan = TRUE' : undefined);
 
     const eventData = await db.getRow('event'+(detail ? 'Detail' : ''), id);
     if (!eventData || eventData.length === 0) return;

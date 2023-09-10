@@ -15,6 +15,7 @@ app.use(`/api/v${version}/match`,   require('./routes/match.routes'));
 app.use(`/api/v${version}/player`,  require('./routes/player.routes'));
 app.use(`/api/v${version}/session`, require('./routes/session.routes'));
 app.use(`/api/v${version}/voter`,   require('./routes/voter.routes'));
+app.use(`/api/v${version}/plan`,    require('./routes/plan.routes'));
 app.use('/api/version', (_, res) => res.sendAndLog({ version }));
 
 // Error handling

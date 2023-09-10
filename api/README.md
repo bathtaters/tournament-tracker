@@ -55,6 +55,16 @@ _Represented below by api/v[n]_
 
 ---
 
+### _Plan_ - [Domain]/api/v[n]/plan/...
+
+| URL | Method | Body | Return | Description |
+|------|------|------|------|------|
+|/|DELETE| |{ success }|Remove all voter/events from plan|
+|/generate|POST| | |Auto-set dates for plan events|
+|/save|POST| | |Add plan to schedule, de-scheduling exisiting events|
+
+---
+
 ### _Event_ - [Domain]/api/v[n]/event/...
 
 | URL | Method | Body | Return | Description |

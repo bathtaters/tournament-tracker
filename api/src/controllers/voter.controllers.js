@@ -1,5 +1,4 @@
 const { matchedData }  = require('express-validator');
-
 const voter = require('../db/models/voter');
 const { arrToObj, toDateStr } = require('../utils/shared.utils');
 
@@ -30,12 +29,7 @@ const updateVote = (req, res) => {
   return voter.set(id, body).then(res.sendAndLog);
 }
 
-// Remove all voters/planned events and settings
-const resetPlan = (_, res) => voter.reset().then(() => res.sendAndLog({ success: true }));
-
-
 module.exports = { 
   getVote, getAllVotes,
   setVoters, updateVote,
-  resetPlan,
 };
