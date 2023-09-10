@@ -1,4 +1,5 @@
 import React from "react";
+import { Navigate } from "react-router-dom";
 import PlanStart from "./PlanStart";
 import PlanVote from "./PlanVote";
 import PlanFinish from "./PlanFinish";
@@ -19,6 +20,7 @@ function Plan() {
     if (settings.planstatus === 3)               return <PlanFinish />
     if (settings.planstatus === 0 && access > 2) return <PlanStart  />
     
+    if (settings.planstatus === 0) return <Navigate replace to="/home" />
     return <PlanMessageStyle>{planMessage.noPlan}</PlanMessageStyle>
 }
 
