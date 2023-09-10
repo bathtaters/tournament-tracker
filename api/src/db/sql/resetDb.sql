@@ -45,7 +45,7 @@ CREATE TABLE event (
     slot SMALLINT NOT NULL DEFAULT 0,
     plan BOOL NOT NULL DEFAULT false,
     players UUID[] NOT NULL DEFAULT '{}',
-    playercount SMALLINT NOT NULL DEFAULT 0,
+    playercount SMALLINT NOT NULL DEFAULT 8,
     roundactive SMALLINT NOT NULL DEFAULT 0,
     roundcount SMALLINT NOT NULL DEFAULT 3,
     wincount SMALLINT NOT NULL DEFAULT 2,
