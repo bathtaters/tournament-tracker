@@ -9,7 +9,7 @@ import { useAccessLevel } from "../../common/common.fetch"
 function DaysContainer({ isEditing, openEventModal, isPlan }) {
     // Global state
     const { data: settings,  isLoading: settingsLoad, error: settingsErr } = useSettingsQuery()
-    const { data: schedule,  isLoading: schedLoad,    error: schedErr    } = useScheduleQuery(isPlan)
+    const { data: schedule,  isLoading: schedLoad,    error: schedErr    } = useScheduleQuery(Boolean(isPlan))
     const { data: eventData, isLoading: eventsLoad,   error: eventsErr   } = useEventQuery()
     const { access } = useAccessLevel()
 
