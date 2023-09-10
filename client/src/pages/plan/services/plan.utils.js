@@ -23,7 +23,7 @@ export function usePollStatus(currentStatus) {
     return data
 }
 
-export function usePlanSettings() {
+export function usePlanSettings(skipPoll = false) {
     const { data: session,  isLoading: sLoad, error: sErr } = useSessionState()
     const { data: voters,   isLoading: aLoad, error: aErr } = useVoterQuery(undefined, { skip: !session?.access || session.access < 2 })
     const { data: voter,    isLoading: vLoad, error: vErr } = useVoterQuery(session?.id, { skip: !session?.id })
@@ -38,7 +38,7 @@ export function usePlanSettings() {
     const setDays   = useCallback((days)   => updateVoter({ id: voter?.id, days   }), [voter?.id, updateVoter])
     const setEvents = useCallback((events) => updateVoter({ id: voter?.id, events }), [voter?.id, updateVoter])
 
-    usePollStatus(settings?.planstatus)
+    usePollStatus(skipPoll ? null : settings?.planstatus)
 
     return {
         access: session?.access,
