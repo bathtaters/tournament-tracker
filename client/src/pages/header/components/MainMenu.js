@@ -7,7 +7,7 @@ import { usePlanSettings } from "../../plan/services/plan.utils"
 
 
 function MainMenu({ modal }) {
-    const { access, settings, voter } = usePlanSettings(true)
+    const { access, settings, voter } = usePlanSettings()
 
     const planIsVisible = access > 2 || Boolean(
         settings?.planmenu && settings.planstatus && 

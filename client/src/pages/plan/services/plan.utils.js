@@ -5,11 +5,11 @@ import { useSettingsQuery, usePlanStatusQuery, useUpdateSettingsMutation, useUpd
 import { useEventQuery, useSessionState } from "../../common/common.fetch"
 import { plan as config } from "../../../assets/config"
 
-export function usePollStatus(currentStatus) {
+export function usePollStatus(currentStatus, pollStatus) {
     const dispatch = useDispatch()
     const { data } = usePlanStatusQuery(undefined, {
         skip: typeof currentStatus !== 'number',
-        pollingInterval: config.statusPoll,
+        pollingInterval: pollStatus ? config.statusPoll : undefined,
         refetchOnFocus: true,
         refetchOnReconnect: true,
     })
@@ -23,7 +23,7 @@ export function usePollStatus(currentStatus) {
     return data
 }
 
-export function usePlanSettings(skipPoll = false) {
+export function usePlanSettings(pollStatus = false) {
     const { data: session,  isLoading: sLoad, error: sErr } = useSessionState()
     const { data: voters,   isLoading: aLoad, error: aErr } = useVoterQuery(undefined, { skip: !session?.access || session.access < 2 })
     const { data: voter,    isLoading: vLoad, error: vErr } = useVoterQuery(session?.id, { skip: !session?.id })
@@ -38,7 +38,7 @@ export function usePlanSettings(skipPoll = false) {
     const setDays   = useCallback((days)   => updateVoter({ id: voter?.id, days   }), [voter?.id, updateVoter])
     const setEvents = useCallback((events) => updateVoter({ id: voter?.id, events }), [voter?.id, updateVoter])
 
-    usePollStatus(skipPoll ? null : settings?.planstatus)
+    usePollStatus(settings?.planstatus, pollStatus)
 
     return {
         access: session?.access,

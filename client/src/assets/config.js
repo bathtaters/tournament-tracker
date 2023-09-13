@@ -26,5 +26,5 @@ export const settings = {
 
 export const plan = {
   updateDelay: 1000, // ms delay for throttling updates
-  statusPoll: 3000,  // ms interval to poll for status at
+  statusPoll: 5 * 1000,  // ms interval to poll for status at
 }

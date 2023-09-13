@@ -5,7 +5,7 @@ import { usePlanSettings } from "./services/plan.utils"
 import { planTitle } from "../../assets/constants"
 
 function PlanLoading() {
-    const { access, settings, setStatus } = usePlanSettings()
+    const { access, settings, setStatus } = usePlanSettings(true)
 
     return (
         <PlanWrapperStyle>
