@@ -20,7 +20,7 @@ const genPlan = async (_, res) => {
         const voters   = await voter.get()
         const settings = await setting.getAll().then(fromObjArray)
     
-        const planData = generatePlan(events, voters, settings)
+        const planData = await generatePlan(events, voters, settings)
         const ids = await plan.multiset(planData)
         await setting.batchSet(planStatus(4))
         return res.sendAndLog(ids)
