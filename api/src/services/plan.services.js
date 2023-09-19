@@ -95,7 +95,7 @@ function getSlotScores(schedule, voters, startDay, slots, maxScore) {
         if (!schedule[slot]) continue  // Skip missing event days
 
         const available = voters.filter(voterCanPlay(day))
-        if (!combinationCount(schedule[slot].playercount > available.length))
+        if (!combinationCount(available.length, schedule[slot].playercount))
             return null // Void schedule if no possible combination of players exists
 
         let newScore = {
