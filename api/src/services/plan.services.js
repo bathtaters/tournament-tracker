@@ -4,9 +4,11 @@ const { permutationCount, getPermutations, combinationCount, getCombinations, ge
 // How often to update progress (ie. 0.01 = Every 1% increase)
 const progUpdate = 0.10
 
+// Default update function -- TODO: Change this to a DB update
+const defaultUpdate = (prog, total) => console.info(` ${Math.round(100 * prog / total)}%: ${prog} of ${total} schedules checked`)
 
 // Accepts planEvents, voters & settings, returns event array ({ id, day, slot, players })
-async function generatePlan(events, voters, { plandates, planslots, datestart, dateend, dayslots } = {}, forceEmpties = false) {
+async function generatePlan(events, voters, { plandates, planslots, datestart, dateend, dayslots } = {}, forceEmpties = false, updateProg = defaultUpdate) {
     // Initialize variables
     let bestPlan = { maxScore: { points: NaN }, minDev: { points: NaN } }
     const dates = [ new Date(`${plandates?.[0] || datestart} `), new Date(`${plandates?.[1] || dateend} `) ],
@@ -31,7 +33,7 @@ async function generatePlan(events, voters, { plandates, planslots, datestart, d
     const progTotal = permutationCount(events.length, slotCount, forceEmpties || events.length < slotCount)
     const progInt = progTotal * progUpdate
     let prog = 0, nextProg = progInt
-    console.info(`Checking ${progTotal} schedules, ${slotCount} slots long, with ${events.length} events & ${voters.length} voters...`)
+    console.debug(`Checking ${progTotal} schedules, ${slotCount} slots long, with ${events.length} events & ${voters.length} voters...`)
     
 
     // Determine every possible schedule given the events and slots
@@ -39,7 +41,7 @@ async function generatePlan(events, voters, { plandates, planslots, datestart, d
         
         // Write out progress bar updates
         if (prog++ >= nextProg) {
-            console.info(` ${Math.round(100 * prog / progTotal)}%: ${prog} of ${progTotal} schedules checked`)
+            updateProg(prog, progTotal)
             nextProg += progInt
         }
         
@@ -53,7 +55,7 @@ async function generatePlan(events, voters, { plandates, planslots, datestart, d
             updateMinDev(plan, bestPlan.minDev)
         }
     }
-    console.info(`${100}%: ${progTotal} of ${progTotal} schedules checked`)
+    updateProg(progTotal, progTotal)
 
 
     // Select plan & reset data for remaining events
