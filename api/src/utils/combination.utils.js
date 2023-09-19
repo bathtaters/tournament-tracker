@@ -22,13 +22,13 @@ function* getCombinations(array, slotCount) {
 /** Calculate count of all possible non-repetative combinations of items in slotCount slots, allowing empty slots */
 function permutationCount(arrayLength, slotCount, includeBlanks) {
     // Simple permutation formula
-    if (!includeBlanks) return fact(arrayLength) / fact(arrayLength - slotCount)
+    if (!includeBlanks) return slotCount > arrayLength ? 0 : fact(arrayLength) / fact(arrayLength - slotCount)
 
     // Flip array & slots order to prevent negative factorials
     // The variables are interchangable when including blanks
     if (arrayLength < slotCount) return permutationCount(slotCount, arrayLength, includeBlanks)
 
-    let sum = 0
+    let sum = 1
     for (let n = 0; n < slotCount; n++) {
         // For each possibility of empty slots (none to all but one)
         // Calculate the permutations of the occupied slots x the combinations of empty slots
@@ -38,22 +38,20 @@ function permutationCount(arrayLength, slotCount, includeBlanks) {
 }
 
 /** Get all non-repeating permutations from array of size slotCount (order matters)
- *  includeBlanks will return permutations containing one or more empty slots
- * -- FIX THIS FOR NUMBERS > 8! -- Make iterative? */
-function* getPermutations(array, slotCount, includeBlanks) {
+ *  includeBlanks will return permutations containing one or more empty slots */
+function* getPermutations(array, slotCount, includeBlanks = false) {
+    const maxIdx = array.length - +!includeBlanks,
+        lastSlot = slotCount - 1
+    let indexes = Array.from({ length: slotCount }, (_, idx) => idx < array.length ? idx : maxIdx)
 
-    function* generate(current, remaining) {
-        if (current.length === slotCount) {
-            yield current.map((i) => array[i])
-            return
-        }
-  
-        for (let i = 0; i < remaining.length + +includeBlanks; i++) {
-            const next = current.concat(remaining[i])
-            yield* generate(next, popIdx(remaining, i))
-        }
+    for (let ptr = lastSlot; ptr >= 0; indexes[ptr]++) {
+        if (!hasRepeats(indexes, includeBlanks && maxIdx))
+            yield indexes.map((i) => array[i])
+    
+        ptr = lastSlot
+        while (indexes[ptr] === maxIdx)
+            indexes[ptr--] = 0
     }
-    yield* generate([], array.map((_,i) => i))
 }
 
 /** Calculate all possible combinations of a single element from array prop nested with the objArray
@@ -77,26 +75,28 @@ function* getObjectCombos(objArray, innerArrayKey) {
 
 
 
-// TESTS !!
-// const a = ['a','b','c','d','e','f','g','h','i','j','k','l','m'], k = 8, b = false
-// const a = ['a','b','c','d','e'], k = 4, b = false
-// console.log(a.length,k,[...getCombinations(a,k)].length, combinationCount(a.length,k))
-// console.log([...getCombinations(a,k,b)])
-// console.log(a.length,k,b,[...getPermutations(a,k,b)].length - +b, permutationCount(a.length,k,b))
-// console.log([...getPermutations(a,k,b)])
-
-
 // HELPERS \\
 
-/** Remove element at idx from array, without mutating */
-const popIdx = (arr, idx) => [ ...arr.slice(0, idx), ...arr.slice(idx + 1) ]
-
 /** Calculate the factorial of N (non-recursive) */
-const fact = (n) => {
+function fact(n) {
     let i, f
     for (f = i = 1; i <= n; i++) f *= i
     return f
 }
+
+/** Return true if array has any repeating values,
+ * unless the repeated value is ignoreValue */
+function hasRepeats(array, ignoreValue) {
+    return array.some((val,idx) => {
+        if (val === ignoreValue) return false
+
+        for (let i = idx + 1; i < array.length; i++) {
+            if (val === array[i]) return true
+        }
+        return false
+    })
+}
+
 
 // EXPORTS \\
 module.exports = {
