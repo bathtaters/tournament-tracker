@@ -32,6 +32,11 @@ export function EntryTitleStyle({ status, children }) {
 }
 
 export function EntryLinkStyle({ to, status, children }) {
+  if (!to) return (
+    <div to={to} className={`${baseEntryClass} cursor-default`}>
+      {children}
+    </div>
+  )
   return (
     <Link to={to} className={`${baseEntryClass} link link-hover ${statusInfo[status].linkClass} ${statusInfo[status].textClass}`}>
       {children}
@@ -39,6 +44,9 @@ export function EntryLinkStyle({ to, status, children }) {
   );
 }
 
+export const PlayerListStyle = ({ children }) => <ul className="font-light text-center">{children}</ul>
+export const PlayerNameStyle = ({ children }) => <li>{children}</li>
+export const NoPlayerStyle = () => <li className="italic opacity-60 font-thin">None</li>
 
 // Other \\
 

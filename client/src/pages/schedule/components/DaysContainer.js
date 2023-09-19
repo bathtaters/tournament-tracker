@@ -33,6 +33,7 @@ function DaysContainer({ isEditing, openEventModal, isPlan }) {
                         isEditing={access > 1 && isEditing}
                         isSlotted={Boolean(isPlan ? settings.planslots : settings.dayslots)}
                         setEventModal={openEventModal}
+                        showPlayers={isPlan}
                     />
                 )}
         </DaysContainerStyle>

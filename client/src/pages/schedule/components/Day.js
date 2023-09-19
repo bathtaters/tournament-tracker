@@ -10,7 +10,7 @@ import { useUpdateSchedule, canDrop, dataType } from "../services/day.services";
 import { weekdays } from '../../../assets/constants';
 
 
-function Day({ events, isEditing, isSlotted, setEventModal, day, eventData }) {
+function Day({ events, isEditing, isSlotted, setEventModal, day, eventData, showPlayers }) {
   // Classes & date as DateObj
   const today = getToday();
   const [ { titleCls, borderCls }, date ] = useMemo(() => [ dayClasses(day, today), toDateObj(day) ], [day, today]);
@@ -42,6 +42,7 @@ function Day({ events, isEditing, isSlotted, setEventModal, day, eventData }) {
           isEditing={isEditing}
           dropHandler={dropHandler}
           editEvent={setEventModal && (() => setEventModal(eventid))}
+          showPlayers={showPlayers}
           key={eventid || slot}
         />
       )}
