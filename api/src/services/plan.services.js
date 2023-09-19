@@ -9,7 +9,7 @@ const progUpdate = 0.10
 async function generatePlan(events, voters, { plandates, planslots, datestart, dateend, dayslots } = {}, forceEmpties = false) {
     // Initialize variables
     let bestPlan = { maxScore: { points: NaN }, minDev: { points: NaN } }
-    const dates = [ new Date(plandates?.[0] || datestart), new Date(plandates?.[1] || dateend) ],
+    const dates = [ new Date(`${plandates?.[0] || datestart} `), new Date(`${plandates?.[1] || dateend} `) ],
         slots = planslots ?? dayslots
     
 
