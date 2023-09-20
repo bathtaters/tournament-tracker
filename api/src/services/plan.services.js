@@ -1,6 +1,6 @@
 const logger = require("../utils/log.adapter")
 const { dayCount } = require("../utils/shared.utils")
-const { filterUnvoted, voterCanPlay, getEventScores, getTotalScore, getDeviation, planToEvent, resetEvent } = require("../utils/plan.utils")
+const { filterUnvoted, voterCanPlay, getEventScores, getTotalScore, getDeviation, planToEvent, resetEvent, daysPresentByPlayer, getGameCount } = require("../utils/plan.utils")
 const { permutationCount, getPermutations, combinationCount, getCombinations, getObjectCombos } = require("../utils/combination.utils")
 
 // How often to update progress (ie. 0.01 = Every 1% increase)
@@ -13,7 +13,11 @@ const defaultUpdate = (prog, total) => logger.info(`  > ${Math.round(100 * prog 
 // Accepts planEvents, voters & settings, returns event array ({ id, day, slot, players })
 async function generatePlan(events, voters, settings = {}, forceEmpties = false, updateProg = defaultUpdate) {
     // Initialize variables
-    let bestPlan = { maxScore: { points: NaN }, minDev: { points: NaN } }
+    let bestPlan = {
+        gameCount: { points: NaN },
+        maxScore:  { points: NaN },
+        minDev:    { points: NaN },
+    }
     const slots = settings.planslots ?? settings.dayslots,
         dates = [
             new Date(`${settings.plandates?.[0] || settings.datestart} `),
@@ -26,14 +30,16 @@ async function generatePlan(events, voters, settings = {}, forceEmpties = false,
         throw new Error("Insufficient data to generate a plan (Check players, events and date/slot settings).")
     if (events.some(({ playercount }) => !playercount))
         throw new Error("Invalid event player count: Must be at least 1")
-
+    
+    // Calculate initial data
     const slotCount = slots * dayCount(...dates)
     if (!slotCount) throw new Error("No available slots in schedule")
 
     let remainingEvents = events.map(({ id }) => id)
     events = filterUnvoted(events, voters)
     if (!events.length) throw new Error("No events have been voted for")
-
+    
+    let daysPresent = daysPresentByPlayer(dates, voters)
 
     // Initialize progress bar
     const progTotal = permutationCount(events.length, slotCount, forceEmpties || events.length < slotCount)
@@ -57,14 +63,15 @@ async function generatePlan(events, voters, settings = {}, forceEmpties = false,
         
         // Score each combination and update max scores
         for (const plan of getObjectCombos(slotScores, 'scores')) {
-            updateMaxScore(plan, bestPlan.maxScore)
-            updateMinDev(plan, bestPlan.minDev)
+            updateGameCount(plan, bestPlan.gameCount, daysPresent)
+            updateMaxScore(plan, bestPlan.maxScore, daysPresent)
+            updateMinDev(plan, bestPlan.minDev, daysPresent)
         }
     }
     updateProg(progTotal, progTotal)
 
     // Handle no matches found
-    if (isNaN(bestPlan.maxScore.points) || isNaN(bestPlan.minDev.points)) {
+    if (isNaN(bestPlan.maxScore.points) || isNaN(bestPlan.minDev.points) || isNaN(bestPlan.gameCount.points)) {
         if (forceEmpties || events.length < slotCount)
             throw new Error("No valid plans were found, check that there are enough players")
 
@@ -83,6 +90,16 @@ async function generatePlan(events, voters, settings = {}, forceEmpties = false,
 
 // HELPERS \\
 
+/** Get score, updating minDev in the process */
+function updateGameCount(plan, gameCount, daysPresent) {
+    const score = getGameCount(plan, daysPresent)
+
+    if (isNaN(gameCount.points) || gameCount.points > score) {
+        gameCount.points = score
+        gameCount.plan = [...plan]
+    }
+}
+
 /** Get score, updating maxScore in the process */
 function updateMaxScore(plan, maxScore) {
     const score = getTotalScore(plan)
@@ -94,8 +111,8 @@ function updateMaxScore(plan, maxScore) {
 }
 
 /** Get score, updating minDev in the process */
-function updateMinDev(plan, minDev) {
-    const score = getDeviation(plan)
+function updateMinDev(plan, minDev, daysPresent) {
+    const score = getDeviation(plan, daysPresent)
 
     if (isNaN(minDev.points) || minDev.points > score) {
         minDev.points = score
