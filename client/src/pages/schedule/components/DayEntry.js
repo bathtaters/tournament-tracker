@@ -33,7 +33,7 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, show
         showPlayers && players && data?.players && (
           <PlayerListStyle>
             {data.players.map((pid) => 
-              <PlayerNameStyle>{players[pid].name || pid}</PlayerNameStyle>
+              <PlayerNameStyle key={pid}>{players[pid].name || pid}</PlayerNameStyle>
             )}
 
             {!data.players.length && <NoPlayerStyle />}
@@ -59,7 +59,7 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, show
           { data.status < 3 && <EditEventButton status={data.status} onClick={editEvent} /> }
 
         </> :
-          <EntryLinkStyle to={!showPlayers && eventUrl} status={data.status}>{data.title}</EntryLinkStyle>
+          <EntryLinkStyle to={showPlayers ? undefined : eventUrl} status={data.status}>{data.title}</EntryLinkStyle>
         }
       </DragBlock>
     </Tooltip>
