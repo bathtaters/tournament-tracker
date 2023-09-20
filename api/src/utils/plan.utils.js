@@ -2,6 +2,9 @@
 const oneDay = 24 * 60 * 60 * 1000
 /** Get the number of days from date A to date B inclusive */
 const dayCount = (dateA, dateB) => 1 + (dateB - dateA) / oneDay
+/** Test if two date objects have the same date */
+const isSameDate = (a,b) => a.getDate() === b.getDate() &&
+    a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear()
 
 /** Remove events no one voted for */
 const filterUnvoted = (events, voters) => {
@@ -10,10 +13,9 @@ const filterUnvoted = (events, voters) => {
     return events.filter(({ id }) => votedEvents.has(id))
 }
 
-/** Returns filter cb to determine if voter can participate in event  */
+/** Returns filter cb to determine if voter can participate in event */
 const voterCanPlay = (day) => {
-    const dayStr = day.toISOString().slice(0,10)
-    return ({ days }) => !Array.isArray(days) || days.every((d) => d !== dayStr)
+    return ({ days }) => !Array.isArray(days) || days.every((d) => !isSameDate(d,day))
 }
 
 /** Return { playerid: score_for_event }, higher score = event is higher on player's list */
