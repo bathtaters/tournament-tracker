@@ -8,11 +8,14 @@ const progUpdate = 0.10
 const defaultUpdate = (prog, total) => console.info(` ${Math.round(100 * prog / total)}%: ${prog} of ${total} schedules checked`)
 
 // Accepts planEvents, voters & settings, returns event array ({ id, day, slot, players })
-async function generatePlan(events, voters, { plandates, planslots, datestart, dateend, dayslots } = {}, forceEmpties = false, updateProg = defaultUpdate) {
+async function generatePlan(events, voters, settings = {}, forceEmpties = false, updateProg = defaultUpdate) {
     // Initialize variables
     let bestPlan = { maxScore: { points: NaN }, minDev: { points: NaN } }
-    const dates = [ new Date(`${plandates?.[0] || datestart} `), new Date(`${plandates?.[1] || dateend} `) ],
-        slots = planslots ?? dayslots
+    const slots = settings.planslots ?? settings.dayslots,
+        dates = [
+            new Date(`${settings.plandates?.[0] || settings.datestart} `),
+            new Date(`${settings.plandates?.[1] || settings.dateend} `)
+        ]
     
 
     // Error check UI
@@ -57,6 +60,14 @@ async function generatePlan(events, voters, { plandates, planslots, datestart, d
     }
     updateProg(progTotal, progTotal)
 
+    // Handle no matches found
+    if (isNaN(bestPlan.maxScore.points) || isNaN(bestPlan.minDev.points)) {
+        if (forceEmpties || events.length < slotCount)
+            throw new Error("No valid plans were found, check that there are enough players")
+
+        console.debug("No matches found, checking partial schedules")
+        return generatePlan(events, voters, settings, true, updateProg)
+    }
 
     // Select plan & reset data for remaining events
     const plan = bestPlan.maxScore.plan // TODO: Get from settings
