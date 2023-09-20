@@ -14,7 +14,7 @@ function PlanLoading() {
                 left={access > 2 && <PlanButton className="btn-error" onClick={setStatus(2)}>← Cancel</PlanButton>}
             />
 
-            <LoadingWrapper>This make take a minute, or not, I just copied this code from Chat GPT so who knows.</LoadingWrapper>
+            <LoadingWrapper>This make take a while. Or not, who knows.</LoadingWrapper>
 
         </PlanWrapperStyle>
     )
