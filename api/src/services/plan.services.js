@@ -1,11 +1,14 @@
-const { dayCount, filterUnvoted, voterCanPlay, getEventScores, getTotalScore, getDeviation, planToEvent, resetEvent } = require("../utils/plan.utils")
+const logger = require("../utils/log.adapter")
+const { dayCount } = require("../utils/shared.utils")
+const { filterUnvoted, voterCanPlay, getEventScores, getTotalScore, getDeviation, planToEvent, resetEvent } = require("../utils/plan.utils")
 const { permutationCount, getPermutations, combinationCount, getCombinations, getObjectCombos } = require("../utils/combination.utils")
 
 // How often to update progress (ie. 0.01 = Every 1% increase)
 const progUpdate = 0.10
 
 // Default update function -- TODO: Change this to a DB update
-const defaultUpdate = (prog, total) => console.info(` ${Math.round(100 * prog / total)}%: ${prog} of ${total} schedules checked`)
+const defaultUpdate = (prog, total) => logger.info(`  > ${Math.round(100 * prog / total)}%: ${prog} of ${total} schedules checked`)
+
 
 // Accepts planEvents, voters & settings, returns event array ({ id, day, slot, players })
 async function generatePlan(events, voters, settings = {}, forceEmpties = false, updateProg = defaultUpdate) {
@@ -36,7 +39,7 @@ async function generatePlan(events, voters, settings = {}, forceEmpties = false,
     const progTotal = permutationCount(events.length, slotCount, forceEmpties || events.length < slotCount)
     const progInt = progTotal * progUpdate
     let prog = 0, nextProg = progInt
-    console.debug(`Checking ${progTotal} schedules, ${slotCount} slots long, with ${events.length} events & ${voters.length} voters...`)
+    logger.debug(`Checking ${progTotal} schedules, ${slotCount} slots long, with ${events.length} events & ${voters.length} voters...`)
     
 
     // Determine every possible schedule given the events and slots
@@ -65,7 +68,7 @@ async function generatePlan(events, voters, settings = {}, forceEmpties = false,
         if (forceEmpties || events.length < slotCount)
             throw new Error("No valid plans were found, check that there are enough players")
 
-        console.debug("No matches found, checking partial schedules")
+        logger.debug("No matches found, checking partial schedules")
         return generatePlan(events, voters, settings, true, updateProg)
     }
 
@@ -89,6 +92,7 @@ function updateMaxScore(plan, maxScore) {
         maxScore.plan = [...plan]
     }
 }
+
 /** Get score, updating minDev in the process */
 function updateMinDev(plan, minDev) {
     const score = getDeviation(plan)

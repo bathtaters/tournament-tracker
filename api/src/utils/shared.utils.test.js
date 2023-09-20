@@ -212,3 +212,6 @@ describe('toDateStr', () => {
       .toEqual([ '2021-03-19', { a: '2004-04-12', test: '2', x: true }, true ])
   })
 })
+
+it.todo("dayCount")
+it.todo("datesAreEqual")
