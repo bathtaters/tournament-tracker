@@ -5,7 +5,7 @@ import { usePlanSettings } from "./services/plan.utils"
 import { planTitle } from "../../assets/constants"
 
 function PlanLoading() {
-    const { access, settings, setStatus } = usePlanSettings(true)
+    const { progress, access, settings, setStatus } = usePlanSettings(true)
 
     return (
         <PlanWrapperStyle>
@@ -14,7 +14,7 @@ function PlanLoading() {
                 left={access > 2 && <PlanButton className="btn-error" onClick={setStatus(2)}>← Cancel</PlanButton>}
             />
 
-            <LoadingWrapper>This make take a while. Or not, who knows.</LoadingWrapper>
+            <LoadingWrapper progress={progress}>This make take a while. Or not, who knows.</LoadingWrapper>
 
         </PlanWrapperStyle>
     )

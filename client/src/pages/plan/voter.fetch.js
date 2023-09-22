@@ -12,10 +12,7 @@ export const voterApi = fetchApi.injectEndpoints({
         providesTags: getTags('Voter'),
     }),
 
-    planStatus: build.query({
-        query: () => 'plan/status',
-        transformResponse: (res) => res?.planstatus
-    }),
+    planStatus: build.query({ query: () => 'plan/status' }),
 
     updateVoter: build.mutation({
         query: ({ id, ...body }) => ({ url: `voter/${id}`, method: 'PATCH', body }),
@@ -41,7 +38,7 @@ export const voterApi = fetchApi.injectEndpoints({
     genPlan: build.mutation({
         query: () => ({ url: `plan/generate`, method: 'POST', }),
         transformResponse: debugLogging ? res => console.log('GEN_PLAN',res) || res : undefined,
-        invalidatesTags: getTags('Event', { addBase: ['Schedule', 'Settings'] }),
+        // invalidatesTags: getTags('Event', { addBase: ['Schedule', 'Settings'], addAll: [] }),
         onQueryStarted: updatePlanGen,
     }),
 

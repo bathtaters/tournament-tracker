@@ -7,7 +7,7 @@ import { plan as config } from "../../../assets/config"
 
 export function usePollStatus(currentStatus, pollStatus) {
     const dispatch = useDispatch()
-    const { data } = usePlanStatusQuery(undefined, {
+    const { data = {} } = usePlanStatusQuery(undefined, {
         skip: typeof currentStatus !== 'number',
         pollingInterval: pollStatus ? config.statusPoll : undefined,
         refetchOnFocus: true,
@@ -15,10 +15,10 @@ export function usePollStatus(currentStatus, pollStatus) {
     })
 
     useEffect(() => {
-        if (typeof currentStatus === 'number' && typeof data === 'number' && data !== currentStatus) dispatch(
-            fetchApi.util.invalidateTags([ 'Settings', 'Schedule', 'Voter' ])
+        if (typeof currentStatus === 'number' && typeof data.planstatus === 'number' && data.planstatus !== currentStatus) dispatch(
+            fetchApi.util.invalidateTags([ 'Settings', 'Schedule', 'Voter', 'Event' ])
         )
-    }, [currentStatus, data, dispatch])
+    }, [currentStatus, data.planstatus, dispatch])
     
     return data
 }
@@ -38,7 +38,7 @@ export function usePlanSettings(pollStatus = false) {
     const setDays   = useCallback((days)   => updateVoter({ id: voter?.id, days   }), [voter?.id, updateVoter])
     const setEvents = useCallback((events) => updateVoter({ id: voter?.id, events }), [voter?.id, updateVoter])
 
-    usePollStatus(settings?.planstatus, pollStatus)
+    const { planprogress } = usePollStatus(settings?.planstatus, pollStatus)
 
     return {
         access: session?.access,
@@ -50,6 +50,7 @@ export function usePlanSettings(pollStatus = false) {
         events,
         setEvents: voter?.id && setEvents,
 
+        progress:  planprogress,
         isLoading: sLoad || aLoad || vLoad || eLoad || tLoad,
         error:     sErr  || aErr  || vErr  || eErr  || tErr,
     }

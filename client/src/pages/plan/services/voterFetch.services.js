@@ -41,6 +41,7 @@ export function updateEvents(events, { dispatch, queryFulfilled, getState }) {
 
 export function updatePlanGen(_, { dispatch, queryFulfilled }) {
     const updateSettings = dispatch(fetchApi.util.updateQueryData('settings', undefined, (draft) => ({ ...draft, planstatus: 3 })))
+    dispatch(fetchApi.util.updateQueryData('planStatus', undefined, (draft) => ({ ...draft, planprogress: 0 })))
     queryFulfilled.catch(() => { updateSettings.undo() }) // rollback
 }
 
