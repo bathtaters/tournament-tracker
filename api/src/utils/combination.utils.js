@@ -3,21 +3,23 @@ const combinationCount = (arrayLen, slotCount) => fact(arrayLen) / (fact(slotCou
 
 /** Get all possible combinations of array items in slotCount slots (No empties, order doesn't matter) */
 function* getCombinations(array, slotCount) {
-    
-    function* generate(current, start) {
-        if (current.length === slotCount) {
-            yield [...current]
-            return
+    const unused = array.length - slotCount
+    let indices = Array.from({ length: slotCount }, (_, i) => i)
+  
+    while (indices[0] <= unused) {
+        yield indices.map(i => array[i])
+        
+        let i = slotCount - 1
+        while (indices[i] === i + unused) {
+            if (--i < 0) return
         }
-    
-        for (let i = start; i < array.length; i++) {
-            current.push(array[i])
-            yield* generate(current, i + 1)
-            current.pop()
+  
+        indices[i]++
+        for (let j = i + 1; j < slotCount; j++) {
+            indices[j] = indices[j - 1] + 1
         }
     }
-    yield* generate([], 0)
-}
+  }
 
 /** Calculate count of all possible non-repetative combinations of items in slotCount slots, allowing empty slots */
 function permutationCount(arrayLength, slotCount, includeBlanks) {
