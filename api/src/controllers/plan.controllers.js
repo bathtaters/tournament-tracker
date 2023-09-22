@@ -3,34 +3,34 @@ const event = require('../db/models/event')
 const voter = require('../db/models/voter')
 const setting = require('../db/models/settings')
 const generatePlan = require('../services/plan.services')
-const { fromObjArray, toObjArray } = require('../services/settings.services')
-
-// Convert status number into Settings object array
-const planStatus = (planstatus) => toObjArray({ planstatus })
+const { fromObjArray } = require('../services/settings.services')
+const { planStatus, updateProg } = require('../utils/plan.utils')
 
 // Get plan status (Used for polling)
-const getStatus = (_, res) => setting.get('planstatus').then((r) => res.sendAndLog({ planstatus: r?.value ? +r.value : 0 }))
+const getStatus = async (_, res) => {
+    const settings = await setting.get(['planstatus', 'planprogress'])
+    return res.sendAndLog(fromObjArray(settings))
+}
 
 // Send plan data to plan generator, then update database to result & goto Plan Finish
-const genPlan = async (_, res) => {
-    await setting.batchSet(planStatus(3))
+async function genPlanAsync() {
+    await setting.batchSet(planStatus(3, 0))
 
     try {
         const events   = await event.get(null, false, true)
         const voters   = await voter.get()
         const settings = await setting.getAll().then(fromObjArray)
-    
-        const planData = await generatePlan(events, voters, settings)
-        const ids = await plan.multiset(planData)
-        await setting.batchSet(planStatus(4))
-        return res.sendAndLog(ids)
+        
+        const planData = await generatePlan(events, voters, settings, updateProg(setting.batchSet))
+        await plan.multiset(planData)
+        await setting.batchSet(planStatus(4, 100))
 
     } catch (err) {
         await setting.batchSet(planStatus(2))
         throw err
     }
-
 }
+const genPlan = (_, res) => { genPlanAsync(); res.sendAndLog({ submitted: true })  }
 
 // Move all planned events to schedule, move all other events to unscheduled, & goto Plan Start
 const savePlan = async (_, res) => {

@@ -1,6 +1,10 @@
 const { datesAreEqual } = require("./shared.utils")
+const { toObjArray } = require("../services/settings.services")
 
 // SETTINGS \\
+
+// How often to update progress (ie. 0.01 = Every 1% increase)
+const progUpdatePercent = 0.02
 
 // How many off days = 1 active day (To equalize events for players who can;t make it)
 const daysOffFactor = 2
@@ -14,6 +18,11 @@ const planMetrics = [
     { factor:  7, getScore: getGameCount  }, // Games per Player
 ]
 
+/** Convert status number into Settings object array */
+const planStatus = (planstatus, planprogress) => toObjArray(planprogress == null ? { planstatus } : { planstatus, planprogress })
+
+/** Callback to update progress bar */
+const updateProg = (setSettings) => (prog, total) => setSettings(toObjArray({ planprogress: 100 * prog / total }))
 
 /** Remove events no one voted for */
 const filterUnvoted = (events, voters) => {
@@ -123,6 +132,7 @@ const getPlanScore = (planData) => planMetrics.reduce(
 )
 
 module.exports = {
+    progUpdatePercent, planStatus, updateProg,
     filterUnvoted, voterCanPlay, daysOffByPlayer,
     getEventScores, getPlanScore,
     planToEvent, resetEvent,
