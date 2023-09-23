@@ -50,7 +50,6 @@ _Represented below by api/v[n]_
 |/all|GET| |{ playerId: { playerVoteData } }|All vote data by playerID|
 |/[id]|GET| |{ playerVoteData }|Vote data for player|
 |/|POST|{ id }|{ id }|Add player as voter|
-|/[id]|DELETE| |{ id }|Remove player as voter|
 |/[id]|PATCH|{ newData }|{ id, newData }|Update player's vote data|
 
 ---
@@ -59,10 +58,10 @@ _Represented below by api/v[n]_
 
 | URL | Method | Body | Return | Description |
 |------|------|------|------|------|
-|/|DELETE| |{ success }|Remove all voter/events from plan|
-|/generate|POST| |[ events ]|Auto-set dates for plan events|
-|/save|POST| |[ events ]|Add plan to schedule, de-scheduling exisiting events|
 |/status|GET| |{ planStatus }|Get plan status number|
+|/save|POST| |[ events ]|Add plan to schedule, de-scheduling exisiting events|
+|/generate|POST| |[ events ]|Auto-set dates for plan events|
+|/|DELETE| |{ success }|Remove all voters/events from plan|
 
 ---
 
@@ -72,12 +71,14 @@ _Represented below by api/v[n]_
 |------|------|------|------|------|
 |/all|GET| |{ id: { eventData }, ... }|Data from all events by ID|
 |/[id]|GET| |{ eventData }|Data from a event|
-|/[id]/stats|GET| |{ playerid: { stats }, ..., ranking: [ids] }|Player stats from a event|
+|/all/stats|GET| |{ playerid: { stats }, ..., ranking: [ids] }|Player stats from all events|
+|/[id]/stats|GET| |{ playerid: { stats }, ..., ranking: [ids] }|Player stats from an event|
 |/|POST|{ eventData }|{ id }|Create a new event|
+|/plan|POST|{ events: [ ids ] }|[{ id }, ... ]|Set event list for current plan|
 |/[id]|DELETE| |{ id }|Deletes event from database|
 |/[id]|PATCH|{ newData }|{ id, newData }|Update event data|
-|/[id]/round|POST| |{ id, round: #, matches: [ ids ] }|Add a round of matches|
-|/[id]/round|DELETE| |{ id, round: # }|Delete the last round|
+|/[id]/round/[round]|POST| |{ id, round: #, matches: [ ids ] }|Add a round of matches|
+|/[id]/round/[round]|DELETE| |{ id, round: # }|Delete the last round|
 
 ---
 
