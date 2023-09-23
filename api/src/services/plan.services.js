@@ -1,7 +1,7 @@
 const logger = require("../utils/log.adapter")
 const { dayCount } = require("../utils/shared.utils")
 const { filterUnvoted, voterCanPlay, getEventScores, planToEvent, resetEvent, daysOffByPlayer, getPlanScore, progUpdatePercent } = require("../utils/plan.utils")
-const { permutationCount, getPermutations, combinationCount, getCombinations, getObjectCombos } = require("../utils/combination.utils")
+const { permutationCount, getPermutations, combinationCount, getCombinationN, getObjectCombos } = require("../utils/combination.utils")
 
 
 // Accepts planEvents, voters & settings, returns event array ({ id, day, slot, players })
@@ -102,9 +102,14 @@ function getSlotScores(schedule, voters, startDay, slots, maxScore) {
         }
         
         // Determine every possible player combination for available players
-        for (const players of getCombinations(available, schedule[slot].playercount)) {
+        const combos = combinationCount(available.length, schedule[slot].playercount)
+        for (let n = 0; n < combos; n++) {
             newScore.scores.push(
-                getEventScores(schedule[slot], players, maxScore)
+                getEventScores(
+                    schedule[slot],
+                    getCombinationN(n, available, schedule[slot].playercount, combos),
+                    maxScore
+                )
             )
         }
 

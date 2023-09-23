@@ -1,25 +1,24 @@
 /** Calculate count of all possible combinations of array items in slotCount slots */
 const combinationCount = (arrayLen, slotCount) => fact(arrayLen) / (fact(slotCount) * fact(arrayLen - slotCount))
 
-/** Get all possible combinations of array items in slotCount slots (No empties, order doesn't matter) */
-function* getCombinations(array, slotCount) {
-    const unused = array.length - slotCount
-    let indices = Array.from({ length: slotCount }, (_, i) => i)
-  
-    while (indices[0] <= unused) {
-        yield indices.map(i => array[i])
-        
-        let i = slotCount - 1
-        while (indices[i] === i + unused) {
-            if (--i < 0) return
+/** Get the Nth combination of array items in slotCount slots
+ *   No empties, order doesn't matter, comboCount = result of combinationCount() */
+function getCombinationN(n, array, slotCount, comboCount) {
+    let combo = [], len = array.length
+
+    for (let curIndex = comboCount; slotCount > 0; slotCount--) {
+        comboCount = Math.trunc((comboCount * slotCount) / len)
+
+        while (curIndex > n + comboCount) {
+            curIndex -= comboCount
+            comboCount *= len - slotCount
+            comboCount = Math.trunc((comboCount - (comboCount % slotCount)) / --len)
         }
-  
-        indices[i]++
-        for (let j = i + 1; j < slotCount; j++) {
-            indices[j] = indices[j - 1] + 1
-        }
+        combo.push(array[--len])
     }
-  }
+    return combo
+}
+
 
 /** Calculate count of all possible non-repetative combinations of items in slotCount slots, allowing empty slots */
 function permutationCount(arrayLength, slotCount, includeBlanks) {
@@ -102,7 +101,7 @@ function hasRepeats(array, ignoreValue) {
 
 // EXPORTS \\
 module.exports = {
-    combinationCount, getCombinations,
+    combinationCount, getCombinationN,
     permutationCount, getPermutations,
     getObjectCombos,
 }
