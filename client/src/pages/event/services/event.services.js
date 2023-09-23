@@ -8,7 +8,7 @@ import { formatCopyRound } from "../../../assets/formatting";
 export function useRoundEditor({ id, roundactive, matches }, round) {
   // Setup
   const dispatch = useDispatch()
-  const access = useAccessLevel()
+  const { access } = useAccessLevel()
   const [isEditing, setIsEditing] = useState(false)
 
   // Copy matches

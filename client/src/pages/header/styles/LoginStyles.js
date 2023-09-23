@@ -1,15 +1,18 @@
 import React from "react";
-import { DropdownStyle, MenuLinkStyle, MenuItemStyle, MenuStyle, headerButtonStyle } from "../styles/HeaderStyles";
-import { ReactComponent as DefaultProfilePic } from "../../../assets/images/blank-user.svg";
+import { DropdownStyle, MenuStyle, MenuLinkStyle, MenuItemStyle, headerButtonStyle } from "./MenuStyles";
 import { defaultPicClass } from "../../profile/styles/ProfileStyles";
+import { ReactComponent as DefaultProfilePic } from "../../../assets/images/blank-user.svg";
 
-export function LoginMenuButton({ src }) {
+export function LoginMenuButton({ initial, src }) {
     return (
-        <label tabIndex="0" className={headerButtonStyle}>
+        <label tabIndex="0" className={`relative ${headerButtonStyle}`}>
             {src ?
                 <img className="bg-gray-400 h-full w-auto" src={src} alt="User menu" />
                 :
-                <DefaultProfilePic className={defaultPicClass} />
+                <>
+                    <DefaultProfilePic className={defaultPicClass} />
+                    <div className="absolute font-thin text-sm top-[0.45rem]">{initial}</div>
+                </>
             }
         </label>
     );
@@ -17,10 +20,10 @@ export function LoginMenuButton({ src }) {
 
 const MenuLoading = () => <MenuItemStyle disabled={true}>Hang on...</MenuItemStyle>;
 
-export function LoginMenuStyle({ loading, onSubmit, children }) {
+export function LoginMenuStyle({ loading, onSubmit, initial, children }) {
     return (
         <DropdownStyle isRight={true}>
-            <LoginMenuButton />
+            <LoginMenuButton initial={initial} />
 
             <MenuStyle onSubmit={onSubmit}>
                 {loading ? <MenuLoading /> : children}

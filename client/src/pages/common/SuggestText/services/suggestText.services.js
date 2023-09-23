@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { validList, getNonStaticSoloIdx } from "./suggestText.utils"
-import { hideListWhenEmpty, hideStaticWhenEmpty, adaptEntry, adaptInput, testEntry, logInvalidEntries } from "./suggestText.custom"
+import { hideListWhenEmpty, adaptEntry, adaptInput, testEntry, logInvalidEntries } from "./suggestText.custom"
 
 // Filter Suggestions logic
-export function getSuggestions(list, value, setSuggestions, setExact) {
+export function getSuggestions(list, value, setSuggestions, setExact, hideStaticWhenEmpty) {
   // Setup registers/constants
   const len = value.length
 

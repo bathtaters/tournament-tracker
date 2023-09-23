@@ -1,9 +1,9 @@
 import React from "react";
 
-export function PlayerEditorStyle({ playerCount, children }) {
+export function PlayerEditorStyle({ label, playerCount, children }) {
   return (
-  <div className="m-4">
-    <label className="label label-text mb-2">{'Players' + (typeof playerCount !== 'number' ? '' : ` (${playerCount})`)}</label>
+  <div className="m-4 w-full">
+    <label className="label label-text mb-2">{label + (typeof playerCount !== 'number' ? '' : ` (${playerCount})`)}</label>
     { children }
   </div> 
   );

@@ -1,11 +1,20 @@
 // Import templates
 import { basicTemplate } from "./formatting";
 
+// -- User Messages -- \\
+
+export const planMessage = {
+  noPlan: "This plan is inactive right now.",
+  notSignedIn: "Please sign in to vote.",
+  notVoter: "You are not a particpant in this plan.",
+};
+
 // -- String Sets -- \\
 
 export const footerText = "bathtaters – 2022";
 
-export const dragType = { event: "json/eventday", player: "json/matchplayer" };
+export const dragType = { event: "json/eventday", player: "json/matchplayer", vote: "json/vote" };
+export const boxIDs = { RANKED: 'ranked', UNRANKED: 'unranked' };
 
 export const statusInfo = [
   { label: 'N/A',         badge: "badge-warning", linkClass: "link-warning", textClass: "text-warning"      },
@@ -16,6 +25,8 @@ export const statusInfo = [
 ];
 
 export const playerAccess = [ 'Guest', 'Player', 'Judge', 'Gonti' ];
+
+export const planTitle = [ 'Inactive Plan', 'Vote Setup', 'Rank Games', 'Generating' , 'Proposed Schedule' ];
 
 export const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
@@ -37,9 +48,9 @@ export const localKeys = {
 // Lock Screen captions
 export const roundButtonLockCaption = "Generating round...";
 export const editEventLockCaptions = ["Creating event...", "Updating event..."];
-export const playerLockCaption = "Creating player...";
 export const resetDataLockCaption = "Resetting data...";
 export const reportLockCaption = "Updating standings...";
+export const createLockCaption = (type) => `Creating ${type}...`;
 
 
 // -- Server error adapters -- \\

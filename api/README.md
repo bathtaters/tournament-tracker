@@ -26,7 +26,8 @@ _Represented below by api/v[n]_
 | URL | Method | Body | Return | Description |
 |------|------|------|------|------|
 |/all|GET| |{settings,schedule,events,players}|All objects in DB|
-|/schedule|GET| |{ YYYY-MM-DD: [ eventids ], ... }|All eventids by date|
+|/schedule|GET| |{ settings, schedule: { YYYY-MM-DD/none: [ eventids ] } }|Events by date + settings (uses settings.showplan)|
+|/schedule/plan|GET| |{ settings, schedule: { YYYY-MM-DD/none: [ eventids ] } }|Planned events by date + relevant settings|
 |/settings|GET| |{ setting: value, ... }|All stored settings|
 |/settings|PATCH|{ setting: value }|{ success, set: [setting] }|Update setting(s)|
 
@@ -42,18 +43,42 @@ _Represented below by api/v[n]_
 
 ---
 
+### _Voter_ - [Domain]/api/v[n]/voter/...
+
+| URL | Method | Body | Return | Description |
+|------|------|------|------|------|
+|/all|GET| |{ playerId: { playerVoteData } }|All vote data by playerID|
+|/[id]|GET| |{ playerVoteData }|Vote data for player|
+|/|POST|{ id }|{ id }|Add player as voter|
+|/[id]|PATCH|{ newData }|{ id, newData }|Update player's vote data|
+
+---
+
+### _Plan_ - [Domain]/api/v[n]/plan/...
+
+| URL | Method | Body | Return | Description |
+|------|------|------|------|------|
+|/status|GET| |{ planStatus }|Get plan status number|
+|/save|POST| |[ events ]|Add plan to schedule, de-scheduling exisiting events|
+|/generate|POST| |[ events ]|Auto-set dates for plan events|
+|/|DELETE| |{ success }|Remove all voters/events from plan|
+
+---
+
 ### _Event_ - [Domain]/api/v[n]/event/...
 
 | URL | Method | Body | Return | Description |
 |------|------|------|------|------|
 |/all|GET| |{ id: { eventData }, ... }|Data from all events by ID|
 |/[id]|GET| |{ eventData }|Data from a event|
-|/[id]/stats|GET| |{ playerid: { stats }, ..., ranking: [ids] }|Player stats from a event|
+|/all/stats|GET| |{ playerid: { stats }, ..., ranking: [ids] }|Player stats from all events|
+|/[id]/stats|GET| |{ playerid: { stats }, ..., ranking: [ids] }|Player stats from an event|
 |/|POST|{ eventData }|{ id }|Create a new event|
+|/plan|POST|{ events: [ ids ] }|[{ id }, ... ]|Set event list for current plan|
 |/[id]|DELETE| |{ id }|Deletes event from database|
 |/[id]|PATCH|{ newData }|{ id, newData }|Update event data|
-|/[id]/round|POST| |{ id, round: #, matches: [ ids ] }|Add a round of matches|
-|/[id]/round|DELETE| |{ id, round: # }|Delete the last round|
+|/[id]/round/[round]|POST| |{ id, round: #, matches: [ ids ] }|Add a round of matches|
+|/[id]/round/[round]|DELETE| |{ id, round: # }|Delete the last round|
 
 ---
 
@@ -66,7 +91,8 @@ _Represented below by api/v[n]_
 |/[id]|POST|{ players, draws, drops }|{ eventid, id }|Report match result|
 |/[id]|DELETE| |{ eventid, id }|Clears match result|
 |/[id]|PATCH|{ newResult }|{ eventid, id }|Update results|
-|/swap|POST|{ playerA: {id,playerid}, playerB } |{ eventid }|Swap players between matches|
+|/[id]/drop|PATCH|{ playerid, undrop }|{ eventid, id }|Drop/Undrop player from event|
+|/swap|POST|[{id,playerid}, {id,playerid}]|{ eventid }|Swap players between matches|
 
 ---
 
@@ -107,11 +133,15 @@ event:
 	title STRING
 	day DATE = NULL
 	slot SMALLINT = 0
+	plan BOOLEAN = false
 	players [player.id] = []
+	playercount SMALLINT = 0
 	roundactive SMALLINT = 0
 	roundcount SMALLINT = 3
-	wincount SMALLINT = 2,
+	wincount SMALLINT = 2
 	playerspermatch SMALLINT = 2
+	notes STRING NOT NULL DEFAULT ''
+    link STRING NOT NULL DEFAULT ''
 	
 	(clock:)
 	clocklimit INTERVAL = 60min
@@ -127,4 +157,9 @@ match:
 	draws SMALLINT = 0
 	drops UUID[] = []
 	reported BOOLEAN = FALSE
+
+voter:
+	id UUID = player.id
+	days DATE[] = []
+	events UUID[] = []
 ```

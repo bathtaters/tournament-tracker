@@ -65,7 +65,7 @@ const rmvRow = (table, rowId, client = null) =>
 
 
 // UPDATE
-const updateRow = (table, rowId, updateObj, { returning, client, idCol, looseMatch } = {}) => {
+const updateRow = (table, rowId, updateObj, { returning, client, idCol, looseMatch, returnArray } = {}) => {
     // strTest(table) || strTest(returning);
     const keys = Object.keys(updateObj || {});
 
@@ -74,25 +74,63 @@ const updateRow = (table, rowId, updateObj, { returning, client, idCol, looseMat
 
     return (client || direct).query(
         `UPDATE ${table} SET ${
-            keys.map((col,idx) => `${col} = $${idx+2}`).join(', ')
-        } WHERE ${idCol || 'id'} ${looseMatch ? 'ILIKE' : '='} $1 RETURNING ${returning || 'id'};`,
+            keys.map((col,idx) => `${col} = $${idx + 1}`).join(', ')
+        }${
+            rowId == null ? '' :
+                ` WHERE ${idCol || 'id'} ${looseMatch ? 'ILIKE' : '='} $${keys.length + 1}`
+        } RETURNING ${returning || 'id'};`,
+        
+        rowId == null
+            ? Object.values(updateObj || {})
+            : [...Object.values(updateObj || {}), rowId]
 
-        [rowId, ...Object.values(updateObj || {})]
-
-    ).then(getSolo()).then(getReturn).then(getFirst())
-    .then(ret => ({
-        [idCol || 'id']: rowId,
-        ...(updateObj || {}),
-        ...(ret || {error: 'Missing return value.'})
-    }));
+    ).then(getSolo()).then(getReturn)
+    .then(ret => ret.length ?
+        ret.map(data => ({
+            [idCol || 'id']: rowId,
+            ...(updateObj || {}),
+            ...(data || {error: 'Missing return value.'})
+        }))
+        :
+        [{error: 'Missing return value.'}]
+    ).then(getFirst(!returnArray));
 };
 
+
+const updateRows = (table, updateObjArray, { returning = 'id', client = direct, idCol = 'id', types = {} } = {}) => {
+    updateObjArray = updateObjArray && updateObjArray.filter((item) => item[idCol])
+    if (!updateObjArray?.length) throw new Error(`No properties or keys provided to update ${table}`)
+
+    const keys = Object.keys(updateObjArray[0])
+    const updateKeys = keys.filter((key) => key !== idCol)
+    strTest(keys)
+    strTest(Object.values(types))
+
+    return client.query(
+        `UPDATE ${table} SET ${
+            updateKeys.map((key) => `${key} = u.${key}`).join(', ')
+        } FROM (VALUES ${
+            updateObjArray.map((_,i) => 
+                `(${keys.map((key, j) => `$${i * keys.length + j + 1}${types[key] ? `::${types[key]}` : ''}`).join(', ')})`
+            ).join(', ')
+        }) AS u(${
+            keys.join(', ')
+        }) WHERE ${table}.${idCol} = u.${idCol} RETURNING ${table}.${returning};`,
+
+        updateObjArray.flatMap((item) => keys.map((key) => item[key]))
+
+    ).then(getSolo()).then(getReturn).then((r) => r && r.map((data) => ({
+        ...updateObjArray.find((item) => item[idCol] === data[idCol]),
+        ...data
+    })))
+}
 
 module.exports = { 
     query,
     getRow, getRows,
     addRows, addRow,
-    rmvRow, updateRow,
+    updateRow, updateRows,
+    rmvRow,
     operation: op => direct.operation(op).then(getReturn),
     file: (...files) => direct.execFiles(files).then(getReturn),
 }

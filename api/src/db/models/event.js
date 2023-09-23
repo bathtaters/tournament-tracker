@@ -3,8 +3,8 @@ const db = require('../admin/interface');
 const strings = require('../sql/strings').event;
 
 // Get event data
-async function get(id, detail=false) {
-    if (!id) return db.getRows('event');
+async function get(id, detail = false, planOnly = false) {
+    if (!id) return db.getRows('event', planOnly ? 'WHERE plan = TRUE' : undefined);
 
     const eventData = await db.getRow('event'+(detail ? 'Detail' : ''), id);
     if (!eventData || eventData.length === 0) return;
@@ -12,7 +12,9 @@ async function get(id, detail=false) {
     return eventData;
 };
 
-const getSchedule = () => db.getRows('schedule');
+const getSchedule = (planOnly) => db.query(`${strings.schedule.prefix}${
+    planOnly ? strings.schedule.planOnly : strings.schedule.useSettings
+}${strings.schedule.suffix}`);
 
 const getOpponents = (eventid, completed=true) => eventid ?
     db.getRow('eventOpps', eventid, null, { idCol: 'eventid', getOne: false }) :
@@ -70,5 +72,6 @@ module.exports = {
     add, popRound, pushRound,
 
     rmv:  id => db.rmvRow('event', id),
-    set: (id, newParams) => db.updateRow('event', id, newParams)
+    set: (id, newParams) => db.updateRow('event', id, newParams),
+    setPlan: (ids) => db.query(strings.plan, [ids]),
 }

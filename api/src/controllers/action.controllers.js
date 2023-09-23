@@ -1,3 +1,5 @@
+const { matchedData }  = require('express-validator');
+
 // Models
 const event = require('../db/models/event');
 const match = require('../db/models/match');
@@ -16,8 +18,9 @@ const { arrToObj } = require('../utils/shared.utils');
 // Swap players in matches
 async function swapPlayers(req, res) {
   // Get data
+  const { swap } = matchedData(req);
   let matchData = await match.getMulti(
-    getUniqueIds(req.body.swap, 'id'), false,
+    getUniqueIds(swap, 'id'), false,
     ['id', 'eventid','players','wins','drops','reported']
   );
 
@@ -30,7 +33,7 @@ async function swapPlayers(req, res) {
     throw new Error("Cannot swap players from different events.");
   
   // Mutate match data
-  matchData = swapPlayersService(matchData, req.body.swap);
+  matchData = swapPlayersService(matchData, swap);
 
   // Write changes
   const result = await match.updateMulti(matchData, 'eventid');
@@ -43,12 +46,13 @@ async function swapPlayers(req, res) {
 
 // Create round matches
 async function nextRound(req, res) {
-  const data = await event.get(req.params.id, true);
+  const { id, roundactive } = matchedData(req);
+  const data = await event.get(id, true);
 
   // Error check
-  if (!data) throw new Error("Event not found: "+req.params.id);
+  if (!data) throw new Error("Event not found: "+id);
 
-  if (data.roundactive + 1 !== req.params.roundactive)
+  if (data.roundactive + 1 !== roundactive)
     throw new Error("Recieved too many round change requests.");
 
   if (
@@ -66,8 +70,8 @@ async function nextRound(req, res) {
 
   // Get additional data
   const [matchData, oppData, autoByes] = await Promise.all([
-    match.getByEvent(req.params.id),
-    event.getOpponents(req.params.id).then(arrToObj('playerid',{ valKey: 'oppids' })),
+    match.getByEvent(id),
+    event.getOpponents(id).then(arrToObj('playerid',{ valKey: 'oppids' })),
     settings.get('autobyes')
   ]);
 
@@ -88,15 +92,17 @@ async function nextRound(req, res) {
 
 // Delete round matches
 async function prevRound(req, res) {
-  const round = await event.getRound(req.params.id); // Get latest round num
+  const { id, roundactive } = matchedData(req);
+  
+  const round = await event.getRound(id); // Get latest round num
   if (round == null) throw new Error("No matches found.");
 
-  if (round !== req.params.roundactive)
+  if (round !== roundactive)
     throw new Error("Recieved too many round change requests.");
 
-  await event.popRound(req.params.id, round);
+  await event.popRound(id, round);
 
-  return res.sendAndLog({ id: req.params.id, round });
+  return res.sendAndLog({ id: id, round });
 }
 
 

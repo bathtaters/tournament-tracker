@@ -33,7 +33,7 @@ const usePlayerClickController = (deleteMode, deletePlayer, openAlert) =>
 // Players base logic
 export default function usePlayersController() {
   // Init globals
-  const access = useAccessLevel()
+  const { access } = useAccessLevel()
   const [ deletePlayer ] = useDeletePlayerMutation()
   
   // Setup locals

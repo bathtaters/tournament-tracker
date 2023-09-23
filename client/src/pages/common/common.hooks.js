@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback, useLayoutEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { usePrefetch } from "./common.fetch";
 import { useLockScreen } from '../../core/services/global.services';
+import { equalArrays, useThrottle } from "./services/basic.services";
 import { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult } from "./services/alert.services";
 export { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult, useLockScreen }
 
@@ -25,36 +26,45 @@ export function usePrefetchEvent() {
 }
 
 // Push prop updates to state
-export function usePropState(propVal, equalsTest = (state,prop) => state === prop, depends = []) {
-  const [ localVal, setLocal ] = useState(propVal)
-  // eslint-disable-next-line
-  const equals = useCallback(equalsTest, depends)
+export function usePropState(propVal, equalsTest = (oldVal,newVal) => oldVal === newVal) {
+  const ref = useRef(propVal)
+  const [ localVal, setLocal ] = useState(ref.current)
 
-  useEffect(() => {
-    setLocal((stateVal) => equals(stateVal, propVal) ? stateVal : propVal)
+  if (!equalsTest(ref.current, propVal)) ref.current = propVal
   // eslint-disable-next-line
-  }, [propVal, ...depends])
+  useEffect(() => setLocal(ref.current), [ref.current])
 
   return [ localVal, setLocal ]
 }
+export const usePropStateList = (propList) => usePropState(propList || [], equalArrays)
 
-// Delay and bundle server updates
-export function useServerValue(value, setServerCallback, updateBundleDelay = 500) {
-  // Local value
-  const [ localVal, setLocal ] = usePropState(value)
+// Delay and throttle server updates
+export function useServerValue(value, updateServerCallback, { throttleDelay = 500, equalsTest } = {}) {
+  // Init hooks
+  const throttle = useThrottle(throttleDelay)
+  const [ localVal, setLocal ] = usePropState(value, equalsTest)
 
-  // Delay and bundle updates
-  useEffect(() => {
-    if (localVal === value) return
+  // Update function
+  const updateLocal = useCallback((newValue) => {
 
-    const timer = setTimeout(() => setServerCallback(localVal), updateBundleDelay)
-    return () => clearTimeout(timer)
-  // eslint-disable-next-line
-  }, [localVal], )
+    // Uses setState((currVal) => newVal) form
+    if (typeof newValue === 'function') return setLocal((local) => {
+      const val = newValue(local)
+      throttle(() => updateServerCallback(val))
+      return val
+    })
+
+    // Use setState(newVal) form
+    setLocal(newValue)
+    throttle(() => updateServerCallback(newValue))
+  }, [setLocal, throttle, updateServerCallback])
 
   // Return value & setter
-  return [ localVal, setLocal ]
+  return [ localVal, updateLocal ]
 }
+export const useServerListValue = (listValue, updateServerCallback, options = {}) =>
+  useServerValue(listValue || [], updateServerCallback, { equalsTest: equalArrays, ...options })
+
 
 // Scales height based on internal content (padding = vertical padding, everything is in pixels)
 export function useScaleToFitRef(depends = [], { padding = 0, minHeight = 32 } = {}) {

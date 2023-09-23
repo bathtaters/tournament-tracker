@@ -32,7 +32,7 @@ export const eventApi = fetchApi.injectEndpoints({
     }),
 
     updateDrops: build.mutation({
-      query: ({ id, playerid, eventid, ...body }) => ({ url: `match/${id}/drop`, method: 'PATCH', body: { ...body, id: playerid } }),
+      query: ({ id, playerid, eventid, ...body }) => ({ url: `match/${id}/drop`, method: 'PATCH', body: { ...body, playerid } }),
       transformResponse: debugLogging ? res => console.log('UPD_DROPS',res) || res : undefined,
       invalidatesTags: getTags(['Match','Event','Stats'],{key:'eventid',all:0}),
       onQueryStarted: dropsUpdate,

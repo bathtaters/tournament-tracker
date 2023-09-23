@@ -7,7 +7,7 @@ import { ContainerStyle, HeaderStyle, ValueStyle, DetailStyle } from "../styles/
 import { useAccessLevel } from "../../common/common.fetch";
 
 function EventDashboard({ data, openStats }) {
-  const access = useAccessLevel()
+  const { access } = useAccessLevel()
 
   const headerValue = data.status === 2 ? 'Round ' + data.roundactive : statusInfo[data?.status ?? 0].label
   

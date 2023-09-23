@@ -74,3 +74,47 @@ exports.filtering = (object, ignoring = ['id']) => {
   });
   return copy;
 };
+
+// DATE FUNCTIONS \\
+
+
+/** One day in ms */
+const oneDay = 24 * 60 * 60 * 1000
+/** Returns True if date is a valid date object */
+const isDate = (date) => date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date)
+
+/**
+ * Rescursively search 'data' for Date objects
+ * and convert them to date strings of form YYYY-MM-DD
+ * @param {any} data 
+ * @returns Copy of data w/ converted dates
+ */
+exports.toDateStr = (data) => {
+  if (typeof data !== 'object' || !data) return data
+  if (isDate(data)) return data.toISOString().slice(0,10)
+
+  if (Array.isArray(data)) return data.map(exports.toDateStr)
+  return Object.entries(data).reduce((obj, [key,val]) => 
+    Object.assign(obj, { [key]: exports.toDateStr(val) }), 
+    {}
+  )
+}
+
+/** 
+ * Get the number of days from startDate to endDate (inclusive)
+ * @param {Date} startDate - Date to start from
+ * @param {Date} endDate - Date to end on
+ * @returns {Number} Count of total days in range
+ */
+exports.dayCount = (startDate, endDate) => 1 + (endDate - startDate) / oneDay
+
+/**
+ * Test if two date objects have the same date
+ * @param {Date} dateA - Date to test for equality
+ * @param {Date} dateB - Date to test for equality
+ * @returns {Boolean} True if dates are equal, otherwise False
+ */
+exports.datesAreEqual = (dateA, dateB) =>
+  dateA.getDate()     === dateB.getDate()     &&
+  dateA.getMonth()    === dateB.getMonth()    &&
+  dateA.getFullYear() === dateB.getFullYear()

@@ -1,3 +1,5 @@
+const { matchedData }  = require('express-validator');
+
 // Models
 const event = require('../db/models/event');
 const match = require('../db/models/match');
@@ -6,7 +8,7 @@ const setting = require('../db/models/settings');
 
 // Imports
 const { resetDatabase } = require('../services/db.services');
-const { asType, toObjArray } = require('../services/settings.services');
+const { asType, toObjArray, fromObjArray } = require('../services/settings.services');
 const { arrToObj } = require('../utils/shared.utils');
 const logger = require('../utils/log.adapter');
 
@@ -29,34 +31,33 @@ async function getAll(_, res) {
 
 // Settings
 async function getSetting(req,res) {
-  const settingsData = await setting.get(req.param.setting);
-  if (!settingsData) throw new Error(req.param.setting + ' setting not found.');
+  const { setting } = matchedData(req);
+  const settingsData = await setting.get(setting);
+  if (!settingsData) throw new Error(setting + ' setting not found.');
   return res.sendAndLog(asType(settingsData));
 }
 
 async function getSettings(req,res) {
-  const settingsData = await setting.getAll();
-  if (!Array.isArray(settingsData)) throw new Error('Settings not found.');
-  
-  let settings = {};
-  settingsData.forEach(entry => settings[entry.id] = asType(entry));
-  return res.sendAndLog(settings);
+  const settings = await setting.getAll();
+  if (!Array.isArray(settings)) throw new Error('Settings not found.');
+  return res.sendAndLog(fromObjArray(settings));
 }
 
 async function setSettings(req,res) {
-  if (!req.body) return res.sendAndLog({ success: false });
+  const settings = matchedData(req);
+  if (!Object.keys(settings).length) return res.sendAndLog({ success: false });
   
-  const settingsArray = toObjArray(req.body);
+  const settingsArray = toObjArray(settings);
 
   const set = await setting.batchSet(settingsArray).then(r => r && r.map(s => s.id));
   return res.sendAndLog({ success: true, set });
 }
 
 // Schedule data
-const getSchedule = async function(_, res) {
+const getSchedule = (planOnly) => async function(_, res) {
   const [schedule, settingsData] = await Promise.all([
-    event.getSchedule().then(arrToObj('day')),
-    setting.get(['dayslots','datestart','dateend']),
+    event.getSchedule(planOnly).then(arrToObj('day')),
+    setting.get(['dayslots','datestart','dateend','planslots','plandates','showplan']),
   ]);
 
   let settings = {};

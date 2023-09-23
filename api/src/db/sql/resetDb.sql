@@ -43,7 +43,9 @@ CREATE TABLE event (
     title STRING NULL,
     day DATE NULL,
     slot SMALLINT NOT NULL DEFAULT 0,
+    plan BOOL NOT NULL DEFAULT false,
     players UUID[] NOT NULL DEFAULT '{}',
+    playercount SMALLINT NOT NULL DEFAULT 8,
     roundactive SMALLINT NOT NULL DEFAULT 0,
     roundcount SMALLINT NOT NULL DEFAULT 3,
     wincount SMALLINT NOT NULL DEFAULT 2,
@@ -77,6 +79,12 @@ CREATE TABLE match (
     INVERTED INDEX player_idx (players)
 );
 
+CREATE TABLE voter (
+    id UUID PRIMARY KEY NOT NULL,
+    days DATE[] NOT NULL DEFAULT '{}',
+    events UUID[] NOT NULL DEFAULT '{}'
+);
+
 -- Perms
 GRANT ALL ON DATABASE %DB% TO db_admin;
 GRANT ALL ON TABLE * TO db_admin;
@@ -87,14 +95,14 @@ GRANT SELECT ON TABLE * TO db_read;
 -- COMBO VIEWS --
 
 CREATE VIEW eventDetail (
-    id, title, players, playerspermatch,
+    id, title, players, playercount, playerspermatch,
     day, slot, roundactive, roundcount, wincount, notes, link,
     allreported,
     anyreported,
     byes,
     drops
 ) AS SELECT
-    event.id, event.title, event.players, playerspermatch,
+    event.id, event.title, event.players, playercount, playerspermatch,
     day, slot, roundactive, roundcount, wincount, notes, link,
     BOOL_AND(reported),
     BOOL_OR(reported) FILTER(
@@ -128,10 +136,3 @@ FROM match,
     UNNEST(match.players) playerid,
     UNNEST(match.players) oppid
 WHERE oppid != playerid GROUP BY eventid, playerid;
-
-
-CREATE VIEW schedule (day, eventslots)
-AS SELECT
-    COALESCE(TO_CHAR(day), 'none'),
-    JSON_OBJECT_AGG(id::STRING, slot)
-FROM event@date_idx GROUP BY day;

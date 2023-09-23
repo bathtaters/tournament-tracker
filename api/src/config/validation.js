@@ -4,6 +4,8 @@ const sharedLimits = {
   player: { min: 0, max: 32 },
   rounds: { min: 1, max: 20 },
   wins:   { min: 0, max: 10 },
+  dates:  { min: 0, max: 30 },
+  slots:  { min: 0, max: 10 },
 };
 
 sharedLimits.activeRounds = { 
@@ -23,11 +25,16 @@ module.exports = {
     settings: {
       title: "Tournament Tracker",
       showrawjson: false,
-      dayslots: 3,
+      dayslots: 2,
       autofillsize: 8,
       datestart: today,
       dateend: tomorrow,
       autobyes: true,
+      planstatus: 1,
+      plandates: [],
+      planslots: 2,
+      planmenu: false,
+      planschedule: false,
     },
     player: {
       name: "New Player",
@@ -41,12 +48,15 @@ module.exports = {
       title: "New Game",
       day: null,
       slot: 0,
+      plan: false,
       players: [],
+      playercount: 8,
       roundactive: 0,
       roundcount: 3,
       wincount: 2,
       playerspermatch: 2,
       notes: '',
+      link: '',
       clocklimit: '01:00:00',
       clockstart: null,
       clockmod: null,
@@ -60,14 +70,21 @@ module.exports = {
       reported: false,
       undrop: false,
     },
+    voter: {
+      days: [],
+      events: [],
+    },
   },
 
   limits: {
     settings: {
       title: sharedLimits.title,
-      daterange: { min: 1, max: 30 },
-      dayslots: { min: 0, max: 10 },
+      daterange: { min: 1, max: sharedLimits.dates.max },
+      dayslots: sharedLimits.slots,
       autofillsize: sharedLimits.player,
+      planstatus: { min: 0, max: 4 },
+      plandates: sharedLimits.dates,
+      planslots: sharedLimits.slots,
     },
     player: {
       name: sharedLimits.title,
@@ -78,12 +95,14 @@ module.exports = {
     event: {
       title: sharedLimits.title,
       players: sharedLimits.player,
+      playercount: sharedLimits.player,
+      slot: sharedLimits.slots,
       roundactive: sharedLimits.activeRounds,
       roundcount: sharedLimits.rounds,
       wincount: sharedLimits.wincount,
       playerspermatch: { min: 1, max: 4 },
       notes: { min: 0, max: 256 },
-      clocklimit: {min: '00:01', max: '24:00:00'}
+      clocklimit: {min: '00:01', max: '24:00:00'},
     },
     match: {
       round:   sharedLimits.rounds,
@@ -93,9 +112,17 @@ module.exports = {
       drops:   sharedLimits.player,
       setDrawsMax: 1,
     },
+    voter: {
+      days: sharedLimits.dates,
+      events: { min: 0, max: 50 },
+    },
     swap: {
       swap: { min: 2, max: 2 },
     },
+    plan: {
+      voters: { min: 0, max: 100 },
+      events: { min: 0, max: 100 },
+    }
   },
 
   types: {
@@ -107,30 +134,39 @@ module.exports = {
       autobyes: "boolean",
       dayslots: "int",
       datestart: "date",
-      dateend: "date"
+      dateend: "date",
+      planstatus: "int",
+      plandates: "date[]",
+      planslots: "int",
+      planmenu: "boolean",
+      planschedule: "boolean",
     },
     player: {
       id: "uuid",
       name: "string",
       password: "string?",
       access: "number",
+      session: "uuid?",
       isteam: "boolean",
       members: "uuid[]?",
-      session: "uuid?"
     },
     event: {
       id: "uuid",
       title: "string",
       day: "date?",
+      slot: "int",
+      plan: "boolean",
       players: "uuid[]",
+      playercount: "int",
       roundactive: "int",
       roundcount: "int",
       wincount: "int",
       playerspermatch: "int",
       notes: "string*",
+      link: "string*",
       clocklimit: "interval",
       clockstart: "datetime?",
-      clockmod: "interval?"
+      clockmod: "interval?",
     },
     match: {
       id: "uuid",
@@ -141,12 +177,22 @@ module.exports = {
       draws: "int",
       drops: "uuid[]?",
       reported: "boolean",
-      undrop: "boolean"
+      undrop: "boolean",
+      playerid: "uuid"
+    },
+    voter: {
+      id: "uuid",
+      days: "date[]",
+      events: "uuid[?]",
     },
     swap: {
       swap: "object[]",
       "swap.*.id": "uuid",
       "swap.*.playerid": "uuid",
+    },
+    plan: {
+      voters: "uuid[]",
+      events: "uuid[]",
     }
   }
 };

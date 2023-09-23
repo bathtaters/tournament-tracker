@@ -1,10 +1,10 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { debugLogging } from "../../../assets/config";
 
 // Checks that 2 arrays are equal (Must be 1D arrays, 2 falsy vars will also be equal)
 export const equalArrays = (a,b) =>
-  (!a && !b) || (a && b && 
-    a.length === b.length && 
+  (!a && !b) || (
+    a?.length === b?.length && 
     a.every((v,i) => b[i] === v)
   );
 
@@ -24,6 +24,27 @@ export const nextTempId = (type, exists) => {
 // Generates 'onClick' events for mouse & touch screen (usage: <Tag {...onClickAll(cb)} /> )
 export const onClickAll = (callback) => ({ onMouseDown: callback, onTouchStart: callback })
 
+// Throttle function call, forces call on unmount
+export function useThrottle(interval) {
+	let timer = useRef(null), func = useRef(null)
+
+  const execFunc = useCallback(() => {
+    timer.current = null
+    if (func.current) func.current()
+    func.current = null
+  }, [])
+
+  useEffect(() => () => {
+    clearTimeout(timer.current)
+    execFunc()
+  }, [execFunc])
+
+  return useCallback((callFunc) => {
+    func.current = callFunc
+    if (timer.current) clearTimeout(timer.current)
+    timer.current = setTimeout(execFunc, interval)
+  }, [execFunc, interval])
+}
 
 // Listen & handle hotkeys
 // hotkeyMap = { [key]: () => action(), ... } !! MUST BE STATIC

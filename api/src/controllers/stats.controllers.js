@@ -1,3 +1,5 @@
+const { matchedData }  = require('express-validator');
+
 // Models
 const event = require('../db/models/event');
 const player = require('../db/models/player');
@@ -12,17 +14,15 @@ const { arrToObj } = require('../utils/shared.utils');
 // Get Event Stats //
 
 async function getAllStats(_, res) {
-  const [matches, players, opps] = await Promise.all([
-    match.getAll(true).then(matchesByEvent),
-    player.list(),
-    event.getOpponents(null, true).then(oppsByEvent),
-  ]);
+  const matches = await match.getAll(true).then(matchesByEvent);
+  const players = await player.list();
+  const opps    = await event.getOpponents(null, true).then(oppsByEvent);
 
   return withMissingEventIds(toStats(matches, players, opps, false)).then(res.sendAndLog);
 }
 
 async function getStats(req, res) {
-  const id = req.params.id;
+  const { id } = matchedData(req);
   const players = await event.getPlayers(id);
   if (!players) return res.sendStatus(204);
 

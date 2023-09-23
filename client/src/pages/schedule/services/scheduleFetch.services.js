@@ -2,13 +2,16 @@ import { getDays, noDate, sortedEvents } from "./date.utils"
 import { debugLogging } from "../../../assets/config"
 
 // Convert Schedule output from server to array
-export function scheduleAdapter({ schedule, settings }) {
+export function scheduleAdapter({ schedule, settings }, _, isPlan) {
   // Skip if no data
   if (!schedule || !settings) return debugLogging && console.log('SCHEDULE MISSING', {schedule, settings})
   
   // Get base data
-  const emptyDay = [...Array(settings.dayslots).values()]
-  const dateRange = getDays(settings.datestart, settings.dateend)
+  const emptyDay = [...Array((isPlan && settings.planslots) || settings.dayslots).values()]
+  const dateRange = getDays(
+    (isPlan && settings.plandates[0]) || settings.datestart,
+    (isPlan && settings.plandates[1]) || settings.dateend
+  )
 
   let output = []
   dateRange.forEach((day) => {

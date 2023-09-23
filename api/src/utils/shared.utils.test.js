@@ -1,6 +1,6 @@
 // Import/Mocks
 const warnSpy = jest.spyOn(global.console, "warn");
-const { arrToObj, insertSorted, filtering } = require('./shared.utils');
+const { arrToObj, insertSorted, filtering, toDateStr } = require('./shared.utils');
 
 afterAll(() => { warnSpy.mockRestore(); });
 
@@ -164,3 +164,54 @@ describe('filtering', () => {
     expect(filtering(sample, [])).not.toBe(sample)
   })
 })
+
+describe('toDateStr', () => {
+  it('passes non-objects', () => {
+    expect(toDateStr(0)).toBe(0)
+    expect(toDateStr(-154)).toBe(-154)
+    expect(toDateStr(true)).toBe(true)
+    expect(toDateStr(null)).toBeNull()
+    expect(toDateStr('test')).toBe('test')
+    expect(toDateStr('')).toBe('')
+    expect(toDateStr(undefined)).toBeUndefined()
+  })
+
+  it('passes arrays/objects', () => {
+    expect(toDateStr([ 1, '2', true ]))
+      .toEqual([ 1, '2', true ])
+    expect(toDateStr({ a: 1, test: '2', x: true }))
+      .toEqual({ a: 1, test: '2', x: true })
+    expect(toDateStr({ a: 1, test: [ 1, '2', true ], x: true }))
+      .toEqual({ a: 1, test: [ 1, '2', true ], x: true })
+    expect(toDateStr([ 1, { a: 1, test: '2', x: true }, true ]))
+      .toEqual([ 1, { a: 1, test: '2', x: true }, true ])
+  })
+
+  it('copies arrays/objects', () => {
+    const arr = [ 1, '2', true ]
+    const obj = { a: 1, test: '2', x: true }
+    expect(toDateStr(arr)).not.toBe(arr)
+    expect(toDateStr(obj)).not.toBe(obj)
+    expect(toDateStr(arr)).toEqual(arr)
+    expect(toDateStr(obj)).toEqual(obj)
+  })
+
+  it('converts dates', () => {
+    expect(toDateStr(new Date(2021, 3-1, 19))).toBe('2021-03-19')
+    expect(toDateStr(new Date('2004-04-12'))).toBe('2004-04-12')
+  })
+
+  it('converts nested dates', () => {
+    expect(toDateStr([ 1, '2', new Date(2021, 3-1, 19) ]))
+      .toEqual([ 1, '2', '2021-03-19' ])
+    expect(toDateStr({ a: new Date('2004-04-12'), test: '2', x: true }))
+      .toEqual({ a: '2004-04-12', test: '2', x: true })
+    expect(toDateStr({ a: 1, test: [ 1, new Date(2021, 3-1, 19), true ], x: new Date('2004-04-12') }))
+      .toEqual({ a: 1, test: [ 1, '2021-03-19', true ], x: '2004-04-12' })
+    expect(toDateStr([ new Date(2021, 3-1, 19), { a: new Date('2004-04-12'), test: '2', x: true }, true ]))
+      .toEqual([ '2021-03-19', { a: '2004-04-12', test: '2', x: true }, true ])
+  })
+})
+
+it.todo("dayCount")
+it.todo("datesAreEqual")

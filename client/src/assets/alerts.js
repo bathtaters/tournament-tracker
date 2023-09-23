@@ -23,14 +23,14 @@ export const deleteEventAlert = (title) => ({
   buttons: [{ value: "Delete Event", className: "btn-error" }, "Cancel"], // [0]=Y
 })
 
-export const duplicatePlayerAlert = (name) => ({
-  title: "Can't Add",
-  message: (name || defPlayer) + " is already here.",
+export const duplicateItemAlert = (type, name) => ({
+  title: `Can't Add ${type}`,
+  message: `${name || defPlayer} was already added.`,
 })
 
-export const createPlayerAlert = (name) => ({
-  title: "New Player?",
-  message: `Would you like to create a profile for ${name || defPlayer}?`,
+export const createItemAlert = (type, name) => ({
+  title: `New ${type}?`,
+  message: `Would you like to create a new ${type.toLowerCase()}${name ? ` called ${name}` : '' }?`,
   buttons: [{ value: "Create",  className: "btn-success" }, "Cancel"], // [0]=Y
 })
 
@@ -66,6 +66,18 @@ export const swapPlayerAlert = {
   buttons: [{ value: "Swap", className: "btn-error" }, "Cancel"], // [0]=Y
 }
 
+export const savePlanAlert = {
+  title: "Replace Schedule",
+  message: "Scheduling these events will unschedule all currently scheduled events.",
+  buttons: [{ value: "Replace", className: "btn-error" }, "Cancel"], // [0]=Y
+}
+
+export const resetPlanAlert = {
+  title: "Reset Plan",
+  message: "This will erase all vote data and plan settings.",
+  buttons: [{ value: "Erase", className: "btn-error" }, "Cancel"], // [0]=Y
+}
+
 
 // --- Player Alerts --- \\
 
@@ -99,4 +111,4 @@ export const resetDbAlertConfirm = {
 
 // --- Errors --- \\
 
-export const playerCreateError = ({ error }, { name }) => new Error(error?.data?.error ? error.data.error : '"'+name+'" was not able to be added.')
+export const itemCreateError = (type, { error }, { name }) => new Error(error?.data?.error ? error.data.error : `${type} "${name}" was not able to be added.`)

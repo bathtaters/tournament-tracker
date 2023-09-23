@@ -8,7 +8,7 @@ function LoginMenu() {
     const { login, logout, user, loading, nameProps, passProps } = useUserSession();
 
     if (user?.id) return (
-        <LoginMenuStyle loading={loading}>
+        <LoginMenuStyle loading={loading} initial={user.name.charAt(0).toUpperCase()}>
             <MenuLinkStyle to={`/profile/${idToUrl(user.id)}`}>{user.name}</MenuLinkStyle>
             <RawData data={user} />
             <DropdownButton onClick={logout}>Logout</DropdownButton>

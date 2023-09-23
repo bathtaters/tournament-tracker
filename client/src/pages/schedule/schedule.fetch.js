@@ -7,7 +7,7 @@ export const scheduleApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
 
     schedule: build.query({
-      query: () => 'schedule',
+      query: (isPlan) => `schedule${isPlan ? '/plan' : ''}`,
       transformResponse: scheduleAdapter,
       providesTags: ['Schedule'],
     }),

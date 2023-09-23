@@ -1,48 +1,23 @@
-import React, { forwardRef } from "react";
-import PropTypes from 'prop-types';
+import React from "react"
+import EditableList from "../../common/EditableList/EditableList"
+import usePlayerEditorController from "../services/playerEditor.controller"
 
-import PlayerRow from "./PlayerRow";
-import PlayerInput from "./PlayerInput";
-import { PlayerEditorStyle } from "../styles/PlayerEditorStyles";
-import Loading from "../../common/Loading";
+function PlayerEditor({ type = 'Player', value, onChange, isStarted, onFirstChange, fillAll }) {
+    
+    const { query, autofill, create } = usePlayerEditorController(type, onChange, fillAll)
 
-import usePlayerEditorController from "../services/playerEditor.controller";
-
-const PlayerEditor = forwardRef(function PlayerEditor({ players, status, onEdit = null }, ref) {
-  // Get data for editor
-  const {
-    data, playerList, inputData, suggestRef, popPlayer,
-    notStarted, isUpdating, isLoading, error,
-  } = usePlayerEditorController(players, status, onEdit, ref)
-
-  // Loading/Error catcher
-  if (!data) return (
-    <PlayerEditorStyle><Loading loading={isLoading} error={error} altMsg="Player data not found" /></PlayerEditorStyle>
-  )
-
-  // Render
-  return (
-    <PlayerEditorStyle playerCount={playerList.length}>
-
-      { playerList.map((pid,idx) => 
-        <PlayerRow
-          name={data[pid] && data[pid].name}
-          isUpdating={isUpdating}
-          onClick={notStarted && popPlayer(pid, idx)}
-          key={pid}
+    return (
+        <EditableList
+            type={type}
+            value={value}
+            onChange={onChange}
+            query={query}
+            autofill={autofill}
+            create={create}
+            isLocked={isStarted}
+            onFirstChange={onFirstChange}
         />
-      ) }
-
-      { notStarted &&  <PlayerInput {...inputData} ref={suggestRef} /> }
-
-    </PlayerEditorStyle>
-  )
-})
-
-PlayerEditor.propTypes = {
-  players: PropTypes.arrayOf(PropTypes.string),
-  status: PropTypes.number,
-  onEdit: PropTypes.func,
+    )
 }
 
 export default PlayerEditor

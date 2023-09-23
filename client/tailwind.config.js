@@ -1,5 +1,9 @@
 module.exports = {
-  content: ['./src/**/*.js', './public/index.html'],
+  content: [
+    './src/**/*.js',
+    './public/index.html',
+    "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",
+  ],
   theme: {
     extend: {
       zIndex: {
@@ -27,7 +31,6 @@ module.exports = {
     },
   },
   plugins: [
-    require('@tailwindcss/line-clamp'),
     require('daisyui'),
   ],
   daisyui: {

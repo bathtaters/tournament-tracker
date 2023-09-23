@@ -15,12 +15,13 @@ import { getBaseData } from "../../core/services/validation.services";
 const baseData = getBaseData('event');
 
 
-function EditEvent({ eventid, modal }) {
+function EditEvent({ eventid, modal, hidePlayers }) {
   
   const {
-    data, playerList, buttons, submitHandler,
+    data, playerList, updatePlayerList,
+    buttons, submitHandler,
     isLoading, error, notLoaded
-  } = useEditEventController(eventid, modal)
+  } = useEditEventController(eventid, modal, hidePlayers)
 
   // Loading/Error catcher
   if (notLoaded) return <Loading loading={isLoading} error={error} altMsg="Modal error" tagName="h3" />
@@ -31,7 +32,7 @@ function EditEvent({ eventid, modal }) {
       { Boolean(data?.status) && <StatusStyle status={data.status} /> }
 
       <InputForm
-        rows={editorLayout}
+        rows={editorLayout(hidePlayers)}
         data={data}
         baseData={{ ...baseData, eventStatus: data?.status || 0 }}
         onSubmit={submitHandler}
@@ -39,12 +40,14 @@ function EditEvent({ eventid, modal }) {
         buttons={buttons}
         rowFirst={true}
       >
-        <PlayerEditor 
-          players={data?.players}
-          status={data?.status || 0}
-          onEdit={modal.current.lock}
-          ref={playerList}
-        />
+        {!hidePlayers && 
+          <PlayerEditor 
+            value={playerList}
+            onChange={updatePlayerList}
+            isStarted={data?.status && data?.status > 1}
+            onFirstChange={modal.current.lock}
+          />
+        }
       </InputForm>
 
       <RawData className="text-sm mt-4" data={data} />

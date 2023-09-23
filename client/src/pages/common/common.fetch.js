@@ -47,12 +47,12 @@ export const { useSessionQuery, usePlayerQuery, useSettingsQuery, useEventQuery,
 export const useSessionState = commonApi.endpoints.session.useQueryState;
 
 export const useAccessLevel = () => {
-  const { data } = useSessionState();
-  return data?.access || 0;
+  const { data, isLoading, error } = useSessionState();
+  return { access: data?.access || 0, isLoading, error };
 };
 
 export const useShowRaw = () => {
   const { data, isLoading, isError } = commonApi.endpoints.settings.useQueryState();
-  const access = useAccessLevel();
+  const { access } = useAccessLevel();
   return !isLoading && !isError && access > 2 && data.showrawjson;
 };

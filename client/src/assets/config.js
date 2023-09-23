@@ -5,7 +5,6 @@ export const debugLogging = false
 export const suggestText = {
   hideListWhenExact: false, // when exact match is entered, hide list
   hideListWhenEmpty: false, // when textbox empty: false = show all / true = show none
-  hideStaticWhenEmpty: true, // when ^ is false, don't show 'static' options (ie. 'add player')
 }
 
 export const counter = {
@@ -23,4 +22,9 @@ export const alert = {
 export const settings = {
   // Store these settings locally (per user settings)
   storeLocal: ['showrawjson'],
+}
+
+export const plan = {
+  updateDelay: 1000, // ms delay for throttling updates
+  statusPoll: 5 * 1000,  // ms interval to poll for status at
 }

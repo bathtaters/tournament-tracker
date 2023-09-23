@@ -1,7 +1,7 @@
 // Imports
 const checkValidation = require('../middleware/validate.middleware')
 const { bySet, usingKey } = require('./shared.validators')
-const { body, oneOf } = require('express-validator')
+const { body, oneOf, param } = require('express-validator')
 
 // Settings
 const reportKeys = ['wins','draws','drops']
@@ -17,7 +17,7 @@ module.exports = {
   matchId:     bySet('match')('id'),
   reportMatch: bySet('match')('id', reportKeys),
   updateMatch: validateMatchUpdate,
-  updateDrops: bySet('match')('id', ['id', 'undrop']),
+  updateDrops: bySet('match')('id', ['playerid', 'undrop']),
   swapPlayers: bySet('swap')(0,'all'),
 }
 
@@ -25,6 +25,9 @@ module.exports = {
 // *** UpdateMatch: SPECIAL VALIDATION *** \\
 async function validateMatchUpdate(req, res, next) {
   try {
+    // Check ID param
+    await param('id').isUUID().run(req)
+
     // Check key
     await oneOf([
       body('key').matches(updateKeyRegEx),

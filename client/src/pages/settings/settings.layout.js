@@ -22,7 +22,11 @@ export const layout = [
   [
     { label: 'Show Raw Data', id: 'showrawjson', type: 'toggle', inputClass: 'toggle-accent' },
     { label: 'Auto-Report Byes', id: 'autobyes', type: 'toggle' },
-  ]
+  ],
+  [
+    { label: 'Show Plan Menu', id: 'planmenu', type: 'toggle' },
+    { label: 'Show Plan Events', id: 'planschedule', type: 'toggle' },
+  ],
 ];
 
 // Buttons prop for InputForm
