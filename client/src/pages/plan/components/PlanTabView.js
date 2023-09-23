@@ -26,7 +26,7 @@ function PlanTabView({ voters = {}, events = {}, settings = {} }) {
 
                 <ViewCellStyle key={voter.id} header={players[voter.id]?.name}>
                     <ViewCellSectionStyle header="Unavailable">
-                        { voter.days.length ?
+                        { voter.days?.length ?
                             dateListToRange(voter.days).map((range) =>
                                 <ViewDateStyle key={range.join()} dateRange={range} />
                             )

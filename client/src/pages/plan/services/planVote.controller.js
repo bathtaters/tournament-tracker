@@ -10,8 +10,8 @@ export default function usePlanVoteController() {
     
     const [ generatePlan ] = useGenPlanMutation()
 
-    const [ tab, selectTab ] = useState(access > 2 && !voter ? 1 : 0)
-    useEffect(() => { if (access > 2 && !voter) selectTab(1) }, [access, voter])
+    const [ tab, selectTab ] = useState(!isLoading && access > 2 && !voter ? 1 : 0)
+    useEffect(() => { if (!isLoading && access > 2 && !voter) selectTab(1) }, [isLoading, access, voter])
 
     return {
         data: tab === 1 ? voters : voter,
