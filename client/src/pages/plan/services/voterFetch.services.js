@@ -104,9 +104,7 @@ export function updatePlanReset(_, { dispatch, queryFulfilled, getState }) {
         delete draft.planslots
     }))
     
-    const updateVoters = dispatch(fetchApi.util.updateQueryData('voter', undefined, (draft) => {
-        Object.keys(draft).forEach((id) => delete draft[id])
-    }))
+    const updateVoters = dispatch(fetchApi.util.updateQueryData('voter', undefined, () => ({})))
 
     const updateIndivVoters = getCachedArgs(getState(), 'voter').map((voter) => 
         dispatch(fetchApi.util.updateQueryData('voter', voter, () => ({})))
