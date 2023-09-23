@@ -14,11 +14,9 @@ const { arrToObj } = require('../utils/shared.utils');
 // Get Event Stats //
 
 async function getAllStats(_, res) {
-  const [matches, players, opps] = await Promise.all([
-    match.getAll(true).then(matchesByEvent),
-    player.list(),
-    event.getOpponents(null, true).then(oppsByEvent),
-  ]);
+  const matches = await match.getAll(true).then(matchesByEvent);
+  const players = await player.list();
+  const opps    = await event.getOpponents(null, true).then(oppsByEvent);
 
   return withMissingEventIds(toStats(matches, players, opps, false)).then(res.sendAndLog);
 }
