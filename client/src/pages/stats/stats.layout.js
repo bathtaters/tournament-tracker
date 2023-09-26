@@ -3,7 +3,7 @@ import { formatPercent } from '../../assets/formatting';
 // Stats table classes
 const hdrClass = 'text-md sm:text-lg',
   indexStyle = { size: 'base', color: 'primary',  weight: 'light',  align: 'right'  },
-  titleStyle = { size: 'lg',   color: 'secondary',  weight: 'light',  align: 'left'   };
+  titleStyle = { size: 'lg',   color: 'secondary',  weight: 'light',  align: 'center'   };
 
 // Stats columns
 const statsLayout = [
