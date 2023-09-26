@@ -1,5 +1,5 @@
 /** Calculate count of all possible combinations of array items in slotCount slots */
-const combinationCount = (arrayLen, slotCount) => fact(arrayLen) / (fact(slotCount) * fact(arrayLen - slotCount))
+const combinationCount = (arrayLen, slotCount) => slotCount && fact(arrayLen) / (fact(slotCount) * fact(arrayLen - slotCount))
 
 /** Get the Nth combination of array items in slotCount slots
  *   No empties, order doesn't matter, comboCount = result of combinationCount() */
@@ -55,25 +55,30 @@ function* getPermutations(array, slotCount, includeBlanks = false) {
     }
 }
 
-/** Calculate all possible combinations of a single element from array prop nested with the objArray
- *  (ie: [{ a: [1,2] }, { a: [3, 4] }] => [{ a: 1 }, { a: 3 }] => [{ a: 1 }, { a: 4 }] => etc) */
-function* getObjectCombos(objArray, innerArrayKey) {
+/** Calculate all possible combinations of a multi-dimensional array
+ *   from an array of the inner array sizes, returning an array of indexes for each call.
+ *    - This will always return a reference to the same, mutating array
+ *    - Ex: ([3,5,2]) => [0,0,0]; [0,0,1]; [0,1,0]; [0,1,1]; etc. */
+function* getArrayCombos(arrayOfIdxs) {
+    let next = arrayOfIdxs.map((val) => val ? 0 : null)
 
-    function* combine(current = [], index = 0) {
-        if (index === objArray.length) {
-            yield current
-            return
+    // Trim 'null' values off the end of array
+    let maxIdx = next.length - 1
+    while (next[maxIdx] == null && maxIdx) maxIdx--
+
+    let ptr = maxIdx
+    while (true) {
+        yield next
+
+        ptr = maxIdx
+        while (next[ptr] == null || next[ptr] + 1 >= arrayOfIdxs[ptr]) {
+            next[ptr] = next[ptr] && 0
+            ptr--
+            if (ptr < 0) return
         }
-  
-        for (let i = 0; i < objArray[index][innerArrayKey].length; i++) {
-            current[index] = { ...objArray[index], [innerArrayKey]: objArray[index][innerArrayKey][i] }
-            yield* combine(current, index + 1)
-        }
+        next[ptr]++
     }
-  
-    yield* combine()
 }
-
 
 
 // HELPERS \\
@@ -103,5 +108,5 @@ function hasRepeats(array, ignoreValue) {
 module.exports = {
     combinationCount, getCombinationN,
     permutationCount, getPermutations,
-    getObjectCombos,
+    getArrayCombos,
 }

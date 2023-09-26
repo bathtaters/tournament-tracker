@@ -1,4 +1,4 @@
-const { datesAreEqual } = require("./shared.utils")
+const { datesAreEqual, toDateStr } = require("./shared.utils")
 const { toObjArray } = require("../services/settings.services")
 
 // SETTINGS \\
@@ -6,8 +6,11 @@ const { toObjArray } = require("../services/settings.services")
 // How often to update progress (ie. 0.01 = Every 1% increase)
 const progUpdatePercent = 0.02
 
-// How many off days = 1 active day (To equalize events for players who can;t make it)
+// How many off days = 1 active day (To equalize events for players who can't make it)
 const daysOffFactor = 2
+
+// How many unranked events will negate a top ranked event (To prevent players in events they don't rank)
+const unrankedEventFactor = 2
 
 // List of multipliers & getScore functions
 // getScore = ({ plan, slotCount, eventCount, daysOff }) => number
@@ -32,9 +35,8 @@ const filterUnvoted = (events, voters) => {
 }
 
 /** Returns filter cb to determine if voter can participate in event */
-const voterCanPlay = (day) => {
-    return ({ days }) => !Array.isArray(days) || days.every((d) => !datesAreEqual(d,day))
-}
+const voterCanPlay = (day) => ({ days }) =>
+    !Array.isArray(days) || days.every((d) => !datesAreEqual(d,day))
 
 /** Calculate how many days each player is present for the entire duration,
  *  return object w/ playerIds as keys */
@@ -51,15 +53,15 @@ function daysOffByPlayer([startDate, endDate], voters) {
 }
 
 /** Return { playerid: score_for_event }, higher score = event is higher on player's list */
-const getEventScores = (event, voters, eventCount) => voters.reduce((scores, voter) => {
-    const idx = voter.events.indexOf(event.id)
-    if (idx === -1) return { ...scores, [voter.id]: 0 }
+const getEventScores = (eventId, voters, eventCount) => voters.reduce((scores, voter) => {
+    const idx = voter.events.indexOf(eventId)
+    if (idx === -1) return { ...scores, [voter.id]: -Math.trunc(eventCount / unrankedEventFactor) }
     return { ...scores, [voter.id]: eventCount - idx }
 }, {})
 
 /** Count how many games each individual player is in */
 const getPlayerCounts = (plan) => plan.reduce((players, slot) => 
-    Object.keys(slot.scores).reduce((scores, id) => ({
+    Object.keys(slot.score).reduce((scores, id) => ({
         ...scores,
         [id]: id in scores ? scores[id] + 1 : 1
     }), players),
@@ -68,7 +70,7 @@ const getPlayerCounts = (plan) => plan.reduce((players, slot) =>
 
 /** Sum each individual player scores from a given plan [{ scores: { [id]: score, ... } }, ...] */
 const getPlayerTotals = (plan) => plan.reduce((players, slot) => 
-    Object.entries(slot.scores).reduce((scores, [ id, score ]) => ({
+    Object.entries(slot.score).reduce((scores, [ id, score ]) => ({
         ...scores,
         [id]: id in scores ? scores[id] + score : score
     }), players),
@@ -76,15 +78,15 @@ const getPlayerTotals = (plan) => plan.reduce((players, slot) =>
 )
 
 /** Sum all player scores from a given plan [{ scores: { [id]: score, ... } }, ...] */
-function getTotalScore({ plan }) {
+function getTotalScore(plan) {
     return plan.reduce((total, slot) => 
-        Object.values(slot.scores).reduce((sum, score) => sum + score, 0) + total,
+        Object.values(slot.score).reduce((sum, score) => sum + score, 0) + total,
         0
     )
 }
 
 /** Calculate the largest deviation between player scores of a given plan [{ scores: { [id]: score, ... } }, ...] */
-function getDeviation({ plan, slotCount, eventCount, daysOff }) {
+function getDeviation(plan, slotCount, daysOff, eventCount) {
     const scores = getPlayerTotals(plan)
 
     let max = NaN, min = NaN
@@ -97,7 +99,7 @@ function getDeviation({ plan, slotCount, eventCount, daysOff }) {
 }
 
 /** Calculate the deviation between the weighted max & min game counts */
-function getGameCount({ plan, slotCount, daysOff }) {
+function getGameCount(plan, slotCount, daysOff) {
     const scores = getPlayerCounts(plan)
 
     // Weight game counts & find min/max
@@ -111,10 +113,10 @@ function getGameCount({ plan, slotCount, daysOff }) {
 }
 
 /** Map plan data to event data for updating */
-const planToEvent = ({ id, day, slot, scores }) => ({
+const planToEvent = ({ id, day, slot, score }) => ({
     id, slot,
-    day: day.toISOString().slice(0,10),
-    players: Object.keys(scores),
+    day: toDateStr(day),
+    players: Object.keys(score),
 })
 
 /** Map event ID to a cleared event */
@@ -126,14 +128,27 @@ const resetEvent = (id) => ({
 })
 
 /** Convert planMetrics + planData into a single score */
-const getPlanScore = (planData) => planMetrics.reduce(
-    (score, { factor, getScore }) => score + factor * getScore(planData),
+const getPlanScore = (...planData) => planMetrics.reduce(
+    (score, { factor, getScore }) => score + factor * getScore(...planData),
     0
 )
+
+/** Get list of days that will align with slots */
+const getVoterLists = (voters, startDate, endDate) => {
+    let available = [],
+        day = new Date(startDate)
+
+    while (day <= endDate) {
+        available.push(voters.filter(voterCanPlay(day)))
+        day.setDate(day.getDate() + 1)
+    }
+    return available
+}
 
 module.exports = {
     progUpdatePercent, planStatus, updateProg,
     filterUnvoted, voterCanPlay, daysOffByPlayer,
     getEventScores, getPlanScore,
     planToEvent, resetEvent,
+    getVoterLists,
 }

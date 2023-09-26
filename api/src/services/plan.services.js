@@ -1,7 +1,7 @@
 const logger = require("../utils/log.adapter")
 const { dayCount } = require("../utils/shared.utils")
-const { filterUnvoted, voterCanPlay, getEventScores, planToEvent, resetEvent, daysOffByPlayer, getPlanScore, progUpdatePercent } = require("../utils/plan.utils")
-const { permutationCount, getPermutations, combinationCount, getCombinationN, getObjectCombos } = require("../utils/combination.utils")
+const { filterUnvoted, getVoterLists, getEventScores, planToEvent, resetEvent, daysOffByPlayer, getPlanScore, progUpdatePercent } = require("../utils/plan.utils")
+const { permutationCount, getPermutations, combinationCount, getCombinationN, getArrayCombos } = require("../utils/combination.utils")
 
 
 // Accepts planEvents, voters & settings, returns event array ({ id, day, slot, players })
@@ -24,6 +24,8 @@ async function generatePlan(events, voters, settings = {}, updateProg, forceEmpt
     const slotCount = slots * dayCount(...dates)
     if (!slotCount) throw new Error("No available slots in schedule")
 
+    const availableVoters = getVoterLists(voters, ...dates)
+
     let remainingEvents = events.map(({ id }) => id)
     events = filterUnvoted(events, voters)
     if (!events.length) throw new Error("No events have been voted for")
@@ -34,7 +36,6 @@ async function generatePlan(events, voters, settings = {}, updateProg, forceEmpt
     const progTotal = permutationCount(events.length, slotCount, forceEmpties || events.length < slotCount)
     const progInt = progTotal * progUpdatePercent
     let prog = 0, nextProg = progInt
-    
 
     // Determine every possible schedule given the events and slots
     for (const schedule of getPermutations(events, slotCount, forceEmpties || events.length < slotCount)) {
@@ -44,20 +45,22 @@ async function generatePlan(events, voters, settings = {}, updateProg, forceEmpt
             if (updateProg) await updateProg(prog, progTotal)
             nextProg += progInt
         }
-        
-        // Determine every possible player combo for each slot in the schedule
-        const slotScores = getSlotScores(schedule, voters, dates[0], slots, events.length)
-        if (!slotScores) continue
-        
-        // Score each combination and update max scores
-        for (const plan of getObjectCombos(slotScores, 'scores')) {
-            const score = getPlanScore({
-                plan, slotCount, daysOff,
-                eventCount: events.length
-            })
 
+        // Determine every possible player combo for each slot in the schedule
+        const comboMax = schedule.map((event, slot) => combinationCount(
+            availableVoters[Math.trunc(slot / slots)].length,
+            event?.playercount
+        ))
+        
+        for (const n of getArrayCombos(comboMax)) {
+            const plan = getPlanN(n, schedule, availableVoters, dates[0], slots, comboMax, events.length)
+            if (!plan) continue
+            
+            // Score each combination and update max scores
+            const score = getPlanScore(plan, slotCount, daysOff, events.length)
+    
             if (isNaN(bestPlan.score) || bestPlan.score < score) {
-                bestPlan.plan = [...plan]
+                bestPlan.plan = plan
                 bestPlan.score = score
             }
         }
@@ -81,41 +84,29 @@ async function generatePlan(events, voters, settings = {}, updateProg, forceEmpt
 }
 
 
-
-/** Retrieve every possible combination of players for a given game
+/** Retrieve next combination of players for a given game
  *  Returns NULL when no combination exisits */
-function getSlotScores(schedule, voters, startDay, slots, maxScore) {
-    let slotScores = [], day = new Date(startDay)
+function getPlanN(n, schedule, availableVoters, startDay, slots, comboMax, eventCount) {
+    let plan = [], day = new Date(startDay)
         
-    for (let slot = 0; slot < schedule.length; ++slot % slots === 0 && day.setDate(day.getDate() + 1)) {
-        if (!schedule[slot]) continue  // Skip missing event days
+    for (let slot = 0; slot < n.length; ++slot % slots === 0 && day.setDate(day.getDate() + 1)) {
+        if (!comboMax[slot]) continue  // Skip missing event days
 
-        const available = voters.filter(voterCanPlay(day))
-        if (!combinationCount(available.length, schedule[slot].playercount))
-            return null // Void schedule if no possible combination of players exists
+        const players = getCombinationN(
+            n[slot],
+            availableVoters[Math.trunc(slot / slots)],
+            schedule[slot].playercount,
+            comboMax[slot]
+        )
 
-        let newScore = {
+        plan.push({
             id: schedule[slot]?.id,
             day: new Date(day),
             slot: slot % slots + 1,
-            scores: [],
-        }
-        
-        // Determine every possible player combination for available players
-        const combos = combinationCount(available.length, schedule[slot].playercount)
-        for (let n = 0; n < combos; n++) {
-            newScore.scores.push(
-                getEventScores(
-                    schedule[slot],
-                    getCombinationN(n, available, schedule[slot].playercount, combos),
-                    maxScore
-                )
-            )
-        }
-
-        slotScores.push(newScore)
+            score: getEventScores(schedule[slot]?.id, players, eventCount),
+        })
     }
-    return slotScores.length ? slotScores : null
+    return plan.length ? plan : null
 }
 
 
