@@ -11,13 +11,13 @@ import profileLayout, { getProfileACL } from "./profile.layout";
 
 import { usePlayerQuery } from "./profile.fetch";
 import { useSessionState } from "../common/common.fetch";
-import { useParamId } from "../common/services/idUrl.services";
+import { useParamIds } from "../common/services/idUrl.services";
 
 
 function Profile() {
-  const playerId = useParamId('id');
+  const { id } = useParamIds('id');
   const { data: allPlayers, isLoading, error } = usePlayerQuery();
-  const playerData = allPlayers?.[playerId];
+  const playerData = allPlayers?.[id];
   
   const { data: user } = useSessionState();
   const acl = getProfileACL(user || undefined, playerData || undefined);
@@ -40,7 +40,7 @@ function Profile() {
               key={row.id}
               rowData={row}
               data={playerData[row.id]}
-              id={playerId}
+              id={id}
               access={acl[row.id]}
             />
           )}
@@ -50,7 +50,7 @@ function Profile() {
       <RawData data={playerData} />
       <RawData data={acl} />
       
-      <PlayerEvents id={playerId} />
+      <PlayerEvents id={id} />
 
     </WrapperStyle>
   );
