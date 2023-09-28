@@ -1,8 +1,8 @@
 import React from "react"
-import { Navigate } from "react-router-dom"
 import Loading from "../common/Loading"
 import { IsResetStyle, PageTitleStyle, ResetFormStyle, LockedInput, PasswordInput, SubmitButton, GridSpacer } from "./styles/ResetStyles"
 import useResetPassword from "./services/reset.service"
+import { resetPwordSuccess, resetPwordExpired } from "../../assets/alerts"
 
 
 function ResetPassword() {
@@ -13,26 +13,10 @@ function ResetPassword() {
         changePassword, changeConfirm, handleSubmit,
     } = useResetPassword()
 
-
     if (isLoading || error) return <Loading loading={isLoading} error={error} altMsg="Loading" />
 
-    if (data.password) return (
-        <IsResetStyle 
-            title="Password Successfully Reset"
-            body="Now use it to sign in at the top right."
-            link="Go to home page"
-            to="/home"
-        />
-    )
-
-    if (!data.success) return (
-        <IsResetStyle 
-            title="Password Link Expired"
-            body="You'll need to request a new one."
-            link="Go to home page"
-            to="/home"
-        />
-    )
+    if (data.password) return <IsResetStyle {...resetPwordSuccess} />
+    if (!data.success) return <IsResetStyle {...resetPwordExpired} />
 
     return (
         <div>
