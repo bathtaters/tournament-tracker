@@ -33,6 +33,7 @@ const removePlayer = (req, res) => players.rmv(matchedData(req).id).then(res.sen
 // Rename
 const updatePlayer = async (req, res) => {
   const { id, ...body } = matchedData(req);
+  if (req.body.session === null) body.session = null;
   if (body.password) body.password = await encryptPassword(body.password);
   return players.set(id, body).then(res.sendAndLog);
 }
