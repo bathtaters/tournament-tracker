@@ -109,6 +109,23 @@ export const resetDbAlertConfirm = {
 }
 
 
+// --- Password Reset Messages --- \\
+
+export const resetPwordSuccess = {
+  title: "Password Successfully Reset",
+  body:  "Now use it to sign in at the top right.",
+  link:  "Go to home page",
+  to:    "/home",
+}
+
+export const resetPwordExpired = {
+  title: "Password Link Expired",
+  body:  "You'll need to request a new one.",
+  link:  "Go to home page",
+  to:    "/home",
+}
+
+
 // --- Errors --- \\
 
 export const itemCreateError = (type, { error }, { name }) => new Error(error?.data?.error ? error.data.error : `${type} "${name}" was not able to be added.`)

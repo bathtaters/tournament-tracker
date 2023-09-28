@@ -1,9 +1,14 @@
 import React from "react";
 
 // BUTTONS
-export function EditButton({ value, isEditing = true, onClick }) {
+export function EditButton({ value, isEditing = true, onClick, disabled }) {
   return (
-    <button type="button" className={"btn btn-primary btn-sm text-xs font-light lowercase"+(isEditing ? "" : " btn-outline")} onClick={onClick}>
+    <button
+      type="button"
+      className={"btn btn-primary btn-sm text-xs font-light lowercase"+(isEditing ? "" : " btn-outline")}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {value}
     </button>
   )

@@ -37,8 +37,15 @@ const updatePlayer = async (req, res) => {
   return players.set(id, body).then(res.sendAndLog);
 }
 
+// Reset Session
+const resetPassword = async (req, res) => {
+  const { id } = matchedData(req);
+  const session = await players.resetLogin(id);
+  return res.sendAndLog({ session });
+}
+
 
 module.exports = { 
   getPlayer, getAllPlayers, getPlayerEvents, getPlayerMatches,
-  createPlayer, removePlayer, updatePlayer,
+  createPlayer, removePlayer, updatePlayer, resetPassword,
 };

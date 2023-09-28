@@ -13,7 +13,7 @@ const commonRows = [
 const playerOnlyRows = [
   { label: 'Password', id: 'password', type: 'password', setValueAs: () => '12345678', minLength: limits.password.min, maxLength: limits.password.max },
   { label: 'Access',   id: 'access',   type: playerAccess },
-  { label: 'Session',  id: 'session'  },
+  { label: 'Session',  id: 'session' },
 ];
 
 const teamOnlyRows = [
@@ -26,20 +26,20 @@ const teamOnlyRows = [
 export default function getProfileLayout(isTeam) { return commonRows.concat(isTeam ? teamOnlyRows : playerOnlyRows); }
 
 
-// Layout based on access [ 0: guest, 1: user, 2: admin, 3: owner ]
+// Layout based on access [ 0: guest, 1: player, 2: judge, 3: gonti ]
 const profileACL = [
-  /* User  > !Self  (0) */ { name: READ },
-  /* User  >  Self  (1) */ { name: READ | WRITE, password: READ | WRITE },
-  /* Admin >  Self  (2) */ { name: READ | WRITE, password: READ | WRITE, session: WRITE, access: READ },
-  /* Admin > !Owner (3) */ { name: READ | WRITE, password: WRITE, session: WRITE, access: READ },
-  /* Admin >  Owner (4) */ { name: READ, access: READ },
-  /* Owner > Anyone (5) */ { name: READ | WRITE, password: READ | WRITE, session: WRITE, access: READ | WRITE },
+  /* Player > !Self  (0) */ { name: READ },
+  /* Player >  Self  (1) */ { name: READ | WRITE, password: READ | WRITE },
+  /* Judge  >  Self  (2) */ { name: READ | WRITE, password: READ | WRITE, access: READ },
+  /* Judge  > !Gonti (3) */ { name: READ | WRITE, access: READ },
+  /* Judge  >  Gonti (4) */ { name: READ, access: READ },
+  /* Gonti  > Anyone (5) */ { name: READ | WRITE, password: READ | WRITE, session: WRITE, access: READ | WRITE, reset: true },
 ]
 
 // Build ACL based off current user & target user
 export const getProfileACL = (user = {}, target = {}) =>
-  /* Owner */ user.access > 2       ? profileACL[5] :
-  /* Guest */ !user.access          ? profileACL[0] :
-  /* Self  */ user.id === target.id ? profileACL[user.access] :
-  /* User  */ user.access === 1     ? profileACL[0] :
-  /* Admin */ target.access > 2     ? profileACL[4] : profileACL[3]
+  /* Gonti  */ user.access > 2       ? profileACL[5] :
+  /* Guest  */ !user.access          ? profileACL[0] :
+  /* Self   */ user.id === target.id ? profileACL[user.access] :
+  /* Player */ user.access === 1     ? profileACL[0] :
+  /* Judge  */ target.access > 2     ? profileACL[4] : profileACL[3]

@@ -40,6 +40,7 @@ _Represented below by api/v[n]_
 |/|POST|{ session }|{ playerData }|Get player data from session token|
 |/|PUT|{ name, password }|{ session }|Create session|
 |/|DELETE|{ session }|{ success }|Destroy session|
+|/[id]|POST|{ session }|{ valid, isSet }|Get password reset session status|
 
 ---
 
@@ -107,6 +108,7 @@ _Represented below by api/v[n]_
 |/|POST|{ playerData }|{ id }|Create new player|
 |/[id]|DELETE| |{ id }|Remove a player|
 |/[id]|PATCH|{ newData }|{ id }|Update player data|
+|/[id]/reset|POST| |{ session }|Erase password, returning reset session key|
 
 ---
 

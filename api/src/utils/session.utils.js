@@ -7,6 +7,9 @@ exports.newSessionID = () => randomUUID();
 // Strip password from player data
 exports.stripPassword = ({ password, session, lower_name, ...player }) => player;
 
+// Check password from player data
+exports.checkPassword = ({ id, session, password }) => ({ id, session, password: !!password });
+
 // Test password
 exports.passwordsMatch = (a, b) => timingSafeEqual(Buffer.from(a,'base64url'), Buffer.from(b,'base64url'));
 

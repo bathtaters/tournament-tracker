@@ -8,9 +8,17 @@ const util = require('../../utils/session.utils');
 
 // Get single or all (ids only) players
 const get = id => db.getRow('player', id).then(r => Array.isArray(r) ? r.map(util.stripPassword) : r && util.stripPassword(r));
+const hasPass = id => db.getRow('player', id).then(r => Array.isArray(r) ? r.map(util.checkPassword) : r && util.checkPassword(r));
 const list = () => db.getRow('player',null,'id').then(r => r && r.map(p => p.id));
 
 // Start/End/Fetch User Sessions
+const resetLogin = id => db.updateRow(
+    'player',
+    id,
+    { session: util.newSessionID(), password: null },
+    { returning: 'session' }
+).then(r => r.session);
+
 const startSession = name => db.updateRow(
     'player',
     name.toLowerCase(),
@@ -50,19 +58,17 @@ async function checkPassword(name, password) {
     try { guess = await util.encryptPassword(password); }
     catch (err) { return err.message || err || 'Error encrypting password.'; }
 
-    if (!stored.password) {
-        const ret = await db.updateRow('player', stored.id, { password: guess }, { returning: 'password' });
-        console.log(`  > Player <${stored.id}>: Inital password set.`);
-        return util.passwordsMatch(guess, ret.password) ? 'Password saved, you may now login.' : 'Save password failed, contact administrator.';
-    }
+    if (!stored.password) return 'Password not set, contact administrator if you don\'t have a password link.';
+    
     return util.passwordsMatch(guess, stored.password) ? 0 : 'Incorrect password.';
 }
 
 
 module.exports = {
-    get, list, add,
+    get, hasPass, list, add,
 
     startSession, 
+    resetLogin, 
     fetchSession,
     endSession,
     

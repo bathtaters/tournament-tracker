@@ -12,14 +12,14 @@ import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 import { useEventQuery } from "./event.fetch";
 import { roundArray } from "./services/event.services";
 import { useDeleteRound } from "./services/roundButton.services";
-import { useParamId } from "../common/services/idUrl.services";
+import { useParamIds } from "../common/services/idUrl.services";
 
 
 function Event() {
   // Get data
   const modal = useRef(null);
-  const eventId = useParamId('id');
-  const { data, isLoading, error, isFetching } = useEventQuery(eventId);
+  const { id } = useParamIds('id');
+  const { data, isLoading, error, isFetching } = useEventQuery(id);
 
   // Handle delete round
   const handleDelete = useDeleteRound(data);
@@ -40,7 +40,7 @@ function Event() {
 
         {roundArray(data.matches && data.matches.length).map((roundNum, idx) => 
           <Round
-            key={eventId+'.'+roundNum}
+            key={`${id}.${roundNum}`}
             data={data}
             round={roundNum - 1}
             deleteRound={!idx ? handleDelete : null}
@@ -53,7 +53,7 @@ function Event() {
 
       <Modal ref={modal}>
         <EditEvent
-          eventid={eventId}
+          eventid={id}
           modal={modal}
         />
       </Modal>

@@ -55,8 +55,15 @@ export function useLinkId (uuid, urlPrefix = '') {
   return linkId ? `/${urlPrefix}${linkId}` : ''
 }
 
-export function useParamId (idParamLabel = 'id') {
+export function useParamIds (...idParamLabels) {
   const params = useParams()
-  // eslint-disable-next-line
-  return useMemo(() => urlToId(params[idParamLabel]), [params[idParamLabel]])
+
+  return useMemo(
+    () => idParamLabels.reduce(
+      (ids, label) => ({ ...ids, [label]: urlToId(params[label]) }),
+      {}
+    ),
+    // eslint-disable-next-line
+    idParamLabels.map((label) => params[label])
+  )
 }
