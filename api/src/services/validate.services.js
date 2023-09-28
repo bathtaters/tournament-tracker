@@ -41,16 +41,16 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
   ptr.errorMessage = errorText.type(type[0])
   ptr.in = isIn
 
+  // Skip validation of empty strings if empty strings are allowed
+  const zeroMin = type[1] === 'string' && (limits?.elem || limits)?.min === 0
+
   // Add validation for optionals/non-optionals
   if (type[4]) {
-    ptr.optional = { options: { nullable: true, checkFalsy: type[1] === 'string' } }
+    ptr.optional = { options: { values: type[1] === 'string' && !zeroMin ? 'falsy' : 'null' } }
   } else {
     ptr.exists = { errorMessage: errorText.exists }
-    ptr.optional = { options: { checkFalsy: type[1] === 'string' } }
+    ptr.optional = { options: { values: type[1] === 'string' && !zeroMin ? 'falsy' : 'undefined' } }
   }
-
-  // Skip validation of empty strings if empty strings are allowed
-  if ((limits?.elem || limits)?.min === 0) ptr.optional.options.checkFalsy = false
 
   // Handle validation for array elements
   if (type[3]) {
@@ -71,7 +71,7 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
 
     // Allowable missing array elements
     if (type[3] === '[?]')
-      ptr.optional = { options: { nullable: true, checkFalsy: false } }
+      ptr.optional = { options: { values: 'null' } }
 
     // Set statics for new entry
     ptr.errorMessage = errorText.type(type[1])

@@ -179,19 +179,19 @@ describe('getSchema', () => {
     })
     it('optional fields', () => {
       expect(services.getSchema('test','any',null,['isIn'],true).test)
-        .toHaveProperty('optional', {options: {nullable: true, checkFalsy: false}})
+        .toHaveProperty('optional', {options: {values: 'null'}})
       expect(services.getSchema('test','any?',null,['isIn'],true).test)
-        .toHaveProperty('optional', {options: {nullable: true, checkFalsy: false}})
+        .toHaveProperty('optional', {options: {values: 'null'}})
       expect(services.getSchema('test','any?',null,['isIn'],false).test)
-        .toHaveProperty('optional', {options: {nullable: true, checkFalsy: false}})
+        .toHaveProperty('optional', {options: {values: 'null'}})
     })
     it('string optionals', () => {
       expect(services.getSchema('test','string',null,['isIn'],true).test)
-        .toHaveProperty('optional', {options: {nullable: true, checkFalsy: true}})
+        .toHaveProperty('optional', {options: {values: 'falsy'}})
       expect(services.getSchema('test','string?',null,['isIn'],true).test)
-        .toHaveProperty('optional', {options: {nullable: true, checkFalsy: true}})
+        .toHaveProperty('optional', {options: {values: 'falsy'}})
       expect(services.getSchema('test','string?',null,['isIn'],false).test)
-        .toHaveProperty('optional', {options: {nullable: true, checkFalsy: true}})
+        .toHaveProperty('optional', {options: {values: 'falsy'}})
     })
     it('limits for string/float/int', () => {
       expect(services.getSchema('test','string','lims',['isIn'],false).test.custom)
@@ -203,13 +203,13 @@ describe('getSchema', () => {
     })
     it('string w/ limit.min = 0', () => {
       expect(services.getSchema('test','string',{min:  0},['isIn'],false).test)
-        .toHaveProperty('optional', {options: {checkFalsy: true}})
+        .toHaveProperty('optional', {options: {values: 'undefined'}})
       expect(services.getSchema('test','string',{min: 10},['isIn'],false).test)
-        .not.toHaveProperty('optional')
+        .toHaveProperty('optional', {options: {values: 'falsy'}})
       expect(services.getSchema('test','string',{elem:{min:  0}},['isIn'],false).test)
-        .toHaveProperty('optional', {options: {checkFalsy: true}})
+        .toHaveProperty('optional', {options: {values: 'undefined'}})
       expect(services.getSchema('test','string',{elem:{min: 10}},['isIn'],false).test)
-        .not.toHaveProperty('optional')
+        .toHaveProperty('optional', {options: {values: 'falsy'}})
     })
     it('just uses isType = { errorMsg } if missing limits', () => {
       expect(services.getSchema('test','float',null,['isIn'],false).test.isFloat)
@@ -323,16 +323,16 @@ describe('getSchema', () => {
 
     it('array has optional props', () => {
       let result = services.getSchema('test','any[]?',null,['isIn'],false)
-      expect(result.test).toHaveProperty('optional', {options: {nullable: true, checkFalsy: false}})
+      expect(result.test).toHaveProperty('optional', {options: {values: 'null'}})
       expect(result.test).not.toHaveProperty('exists')
       result = services.getSchema('test','any[]',null,['isIn'],true)
-      expect(result.test).toHaveProperty('optional', {options: {nullable: true, checkFalsy: false}})
+      expect(result.test).toHaveProperty('optional', {options: {values: 'null'}})
       expect(result.test).not.toHaveProperty('exists')
     })
     it('array has non-optional props', () => {
       const result = services.getSchema('test','any[]',null,['isIn'],false)
       expect(result.test).toHaveProperty('exists', {errorMessage: expect.any(String)})
-      expect(result.test).not.toHaveProperty('optional')
+      expect(result.test).toHaveProperty('optional', {options: {values: 'undefined'}})
     })
     it('elements missing optional props', () => {
       let result = services.getSchema('test','any[]?',null,['isIn'],false)
