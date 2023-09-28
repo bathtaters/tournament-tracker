@@ -1,13 +1,14 @@
 import React from "react";
 
 import ProfilePic from "./components/ProfilePic";
+import ResetLink from "./components/ResetLink";
 import PlayerDataRow from "./components/PlayerDataRow";
 import PlayerEvents from "../playerEvents/PlayerEvents";
 import RawData from "../common/RawData";
 import Loading from "../common/Loading";
 
-import { WrapperStyle, ProfileStyle, PlayerDataStyle } from "./styles/ProfileStyles";
-import profileLayout, { getProfileACL } from "./profile.layout";
+import { WrapperStyle, ProfileStyle, PlayerDataStyle, PicColumnStyle } from "./styles/ProfileStyles";
+import profileLayout, { WRITE, getProfileACL } from "./profile.layout";
 
 import { usePlayerQuery } from "./profile.fetch";
 import { useSessionState } from "../common/common.fetch";
@@ -32,7 +33,11 @@ function Profile() {
     <WrapperStyle isTeam={playerData.isteam}>
       <ProfileStyle>
 
-        <ProfilePic />
+        <PicColumnStyle>
+          <ProfilePic />
+
+          <ResetLink link={playerData.resetlink} />
+        </PicColumnStyle>
 
         <PlayerDataStyle>
           {profileLayout(playerData.isteam).map((row) =>
@@ -44,6 +49,13 @@ function Profile() {
               access={acl[row.id]}
             />
           )}
+          { acl.reset &&
+            <PlayerDataRow
+              id={id}
+              rowData={{ label: 'Password',  id: 'reset', disabled: !!playerData.resetlink }}
+              access={WRITE}
+            />
+          }
         </PlayerDataStyle>
       </ProfileStyle>
 
