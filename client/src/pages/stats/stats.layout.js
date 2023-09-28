@@ -2,8 +2,9 @@ import { formatPercent } from '../../assets/formatting';
 
 // Stats table classes
 const hdrClass = 'text-md sm:text-lg',
-  indexStyle = { size: 'base', color: 'primary',  weight: 'light',  align: 'right'  },
-  titleStyle = { size: 'lg',   color: 'secondary',  weight: 'light',  align: 'center'   };
+  indexStyle = { size: 'base', color: 'primary',   weight: 'light',  align: 'right'  },
+  titleStyle = { size: 'lg',   color: 'secondary', weight: 'light',  align: 'left'   },
+  listStyle  = { size: 'lg',   color: 'secondary', weight: 'light',  align: 'center' };
 
 // Stats columns
 const statsLayout = [
@@ -17,7 +18,7 @@ const statsLayout = [
   { label: 'OGW',  get: (id, {stats}) => stats[id]?.oppGame,  format: formatPercent, default: '-', hdrClass },
 ]
 const listLayout = [
-  { get: (id, {players}) => players[id]?.name, cellStyle: titleStyle, hdrClass: 'text-lg', default: '?' },
+  { get: (id, {players}) => players[id]?.name, cellStyle: listStyle, hdrClass: 'text-lg', default: '?' },
 ]
 
 export { statsLayout, listLayout  }
