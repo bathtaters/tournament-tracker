@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParamIds } from "../../common/services/idUrl.services"
-import { usePlayerQuery, useCanResetQuery, useUpdatePlayerMutation } from "../../profile/profile.fetch"
+import { usePlayerQuery, useResetSessionQuery, useUpdatePlayerMutation } from "../../profile/profile.fetch"
 
 import { getBaseData } from "../../../core/services/validation.services";
 export const { min, max } = getBaseData('player').limits.password
@@ -9,7 +9,7 @@ export const { min, max } = getBaseData('player').limits.password
 export default function useResetPassword() {
     const params = useParamIds('id','session')
     const { data: player, isLoading: playerLoading } = usePlayerQuery(params.id, { skip: !params?.id })
-    const { data, isLoading, error } = useCanResetQuery(params, { skip: !params?.id, refetchOnFocus: true, refetchOnReconnect: true, refetchOnMountOrArgChange: true })
+    const { data, isLoading, error } = useResetSessionQuery(params, { skip: !params?.id, refetchOnFocus: true, refetchOnReconnect: true, refetchOnMountOrArgChange: true })
     const [ updatePlayer, { isLoading: isUpdating } ] = useUpdatePlayerMutation()
 
     const [ password,  setPassword  ] = useState('')

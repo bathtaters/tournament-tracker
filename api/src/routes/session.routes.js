@@ -8,6 +8,6 @@ const controller = require('../controllers/session.controllers');
 router.post('/',    validate.session,    catcher(controller.fetch));
 router.put('/',     validate.login,      catcher(controller.login));
 router.delete('/',  validate.session,    catcher(controller.logout));
-router.post('/:id', validate.idSession,  catcher(controller.canReset));
+router.post('/:id', validate.idSession,  catcher(controller.resetStatus));
 
 module.exports = router;

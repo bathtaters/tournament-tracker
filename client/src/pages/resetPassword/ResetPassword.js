@@ -15,8 +15,8 @@ function ResetPassword() {
 
     if (isLoading || error) return <Loading loading={isLoading} error={error} altMsg="Loading" />
 
-    if (data.password) return <IsResetStyle {...resetPwordSuccess} />
-    if (!data.success) return <IsResetStyle {...resetPwordExpired} />
+    if (data.isSet) return <IsResetStyle {...resetPwordSuccess} />
+    if (!data.valid) return <IsResetStyle {...resetPwordExpired} />
 
     return (
         <div>
