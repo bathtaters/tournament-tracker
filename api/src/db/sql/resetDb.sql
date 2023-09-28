@@ -136,3 +136,13 @@ FROM match,
     UNNEST(match.players) playerid,
     UNNEST(match.players) oppid
 WHERE oppid != playerid GROUP BY eventid, playerid;
+
+
+-- CREATE OWNER IF NONE EXIST --
+
+INSERT INTO player (id, session, name, access)
+    SELECT 
+        '0fb2b786-7ee7-4a36-831b-ab41e8834fbc',
+        '0fb2b786-7ee7-4a36-831b-ab41e8834fbc',
+        'Admin', 3
+    WHERE NOT EXISTS (SELECT * FROM player WHERE access = 3);
