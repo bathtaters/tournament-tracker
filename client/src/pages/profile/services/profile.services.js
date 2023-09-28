@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import { useUpdatePlayerMutation, usePlayerState } from "../profile.fetch";
 import { useHotkeys } from "../../common/services/basic.services";
 import { useOpenAlert } from "../../common/common.hooks";
-import { fetchApi } from '../../common/common.fetch';
 import { WRITE } from "../profile.layout";
 import { duplicateNameAlert } from "../../../assets/alerts";
 
@@ -49,16 +48,6 @@ export default function usePlayerData(rowData, data, access, id) {
 }
 
 
-// Cache update
-export function playerUpdate({ id, ...body }, { dispatch, queryFulfilled }) {
-  const updateAll = dispatch(fetchApi.util.updateQueryData('player', undefined, draft => { 
-    Object.assign(draft[id], body); 
-  }));
-  const updateOne = dispatch(fetchApi.util.updateQueryData('player', id, draft => { 
-    Object.assign(draft, body); 
-  }));
-  queryFulfilled.catch(() => { updateAll.undo(); updateOne.undo(); }); // rollback
-};
 
 
 
