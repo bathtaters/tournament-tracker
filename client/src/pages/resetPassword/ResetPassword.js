@@ -18,14 +18,21 @@ function ResetPassword() {
 
     if (data.password) return (
         <IsResetStyle 
-            title="Password successfully reset!"
+            title="Password Successfully Reset"
             body="Now use it to sign in at the top right."
             link="Go to home page"
             to="/home"
         />
     )
 
-    if (!data.success) return <Navigate replace to="/home" />
+    if (!data.success) return (
+        <IsResetStyle 
+            title="Password Link Expired"
+            body="You'll need to request a new one."
+            link="Go to home page"
+            to="/home"
+        />
+    )
 
     return (
         <div>
