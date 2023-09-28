@@ -14,9 +14,10 @@ router.get('/:id/events',  validate.playerid, catcher(controller.getPlayerEvents
 router.get('/:id/matches', validate.playerid, catcher(controller.getPlayerMatches));
 
 // Sets
-router.post('/',      validate.createPlayer, catcher(controller.createPlayer));
-router.delete('/:id', validate.playerid,     catcher(controller.removePlayer));
-router.patch('/:id',  validate.updatePlayer, catcher(controller.updatePlayer));
+router.post('/',          validate.createPlayer, catcher(controller.createPlayer));
+router.delete('/:id',     validate.playerid,     catcher(controller.removePlayer));
+router.patch('/:id',      validate.updatePlayer, catcher(controller.updatePlayer));
+router.post('/:id/reset', validate.playerid,     catcher(controller.resetPassword));
 
 
 module.exports = router;

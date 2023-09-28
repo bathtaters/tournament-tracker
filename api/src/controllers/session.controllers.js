@@ -35,4 +35,15 @@ async function fetch(req, res, next) {
 }
 
 
-module.exports = { login, logout, fetch };
+// Check if user can reset password
+const canReset = async (req, res) => {
+    const { id, session } = matchedData(req);
+    const db = await players.hasPass(id);
+  
+    if (!db?.id) return res.sendAndLog({ error: 'id' });
+    if (db.session !== session) return res.sendAndLog({ error: 'session' });
+    return res.sendAndLog(db.password ? { password: true } : { success: true });
+}
+  
+
+module.exports = { login, logout, fetch, canReset };
