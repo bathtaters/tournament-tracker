@@ -33,9 +33,7 @@ function PlayerDataRow({ rowData, data, id, access }) {
           </>
 
           :
-          !rowData.disabled && <>
-            <EditButton value="reset" isEditing={true} onClick={handleClick} />
-          </>
+          <EditButton value="reset" isEditing={true} onClick={handleClick} disabled={rowData.disabled} />
         }
       </InputGroupStyle>
 
