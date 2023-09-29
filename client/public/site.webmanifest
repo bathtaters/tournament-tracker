@@ -1,14 +1,27 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Tournament Tracker",
+    "short_name": "Tournament Tracker",
+    "description": "Track and schedule Swiss tournament events",
+    "theme_color": "#1976d2",
+    "background_color": "#212121",
+    "display": "standalone",
+    "scope": "./",
+    "start_url": "./home",
     "icons": [
         {
-            "src": "/android-chrome-192x192.png",
+            "src": "/icons/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "/icons/android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
+        },
+        {
+            "src": "/icons/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
         }
-    ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
-    "display": "standalone"
+    ]
 }
