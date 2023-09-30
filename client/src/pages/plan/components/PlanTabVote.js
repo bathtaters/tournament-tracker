@@ -30,12 +30,12 @@ function PlanTabVote({ voter, events, settings }) {
     
 
     return (<>
-        <GeneralSectionStyle header="Pick Available Days">
+        <GeneralSectionStyle header="Availability">
             <DateMultiSelect range={settings?.plandates} value={dates} onChange={setDates} />
         </GeneralSectionStyle>
 
         <PlanRowStyle>
-            <GeneralSectionStyle header="Ranked Events">
+            <GeneralSectionStyle header="Ranked">
                 <EventDragger
                     boxId="ranked"
                     eventIds={ranked}
@@ -46,7 +46,7 @@ function PlanTabVote({ voter, events, settings }) {
                 />
             </GeneralSectionStyle>
 
-            <GeneralSectionStyle header="Unranked Events">
+            <GeneralSectionStyle header="Unranked">
                 <EventDragger
                     boxId="unranked"
                     eventIds={unranked}
