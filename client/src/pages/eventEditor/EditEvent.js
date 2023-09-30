@@ -15,13 +15,13 @@ import { getBaseData } from "../../core/services/validation.services";
 const baseData = getBaseData('event');
 
 
-function EditEvent({ eventid, modal, hidePlayers }) {
+function EditEvent({ eventid, modal, hidePlayers, onDeleteRedirect = '/home' }) {
   
   const {
     data, playerList, updatePlayerList,
     buttons, submitHandler,
     isLoading, error, notLoaded
-  } = useEditEventController(eventid, modal, hidePlayers)
+  } = useEditEventController(eventid, modal, hidePlayers, onDeleteRedirect)
 
   // Loading/Error catcher
   if (notLoaded) return <Loading loading={isLoading} error={error} altMsg="Modal error" tagName="h3" />

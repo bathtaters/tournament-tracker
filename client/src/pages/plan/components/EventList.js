@@ -11,7 +11,7 @@ function EventList({ value, onChange }) {
         <EditableList type="Event" {...listProps} />
 
         <Modal ref={modal}>
-            <EditEvent modal={modal} eventid={editId} hidePlayers={true} />
+            <EditEvent modal={modal} eventid={editId} hidePlayers={true} onDeleteRedirect="/plan" />
         </Modal>
     </>)
 }

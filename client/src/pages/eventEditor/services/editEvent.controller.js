@@ -8,7 +8,7 @@ import { editEventLockCaptions } from "../../../assets/constants";
 import { useLockScreen, useOpenAlert } from "../../common/common.hooks";
 
 
-export default function useEditEventController(eventid, modal, hidePlayers) {
+export default function useEditEventController(eventid, modal, hidePlayers, deleteRedirect) {
   // Get server data
   const { data, isLoading, error } = useEventQuery(eventid, { skip: !eventid })
 
@@ -32,7 +32,7 @@ export default function useEditEventController(eventid, modal, hidePlayers) {
         if (!res) return;
         if (eventid) deleteEvent(eventid)
         modal.current.close(true)
-        navigate("/home")
+        navigate(deleteRedirect)
       })
 
   // Create/Update event & close modal
