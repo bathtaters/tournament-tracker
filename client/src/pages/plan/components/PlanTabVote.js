@@ -51,7 +51,7 @@ function PlanTabVote({ voter, events, settings }) {
                     boxId="unranked"
                     eventIds={unranked}
                     events={events}
-                    slots={Math.max(unranked.length, 1)}
+                    slots={Math.min(unranked.length + 1, eventList.length)}
                     onDrop={setRanked}
                 />
             </GeneralSectionStyle>
