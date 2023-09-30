@@ -4,13 +4,7 @@ import { Link } from "react-router-dom";
 export const headerBase = "text-center"
 
 export function TableStyle({ className = '', children }) {
-  return (
-    <div className="flex justify-start sm:justify-center">
-      <table className={`table ${className}`}>
-        {children}
-      </table>
-    </div>
-  )
+  return <table className={`table ${className}`}>{children}</table>
 }
 
 export function HeaderStyle({ label, span = 1, className = '' }) {
