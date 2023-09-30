@@ -42,11 +42,12 @@ function PlanStart() {
                         displayFormat="MM/DD/YY"
                         inputClassName="input input-primary w-full"
                         containerClassName="relative w-full"
+                        disabled={access < 3}
                     />
                 </InputWrapperStyle>
 
                 <InputWrapperStyle label="Daily Events">
-                    <RangeSelector {...slotLimits} value={slots} onChange={handleSlotChange} />
+                    <RangeSelector {...slotLimits} value={slots} onChange={handleSlotChange} disabled={access < 3} />
                 </InputWrapperStyle>
             </PlanRowStyle>
 
