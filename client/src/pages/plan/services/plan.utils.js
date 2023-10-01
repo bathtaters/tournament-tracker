@@ -133,7 +133,7 @@ export const addOrRemove = (value, array) =>
     array.includes(value) ? array.filter((v) => v !== value) : [ ...array, value ]
 
 /** Pad out array to padLength using padVal */
-export const arrayPad = (array, padLength, padVal) => padLength < array.length ? array :
+export const arrayPad = (array, padLength, padVal = null) => padLength < array.length ? array :
     [ ...array, ...Array(padLength).fill(padVal).slice(array.length) ]
 
 
@@ -175,6 +175,8 @@ export const arrSwap = (arr, idx) => {
     if (idx.length !== 2 || idx[0] === idx[1]) return arr
 
     idx.sort((a, b) => a - b)
+    if (idx[1] > arr.length) arr = arrayPad(arr, idx[1])
+
     return trimFalsy([
         ...arr.slice(0, idx[0]),
         arr[idx[1]],
