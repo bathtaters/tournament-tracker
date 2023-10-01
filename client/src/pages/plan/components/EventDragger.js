@@ -1,12 +1,17 @@
 import React from "react"
 import PropTypes from "prop-types"
 import DragBlock from '../../common/DragBlock'
-import { DragBlockWrapper, dragEventStyle } from "../styles/PlanTabVoteStyles"
+import { DragBlockWrapper, dragEventStyle, SideButtonWrapper, SideButton, OverlayButton } from "../styles/PlanTabVoteStyles"
 import { canDrop, dataType } from "../services/planVote.services"
 import { arrayPad } from "../services/plan.utils"
 
 
-function EventDragger({ boxId, eventIds, slots, events, onDrop, numberSlots }) {
+function EventDragger({ boxId, eventIds, slots, events, onDrop, onClick, numberSlots }) {
+    
+    const raiseEvent = (id, slot) => id && slot > 0 ? ((ev) => onClick(ev, id, slot, -1)) : null
+    const lowerEvent = (id, slot) => id && slot < slots - 1 ? ((ev) => onClick(ev, id, slot, 1)) : null
+    const rankEvent  = (id) => id && ((ev) => onClick(ev, id, -1))
+    const dropEvent  = (id) => id && ((ev) => onClick(ev, id, 1))
 
     return (<>
         { arrayPad(eventIds, slots || 0).map((id,slot) => 
@@ -20,8 +25,21 @@ function EventDragger({ boxId, eventIds, slots, events, onDrop, numberSlots }) {
                     className={dragEventStyle(id && boxId)}
                     draggable={Boolean(id)}
                 >
-                    {id && events?.[id]?.title}
+                    <span>{id && events?.[id]?.title}</span>
+                    {id && numberSlots && <OverlayButton onClick={dropEvent(id)}>✕</OverlayButton>}
+                    {id && <div className="absolute right-1 top-0 bottom-1 text-3xl font-thin flex items-center opacity-60">☰</div>}
                 </DragBlock>
+                
+                {numberSlots ?
+                    <SideButtonWrapper hide={!id}>
+                        <SideButton onClick={raiseEvent(id, slot)}>▲</SideButton>
+                        <SideButton onClick={lowerEvent(id, slot)}>▼</SideButton>
+                    </SideButtonWrapper>
+                :
+                    <SideButtonWrapper hide={!id}>
+                        <SideButton onClick={rankEvent(id)}>＋</SideButton>
+                    </SideButtonWrapper>
+                }
 
             </DragBlockWrapper>
         )}

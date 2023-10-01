@@ -24,7 +24,7 @@ function PlanTabVote({ voter, events, settings }) {
     )
 
     // Voter.Events
-    const [ ranked, setRanked ] = useRankState(voter, updateVoter)
+    const { ranked, handleDrop, handleClick } = useRankState(voter, updateVoter)
 
     const unranked = eventList.filter((id) => !ranked.includes(id))
     
@@ -41,7 +41,8 @@ function PlanTabVote({ voter, events, settings }) {
                     eventIds={ranked}
                     events={events}
                     slots={eventList.length}
-                    onDrop={setRanked}
+                    onDrop={handleDrop}
+                    onClick={handleClick}
                     numberSlots={true}
                 />
             </GeneralSectionStyle>
@@ -52,7 +53,8 @@ function PlanTabVote({ voter, events, settings }) {
                     eventIds={unranked}
                     events={events}
                     slots={Math.min(unranked.length + 1, eventList.length)}
-                    onDrop={setRanked}
+                    onDrop={handleDrop}
+                    onClick={handleClick}
                 />
             </GeneralSectionStyle>
         </PlanRowStyle>

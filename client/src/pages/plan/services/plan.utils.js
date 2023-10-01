@@ -137,35 +137,49 @@ export const arrayPad = (array, padLength, padVal) => padLength < array.length ?
     [ ...array, ...Array(padLength).fill(padVal).slice(array.length) ]
 
 
-
-const lastTruthyIndex = (array) => {
-    for (let i = array.length - 2; i >= 0; i--) { if (array[i]) return i }
-    return -1
+export const trimFalsy = (array, start = 0) => {
+    
+    let i = array.length
+    while (!array[--i]) {
+        if (i <= start) return []
+    }
+    return array.slice(start, i + 1)
 }
 
-export const arrRemove = (array, idx) => idx === array.length - 1 ?
-    array.slice(0, lastTruthyIndex(array) + 1) :
-    arrInsert(array, idx)
+export const arrRemove = (array, idx) => trimFalsy(arrInsert(array, idx))
 
 
 export const arrInsert = (array, idx, value) => idx <= array.length ? [
     ...array.slice(0, idx),
     value,
-    ...array.slice(idx + 1),
+    ...trimFalsy(array, idx + 1),
 ] : [
     ...arrayPad(array, idx),
     value,
 ]
 
+export const arrShift = (array, idx, backward = false) => backward ? trimFalsy([
+    ...array.slice(0, idx - 1),
+    array[idx],
+    array[idx - 1],
+    ...array.slice(idx + 1),
+]) : [
+    ...array.slice(0, idx),
+    array[idx + 1],
+    array[idx],
+    ...array.slice(idx + 2),
+]
+
+
 export const arrSwap = (arr, idx) => {
     if (idx.length !== 2 || idx[0] === idx[1]) return arr
 
     idx.sort((a, b) => a - b)
-    return [
+    return trimFalsy([
         ...arr.slice(0, idx[0]),
         arr[idx[1]],
         ...arr.slice(idx[0] + 1, idx[1]),
         arr[idx[0]],
         ...arr.slice(idx[1] + 1),
-    ]
+    ])
 }

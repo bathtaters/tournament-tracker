@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { boxIDs, dragType } from "../../../assets/constants";
-import { arrInsert, arrRemove, arrSwap } from "./plan.utils";
+import { arrInsert, arrRemove, arrShift, arrSwap, trimFalsy } from "./plan.utils";
 import { useServerListValue } from "../../common/common.hooks";
 import { plan as config } from "../../../assets/config"
 
@@ -22,23 +22,36 @@ export function useRankState(voter, updateVoter) {
     )
 
     // from/to form: {id, boxId, slot}
-    return [
-        ranked,
+    const handleDrop = useCallback(
+        (from, to) => {
+            if (from.boxId === to.boxId) {
+                to.boxId === boxIDs.RANKED && setRanked((ranked) => arrSwap(ranked, [from.slot, to.slot]))
+                return;
+            }
+            
+            setRanked((ranked) => to.boxId === boxIDs.RANKED ?
+                arrInsert(ranked, to.slot, from.id) :
+                arrRemove(ranked, from.slot)
+            )
+        },
+        [setRanked]
+    )
+    
+    // idx of -1 means unranked, shift of 0 means move to unranked (otherwise expect +1/-1)
+    const handleClick = useCallback(
+        (ev, id, idx, shift = 0) => {
+            ev.stopPropagation()
+            if (idx === -1) return setRanked((ranked) => ranked.concat(id))
+            if (shift === 0) return setRanked((ranked) => trimFalsy(ranked.filter((event) => event !== id)))
+            setRanked((ranked) => arrShift(ranked, idx, shift < 0))
+        },
+        [setRanked]
+    )
 
-        useCallback(
-            (from, to) => {
-                if (from.boxId === to.boxId) {
-                    to.boxId === boxIDs.RANKED && setRanked((ranked) => arrSwap(ranked, [from.slot, to.slot]))
-                    return;
-                }
-                
-                setRanked((ranked) => to.boxId === boxIDs.RANKED ?
-                    arrInsert(ranked, to.slot, from.id) :
-                    arrRemove(ranked, from.slot)
-                )
-            },
-            [setRanked]
-        ),
-    ]
+    return {
+        ranked,
+        handleDrop,
+        handleClick,
+    }
 
 }

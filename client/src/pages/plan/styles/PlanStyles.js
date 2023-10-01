@@ -42,6 +42,6 @@ export const PlanFooterStyle = ({ children }) => (
 export const PlanButton = (props) => (
     <button
         {...props}
-        className={`btn btn-sm sm:btn-md flex-grow text-sm sm:text-base ${props.className || 'btn-primary'}`}
+        className={`btn btn-sm sm:btn-md flex-grow text-xs sm:text-base ${props.className || 'btn-primary'}`}
     />
 )
