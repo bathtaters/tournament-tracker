@@ -3,8 +3,11 @@ const { toObjArray } = require("../services/settings.services")
 
 // SETTINGS \\
 
+// Total number of threads to spawn for paralell processing
+const threadCount = 16 - 1
+
 // How often to update progress (ie. 0.01 = Every 1% increase)
-const progUpdatePercent = 0.02
+const progUpdatePercent = 0.005
 
 // How many off days = 1 active day (To equalize events for players who can't make it)
 const daysOffFactor = 2
@@ -145,10 +148,18 @@ const getVoterLists = (voters, startDate, endDate) => {
     return available
 }
 
+/** Return the greatest plan score in a group */
+const maxPlan = (...plans) => !plans.length ? null :
+    plans.reduce(
+        (max, plan) => plan.score > max.score || isNaN(max.score) ? plan : max,
+        { score: NaN }
+    )
+
 module.exports = {
-    progUpdatePercent, planStatus, updateProg,
+    threadCount, progUpdatePercent,
+    planStatus, updateProg,
     filterUnvoted, voterCanPlay, daysOffByPlayer,
     getEventScores, getPlanScore,
     planToEvent, resetEvent,
-    getVoterLists,
+    getVoterLists, maxPlan,
 }

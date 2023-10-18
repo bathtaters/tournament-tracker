@@ -1,7 +1,11 @@
+const { join } = require('path')
 const logger = require("../utils/log.adapter")
 const { dayCount } = require("../utils/shared.utils")
-const { filterUnvoted, getVoterLists, getEventScores, planToEvent, resetEvent, daysOffByPlayer, getPlanScore, progUpdatePercent } = require("../utils/plan.utils")
-const { permutationCount, getPermutations, combinationCount, getCombinationN, getArrayCombos } = require("../utils/combination.utils")
+const multithread = require('../utils/multithread.utils')
+const { filterUnvoted, getVoterLists, planToEvent, resetEvent, daysOffByPlayer, progUpdatePercent, maxPlan, threadCount } = require("../utils/plan.utils")
+const { permutationCount, getPermutations } = require("../utils/combination.utils")
+
+const threadFile = join(__dirname, 'plan.thread.js')
 
 
 // Accepts planEvents, voters & settings, returns event array ({ id, day, slot, players })
@@ -29,42 +33,32 @@ async function generatePlan(events, voters, settings = {}, updateProg, forceEmpt
     let remainingEvents = events.map(({ id }) => id)
     events = filterUnvoted(events, voters)
     if (!events.length) throw new Error("No events have been voted for")
-    
-    let daysOff = daysOffByPlayer(dates, voters)
 
     // Initialize progress bar
     const progTotal = permutationCount(events.length, slotCount, forceEmpties || events.length < slotCount)
     const progInt = progTotal * progUpdatePercent
     let prog = 0, nextProg = progInt
 
-    // Determine every possible schedule given the events and slots
-    for (const schedule of getPermutations(events, slotCount, forceEmpties || events.length < slotCount)) {
-        
+    // Initialize thread data
+    const schedules = getPermutations(events, slotCount, forceEmpties || events.length < slotCount)
+    const extraData = {
+        events, availableVoters, slots, dates, slotCount,
+        daysOff: daysOffByPlayer(dates, voters),
+    }
+    const updateBestPlan = async (nextPlan) => {
         // Write out progress bar updates
         if (prog++ >= nextProg) {
             if (updateProg) await updateProg(prog, progTotal)
             nextProg += progInt
         }
-
-        // Determine every possible player combo for each slot in the schedule
-        const comboMax = schedule.map((event, slot) => combinationCount(
-            availableVoters[Math.trunc(slot / slots)].length,
-            event?.playercount
-        ))
-        
-        for (const n of getArrayCombos(comboMax)) {
-            const plan = getPlanN(n, schedule, availableVoters, dates[0], slots, comboMax, events.length)
-            if (!plan) continue
-            
-            // Score each combination and update max scores
-            const score = getPlanScore(plan, slotCount, daysOff, events.length)
     
-            if (isNaN(bestPlan.score) || bestPlan.score < score) {
-                bestPlan.plan = plan
-                bestPlan.score = score
-            }
-        }
+        bestPlan = maxPlan(bestPlan, nextPlan)
     }
+
+    // Determine every possible schedule given the events and slots
+    await multithread(threadFile, threadCount, schedules, updateBestPlan, extraData)
+
+    // Finish 
     if (updateProg) await updateProg(progTotal, progTotal)
 
     // Handle no matches found
@@ -82,32 +76,5 @@ async function generatePlan(events, voters, settings = {}, updateProg, forceEmpt
     )
     return bestPlan.plan.map(planToEvent).concat(remainingEvents.map(resetEvent))
 }
-
-
-/** Retrieve next combination of players for a given game
- *  Returns NULL when no combination exisits */
-function getPlanN(n, schedule, availableVoters, startDay, slots, comboMax, eventCount) {
-    let plan = [], day = new Date(startDay)
-        
-    for (let slot = 0; slot < n.length; ++slot % slots === 0 && day.setDate(day.getDate() + 1)) {
-        if (!comboMax[slot]) continue  // Skip missing event days
-
-        const players = getCombinationN(
-            n[slot],
-            availableVoters[Math.trunc(slot / slots)],
-            schedule[slot].playercount,
-            comboMax[slot]
-        )
-
-        plan.push({
-            id: schedule[slot]?.id,
-            day: new Date(day),
-            slot: slot % slots + 1,
-            score: getEventScores(schedule[slot]?.id, players, eventCount),
-        })
-    }
-    return plan.length ? plan : null
-}
-
 
 module.exports = generatePlan
