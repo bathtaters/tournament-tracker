@@ -11,53 +11,88 @@ parentPort.on('message', ({ value, extra }) => {
 
 
 /** Get best plan for a given schedule */
-function getBestPlan(schedule, { events, availableVoters, slots, dates, slotCount, daysOff }) {
-    let bestPlan = { plan: [], score: NaN }
+function getBestPlan(schedule, { events, voters, slots, dates, slotCount, daysOff }) {
+    let playerLists = schedule.map(() => []),
+        rankIdx = voters.map(() => 0)
 
-    // Determine every possible player combo for each slot in the schedule
-    const comboMax = schedule.map((event, slot) => combinationCount(
-        availableVoters[Math.trunc(slot / slots)].length,
-        event?.playercount
-    ))
-    
-    for (const n of getArrayCombos(comboMax)) {
-        const plan = getPlanN(n, schedule, availableVoters, dates[0], slots, comboMax, events.length)
-        if (!plan) continue
+    // Loop while player list is incomplete
+    while (playerLists.some((players, slot) => players.length !== schedule[slot].playercount)) {
         
-        // Score each combination and update max scores
-        const score = getPlanScore(plan, slotCount, daysOff, events.length)
+        // Force players into empty event slots if no one else voted for them
+        if (Object.entries(rankIdx).every(([v, rank]) => voters[v].events.length <= rank)) {
+            for (const slot in playerLists) {
+                while (playerLists[slot].length < schedule[slot].playercount) {
 
-        if (isNaN(bestPlan.score) || bestPlan.score < score) {
-            bestPlan.plan = plan
-            bestPlan.score = score
+                    const voterIdx = voters.findIndex(({ ignoreSlots }, v) =>
+                        !ignoreSlots.includes(slot)
+                            && !playerLists[slot].includes(v)
+                    )
+                    
+                    // If no player found, fail the schedule -- I should handle this more gracefully
+                    if (voterIdx === -1) return { plan: [], score: NaN }
+
+                    playerLists[slot].push(voterIdx)
+                }
+            }
+            break
         }
+
+        // Give each player their next available top choice on the schedule
+        for (const v in voters) {
+
+            while (rankIdx[v] < voters[v].events.length) {
+
+                const eventId = voters[v].events[rankIdx[v]++]
+                if (!eventId) continue // Empty ranking
+                
+                const slot = schedule.findIndex(
+                    (event, slot) =>
+                        // Ignore slots
+                        !voters[v].ignoreSlots.includes(slot)
+                            // Find matching event
+                            && event?.id === eventId
+                            // ...that is not full
+                            && playerLists[slot].length < event.playercount
+                )
+                
+                // If an event is found (and player isn't already registered)
+                if (slot !== -1 && !playerLists[slot].includes(v)) {
+                    // ...register player for that event
+                    playerLists[slot].push(v)
+                    break
+                }
+            }
+        }   
     }
 
-    return bestPlan
-}
+    // Generate plan data from playerLists
+    const day = new Date(dates[0])
+    let plan
+    try {
 
-
-/** Retrieve next combination of players for a given game
- *  Returns NULL when no combination exisits */
-function getPlanN(n, schedule, availableVoters, startDay, slots, comboMax, eventCount) {
-    let plan = [], day = new Date(startDay)
-        
-    for (let slot = 0; slot < n.length; ++slot % slots === 0 && day.setDate(day.getDate() + 1)) {
-        if (!comboMax[slot]) continue  // Skip missing event days
-
-        const players = getCombinationN(
-            n[slot],
-            availableVoters[Math.trunc(slot / slots)],
-            schedule[slot].playercount,
-            comboMax[slot]
-        )
-
-        plan.push({
-            id: schedule[slot]?.id,
-            day: new Date(day),
-            slot: slot % slots + 1,
-            score: getEventScores(schedule[slot]?.id, players, eventCount),
+        plan = playerLists.map((players, slot) => {
+            // Inc. day
+            if (slot && slot % slots === 0) day.setDate(day.getDate() + 1)
+    
+            return {
+                id: schedule[slot]?.id,
+                day: new Date(day),
+                slot: slot % slots + 1,
+                score: getEventScores(
+                    schedule[slot]?.id,
+                    players.map((v) => voters[v]),
+                    events.length,
+                ),
+            }
         })
+    } catch (e) {
+        console.log(playerLists)
+        console.log(voters)
+        throw e
     }
-    return plan.length ? plan : null
+    
+    return {
+        plan,
+        score: getPlanScore(plan, slotCount, daysOff, events.length),
+    }
 }

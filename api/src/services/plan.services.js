@@ -2,7 +2,7 @@ const { join } = require('path')
 const logger = require("../utils/log.adapter")
 const { dayCount } = require("../utils/shared.utils")
 const multithread = require('../utils/multithread.utils')
-const { filterUnvoted, getVoterLists, planToEvent, resetEvent, daysOffByPlayer, progUpdatePercent, maxPlan, threadCount } = require("../utils/plan.utils")
+const { filterUnvoted, getVoterSlots, planToEvent, resetEvent, daysOffByPlayer, progUpdatePercent, maxPlan, threadCount } = require("../utils/plan.utils")
 const { permutationCount, getPermutations } = require("../utils/combination.utils")
 
 const threadFile = join(__dirname, 'plan.thread.js')
@@ -28,7 +28,7 @@ async function generatePlan(events, voters, settings = {}, updateProg, forceEmpt
     const slotCount = slots * dayCount(...dates)
     if (!slotCount) throw new Error("No available slots in schedule")
 
-    const availableVoters = getVoterLists(voters, ...dates)
+    voters = getVoterSlots(voters, slots, dates[0])
 
     let remainingEvents = events.map(({ id }) => id)
     events = filterUnvoted(events, voters)
@@ -42,7 +42,7 @@ async function generatePlan(events, voters, settings = {}, updateProg, forceEmpt
     // Initialize thread data
     const schedules = getPermutations(events, slotCount, forceEmpties || events.length < slotCount)
     const extraData = {
-        events, availableVoters, slots, dates, slotCount,
+        events, voters, slots, dates, slotCount,
         daysOff: daysOffByPlayer(dates, voters),
     }
     const updateBestPlan = async (nextPlan) => {

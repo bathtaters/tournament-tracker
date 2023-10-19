@@ -1,4 +1,4 @@
-const { datesAreEqual, toDateStr } = require("./shared.utils")
+const { datesAreEqual, toDateStr, dayCount } = require("./shared.utils")
 const { toObjArray } = require("../services/settings.services")
 
 // SETTINGS \\
@@ -136,23 +136,25 @@ const getPlanScore = (...planData) => planMetrics.reduce(
     0
 )
 
-/** Get list of days that will align with slots */
-const getVoterLists = (voters, startDate, endDate) => {
-    let available = [],
-        day = new Date(startDate)
-
-    while (day <= endDate) {
-        available.push(voters.filter(voterCanPlay(day)))
-        day.setDate(day.getDate() + 1)
+/** Convert voter days to ignore into slot numbers to ignore */
+const getVoterSlots = (voters, slotsPerDay, startDate) => {
+    
+    const dayToSlots = (day) => {
+        const startSlot = slotsPerDay * dayCount(startDate, day)
+        return Array.from({ length: slotsPerDay }).map((_,i) => i + startSlot)
     }
-    return available
+
+    return voters.map((voter) => ({
+        ...voter,
+        ignoreSlots: voter.days.flatMap(dayToSlots)
+    }))
 }
 
 /** Return the greatest plan score in a group */
 const maxPlan = (...plans) => !plans.length ? null :
     plans.reduce(
         (max, plan) => plan.score > max.score || isNaN(max.score) ? plan : max,
-        { score: NaN }
+        { plan: [], score: NaN }
     )
 
 module.exports = {
@@ -161,5 +163,5 @@ module.exports = {
     filterUnvoted, voterCanPlay, daysOffByPlayer,
     getEventScores, getPlanScore,
     planToEvent, resetEvent,
-    getVoterLists, maxPlan,
+    getVoterSlots, maxPlan,
 }
