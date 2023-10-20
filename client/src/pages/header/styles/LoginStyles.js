@@ -32,6 +32,17 @@ export function LoginMenuStyle({ loading, onSubmit, initial, children }) {
     );
 }
 
+export function MenuCreditsStyle({ value }) {
+    return (
+      <MenuItemStyle lessPadding={true}>
+        <div className="text-base px-3 cursor-auto">
+          <span className="mr-2">Credits:</span>
+          <span className="font-light">{typeof value === 'number' ? value : '-'}</span>
+        </div>
+      </MenuItemStyle>
+    );
+  }
+
 export function DropdownInput({ label, props }) {
     return (
         <MenuItemStyle lessPadding={true}>
