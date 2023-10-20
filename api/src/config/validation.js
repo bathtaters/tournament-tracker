@@ -39,6 +39,7 @@ module.exports = {
     player: {
       name: "New Player",
       password: null,
+      credits: 0,
       access: 1,
       isteam: false,
       members: null,
@@ -88,6 +89,7 @@ module.exports = {
     },
     player: {
       name: sharedLimits.title,
+      credits: { min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER },
       password: { min: 6, max: 64 },
       access: { min: 0, max: 3 },
       members: { min: 2, max: 12 },
@@ -145,7 +147,8 @@ module.exports = {
       id: "uuid",
       name: "string",
       password: "string?",
-      access: "number",
+      credits: "float",
+      access: "int",
       session: "uuid?",
       isteam: "boolean",
       members: "uuid[]?",
