@@ -140,7 +140,7 @@ const getPlanScore = (...planData) => planMetrics.reduce(
 const getVoterSlots = (voters, slotsPerDay, startDate) => {
     
     const dayToSlots = (day) => {
-        const startSlot = slotsPerDay * dayCount(startDate, day)
+        const startSlot = slotsPerDay * (dayCount(startDate, day) - 1)
         return Array.from({ length: slotsPerDay }).map((_,i) => i + startSlot)
     }
 
