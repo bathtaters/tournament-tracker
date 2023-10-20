@@ -32,7 +32,7 @@ function Stats({ eventid, onPlayerClick, className = 'table-zebra', highlightCla
         rowLink="profile/"
         rowClass={highlightClass}
         className={className}
-        hdrClass={hideStats ? "hidden" : "text-center mb-2"}
+        hdrClass="text-center mb-2"
         onRowClick={onPlayerClick}
       >
         No players exist
