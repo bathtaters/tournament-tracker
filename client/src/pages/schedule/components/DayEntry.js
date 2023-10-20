@@ -17,7 +17,7 @@ import { usePlayerQuery } from "../../common/common.fetch";
 
 
 function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, showPlayers = false }) {
-  const { data: players } = usePlayerQuery(null, { skip: !showPlayers })
+  const { data: players } = usePlayerQuery(undefined, { skip: !showPlayers })
 
   // Setup prefetching
   const prefetch = usePrefetchEvent();

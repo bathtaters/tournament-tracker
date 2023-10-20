@@ -13,11 +13,12 @@ import profileLayout, { WRITE, getProfileACL } from "./profile.layout";
 import { usePlayerQuery } from "./profile.fetch";
 import { useSessionState } from "../common/common.fetch";
 import { useParamIds } from "../common/services/idUrl.services";
+import { apiPollMs } from "../../assets/config";
 
 
 function Profile() {
   const { id } = useParamIds('id');
-  const { data: allPlayers, isLoading, error } = usePlayerQuery();
+  const { data: allPlayers, isLoading, error } = usePlayerQuery(undefined, { pollingInterval: apiPollMs });
   const playerData = allPlayers?.[id];
   
   const { data: user } = useSessionState();

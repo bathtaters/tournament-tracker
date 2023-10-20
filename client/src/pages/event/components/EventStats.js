@@ -9,11 +9,12 @@ import Modal from "../../common/Modal";
 import Loading from "../../common/Loading";
 
 import { useStatsQuery, usePlayerQuery } from "../event.fetch";
+import { apiPollMs } from "../../../assets/config";
 
 function EventStats({ event }) {
   // Global
   const modal = useRef(null);
-  const { data,          isLoading,                 error              } = useStatsQuery(event.id);
+  const { data,          isLoading,                 error              } = useStatsQuery(event.id, { pollingInterval: apiPollMs });
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
 
   // Loading/Error catcher

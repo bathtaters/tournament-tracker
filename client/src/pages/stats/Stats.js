@@ -8,11 +8,12 @@ import Loading from "../common/Loading";
 import { statsLayout, listLayout } from "./stats.layout";
 import { getPlayerList } from "./services/stats.services";
 import { useStatsQuery, usePlayerQuery } from "../common/common.fetch";
+import { apiPollMs } from "../../assets/config";
 
 function Stats({ eventid, onPlayerClick, className = 'table-zebra', highlightClass = '', hideTeams, hideStats }) {
   // Global state
-  const { data: stats, isLoading, error } = useStatsQuery(eventid)
-  const { data: players, isLoading: playLoad, error: playErr } = usePlayerQuery()
+  const { data: stats, isLoading, error } = useStatsQuery(eventid, { skip: hideStats, pollingInterval: apiPollMs })
+  const { data: players, isLoading: playLoad, error: playErr } = usePlayerQuery(undefined, { pollingInterval: apiPollMs })
   const playerList = getPlayerList(stats?.ranking, players, !eventid, hideTeams)
 
   // Loading/Error catcher
