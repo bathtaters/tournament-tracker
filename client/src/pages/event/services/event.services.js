@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useMatchQuery, usePlayerQuery, refetchStats } from '../event.fetch';
 import { useAccessLevel } from "../../common/common.fetch";
 import { formatCopyRound } from "../../../assets/formatting";
+import { apiPollMs } from "../../../assets/config";
 
 // Round Editor controller
 export function useRoundEditor({ id, roundactive, matches }, round) {
@@ -12,7 +13,7 @@ export function useRoundEditor({ id, roundactive, matches }, round) {
   const [isEditing, setIsEditing] = useState(false)
 
   // Copy matches
-  const { data: matchData } = useMatchQuery(id)
+  const { data: matchData } = useMatchQuery(id, { pollingInterval: apiPollMs })
   const { data: playerData } = usePlayerQuery()
   const handleCopy = !playerData || !matchData || round + 1 !== roundactive ? null :
     () => navigator.clipboard.writeText(formatCopyRound(matches[round], matchData, playerData))

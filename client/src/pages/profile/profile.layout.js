@@ -8,6 +8,7 @@ export const READ = 1, WRITE = 2;
 // Player Data layout
 const commonRows = [
   { label: 'Name', id: 'name', required: true, minLength: limits.name.min, maxLength: limits.name.max },
+  { label: 'Credits', id: 'credits', type: 'number', required: true, min: limits.credits.min, max: limits.credits.max },
 ];
 
 const playerOnlyRows = [
@@ -28,12 +29,12 @@ export default function getProfileLayout(isTeam) { return commonRows.concat(isTe
 
 // Layout based on access [ 0: guest, 1: player, 2: judge, 3: gonti ]
 const profileACL = [
-  /* Player > !Self  (0) */ { name: READ },
-  /* Player >  Self  (1) */ { name: READ | WRITE, password: READ | WRITE },
-  /* Judge  >  Self  (2) */ { name: READ | WRITE, password: READ | WRITE, access: READ },
-  /* Judge  > !Gonti (3) */ { name: READ | WRITE, access: READ },
-  /* Judge  >  Gonti (4) */ { name: READ, access: READ },
-  /* Gonti  > Anyone (5) */ { name: READ | WRITE, password: READ | WRITE, session: WRITE, access: READ | WRITE, reset: true },
+  /* Player > !Self  (0) */ { name: READ, credits: READ },
+  /* Player >  Self  (1) */ { name: READ | WRITE, credits: READ, password: READ | WRITE },
+  /* Judge  >  Self  (2) */ { name: READ | WRITE, credits: READ, password: READ | WRITE, access: READ },
+  /* Judge  > !Gonti (3) */ { name: READ | WRITE, credits: READ | WRITE, access: READ },
+  /* Judge  >  Gonti (4) */ { name: READ, credits: READ | WRITE, access: READ },
+  /* Gonti  > Anyone (5) */ { name: READ | WRITE, credits: READ | WRITE, password: READ | WRITE, session: WRITE, access: READ | WRITE, reset: true },
 ]
 
 // Build ACL based off current user & target user

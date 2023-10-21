@@ -23,6 +23,7 @@ CREATE TABLE player (
     password STRING NULL,
     access SMALLINT NOT NULL DEFAULT 1,
     session UUID NULL,
+    credits DECIMAL DEFAULT 0,
 
     -- Team
     isteam BOOLEAN NOT NULL DEFAULT FALSE,

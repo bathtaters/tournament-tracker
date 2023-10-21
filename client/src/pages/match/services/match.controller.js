@@ -14,6 +14,7 @@ import { swapController, canSwap } from "./swap.services"
 
 import { clearReportAlert } from '../../../assets/alerts'
 import { reportLockCaption } from "../../../assets/constants"
+import { apiPollMs } from "../../../assets/config"
 
 // Get max possible draws
 import { getLimit } from "../../../core/services/validation.services"
@@ -25,8 +26,8 @@ export default function useMatchController(eventid, matchId) {
   const openAlert = useOpenAlert();
 
   // Query Hooks
-  const { data: matches,  isLoading: loadingMatch,   error: matchError  } = useMatchQuery(eventid)
-  const { data: rankings, isLoading: loadingRank,    error: rankError   } = useStatsQuery(eventid)
+  const { data: matches,  isLoading: loadingMatch,   error: matchError  } = useMatchQuery(eventid, { pollingInterval: apiPollMs })
+  const { data: rankings, isLoading: loadingRank,    error: rankError   } = useStatsQuery(eventid, { pollingInterval: apiPollMs })
   const { data: players,  isLoading: loadingPlayers, error: playerError } = usePlayerQuery()
   const { data: user } = useSessionState()
   const showRaw = useShowRaw()
