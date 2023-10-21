@@ -1,5 +1,6 @@
 // -- Common Utility Functions -- //
 const logger = require('./log.adapter');
+const { randomInt } = require('crypto');
 
 
 /**
@@ -30,7 +31,25 @@ exports.arrToObj = (key, { delKey=false, valKey=null, combo=false }={}) =>
       return o;
     }, {});
 
+/** Fischer-Yates shuffle algorithm
+ *    - Reorder array in place, returning array */
+exports.shuffle = (array) => {
+  let currentIndex = array.length,  randomIndex;
 
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    randomIndex = randomInt(currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
 
 /**
  * Tests if 'entry' should be before 'item' in array.
