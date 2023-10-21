@@ -1,6 +1,7 @@
 // --- SHARED UTILITES FOR GENERATING MATCHES --- \\
 const { randomInt } = require('crypto');
 const { getCombinations, getUniqueCombinations } = require('../../utils/combination.utils')
+const { shuffle } = require('../../utils/shared.utils');
 
 
 // --- BASIC MATH OPS --- \\
@@ -104,25 +105,6 @@ exports.getGroupsSimple = (array, width) => {
 
 
 // --- RANDOMIZE/2D-IZE ARRAY --- \\
-
-// Fischer-Yates shuffle algo
-exports.shuffle = (array) => {
-  let currentIndex = array.length,  randomIndex;
-
-  // While there remain elements to shuffle...
-  while (currentIndex != 0) {
-
-    // Pick a remaining element...
-    randomIndex = randomInt(currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
-  }
-
-  return array;
-}
 
 /**
  * Randomize & Un-flatten array
