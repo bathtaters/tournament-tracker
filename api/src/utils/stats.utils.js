@@ -29,7 +29,7 @@ exports.calcBase = (playeridx, wldArr, { wins, draws, totalwins }, event) => ({
     matchRecord: Object.assign([0,0,0], { [wldArr[playeridx]]: 1 }),
     gameRecord:  [ wins[playeridx], totalwins - wins[playeridx], draws ],
     matchScore:  [ points.win, 0, points.draw ][ wldArr[playeridx] ],
-    gameScore:   ( wins[playeridx] * points.win ) + ( draws * points.draw ),
+    gameScore:   ( wins[playeridx] * points.win )// + ( draws * points.draw ), // ignore draws in game calculation
 });
 
 exports.calcRates = (result, useFloor) => Object.assign(result, {
