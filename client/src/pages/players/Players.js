@@ -22,6 +22,7 @@ function Players() {
           onPlayerClick={handlePlayerClick}
           hideTeams={true}
           hideStats={access < 3}
+          showCredits={true}
         />
       </StatsStyle>
 
