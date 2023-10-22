@@ -5,6 +5,7 @@
   "main": "./src/server.js",
   "scripts": {
     "start": "node ./src/server.js",
+    "sync": "node -e 'require(\"./src/services/init.services.js\")(true)'",
     "test": "jest",
     "inspect": "node --inspect ./src/server.js"
   },

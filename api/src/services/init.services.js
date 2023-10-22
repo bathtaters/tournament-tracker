@@ -7,10 +7,11 @@ const { types } = require("pg");
 const db = require('../db/admin/connect');
 
 // To be run when server starts
-async function initServices() {
+async function initServices(syncOnly = false) {
   // Copy validation params to client
-  exportToClient({ ...validation, meta }, 'src', 'assets', 'validation.json')
+  await exportToClient({ ...validation, meta }, 'src', 'assets', 'validation.json')
     .then(p => console.log('Validate config copied to client --  '+p));
+  if (syncOnly) process.exit(0)
 
   // Setup integer parsing for pg
   types.setTypeParser(types.builtins.INT2, parseInt);

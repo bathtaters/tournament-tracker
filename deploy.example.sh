@@ -29,6 +29,9 @@ cd "$repopath/api"
 npm install
 npm update
 
+# Sync API config to Client
+npm run sync
+
 # Update Client
 echo
 echo " *** UPDATING CLIENT *** "
