@@ -80,6 +80,10 @@ _Represented below by api/v[n]_
 |/[id]|PATCH|{ newData }|{ id, newData }|Update event data|
 |/[id]/round/[round]|POST| |{ id, round: #, matches: [ ids ] }|Add a round of matches|
 |/[id]/round/[round]|DELETE| |{ id, round: # }|Delete the last round|
+|/all/credits|POST| |{ playerid: credits, ... }|Reset player credits using credits from finished events|
+|/all/credits|DELETE| |{ playerid: credits, ... }|Reset player credits to zero|
+|/[id]/credits|POST| |{ playerid: newCredits, ... }|Add credits from event to players|
+|/[id]/credits|DELETE| |{ playerid: newCredits, ... }|Remove credits from event to players|
 
 ---
 

@@ -27,4 +27,24 @@ module.exports = {
     "Losses",
     "Draws"
   ],
+  creditsPerRank: [
+    // TODO: Move to Gonti settings
+    250, // 1st
+    200,
+    150,
+    130,
+    120,
+    100,
+    100,
+    50, // 8th
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+  ],
+  didntPlayCredits: 50,
+  
 };

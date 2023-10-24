@@ -8,6 +8,7 @@ const match = require('../db/models/match');
 // Services/Utils
 const toStats = require('../services/stats.services');
 const { arrToObj } = require('../utils/shared.utils');
+const { creditsPerRank, didntPlayCredits } = require('../config/constants');
 
 
 
@@ -23,7 +24,7 @@ async function getAllStats(_, res) {
 
 async function getStats(req, res) {
   const { id } = matchedData(req);
-  const players = await event.getPlayers(id);
+  const players = await event.getPlayers(id).then((r) => r?.players);
   if (!players) return res.sendStatus(204);
 
   const [matches, opps] = await Promise.all([
@@ -31,11 +32,76 @@ async function getStats(req, res) {
     event.getOpponents(id).then(arrToObj('playerid',{ valKey: 'oppids' })),
   ]);
   
-  return res.sendAndLog(toStats({[id]: matches}, players.players, {[id]: opps}, true));
+  return res.sendAndLog(toStats({[id]: matches}, players, {[id]: opps}, true));
+}
+
+const getEventCredits = (id, matches, players, opps, credits = {}) => {
+  const { ranking } = toStats({[id]: matches}, players, {[id]: opps}, true)
+  if (!ranking?.length) return credits
+  
+  players.forEach((player) => {
+    if (!credits[player]) credits[player] = 0
+
+    credits[player] += 
+      ranking.includes(player) ? 
+        creditsPerRank[ranking.indexOf(player)]
+        : didntPlayCredits
+  })
+
+  return credits
+}
+
+const resetAllCredits = (includeFinished = false) => includeFinished ?
+  async function resetAllCredits() {
+    let credits = {}
+    const players = await player.list()
+
+    for (const id of players) {
+      credits[id] = 0
+      await player.set(id, { credits: 0 })
+    }
+    return res.sendAndLog(credits)
+  } :
+  async function resetAllCredits(_, res) {
+    const matches = await match.getAll(true).then(matchesByEvent);
+    const players = await player.list();
+    const opps    = await event.getOpponents(null, true).then(oppsByEvent);
+
+    let credits = {}
+
+    for (const id in matches) {
+      getEventCredits(id, matches[id], players, opps[id], credits)
+    }
+    
+    for (const id in credits) {
+      await player.set(id, { credits: credits[id] })
+    }
+    return res.sendAndLog(credits)
+  }
+
+const setCredits = (undo = false) =>
+  async function setCredits(req, res) {
+    const { id } = matchedData(req);
+    const players = await event.getPlayers(id).then((r) => r?.players);
+    if (!players) return res.sendStatus(204);
+
+    const [allPlayers, matches, opps] = await Promise.all([
+      player.get(),
+      match.getByEvent(id),
+      event.getOpponents(id).then(arrToObj('playerid',{ valKey: 'oppids' })),
+    ]);
+
+    let eventCredits = getEventCredits(id, matches, players, opps)
+  
+  for (const { id, credits } of allPlayers) {
+    if (!(id in eventCredits)) eventCredits[id] = didntPlayCredits
+    await player.set(id, { credits: credits + (undo ? -eventCredits[id] : eventCredits[id]) })
+  }
+  return res.sendAndLog(eventCredits)
 }
 
 
-module.exports = { getAllStats, getStats }
+module.exports = { getAllStats, getStats, resetAllCredits, setCredits }
 
 
 

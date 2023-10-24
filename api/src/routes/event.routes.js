@@ -13,8 +13,12 @@ const action = require('../controllers/action.controllers');
 router.get('/all',                   catcher(controller.getAllEvents));
 router.get('/:id', validate.eventid, catcher(controller.getEvent));
 
-router.get('/all/stats',                   catcher(stats.getAllStats));
-router.get('/:id/stats', validate.eventid, catcher(stats.getStats));
+router.get('/all/stats',                        catcher(stats.getAllStats));
+router.get('/:id/stats',      validate.eventid, catcher(stats.getStats));
+router.post('/all/credits',                     catcher(stats.resetAllCredits(true)));
+router.delete('/all/credits',                   catcher(stats.resetAllCredits(false)));
+router.post('/:id/credits',   validate.eventid, catcher(stats.setCredits(false)));
+router.delete('/:id/credits', validate.eventid, catcher(stats.setCredits(true)));
 
 // Set
 router.post('/plan',  validate.setPlan,     catcher(controller.setPlan));
