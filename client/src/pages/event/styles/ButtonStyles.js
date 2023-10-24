@@ -33,3 +33,17 @@ export function CopyRoundButton({ onClick }) {
     </button>
   )
 }
+
+export const CreditButtonWrapper = ({ children }) => (
+  <div className="flex justify-center items-center gap-4 p-8">
+    {children}
+  </div>
+)
+
+export const CreditButton = (props) => (
+  <button className="btn btn-primary btn-outline btn-square" {...props}>
+    {!props.disabled ? props.children : 
+      <span className="loading loading-ball loading-xs" />
+    }
+  </button>
+)

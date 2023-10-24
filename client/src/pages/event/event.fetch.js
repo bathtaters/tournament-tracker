@@ -26,10 +26,16 @@ export const eventApi = fetchApi.injectEndpoints({
       onQueryStarted: clearRoundUpdate,
     }),
 
+    updateCredits: build.mutation({
+      query: ({ id, undo = false }) => ({ url: `event/${id}/credits`, method: undo ? 'DELETE' : 'POST' }),
+      transformResponse: debugLogging ? res => console.log('UPD_CREDITS',res) || res : undefined,
+      invalidatesTags: getTags('Player', { addAll: ['Player'] }),
+    }),
+
   }),
   overrideExisting: true
 });
 const refetchStats = (id) => fetchApi.util.invalidateTags(getTags('Stats',{all:0})({id}))
 
 export { useEventQuery, usePlayerQuery, useSettingsQuery, useStatsQuery, useSetEventMutation, useMatchQuery, refetchStats };
-export const { useNextRoundMutation, useClearRoundMutation } = eventApi;
+export const { useNextRoundMutation, useClearRoundMutation, useUpdateCreditsMutation } = eventApi;

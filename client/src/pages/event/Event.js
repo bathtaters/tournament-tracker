@@ -7,11 +7,12 @@ import EventDashboard from "./components/EventDashboard";
 import EditEvent from "../eventEditor/EditEvent";
 import Round from "./components/Round";
 import Loading from "../common/Loading";
+import CreditButtons from "./components/subcomponents/CreditButtons";
 import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 
 import { useEventQuery } from "./event.fetch";
 import { roundArray } from "./services/event.services";
-import { useDeleteRound } from "./services/roundButton.services";
+import { isFinished, useDeleteRound } from "./services/roundButton.services";
 import { useParamIds } from "../common/services/idUrl.services";
 
 
@@ -48,6 +49,8 @@ function Event() {
         )}
 
       </DashboardStyle>
+      
+      { isFinished(data) && <CreditButtons id={id} /> }
 
       <RawData data={data} />
 

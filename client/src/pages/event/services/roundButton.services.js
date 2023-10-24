@@ -7,7 +7,7 @@ import { debugLogging } from "../../../assets/config";
 
 // Get Round Button label
 //  none|begin|end|back|next|wait|done
-const getRoundButton = (event, isLocked) => roundButtonText[
+const getRoundButton = (event, isLocked = false) => roundButtonText[
   isLocked ? 'wait' :
   !event || !event.players?.length ? 'none' :
   event.roundactive === 0 ? 'begin' :
@@ -16,6 +16,9 @@ const getRoundButton = (event, isLocked) => roundButtonText[
     (event.anyreported === true ? 'wait' : 'back') :
   event.roundactive === event.roundcount ? 'end' : 'next'
 ]
+
+// Check if event is over
+export const isFinished = (event) => Boolean(event && event.roundactive > event.roundcount)
 
 // Check if button should get Next round
 const isNext = ({ allreported, status }) =>  allreported || status === 1
