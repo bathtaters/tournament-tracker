@@ -119,19 +119,21 @@ exports.getGroups = (array, width) => {
     let result = []
     for (const match of exports.getCombos(remaining, Math.min(remaining.length, width))) {
 
-      // Remove combo elements from 'remaining' & recurse
-      recurGroups(remaining.filter(elem => !match.includes(elem)), current.concat([match]))
-        .forEach(r => result.push(r)) // Add each result to result array
+exports.getGroupsSimple = (array, width) => {
+  let result = [], current = []
+
+  for (const entry of array) {
+    current.push(entry)
+
+    if (current.length >= width) {
+      result.push(current)
+      current = []
     }
-  
-    return result.sort()
   }
 
-  // Run using indexes to improve time on sorting & tie-break based on input order
-  const indexGroups = exports.removeDupes(recurGroups(array.map((_,i) => i), []))
-  return exports.deepSwap(indexGroups, array)
+  if (current.length) result.push(current)
+  return result
 }
-
 
 
 // --- RANDOMIZE/2D-IZE ARRAY --- \\
