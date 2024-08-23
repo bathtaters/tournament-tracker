@@ -7,6 +7,7 @@ import { PlanWrapperStyle, PlanTitleStyle, PlanRowStyle, InputWrapperStyle, Plan
 import usePlanStartController from "./services/planStart.controller"
 import { dateArrToPicker } from "./services/plan.utils"
 import { useAccessLevel } from "../common/common.fetch"
+import { toDateObj } from "../schedule/services/date.utils"
 import { planTitle } from "../../assets/constants"
 
 import { getLimit } from "../../core/services/validation.services"
@@ -36,8 +37,8 @@ function PlanStart() {
                     <DatePicker
                         value={dateArrToPicker(dates)}
                         onChange={handleDateChange}
-                        minDate={settings?.datestart}
-                        maxDate={settings?.dateend}
+                        minDate={toDateObj(settings.datestart)}
+                        maxDate={toDateObj(settings.dateend)}
                         separator="–"
                         displayFormat="MM/DD/YY"
                         inputClassName="input input-primary w-full"
