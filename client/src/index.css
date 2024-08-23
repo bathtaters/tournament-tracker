@@ -60,4 +60,7 @@
     .bg-ignore {
         @apply hover:bg-transparent active:bg-transparent focus:bg-transparent;
     }
+
+    /* General button styling */
+    .btn { @apply uppercase; }
 }

@@ -1,11 +1,11 @@
 import React from "react"
 
 const TabWrapperStyle = (props) => (
-    <div className="tabs m-2" {...props} /> 
+    <div className="tabs tabs-bordered m-2" {...props} /> 
 )
 
 const TabStyle = ({ selected, children, ...props }) => (
-    <button className={`tab tab-bordered${selected ? ' tab-active' : ''}`} {...props}>
+    <button className={`tab${selected ? ' tab-active' : ''}`} {...props}>
         <h3 className="text-xl">{children}</h3>
     </button>
 )

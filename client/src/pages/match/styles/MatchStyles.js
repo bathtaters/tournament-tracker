@@ -46,7 +46,7 @@ export function PlayerInfoStyle({ isDrop, children }) {
     </div>
   );
 }
-// bg-base-focus rounded-md border border-base-content
+
 export function PlayerDropStyle({ children, visible }) {
   if (!visible) return null;
   return (

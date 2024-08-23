@@ -19,7 +19,8 @@ export const DragBlockWrapper = ({ number, children }) => (
 
 export const dragEventStyle = (boxId) => 
     `h-12 sm:h-16 m-1 px-2 font-light text-lg ${
-        boxId === boxIDs.RANKED ? 'bg-primary-focus text-primary-content hover:bg-primary/80 hover:text-primary-content/80 ' : ''
+        boxId !== boxIDs.RANKED ? '' :
+        'bg-[color-mix(in_oklab,oklch(var(--p)),black_7%)] text-primary-content hover:bg-primary/80 hover:text-primary-content/80 '
     }relative flex justify-center items-center flex-grow rounded-xl overflow-hidden text-ellipsis `
 
 
