@@ -24,6 +24,7 @@ export const alert = {
 export const settings = {
   // Store these settings locally (per user settings)
   storeLocal: ['showrawjson'],
+  localPrefix: 'tt', // Use before localStorage keys to avoid potential collisions
 }
 
 export const plan = {

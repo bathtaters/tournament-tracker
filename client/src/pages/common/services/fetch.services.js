@@ -5,9 +5,9 @@ import { getBaseData } from "../../../core/services/validation.services"
 export const defaultSettings = getBaseData('settings').defaults
 
 // Handle local data
-export const getLocalVar = (key) => JSON.parse(localStorage.getItem(key))
+export const getLocalVar = (key) => JSON.parse(localStorage.getItem(`${settings.localPrefix}-${key}`))
 export const setLocalVar = (key, value, dispatch) => {
-  localStorage.setItem(key, JSON.stringify(value))
+  localStorage.setItem(`${settings.localPrefix}-${key}`, JSON.stringify(value))
   // if dispatch passed, update state as well
   if (dispatch) dispatch(fetchApi.util.updateQueryData('settings', undefined, (draft) => { draft[key] = value }))
 }

@@ -42,7 +42,7 @@ export const roundButtonText = {
 
 // Local var keys
 export const localKeys = {
-  session: 'tt-session',
+  session: 'session',
 };
 
 // Lock Screen captions
