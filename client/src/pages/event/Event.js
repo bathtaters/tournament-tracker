@@ -10,7 +10,7 @@ import Loading from "../common/Loading";
 import CreditButtons from "./components/subcomponents/CreditButtons";
 import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 
-import { useEventQuery } from "./event.fetch";
+import { useEventQuery, useSettingsQuery } from "./event.fetch";
 import { roundArray } from "./services/event.services";
 import { isFinished, useDeleteRound } from "./services/roundButton.services";
 import { useParamIds } from "../common/services/idUrl.services";
@@ -21,13 +21,14 @@ function Event() {
   const modal = useRef(null);
   const { id } = useParamIds('id');
   const { data, isLoading, error, isFetching } = useEventQuery(id);
+  const { data: settings, isLoading: sLoad, error: sErr } = useSettingsQuery();
 
   // Handle delete round
   const handleDelete = useDeleteRound(data);
   
   // Loading/Error catcher
-  if (isLoading || error || !data)
-    return <Loading loading={isLoading} error={error} altMsg="Event not found" tagName="h3" />;
+  if (isLoading || error || sLoad || sErr || !data)
+    return <Loading loading={isLoading || sLoad} error={error || sErr} altMsg="Event not found" tagName="h3" />;
 
   // Render
   return (
@@ -50,7 +51,7 @@ function Event() {
 
       </DashboardStyle>
       
-      { isFinished(data) && <CreditButtons id={id} /> }
+      { settings.showcredits && isFinished(data) && <CreditButtons id={id} /> }
 
       <RawData data={data} />
 
