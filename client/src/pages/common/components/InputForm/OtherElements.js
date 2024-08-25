@@ -31,7 +31,7 @@ export function ElementInput({ inputProps = {}, backend, className, wrapperClass
 
   return (
     <InputStyle disabled={inputProps.disabled} className={wrapperClass}>
-      <input {...inputProps} className={className} />
+      <input {...inputProps} className={"join-item "+className} />
     </InputStyle>
   );
 }

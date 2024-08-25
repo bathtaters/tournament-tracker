@@ -8,7 +8,7 @@ import WarningIcon from "../icons/WarningIcon"
 export const elementDefaults = {
   className:  "font-light mx-1 sm:mx-4",
   labelClass: "whitespace-nowrap",
-  inputWrapperClass: "flex",
+  inputWrapperClass: "",
   inputClass: "",
   buttonClass: "btn-primary mx-1 sm:mx-4",
 }
@@ -54,9 +54,9 @@ export function ElementStyle({ isFragment, isLabel, className, children }) {
 // Apply Disabled Lock to Input Elements
 export function InputStyle({ disabled, className, children }) {
   return (
-    <label className={(disabled ? "input-group " : "") + className}>
+    <label className={(disabled ? "join " : "") + className}>
       { children }
-      { disabled && <div className="bg-base-200 flex text-secondary pr-1 sm:pr-2"><LockIcon /></div> }
+      { disabled && <div className="bg-base-200 flex text-secondary pr-1 sm:pr-2 join-item"><LockIcon /></div> }
     </label>
   )
 }

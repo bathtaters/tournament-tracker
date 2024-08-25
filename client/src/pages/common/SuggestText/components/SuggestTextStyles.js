@@ -20,8 +20,6 @@ export const HiddenList = ({ label }) => (
   <span className="hidden" aria-hidden="true" id={label+'-list'} />
 )
 
-const Ab = () => <span className="hidden" aria-hidden="true" /> // Absorb first/last child styling for input-group
-
 export function ListStyle({ divRef, textbox, children, label, className = listClassDef.wrapper }) {
 
   // List width
@@ -41,8 +39,8 @@ export function ListStyle({ divRef, textbox, children, label, className = listCl
   }, [layoutClasses.overrideMaxHeight || divRef.current?.getBoundingClientRect()?.bottom])  
   
   return (
-    <div className={`${layoutClasses.listWrapper} ${className}`} ref={divRef}><Ab /> 
-        <ul id={label+'-list'}><Ab />{children}<Ab /></ul>
-    <Ab /></div>
+    <div className={`${layoutClasses.listWrapper} ${className}`} ref={divRef}>
+        <ul id={label+'-list'}>{children}</ul>
+    </div>
   )
 }

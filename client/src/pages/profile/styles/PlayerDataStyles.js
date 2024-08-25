@@ -5,7 +5,7 @@ export function EditButton({ value, isEditing = true, onClick, disabled }) {
   return (
     <button
       type="button"
-      className={"btn btn-primary btn-sm text-xs font-light lowercase"+(isEditing ? "" : " btn-outline")}
+      className={"join-item btn btn-primary btn-sm text-xs font-light lowercase"+(isEditing ? "" : " btn-outline")}
       onClick={onClick}
       disabled={disabled}
     >
@@ -24,13 +24,13 @@ export function LabelStyle({ id, children }) {
 }
 
 export function InputGroupStyle({ children }) {
-  return <div className="input-group input-group-sm flex">{children}</div>
+  return <div className="join">{children}</div>
 }
 
 export function SelectOptionStyle({ type, optionClass, ...props  }) {
   return (
     <select
-      className="select select-sm select-primary select-bordered flex-grow min-w-0 disabled:opacity-100 disabled:cursor-text"
+      className="join-item select select-sm select-primary select-bordered flex-grow min-w-0 disabled:opacity-100 disabled:cursor-text"
       {...props}
     >
       {Object.entries(type).map(([key,val]) => (
@@ -45,7 +45,7 @@ export function InputStyle(props) {
 
   return (
     <input
-      className="input input-sm input-primary input-bordered flex-grow min-w-0 disabled:opacity-100 disabled:cursor-text"
+      className="join-item input input-sm input-primary input-bordered flex-grow min-w-0 disabled:opacity-100 disabled:cursor-text"
       {...props}
     />
   )
