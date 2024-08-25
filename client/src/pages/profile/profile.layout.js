@@ -8,8 +8,8 @@ export const READ = 1, WRITE = 2;
 // Player Data layout
 const commonRows = [
   { label: 'Name', id: 'name', required: true, minLength: limits.name.min, maxLength: limits.name.max },
-  { label: 'Credits', id: 'credits', type: 'number', required: true, min: limits.credits.min, max: limits.credits.max },
 ];
+const creditRow = { label: 'Credits', id: 'credits', type: 'number', required: true, min: limits.credits.min, max: limits.credits.max }
 
 const playerOnlyRows = [
   {
@@ -26,7 +26,10 @@ const teamOnlyRows = [
   },
 ];
 
-export default function getProfileLayout(isTeam) { return commonRows.concat(isTeam ? teamOnlyRows : playerOnlyRows); }
+export default function getProfileLayout(showCredits, isTeam) {
+  const base = showCredits ? [ ...commonRows, creditRow ] : commonRows
+  return base.concat(isTeam ? teamOnlyRows : playerOnlyRows)
+}
 
 
 // Layout based on access [ 0: guest, 1: player, 2: judge, 3: gonti ]

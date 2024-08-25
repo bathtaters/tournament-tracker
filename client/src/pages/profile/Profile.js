@@ -11,7 +11,7 @@ import { WrapperStyle, ProfileStyle, PlayerDataStyle, PicColumnStyle } from "./s
 import profileLayout, { WRITE, getProfileACL } from "./profile.layout";
 
 import { usePlayerQuery } from "./profile.fetch";
-import { useSessionState } from "../common/common.fetch";
+import { useSessionState, useSettingsQuery } from "../common/common.fetch";
 import { useParamIds } from "../common/services/idUrl.services";
 import { apiPollMs } from "../../assets/config";
 
@@ -23,6 +23,9 @@ function Profile() {
   
   const { data: user } = useSessionState();
   const acl = getProfileACL(user || undefined, playerData || undefined);
+
+  const { data: settings, isLoading: sLoad, error: sErr } = useSettingsQuery();
+  const enableCredits = sLoad || sErr ? false : settings.showcredits;
 
   if (isLoading || error || !playerData) return (
     <WrapperStyle>
@@ -41,7 +44,7 @@ function Profile() {
         </PicColumnStyle>
 
         <PlayerDataStyle>
-          {profileLayout(playerData.isteam).map((row) =>
+          {profileLayout(enableCredits, playerData.isteam).map((row) =>
             <PlayerDataRow
               key={row.id}
               rowData={row}
