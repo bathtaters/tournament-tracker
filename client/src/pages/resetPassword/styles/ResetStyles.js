@@ -36,6 +36,7 @@ export const PasswordInput = ({ id, label, redBorder, value, onChange }) => (<>
         id={id}
         type="password"
         className={`input input-primary input-bordered min-w-0 col-span-3 ${redBorder === id ? 'border-error' : ''}`}
+        autoComplete="new-password"
         value={value}
         onChange={onChange}
     />

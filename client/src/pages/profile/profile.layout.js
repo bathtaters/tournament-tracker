@@ -12,7 +12,9 @@ const commonRows = [
 ];
 
 const playerOnlyRows = [
-  { label: 'Password', id: 'password', type: 'password', setValueAs: () => '12345678', minLength: limits.password.min, maxLength: limits.password.max },
+  {
+    label: 'Password', id: 'password', type: 'password', autoComplete: 'new-password',
+    setValueAs: () => '12345678', minLength: limits.password.min, maxLength: limits.password.max },
   { label: 'Access',   id: 'access',   type: playerAccess },
   { label: 'Session',  id: 'session' },
 ];

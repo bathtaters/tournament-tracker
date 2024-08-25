@@ -26,7 +26,7 @@ export function useUserSession() {
         logout,
         user: data,
         loading: isLoading || loginLoading || logoutLoading,
-        nameProps: { value: name,     onChange: (ev) => setName(ev.target.value) },
-        passProps: { value: password, onChange: (ev) => setPass(ev.target.value) },
+        nameProps: { value: name,     onChange: (ev) => setName(ev.target.value), autoComplete: "username" },
+        passProps: { value: password, onChange: (ev) => setPass(ev.target.value), autoComplete: "current-password" },
     };
 }
