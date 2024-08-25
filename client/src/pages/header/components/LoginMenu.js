@@ -5,12 +5,12 @@ import { useUserSession } from "../services/session.hooks";
 import { idToUrl } from "../../common/services/idUrl.services";
 
 function LoginMenu() {
-    const { login, logout, user, loading, nameProps, passProps } = useUserSession();
+    const { login, logout, user, loading, nameProps, passProps, enableCredits } = useUserSession();
 
     if (user?.id) return (
         <LoginMenuStyle loading={loading} initial={user.name.charAt(0).toUpperCase()}>
             <MenuLinkStyle to={`/profile/${idToUrl(user.id)}`}>{user.name}</MenuLinkStyle>
-            <MenuCreditsStyle value={user?.credits} />
+            { enableCredits && <MenuCreditsStyle value={user?.credits} /> }
             <RawData data={user} />
             <DropdownButton onClick={logout}>Logout</DropdownButton>
         </LoginMenuStyle>

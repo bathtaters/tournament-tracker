@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSessionQuery } from "../../common/common.fetch";
+import { useSessionQuery, useSettingsQuery } from "../../common/common.fetch";
 import { useLoginMutation, useLogoutMutation } from "../session.fetch";
 import { getLocalVar } from "../../common/services/fetch.services";
 import { localKeys } from "../../../assets/constants";
@@ -8,6 +8,7 @@ import { apiPollMs } from "../../../assets/config";
 
 export function useUserSession() {
     const { data, isLoading } = useSessionQuery(undefined, { skip: !getLocalVar(localKeys.session), pollingInterval: apiPollMs });
+    const { data: settings, isLoading: sLoad, error: sErr } = useSettingsQuery();
 
     const [ apiLogin,  { isLoading: loginLoading  } ] = useLoginMutation();
     const [ apiLogout, { isLoading: logoutLoading } ] = useLogoutMutation();
@@ -25,7 +26,8 @@ export function useUserSession() {
         login,
         logout,
         user: data,
-        loading: isLoading || loginLoading || logoutLoading,
+        loading: isLoading || loginLoading || logoutLoading || sLoad,
+        enableCredits: sLoad || sErr ? false : settings.showcredits || false,
         nameProps: { value: name,     onChange: (ev) => setName(ev.target.value), autoComplete: "username" },
         passProps: { value: password, onChange: (ev) => setPass(ev.target.value), autoComplete: "current-password" },
     };
