@@ -52,9 +52,6 @@ export function getButtonProps(data, close, idx) {
   return {
     ...data, // all other values include as-is
 
-    // React key for button is ID => Label => Value => Index
-    key: data.id || data.label || data.value || idx,
-
     // Button text is Label => Value => ID => "?"
     value: data.label || data.value || data.id || '?',
 

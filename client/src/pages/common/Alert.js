@@ -50,7 +50,11 @@ function Alert() {
 
         {buttons &&
           <AlertButtonWrapperStyle>
-            { buttons.map((button,i) => <AlertButton {...getButtonProps(button, close, i)} />) }
+            
+            { buttons.map((btn,i) => (
+              // React key for button is ID => Label => Value => Index
+              <AlertButton {...getButtonProps(btn, close, i)} key={btn.key || btn.id || btn.label || btn.value || i} />
+            )) }
           </AlertButtonWrapperStyle>
         }
 
