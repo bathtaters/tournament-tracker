@@ -18,15 +18,18 @@ const statsLayout = [
   { label: 'OGW', get: (id, {stats}) => stats[id]?.oppGame,  format: formatPercent, default: '-', hdrClass },
 ]
 
-const creditsLayout = [
-  ...statsLayout.slice(0,2),
-  { label: 'Credits', get: (id, {players}) => players[id]?.credits, hdrClass: 'text-lg', default: '-' },
-  ...statsLayout.slice(2),
-]
-
-const listLayout = [
+const basicLayout = [
   { label: 'Name',    get: (id, {players}) => players[id]?.name, cellStyle: listStyle,  hdrClass: 'text-lg',  default: '?' },
-  { label: 'Credits', get: (id, {players}) => players[id]?.credits, hdrClass: 'text-lg', default: '-' },
 ]
 
-export { statsLayout, creditsLayout, listLayout  }
+const creditsRow = { label: 'Credits', get: (id, {players}) => players[id]?.credits, hdrClass: 'text-lg', default: '-' }
+
+export default function getStatsLayout(basic = false, showCredits = false) {
+  if (basic) return showCredits ? [ ...basicLayout, creditsRow ] : basicLayout
+  if (!showCredits) return statsLayout
+  return [
+    ...statsLayout.slice(0,2),
+    creditsRow,
+    ...statsLayout.slice(2),
+  ]
+}

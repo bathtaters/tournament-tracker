@@ -5,21 +5,24 @@ import DataTable from "../common/DataTable";
 import RawData from "../common/RawData";
 import Loading from "../common/Loading";
 
-import { statsLayout, listLayout, creditsLayout } from "./stats.layout";
+import statsLayout from "./stats.layout";
 import { getPlayerList } from "./services/stats.services";
-import { useStatsQuery, usePlayerQuery } from "../common/common.fetch";
+import { useStatsQuery, usePlayerQuery, useSettingsQuery } from "../common/common.fetch";
 import { apiPollMs } from "../../assets/config";
 
 function Stats({ eventid, onPlayerClick, className = 'table-zebra', highlightClass = '', hideTeams, hideStats, showCredits }) {
   // Global state
   const { data: stats, isLoading, error } = useStatsQuery(eventid, { skip: hideStats, pollingInterval: apiPollMs })
   const { data: players, isLoading: playLoad, error: playErr } = usePlayerQuery(undefined, { pollingInterval: apiPollMs })
+  const { data: settings, isLoading: sLoad, error: sErr } = useSettingsQuery()
+  
   const playerList = getPlayerList(stats?.ranking, players, !eventid, hideTeams)
+  const enableCredits = sLoad || sErr ? showCredits : showCredits && settings.showcredits
 
   // Loading/Error catcher
-  if (isLoading || playLoad || error || playErr) return (
-    <DataTable colLayout={statsLayout} className={className}>
-      <Loading loading={isLoading || playLoad} error={error || playErr} />
+  if (isLoading || playLoad || sLoad || error || playErr || sErr) return (
+    <DataTable colLayout={statsLayout(true, enableCredits)} className={className}>
+      <Loading loading={isLoading || playLoad || sLoad} error={error || playErr || sErr} />
     </DataTable>
   )
   
@@ -27,7 +30,7 @@ function Stats({ eventid, onPlayerClick, className = 'table-zebra', highlightCla
   return (
     <div className="w-full overflow-auto">
       <DataTable
-        colLayout={hideStats ? listLayout : showCredits ? creditsLayout : statsLayout}
+        colLayout={statsLayout(hideStats, enableCredits)}
         rowIds={playerList}
         extra={{ stats, players }}
         rowLink="profile/"
