@@ -20,8 +20,9 @@ export const layout = [
   ],
 
   [
-    { label: 'Show Raw Data', id: 'showrawjson', type: 'toggle', inputClass: 'toggle-accent' },
+    { label: 'Enable Credits', id: 'showcredits', type: 'toggle' },
     { label: 'Auto-Report Byes', id: 'autobyes', type: 'toggle' },
+    { label: 'Show Raw Data', id: 'showrawjson', type: 'toggle', inputClass: 'toggle-accent' },
   ],
   [
     { label: 'Show Plan Menu', id: 'planmenu', type: 'toggle' },
