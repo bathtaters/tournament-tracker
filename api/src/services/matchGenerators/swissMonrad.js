@@ -5,20 +5,24 @@ const { avg, diff, count, getGroups, getCombos, randomGroup } = require('./match
 
 // Stats weighting for calculations
 const weight = {
-  penalty:   50000000, // Per rematched player or x2 for each bye
-  matchRate:  1000000,
-  oppMatch:     10000,
-  gameRate:       100,
-  oppGame:          1,
+  penalty:   5000000000, // Per rematched player or x2 for each bye
+  matchRate:  100000000,
+  oppMatch:     1000000,
+  gameRate:       10000,
+  oppGame:          100,
 }
+
+// Tie-breaker: Check number of times players played each other in all other events combined.
+const getMatchupCount = (allMatchups, playerA, playerB) => allMatchups.find(({ id, opp }) => playerA === id && playerB === opp)?.count || 0
 
 // Calculate single player's base score
 const getPlayerScore = (stats) => !stats ? 0 :
   Object.keys(weight).reduce((tot,key) => tot + (key in stats && !isNaN(stats[key]) ? stats[key] * weight[key] : 0), 0)
 
 // Calculate score of 2 players (base + rematch penalties)
-const getComboScore = (scores, opps) => ([playerA, playerB]) =>
+const getComboScore = (scores, opps, allMatchups) => ([playerA, playerB]) =>
   diff(scores[playerA], scores[playerB]) + (count(playerB, opps?.[playerA]) + count(playerA, opps?.[playerB])) * weight.penalty
+  + getMatchupCount(allMatchups, playerA, playerB)
 
 // Calculate score for single player match (base + bye penalties)
 const getSoloScore = (player, score, byes) => score + count(player, byes) * weight.penalty * 2
@@ -27,7 +31,7 @@ const getSoloScore = (player, score, byes) => score + count(player, byes) * weig
 
 // --- MAIN --- \\
 
-function generateMatchups(stats, { playerspermatch, byes, oppData }) {
+function generateMatchups(stats, { playerspermatch, byes, oppData, allMatchups }) {
   // Randomize matches for initial pairing
   if (stats.noStats) return randomGroup(stats.ranking, playerspermatch)
 
@@ -46,7 +50,7 @@ function generateMatchups(stats, { playerspermatch, byes, oppData }) {
       match.length === 1 ? getSoloScore(match[0], playerScores[match[0]], byes) :
 
       // Standard match (average out scores of each player pair)
-      avg( getCombos(match, 2).map(getComboScore(playerScores, oppData)) )
+      avg( getCombos(match, 2).map(getComboScore(playerScores, oppData, allMatchups || [])) )
     ))
   )
   

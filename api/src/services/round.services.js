@@ -3,7 +3,7 @@ const matchGen = require('./matchGenerators/swissMonrad');
 const toStats = require('./stats.services');
 
 // Builds data object representing a round
-function round(eventData, matchData, oppData, autoReportByes) {
+function round(eventData, matchData, oppData, allMatchups, autoReportByes) {
     // Increment round number & create return object
     const matchBase = { 
         round: Math.min(eventData.roundactive, eventData.roundcount) + 1,
@@ -21,7 +21,7 @@ function round(eventData, matchData, oppData, autoReportByes) {
     if (eventData.drops) stats.ranking = stats.ranking.filter(p => !eventData.drops.includes(p));
 
     // Generate match table (Can add more alogrithms later)
-    const matchTable = matchGen(stats, {...eventData, oppData});
+    const matchTable = matchGen(stats, {...eventData, oppData, allMatchups});
 
     // Format for DB write (auto-reporting byes)
     const byeWins = autoReportByes ? eventData.wincount : 0;

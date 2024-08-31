@@ -29,6 +29,19 @@ exports.match = {
     drop:   "UPDATE match SET drops = ARRAY_APPEND(drops, $2) WHERE id = $1 RETURNING eventid;",
     undrop: "UPDATE match SET drops = ARRAY_REMOVE(drops, $2) WHERE id = $1 RETURNING eventid;",
     complete: exports.event.complete,
+    allCounts: `
+    WITH unnested AS (SELECT id, unnest(players) AS player FROM match WHERE eventid <> $1)
+    SELECT
+        player1 AS id,
+        player2 AS opp,
+        COUNT(*) AS count
+    FROM (
+        SELECT a.player AS player1, b.player AS player2
+        FROM unnested a
+        JOIN unnested b ON a.id = b.id
+        WHERE a.player <> b.player
+    )
+    GROUP BY player1, player2;`
 }
 
 exports.voter = {

@@ -69,14 +69,15 @@ async function nextRound(req, res) {
     throw new Error("All matches have not been reported");
 
   // Get additional data
-  const [matchData, oppData, autoByes] = await Promise.all([
+  const [matchData, oppData, allMatchups, autoByes] = await Promise.all([
     match.getByEvent(id),
     event.getOpponents(id).then(arrToObj('playerid',{ valKey: 'oppids' })),
+    match.getMatchups(id),
     settings.get('autobyes')
   ]);
 
   // Build round
-  const { eventid, round, matches } = roundService(data, matchData, oppData, autoByes ? asType(autoByes) : autoByesDef);
+  const { eventid, round, matches } = roundService(data, matchData, oppData, allMatchups, autoByes ? asType(autoByes) : autoByesDef);
   
   // Create matches
   const ret = await event.pushRound(eventid, round, matches);
