@@ -8,9 +8,7 @@
             "name": "Launch API",
             "program": "${workspaceFolder}/api/src/server.js",
             "request": "launch",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
+            "skipFiles": ["<node_internals>/**"],
             "type": "node"
         },
         {
@@ -19,6 +17,16 @@
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}/src"
-        }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Current API Jest Test File",
+            "program": "${workspaceFolder}/api/node_modules/.bin/jest",
+            "args": ["${relativeFile}"],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "cwd": "${workspaceFolder}/api"
+        } 
     ]
 }
