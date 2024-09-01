@@ -125,9 +125,9 @@ describe('calcBase', () => {
     expect(playerC).toHaveProperty('matchScore', 1)
   })
   it('gameScore', () => {
-    expect(playerA).toHaveProperty('gameScore', 2)
-    expect(playerB).toHaveProperty('gameScore', 11)
-    expect(playerC).toHaveProperty('gameScore', 5)
+    expect(playerA).toHaveProperty('gameScore', 0)
+    expect(playerB).toHaveProperty('gameScore', 9)
+    expect(playerC).toHaveProperty('gameScore', 3)
   })
 })
 
@@ -143,12 +143,18 @@ describe('calcRates', () => {
 
   it('calls rate', () => {
     calcRates({matchScore: 'MS', gameScore: 'GS', matchRecord: 'MR', gameRecord: 'GR'}, 'floor')
-    expect(rateSpy).toBeCalledTimes(2)
+    expect(rateSpy).toHaveBeenCalledTimes(2)
     expect(rateSpy).toHaveBeenNthCalledWith(1, 'MS', 'MR', 'floor')
     expect(rateSpy).toHaveBeenNthCalledWith(2, 'GS', 'GR', 'floor')
   })
   it('passes rate results', () => {
     expect(calcRates({})).toEqual({ matchRate: 'MRate', gameRate: 'GRate' })
+  })
+  it('strips game draws for rateCalc', () => {
+    rateSpy.mockClear()
+    calcRates({ gameRecord: ['GW','GL','GD'] })
+    expect(rateSpy).toHaveBeenCalledTimes(2)
+    expect(rateSpy).toHaveBeenNthCalledWith(2, undefined, ['GW','GL'], undefined)
   })
 })
 

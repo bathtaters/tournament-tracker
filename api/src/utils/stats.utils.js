@@ -34,7 +34,7 @@ exports.calcBase = (playeridx, wldArr, { wins, draws, totalwins }, event) => ({
 
 exports.calcRates = (result, useFloor) => Object.assign(result, {
     matchRate: exports.rate(result.matchScore, result.matchRecord, useFloor),
-    gameRate:  exports.rate(result.gameScore,  result.gameRecord,  useFloor),
+    gameRate:  exports.rate(result.gameScore,  result.gameRecord?.slice(0,2),  useFloor),
 });
 
 exports.calcOpps = (result, current, oppList) => {
