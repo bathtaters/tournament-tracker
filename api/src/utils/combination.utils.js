@@ -85,9 +85,15 @@ function* getArrayCombos(arrayOfIdxs) {
 
 /** Calculate the factorial of N (non-recursive) */
 function fact(n) {
+    if (n in factCache) return factCache[n]
     let i, f
     for (f = i = 1; i <= n; i++) f *= i
     return f
+}
+// Cache factorials up to 170
+const factCache = [1];
+for (let i = 1; i <= 170; i++) {
+    factCache[i] = factCache[i - 1] * i;
 }
 
 /** Return true if array has any repeating values,
