@@ -36,7 +36,7 @@ export default function useRoundButton(event, disabled) {
   
   // Get fetching status
   const isFetching = isLoading && event.roundactive !== event.roundcount + 1
-  const isLocked = useLockScreen(isFetching, roundButtonLockCaption)
+  const [isLocked] = useLockScreen(isFetching, roundButtonLockCaption)
 
   // Get button status
   const disableButton = disabled || isLocked || disableRound(event)

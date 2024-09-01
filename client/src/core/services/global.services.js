@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchApi, tagTypes } from "../store/fetchApi";
-import { setFetch, lockScreenUntilLoaded } from "../store/globalSlice";
+import { setFetch, lockScreenUntilLoaded, globalSlice } from "../store/globalSlice";
 
 // Get global status
 export const useFetchingStatus = () => useSelector((state) => state.global.isFetching)
@@ -40,5 +40,9 @@ export function useLockScreen(isLoading, caption) {
 
   useEffect(() => { if (!isLoading) dispatch(lockScreenUntilLoaded(caption)) }, [dispatch, isLoading, caption])
 
-  return isLocked
+  return [
+    isLocked,
+    (overrideCaption) => dispatch(globalSlice.actions.lockScreen(overrideCaption ?? caption)),
+    () => dispatch(globalSlice.actions.unlockScreen()),
+  ]
 }

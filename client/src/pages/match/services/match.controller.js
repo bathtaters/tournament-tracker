@@ -37,7 +37,7 @@ export default function useMatchController(eventid, matchId) {
   const [ swapPlayers ] = useSwapPlayersMutation()
   const [ updateDrops ] = useUpdateDropsMutation()
   const [ report, { isLoading: isReporting } ] = useReportMutation()
-  const isLocked = useLockScreen(isReporting, reportLockCaption)
+  const [ isLocked ] = useLockScreen(isReporting, reportLockCaption)
 
   // Catch loading/error
   const matchData = matches?.[matchId], error = matchError || rankError || playerError
