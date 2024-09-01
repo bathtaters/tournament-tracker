@@ -8,11 +8,12 @@ const ALGO_THRESHOLD = 10
 
 // Stats weighting for calculations
 const weight = {
-  penalty:   5000000000, // Per rematched player or x2 for each bye
-  matchRate:  100000000,
-  oppMatch:     1000000,
-  gameRate:       10000,
+  penalty:  10000000004, // Per rematched player or x2 for each bye
+  matchRate:  100000003,
+  oppMatch:     1000002,
+  gameRate:       10001,
   oppGame:          100,
+  matchups:           0.001,
 }
 
 // Tie-breaker: Check number of times players played each other in all other events combined.
@@ -25,7 +26,7 @@ const getPlayerScore = (stats) => !stats ? 0 :
 // Calculate score of 2 players (base + rematch penalties)
 const getComboScore = (scores, opps, allMatchups) => ([playerA, playerB]) =>
   diff(scores[playerA], scores[playerB]) + (count(playerB, opps?.[playerA]) + count(playerA, opps?.[playerB])) * weight.penalty
-  + getMatchupCount(allMatchups, playerA, playerB)
+  + getMatchupCount(allMatchups, playerA, playerB) * weight.matchups
 
 // Calculate score for single player match (base + bye penalties)
 const getSoloScore = (player, score, byes) => score + count(player, byes) * weight.penalty * 2
