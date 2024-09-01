@@ -68,7 +68,7 @@ describe('new round', () => {
     })
   })
   it('each match has players, wins & reported props', () => {
-    round(eventData, null, null, false).matches.forEach((match,i) => {
+    round(eventData, null, null, null, false).matches.forEach((match,i) => {
       expect(match).toHaveProperty('players', matchGenResult[i])
       expect(match).toHaveProperty('wins', i != 2 ? [0,0] : [0])
       expect(match).toHaveProperty('reported', false)
@@ -77,7 +77,7 @@ describe('new round', () => {
 
   // Auto-Report Byes
   it('auto-reports byes when true', () => {
-    round(eventData, null, null, true).matches.forEach((match,i) => {
+    round(eventData, null, null, null, true).matches.forEach((match,i) => {
       expect(match).toHaveProperty('wins', i != 2 ? [0,0] : [2])
       expect(match).toHaveProperty('reported', i != 2 ? false : true)
     })
@@ -86,17 +86,25 @@ describe('new round', () => {
   // MatchGen
   it('uses matchGen to generate matches', () => {
     round(eventData)
-    expect(matchGen).toBeCalledTimes(1)
-    expect(matchGen).toBeCalledWith(
+    expect(matchGen).toHaveBeenCalledTimes(1)
+    expect(matchGen).toHaveBeenCalledWith(
       { ranking: eventData.players },
       {...eventData, oppData: undefined}
+    )
+  })
+  it('passes allMatchups to matchGen', () => {
+    round(eventData, null, null, 'AM')
+    expect(matchGen).toHaveBeenCalledTimes(1)
+    expect(matchGen).toHaveBeenCalledWith(
+      { ranking: eventData.players },
+      { ...eventData, oppData: null, allMatchups: 'AM' }
     )
   })
   it('passes noStats to matchGen on first round', () => {
     eventData.roundactive = 0
     round(eventData)
-    expect(matchGen).toBeCalledTimes(1)
-    expect(matchGen).toBeCalledWith(
+    expect(matchGen).toHaveBeenCalledTimes(1)
+    expect(matchGen).toHaveBeenCalledWith(
       { ranking: eventData.players, noStats: true },
       {...eventData, oppData: undefined}
     )
@@ -111,13 +119,13 @@ describe('new round', () => {
     
     expect(round({...eventData, players: null })).toHaveProperty('matches',[])
     expect(matchGen).toHaveBeenNthCalledWith(2, {ranking: []}, expect.anything())
-    expect(matchGen).toBeCalledTimes(2)
+    expect(matchGen).toHaveBeenCalledTimes(2)
   })
 
   // Drops
   it('drops players in drops array', () => {
     round({...eventData, drops: ['d','b']})
-    expect(matchGen).toBeCalledWith({ ranking: [
+    expect(matchGen).toHaveBeenCalledWith({ ranking: [
       expect.stringMatching(/^[ace]$/),
       expect.stringMatching(/^[ace]$/),
       expect.stringMatching(/^[ace]$/),
@@ -128,12 +136,12 @@ describe('new round', () => {
   it('skip toStats for 1st round', () => {
     eventData.roundactive = 0
     round(eventData)
-    expect(toStats).toBeCalledTimes(0)
+    expect(toStats).toHaveBeenCalledTimes(0)
   })
   it('use toStats for other rounds', () => {
     round(eventData, 'matches', 'opps')
-    expect(toStats).toBeCalledTimes(1)
-    expect(toStats).toBeCalledWith(
+    expect(toStats).toHaveBeenCalledTimes(1)
+    expect(toStats).toHaveBeenCalledWith(
       { solo: 'matches' },
       eventData.players,
       { solo: 'opps' },

@@ -10,7 +10,7 @@ const generateMatchups = require('./swissMonrad')
 // NOTE: Uses un-mocked matchGen.utils, ensure that passes test first //
 
 describe('generateMatchups', () => {
-  let stats, fullStats, blankStats
+  let stats, fullStats, blankStats, allMatchups
 
   beforeEach(() => {
     stats = {
@@ -24,6 +24,10 @@ describe('generateMatchups', () => {
     }
     fullStats = { ...stats, ranking: stats.ranking.concat('e','f') }
     blankStats = { ranking: stats.ranking, noStats: true }
+    allMatchups = [
+      { id: 'e', opp: 'f', count: 10 },
+      { id: 'f', opp: 'e', count: 10 },
+    ]
   })
 
   it('pairs using stats to rank', () => {
@@ -89,15 +93,31 @@ describe('generateMatchups', () => {
     ).toEqual([['a','c'], ['b','f'], ['d','e']])
   })
 
+  it('pair least paired from all events to tie break', () => {
+    const extStats = {
+      ...fullStats,
+      g: fullStats.f,
+      ranking: fullStats.ranking.concat('g')
+    }
+    
+    expect(
+      generateMatchups(extStats, { playerspermatch: 2, allMatchups })
+    ).toEqual([['a','b'], ['c','d'], ['e','g'], ['f']])
+    expect(
+      generateMatchups(extStats, { playerspermatch: 2 })
+    ).toEqual([['a','b'], ['c','d'], ['e','f'], ['g']])
+  })
+
   it('throws error and prints reports', () => {
     avgSpy.mockReturnValue(NaN) // force error
     errSpy.mockImplementationOnce(() => {}).mockImplementationOnce(() => {}) // ignore errs
+    stats.ranking = []
     
     expect(() => generateMatchups(stats, { playerspermatch: 2 }))
-      .toThrowError('SWISS MONRAD failed to find best match pairing.')
+      .toThrow('SWISS MONRAD failed to find best match pairing.')
     avgSpy.mockReset()
 
-    expect(errSpy).toBeCalledTimes(2)
+    expect(errSpy).toHaveBeenCalledTimes(2)
     expect(errSpy).toHaveBeenNthCalledWith(1,
       'SWISS MONRAD Input Data:',
       stats, {
@@ -110,10 +130,9 @@ describe('generateMatchups', () => {
       'SWISS MONRAD Results:',
       {
         bestScore: NaN,
-        worstScore: NaN,
-        bestCount: 0,
-        worstCount: 0,
-        totalCount: 3,
+        totalCount: 0,
+        playerScores: expect.anything(),
+        stats,
       }
     )
   })

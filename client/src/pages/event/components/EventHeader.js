@@ -6,9 +6,10 @@ import { NotesStyle, NotesWrapperStyle } from "../styles/NoteEditorStyles";
 
 import { useAccessLevel } from "../../common/common.fetch";
 import useRoundButton from "../services/roundButton.services";
+import { WarningTextStyle } from "../styles/RoundStyles";
 
 function EventHeader({ data, disabled }) {
-  const { handleClick, buttonText } = useRoundButton(data, disabled)
+  const { handleClick, buttonText, buttonWarning } = useRoundButton(data, disabled)
   const { access } = useAccessLevel()
 
   return (<>
@@ -20,6 +21,8 @@ function EventHeader({ data, disabled }) {
         value={buttonText}
       />
     }
+
+    { access > 1 && buttonWarning && <WarningTextStyle>{buttonWarning}</WarningTextStyle> }
 
     {access > 1 ?
       <NotesEditor id={data.id} notes={data.notes} />

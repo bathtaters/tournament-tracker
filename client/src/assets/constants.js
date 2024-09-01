@@ -55,6 +55,8 @@ export const createLockCaption = (type) => `Creating ${type}...`;
 
 // -- Server error adapters -- \\
 
+export const roundThreshold = 10, roundThresholdMsg = "Will not use pairing algorithm due to technical limitations."
+
 // Data to extract from form element for error message
 export const formErrorData = ({ min, max, minLength, maxLength, value, id }) => ({ min, max, minLength, maxLength, value, id })
 

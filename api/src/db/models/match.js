@@ -14,6 +14,9 @@ const getMulti = (matchIds, detail = false, fields = null) => db.operation(clien
     ))
 );
 
+// Get a list of player IDs w/ their match frequency (vars: id, opp, count)
+const getMatchups = (eventId) => db.query(strings.allCounts, [eventId]);
+
 // Get list of IDs only
 const listByEvent = eventid => db.query(strings.list, [eventid]);
 
@@ -54,6 +57,6 @@ const updateWins = async (id, index, wins) => {
 
 
 module.exports = {
-    get, getMulti, listByEvent, getByEvent, getAll,
+    get, getMulti, getMatchups, listByEvent, getByEvent, getAll,
     dropPlayer, update, updateMulti, updateWins,
 }
