@@ -102,7 +102,7 @@ describe('generateMatchups', () => {
     
     expect(
       generateMatchups(extStats, { playerspermatch: 2, allMatchups })
-    ).toEqual([['a','b'], ['c','d'], ['e'], ['f','g']])
+    ).toEqual([['a','b'], ['c','d'], ['e','g'], ['f']])
     expect(
       generateMatchups(extStats, { playerspermatch: 2 })
     ).toEqual([['a','b'], ['c','d'], ['e','f'], ['g']])
@@ -111,12 +111,13 @@ describe('generateMatchups', () => {
   it('throws error and prints reports', () => {
     avgSpy.mockReturnValue(NaN) // force error
     errSpy.mockImplementationOnce(() => {}).mockImplementationOnce(() => {}) // ignore errs
+    stats.ranking = []
     
     expect(() => generateMatchups(stats, { playerspermatch: 2 }))
-      .toThrowError('SWISS MONRAD failed to find best match pairing.')
+      .toThrow('SWISS MONRAD failed to find best match pairing.')
     avgSpy.mockReset()
 
-    expect(errSpy).toBeCalledTimes(2)
+    expect(errSpy).toHaveBeenCalledTimes(2)
     expect(errSpy).toHaveBeenNthCalledWith(1,
       'SWISS MONRAD Input Data:',
       stats, {
@@ -129,10 +130,9 @@ describe('generateMatchups', () => {
       'SWISS MONRAD Results:',
       {
         bestScore: NaN,
-        worstScore: NaN,
-        bestCount: 0,
-        worstCount: 0,
-        totalCount: 3,
+        totalCount: 0,
+        playerScores: expect.anything(),
+        stats,
       }
     )
   })

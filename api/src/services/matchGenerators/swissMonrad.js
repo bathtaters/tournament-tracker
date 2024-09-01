@@ -1,4 +1,5 @@
 const { avg, diff, count, getGroups, getGroupsSimple, randomGroup } = require('./matchGen.utils');
+const { getCombinations } = require('../../utils/combination.utils');
 
 
 // --- SPECIFIC SETTINGS --- \\
@@ -41,32 +42,31 @@ function generateMatchups(stats, { playerspermatch, byes, oppData, allMatchups }
 
   if (stats.ranking.length > ALGO_THRESHOLD)
     return getGroupsSimple(stats.ranking, playerspermatch)
-
+  
   // Calculate base player scores
   const playerScores = stats.ranking.reduce((scores, player) => 
     Object.assign(scores, { [player]: getPlayerScore(stats[player]) }),
   {})
-
-  // Calculate scores for every possible pairing
-  const allScores = allPossible.map((matchList) =>
-    avg(matchList.map((match) =>
-      // Bye match
+    
+  // Iterate over all possible match groupings, finding the lowest score
+  let bestMatch = null, bestScore = NaN
+  for (const matchList of getGroups(stats.ranking, playerspermatch)) {
+      const val = avg(matchList.map((match) =>
+        // Bye match
       match.length === 1 ? getSoloScore(match[0], playerScores[match[0]], byes) :
-
+      
       // Standard match (average out scores of each player pair)
-      avg( getCombos(match, 2).map(getComboScore(playerScores, oppData, allMatchups || [])) )
+      avg( [...getCombinations(match, 2)].map(getComboScore(playerScores, oppData, allMatchups || [])) )
     ))
-  )
-  
-  // Get pairing with the lowest score
-  const bestScore = Math.min(...allScores)
-  // logScores(allScores, allPossible, bestScore) // DEBUG LOG
-  const bestMatch = allPossible[allScores.indexOf(bestScore)]
+    if (!isNaN(bestScore) && val >= bestScore) continue
+    bestScore = val
+    bestMatch = matchList
+  }
 
   // Catch error
   if (!bestMatch) {
     console.error('SWISS MONRAD Input Data:', stats, { playerspermatch, byes, oppData })
-    console.error('SWISS MONRAD Results:', resultsLogObject(allScores, bestScore, Math.max(...allScores)))
+    console.error('SWISS MONRAD Results:', resultsLogObject(stats, playerScores, bestScore))
     throw new Error('SWISS MONRAD failed to find best match pairing.')
   }
 
@@ -80,13 +80,8 @@ module.exports = generateMatchups;
 
 // ----- Logging ------ \\
 
-// Log each combo's score for debugging
-const logScores = (sc,gp,bs) => gp.forEach((e,i) => console.log(sc[i] === bs ? 'x' : '-', sc[i].toFixed(0), e)) || console.log('RESULTS:',resultsLogObject(sc, bs, Math.max(...sc)))
-
 // Get results as readable object for error reporting
-const resultsLogObject = (allScores, bestScore, worstScore) => ({
-  bestScore, worstScore,
-  totalCount: allScores.length,
-  bestCount: allScores.filter(s => s === bestScore).length,
-  worstCount: allScores.filter(s => s === Math.max(...allScores)).length
+const resultsLogObject = (stats, playerScores, bestScore) => ({
+  bestScore, stats, playerScores,
+  totalCount: stats.ranking.length,
 })
