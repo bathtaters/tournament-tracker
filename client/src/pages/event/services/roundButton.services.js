@@ -36,14 +36,17 @@ export default function useRoundButton(event, disabled) {
   
   // Get fetching status
   const isFetching = isLoading && event.roundactive !== event.roundcount + 1
-  const [isLocked] = useLockScreen(isFetching, roundButtonLockCaption)
+  const [isLocked, lock] = useLockScreen(isFetching, roundButtonLockCaption)
 
   // Get button status
   const disableButton = disabled || isLocked || disableRound(event)
 
   return {
     handleClick: disableButton ? null :
-      isNext(event) ? () => nextRound({ id: event.id, roundactive: event.roundactive }) : deleteRound,
+      isNext(event) ? () => {
+        lock()
+        nextRound({ id: event.id, roundactive: event.roundactive })
+      }: deleteRound,
 
     buttonText: getRoundButton(event, isLocked),
     buttonWarning: event?.players?.length &&  event.players.length > roundThreshold && isNext(event) ? roundThresholdMsg : null
