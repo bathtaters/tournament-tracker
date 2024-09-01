@@ -1,7 +1,10 @@
-const { avg, diff, count, getGroups, getCombos, randomGroup } = require('./matchGen.utils');
+const { avg, diff, count, getGroups, getGroupsSimple, randomGroup } = require('./matchGen.utils');
 
 
 // --- SPECIFIC SETTINGS --- \\
+
+// Maximum number of players before simple match-maker is run
+const ALGO_THRESHOLD = 10
 
 // Stats weighting for calculations
 const weight = {
@@ -35,8 +38,8 @@ function generateMatchups(stats, { playerspermatch, byes, oppData, allMatchups }
   // Randomize matches for initial pairing
   if (stats.noStats) return randomGroup(stats.ranking, playerspermatch)
 
-  // Generate all possible match groupings
-  const allPossible = getGroups(stats.ranking, playerspermatch)
+  if (stats.ranking.length > ALGO_THRESHOLD)
+    return getGroupsSimple(stats.ranking, playerspermatch)
 
   // Calculate base player scores
   const playerScores = stats.ranking.reduce((scores, player) => 

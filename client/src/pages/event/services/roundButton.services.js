@@ -2,7 +2,7 @@ import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
 import { useNextRoundMutation, useClearRoundMutation } from "../event.fetch";
 
 import { deleteRoundAlert } from "../../../assets/alerts";
-import { roundButtonText, roundButtonLockCaption } from "../../../assets/constants";
+import { roundButtonText, roundButtonLockCaption, roundThresholdMsg, roundThreshold } from "../../../assets/constants";
 import { debugLogging } from "../../../assets/config";
 
 // Get Round Button label
@@ -46,6 +46,7 @@ export default function useRoundButton(event, disabled) {
       isNext(event) ? () => nextRound({ id: event.id, roundactive: event.roundactive }) : deleteRound,
 
     buttonText: getRoundButton(event, isLocked),
+    buttonWarning: event?.players?.length &&  event.players.length > roundThreshold && isNext(event) ? roundThresholdMsg : null
   }
 }
 

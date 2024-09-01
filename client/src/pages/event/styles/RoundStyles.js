@@ -26,3 +26,7 @@ export function RoundStyle({ title, isMissing, className='', handleCopy, childre
 export function EditRoundStyle({ children }) {
   return (<div className="font-thin text-sm italic text-center mt-1">{children}</div>);
 }
+
+export function WarningTextStyle({ children }) {
+  return (<div className="w-full text-center font-extralight text-sm italic opacity-80 mb-4">{children}</div>)
+}
