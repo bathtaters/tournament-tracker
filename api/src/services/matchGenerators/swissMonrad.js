@@ -16,7 +16,7 @@ const weight = {
 }
 
 // Tie-breaker: Check number of times players played each other in all other events combined.
-const getMatchupCount = (allMatchups, playerA, playerB) => allMatchups.find(({ id, opp }) => playerA === id && playerB === opp)?.count || 0
+const getMatchupCount = (allMatchups, playerA, playerB) => Number(allMatchups.find(({ id, opp }) => playerA === id && playerB === opp)?.count || 0)
 
 // Calculate single player's base score
 const getPlayerScore = (stats) => !stats ? 0 :
