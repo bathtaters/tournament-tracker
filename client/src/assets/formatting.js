@@ -28,3 +28,14 @@ export const formatCopyRound = (matchList, matches, players) => matchList.map(
     + (!matches[matchId]?.draws || !matches[matchId].reported ? '' :
       ` (+${matches[matchId].draws} draw${matches[matchId].draws > 1 ? 's' : ''})`)
 ).join('\n')
+
+export const formatCopySeats = (matchList, matches, players, playerspermatch) => {
+  const playerList = []
+  for (let p = 0; p < playerspermatch; p++) {
+    for (const matchId of matchList) {
+      const playerId = matches[matchId]?.players?.[p]
+      playerList.push(players?.[playerId]?.name)
+    }
+  }
+  return playerList.map((name, idx) => `${idx+1}. ${name ?? '[Empty]'}`).join('\n')
+}
