@@ -24,6 +24,7 @@ CREATE TABLE player (
     access SMALLINT NOT NULL DEFAULT 1,
     session UUID NULL,
     credits DECIMAL DEFAULT 0,
+    hide BOOL DEFAULT false,
 
     -- Team
     isteam BOOLEAN NOT NULL DEFAULT FALSE,
