@@ -10,13 +10,13 @@ import { getPlayerList } from "./services/stats.services";
 import { useStatsQuery, usePlayerQuery, useSettingsQuery } from "../common/common.fetch";
 import { apiPollMs } from "../../assets/config";
 
-function Stats({ eventid, onPlayerClick, className = 'table-zebra', highlightClass = '', hideTeams, hideStats, showCredits }) {
+function Stats({ eventid, onPlayerClick, className = 'table-zebra', highlightClass = '', hideTeams, hideStats, hideHidden, showCredits }) {
   // Global state
   const { data: stats, isLoading, error } = useStatsQuery(eventid, { skip: hideStats, pollingInterval: apiPollMs })
   const { data: players, isLoading: playLoad, error: playErr } = usePlayerQuery(undefined, { pollingInterval: apiPollMs })
   const { data: settings, isLoading: sLoad, error: sErr } = useSettingsQuery()
   
-  const playerList = getPlayerList(stats?.ranking, players, !eventid, hideTeams)
+  const playerList = getPlayerList(stats?.ranking, players, !eventid, hideTeams, hideHidden)
   const enableCredits = sLoad || sErr ? showCredits : showCredits && settings.showcredits
 
   // Loading/Error catcher
