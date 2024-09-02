@@ -9,7 +9,7 @@ import { AddButton, RemoveButton } from "./styles/ButtonStyles";
 import usePlayersController from "./services/player.services";
 
 function Players() {
-  const { deleteMode, access, modal, handlePlayerClick, toggleDelete } = usePlayersController()
+  const { deleteMode, access, modal, handlePlayerClick, toggleDelete, hideStats } = usePlayersController()
 
   return (
     <div>
@@ -21,7 +21,7 @@ function Players() {
           highlightClass={statsClass.hover(deleteMode)}
           onPlayerClick={handlePlayerClick}
           hideTeams={true}
-          hideStats={access < 3}
+          hideStats={hideStats}
           showCredits={true}
         />
       </StatsStyle>

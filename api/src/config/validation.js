@@ -36,6 +36,7 @@ module.exports = {
       planmenu: false,
       planschedule: false,
       showcredits: false,
+      showstandings: false,
     },
     player: {
       name: "New Player",
@@ -144,6 +145,7 @@ module.exports = {
       planmenu: "boolean",
       planschedule: "boolean",
       showcredits: "boolean",
+      showstandings: "boolean",
     },
     player: {
       id: "uuid",
