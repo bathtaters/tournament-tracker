@@ -16,6 +16,7 @@ function PlayerEditor({ type = 'Player', value, onChange, isStarted, onFirstChan
             create={create}
             isLocked={isStarted}
             onFirstChange={onFirstChange}
+            filter={({ hide }) => !hide}
         />
     )
 }
