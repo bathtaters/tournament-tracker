@@ -23,7 +23,7 @@ export default function usePlayerData(rowData, data, access, id) {
   const [ editData,  setEditData ] = useState(data);
   
   // Form Control
-  const changeData = (e) => setEditData(e.target.value);
+  const changeData = (e) => e.target.type === 'checkbox' ? setEditData(e.target.checked) : setEditData(e.target.value);
 
   // Form Submit
   const saveData = () => {  
@@ -58,10 +58,12 @@ export default function usePlayerData(rowData, data, access, id) {
 // Controller Utilities
 
 function getUpdateBody(editData, data, rowData, id) {
-  if (rowData.required && (!editData || !editData.trim())) return;
-  if (editData && editData.trim() === data) return;
+  const trimmed = typeof editData === 'string' ? editData.trim() : editData
+  if (rowData.required && !trimmed) return;
+  if (trimmed === data) return;
   
-  return { [rowData.id]: editData || null, id };
+  if (typeof editData === 'string' && !trimmed) editData = null
+  return { [rowData.id]: editData, id };
 }
 
 
