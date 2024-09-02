@@ -1,13 +1,19 @@
 import React from "react";
 import { CopyRoundButton } from "./ButtonStyles";
 
-export function RoundStyle({ title, isMissing, className='', handleCopy, children }) {
+export function RoundStyle({ title, isMissing, className='', handleCopy, handleCopySeats, children }) {
   return (
     <div className={'m-3 relative ' + className}>
 
       { handleCopy &&
-        <span className="absolute top-0 right-0">
-          <CopyRoundButton onClick={handleCopy} />
+        <span className="absolute top-0 right-0" title="Copy Pairings">
+          <CopyRoundButton onClick={handleCopy} isSeat={false} />
+        </span>
+      }
+
+      { handleCopySeats &&
+        <span className="absolute top-0 left-0" title="Copy Seating">
+          <CopyRoundButton onClick={handleCopySeats} isSeat={true} />
         </span>
       }
 

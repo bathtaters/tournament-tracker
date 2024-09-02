@@ -1,6 +1,7 @@
 import React from "react";
 import EditIcon from "../../common/icons/EditIcon";
 import CopyIcon from "../../common/icons/CopyIcon";
+import SeatIcon from "../../common/icons/SeatIcon";
 
 export function RoundButton({ value, onClick }) {
   return (
@@ -26,10 +27,10 @@ export function EditEventButton({ onClick }) {
   )
 }
 
-export function CopyRoundButton({ onClick }) {
+export function CopyRoundButton({ onClick, isSeat }) {
   return (
     <button type="button" className="btn btn-xs btn-square btn-ghost opacity-40" onClick={onClick}>
-      <CopyIcon />
+      { isSeat ? <SeatIcon /> : <CopyIcon /> }
     </button>
   )
 }
