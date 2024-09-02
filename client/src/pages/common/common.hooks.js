@@ -1,7 +1,9 @@
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
+import { useDispatch } from "react-redux";
 import { usePrefetch } from "./common.fetch";
 import { useLockScreen } from '../../core/services/global.services';
 import { equalArrays, useThrottle } from "./services/basic.services";
+import { getLocalVar, setLocalVar } from "./services/fetch.services";
 import { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult } from "./services/alert.services";
 export { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult, useLockScreen }
 
@@ -23,6 +25,26 @@ export function usePrefetchEvent() {
   const prefetchMatch = usePrefetch('match')
   const prefetchStats = usePrefetch('stats')
   return (id) => { prefetchEvent(id); prefetchMatch(id); prefetchStats(id); }
+}
+
+export function useLocalStorage(key, initial = null) {
+  const dispatch = useDispatch()
+  const [ state, setState ] = useState(getLocalVar(key ?? initial))
+  
+  const updateValue = useCallback((value) => {
+    if (typeof value === 'function') {
+      setState((val) => {
+        val = value(val)
+        setLocalVar(key, val, dispatch)
+        return val
+      })
+    } else {
+      setState(value)
+      setLocalVar(key, value, dispatch)
+    }
+  }, [key, dispatch])
+  
+  return [ state, updateValue, setState ]
 }
 
 // Push prop updates to state
