@@ -46,6 +46,7 @@ module.exports = {
       isteam: false,
       members: null,
       session: null,
+      hide: false,
     },
     event: {
       title: "New Game",
@@ -156,6 +157,7 @@ module.exports = {
       session: "uuid?",
       isteam: "boolean",
       members: "uuid[]?",
+      hide: "boolean",
     },
     event: {
       id: "uuid",
