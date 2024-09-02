@@ -9,7 +9,7 @@ export function StatsStyle({ children }) {
 }
 
 export function FooterStyle({ children }) {
-  return (<h4 className="text-center">{children}</h4>);
+  return (<h4 className="join w-full justify-center">{children}</h4>);
 }
 
 // Add Player

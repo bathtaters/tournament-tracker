@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
-import { useOpenAlert } from "../../common/common.hooks";
-import { useAccessLevel } from "../../common/common.fetch";
+import { useLocalStorage, useOpenAlert } from "../../common/common.hooks";
+import { useAccessLevel, useSettingsQuery } from "../../common/common.fetch";
 import { useDeletePlayerMutation } from "../player.fetch";
 import { deletePlayerAlert, cantDeletePlayerAlert } from "../../../assets/alerts";
 
@@ -35,6 +35,8 @@ export default function usePlayersController() {
   // Init globals
   const { access } = useAccessLevel()
   const [ deletePlayer ] = useDeletePlayerMutation()
+  const { data: settings } = useSettingsQuery()
+  const [ showHidden, setShowHidden ] = useLocalStorage('showAllPlayers', false)
   
   // Setup locals
   const modal = useRef(null)
@@ -46,5 +48,10 @@ export default function usePlayersController() {
 
   const handlePlayerClick = usePlayerClickController(deleteMode, deletePlayer, openAlert)
 
-  return { deleteMode, access, modal, handlePlayerClick, toggleDelete }
+  return {
+    deleteMode, access, modal, handlePlayerClick, toggleDelete,
+    hideStats: !settings?.showstandings,
+    hideHidden: !showHidden || access < 3,
+    setShowHidden: access > 2 && setShowHidden,
+  }
 }

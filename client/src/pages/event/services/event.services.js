@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useMatchQuery, usePlayerQuery, refetchStats } from '../event.fetch';
 import { useAccessLevel } from "../../common/common.fetch";
-import { formatCopyRound } from "../../../assets/formatting";
+import { formatCopyRound, formatCopySeats } from "../../../assets/formatting";
 import { apiPollMs } from "../../../assets/config";
 
 // Round Editor controller
-export function useRoundEditor({ id, roundactive, matches }, round) {
+export function useRoundEditor({ id, roundactive, matches, playerspermatch }, round) {
   // Setup
   const dispatch = useDispatch()
   const { access } = useAccessLevel()
@@ -15,8 +15,11 @@ export function useRoundEditor({ id, roundactive, matches }, round) {
   // Copy matches
   const { data: matchData } = useMatchQuery(id, { pollingInterval: apiPollMs })
   const { data: playerData } = usePlayerQuery()
+  
   const handleCopy = !playerData || !matchData || round + 1 !== roundactive ? null :
     () => navigator.clipboard.writeText(formatCopyRound(matches[round], matchData, playerData))
+  const handleCopySeats = !playerData || !matchData || round || roundactive !== 1 ? null :
+    () => navigator.clipboard.writeText(formatCopySeats(matches[round], matchData, playerData, playerspermatch))
 
   // Refetch Stats
   const setEditing = (isEditing) => {
@@ -24,7 +27,7 @@ export function useRoundEditor({ id, roundactive, matches }, round) {
     setIsEditing(isEditing)
   }
 
-  return { isEditing, setEditing, showEdit: access > 1, handleCopy }
+  return { isEditing, setEditing, showEdit: access > 1, handleCopy, handleCopySeats }
 }
 
 
