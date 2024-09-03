@@ -60,7 +60,7 @@ export default function usePlayerData(rowData, data, access, id) {
 function getUpdateBody(editData, data, rowData, id) {
   const trimmed = typeof editData === 'string' ? editData.trim() : editData
   if (rowData.required && !trimmed) return;
-  if (trimmed === data) return;
+  if (trimmed && trimmed === data) return;
   
   if (typeof editData === 'string' && !trimmed) editData = null
   return { [rowData.id]: editData, id };
