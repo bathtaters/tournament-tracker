@@ -1,5 +1,6 @@
 /* *** MATCH Object *** */
 const db = require('../admin/interface');
+const log = require('./log');
 const strings = require('../sql/strings').match;
 const { filtering } = require('../../utils/shared.utils');
 
@@ -31,29 +32,49 @@ const getAll = (completed = true) => db.getRows(
 );
 
 // Drop/Undrop player from match
-const dropPlayer = (id, player, drop) => db.query(drop ? strings.drop : strings.undrop, [id, player]).then(r => r?.[0]);
+const dropPlayer = (id, player, drop, userid) => log.query(drop ? strings.drop : strings.undrop, [id, player], (data, error) => 
+    error ? {
+        dbtable: log.TableName.MATCH,
+        action: log.LogAction.UPDATE,
+        tableid: id,
+        data: { [`drop.${drop ? 'push' : 'pop'}`]: player },
+        userid, error,
+    } : {
+        dbtable: log.TableName.MATCH,
+        action: log.LogAction.UPDATE,
+        tableid: data.id,
+        data: { drops: data.drops },
+        userid,
+    }
+).then((r) => r?.[0])
 
 // Update match data (Providing match.player will overwrite entire object)
-const update = (id, newData) => db.updateRow('match', id, newData, { returning: 'eventid' });
+const update = (id, newData, userid) => log.updateRows('match', id, newData, userid);
 
-const updateMulti = (dataArray, returning = 'eventid') => db.operation(client =>
-    Promise.all(dataArray.map(data => 
-        data.id ? db.updateRow('match', data.id, filtering(data, ['id']), { returning, client })
-        : { ...data, error: 'No ID provided' }
+const updateMulti = (dataArray, userid) => db.operation((client) =>
+    Promise.all(dataArray.map((data) => data.id ?
+        log.updateRows('match', data.id, filtering(data, ['id']), userid, { client })
+        :
+        log.addEntries({
+            dbtable: log.TableName.MATCH,
+            action: log.LogAction.UPDATE,
+            data, userid,
+            error: "No ID provided"
+        }).then(() => ({ ...data, error: 'No ID provided' }))
     ))
 );
 
 // Update match.wins only
-const updateWins = async (id, index, wins) => {
+const updateWins = async (id, index, wins, userid) => {
     // Get
     const data = await db.getRow('match', id, 'eventid, wins');
     if (!data || !data.wins) return data;
     // Set
     data.wins[index] = wins;
-    return db.updateRow('match', id, { wins: data.wins }).then(() => data);
+    return log.updateRows('match', id, { wins: data.wins }, userid);
 }
 // This can replace the above function but doesn't work in CockroachDB:
-// db.updateRow('match', id, { [`wins[${index+1}]`]: wins }, { returning: 'eventid' });
+// log.updateRows('match', id, { [`wins[${index+1}]`]: wins }, userid);
 
 
 module.exports = {

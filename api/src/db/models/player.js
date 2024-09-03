@@ -1,5 +1,6 @@
 /* *** PLAYER Object *** */
 const db = require('../admin/interface');
+const log = require('./log');
 const strings = require('../sql/strings').player;
 const defs = require('../../config/validation').defaults.player;
 const util = require('../../utils/session.utils');
@@ -12,18 +13,19 @@ const hasPass = id => db.getRow('player', id).then(r => Array.isArray(r) ? r.map
 const list = () => db.getRow('player',null,'id').then(r => r && r.map(p => p.id));
 
 // Start/End/Fetch User Sessions
-const resetLogin = id => db.updateRow(
+const resetLogin = (id, userid) => log.updateRows(
     'player',
     id,
     { session: util.newSessionID(), password: null },
-    { returning: 'session' }
-).then(r => r.session);
+    userid,
+).then((r) => r.session);
 
-const startSession = name => db.updateRow(
+const startSession = (name, userid) => log.updateRows(
     'player',
     name.toLowerCase(),
     { session: util.newSessionID() },
-    { idCol: 'lower_name', returning: 'session' }
+    userid,
+    { idCol: 'lower_name' }
 ).then(r => r.session);
 
 const fetchSession = session => db.getRow(
@@ -33,10 +35,11 @@ const fetchSession = session => db.getRow(
     { idCol: 'session', getOne: true }
 ).then(r => r && util.stripPassword(r));
 
-const endSession = session => db.updateRow(
+const endSession = (session, userid) => log.updateRows(
     'player',
     session,
     { session: null },
+    userid,
     { idCol: 'session' }
 );
 
@@ -47,20 +50,20 @@ const getPlayerEvents = playerids => db.query(playerids.map(() => strings.eventF
 const getPlayerMatches = playerid => db.getRow('matchDetail', playerid, null, { idCol: 'ANY(players)', getOne: false });
 
 // Add new player
-const add = playerData => db.addRow('player', { ...defs, ...playerData });
+const add = (playerData, userid) => log.addRows('player', { ...defs, ...playerData }, userid);
 
 // Check password (Or set if no password) -- Return 0 on success, reason string on failure
 async function checkPassword(name, password) {
     const stored = await db.getRow('player', name, ['id','password'], { idCol: 'name', getOne: true, looseMatch: true });
-    if (!stored || !stored.id) return 'Player not found.';
+    if (!stored || !stored.id) return log.login(null, 'Player not found.', name);
 
     let guess;
     try { guess = await util.encryptPassword(password); }
-    catch (err) { return err.message || err || 'Error encrypting password.'; }
+    catch (err) { return log.login(stored.id, err.message || err || 'Error encrypting password.'); }
 
-    if (!stored.password) return 'Password not set, contact administrator if you don\'t have a password link.';
+    if (!stored.password) return log.login(stored.id, 'Password not set, contact administrator if you don\'t have a password link.');
     
-    return util.passwordsMatch(guess, stored.password) ? 0 : 'Incorrect password.';
+    return log.login(stored.id, util.passwordsMatch(guess, stored.password) ? null : 'Incorrect password.');
 }
 
 
@@ -76,6 +79,6 @@ module.exports = {
     getPlayerMatches,
     checkPassword,
     
-    rmv: id => db.rmvRow('player', id),
-    set: (id, newParams) => db.updateRow('player', id, newParams),
+    rmv: (id, userid) => log.rmvRows('player', id, null, userid),
+    set: (id, newParams, userid) => log.updateRows('player', id, newParams, userid),
 }
