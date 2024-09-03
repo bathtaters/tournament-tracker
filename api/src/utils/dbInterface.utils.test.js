@@ -7,6 +7,7 @@ const {
   getFirst, getReturn, getSolo
 } = main;
 
+describe.toDo('sqlSub')
 
 // ---- Test String ---- //
 

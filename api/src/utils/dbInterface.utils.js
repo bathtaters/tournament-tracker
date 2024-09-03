@@ -23,6 +23,14 @@ exports.queryValues = (objArray, keys) => objArray.flatMap(colObj =>
   keys.filter(k=>k!==undefined).map(k => colObj[k])
 );
 
+// Run a quick SQL argument substitution using array rules only
+exports.sqlSub = (text, args = []) => {
+  for (let i = args.length; i; i--) {
+      text = text.replace(`$${i}`, String(args[i - 1]))
+  }
+  return text
+}
+
 // Process results
 const pgReturnKey = 'rows';
 
