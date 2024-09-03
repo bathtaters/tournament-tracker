@@ -12,12 +12,14 @@ const query = (text, args, splitArgs, client) => (client || direct).query(text, 
 
 
 // SELECT
-const getRows = (table, sqlFilter, args, cols, client) => 
+const getRows = (table, sqlFilter, args, cols, limit, offset, client) => 
     // strTest(table) || strTest(sqlFilter) || strTest(cols) ||
     (client || direct).query(
         `SELECT ${
             (Array.isArray(cols) ? cols.join(', ') : cols) || '*'
-        } FROM ${table} ${sqlFilter || ''};`,
+        } FROM ${table} ${sqlFilter || ''}${
+            limit ? ` LIMIT ${limit} OFFSET ${offset || 0}` : ''
+        };`,
         args || []
     ).then(getSolo()).then(getReturn);
 
@@ -26,9 +28,9 @@ const getRow = (table, rowId, cols, { idCol = 'id', getOne = true, client, loose
     // strTest(table) || strTest(cols);
     module.exports.getRows( // exports required for unit testing
         table,
-        rowId ? `WHERE ${idCol} ${looseMatch ? 'ILIKE' : '='} $1${getOne ? ' LIMIT 1' : ''}` : '',
+        rowId ? `WHERE ${idCol} ${looseMatch ? 'ILIKE' : '='} $1` : '',
         rowId && [rowId],
-        cols, client
+        cols, rowId && getOne ? 1 : 0, 0, client
     ).then(getFirst(getOne && !!rowId));
 
 
