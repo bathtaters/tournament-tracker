@@ -4,6 +4,7 @@ import PlayerEditor from "../eventEditor/components/PlayerEditor"
 import EventList from "./components/EventList"
 import RangeSelector from "../common/components/InputForm/RangeSelector"
 import { PlanWrapperStyle, PlanTitleStyle, PlanRowStyle, InputWrapperStyle, PlanFooterStyle, PlanButton } from "./styles/PlanStyles"
+import RawData from "../common/RawData"
 import usePlanStartController from "./services/planStart.controller"
 import { dateArrToPicker } from "./services/plan.utils"
 import { useAccessLevel } from "../common/common.fetch"
@@ -31,7 +32,7 @@ function PlanStart() {
             <PlanTitleStyle title={planTitle[settings?.planstatus]} />
 
             {status !== 1 && <PlanFooterStyle><PlanButton onClick={setStatus(1)}>Enable Plan</PlanButton></PlanFooterStyle>}
-            
+
             <PlanRowStyle>
                 <InputWrapperStyle label="Date Range">
                     <DatePicker
@@ -64,6 +65,10 @@ function PlanStart() {
                     {status === 1 && <PlanButton onClick={setStatus(2)}>Start Vote</PlanButton>}
                 </PlanFooterStyle>
             }
+
+            <RawData data={{ players }} />
+            <RawData data={{ events }} />
+            <RawData data={{ ...settings, saved: undefined }} />
         </PlanWrapperStyle>
     )
 
