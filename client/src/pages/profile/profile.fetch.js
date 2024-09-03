@@ -14,14 +14,14 @@ export const profileApi = fetchApi.injectEndpoints({
 
     updatePlayer: build.mutation({
       query: ({ id, ...body }) => ({ url: `player/${id}`, method: 'PATCH', body }),
-      transformResponse: debugLogging ? res => console.log('UPD_PLAYER',res) || res : undefined,
+      transformResponse: debugLogging ? (res) => console.log('UPD_PLAYER',res) || res : undefined,
       invalidatesTags: getTags('Player',{ all: 0, addBase: ['ResetPass'] }),
       onQueryStarted: playerUpdate,
     }),
 
     resetPassword: build.mutation({
       query: (id) => ({ url: `player/${id}/reset`, method: 'POST' }),
-      transformResponse: (res) => console.log('RESET_PW',res) || res,
+      transformResponse: debugLogging ? (res) => console.log('RESET_PW',res) || res : undefined,
       onQueryStarted: resetUpdate,
       invalidatesTags: ['ResetPass'],
     }),
