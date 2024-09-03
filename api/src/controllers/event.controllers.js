@@ -46,6 +46,7 @@ async function removeEvent (req, res) {
 // Manually set event data (Guess day-slot if missing when updating day)
 async function updateEvent (req, res) {
   let { id, ...body } = matchedData(req);
+  if (!('day' in body) && req.body.day === null) body.day = null
 
   if (body.players) body.playercount = body.players.length;
   if ('day' in body && !('slot' in body))
