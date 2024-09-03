@@ -32,6 +32,9 @@ afterAll(() => { warnSpy.mockRestore(); });
 
 // ----- SELECT ----- //
 
+describe.todo('getCount')
+describe.todo('rmvRows')
+
 describe('getRows', () => {
   it('table param only', () => 
     expect(ops.getRows('test')).resolves.toEqual([

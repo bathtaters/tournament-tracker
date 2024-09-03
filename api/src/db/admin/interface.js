@@ -12,6 +12,12 @@ const query = (text, args, splitArgs, client) => (client || direct).query(text, 
 
 
 // SELECT
+const getCount = (table, sqlFilter, args, client) => 
+    // strTest(table) || strTest(sqlFilter) || 
+    (client || direct).query(
+        `SELECT COUNT(*) AS count FROM ${table} ${sqlFilter || ''}`, args || []
+    ).then(getFirst()).then(({ count }) => count)
+
 const getRows = (table, sqlFilter, args, cols, limit, offset, client) => 
     // strTest(table) || strTest(sqlFilter) || strTest(cols) ||
     (client || direct).query(
@@ -64,6 +70,9 @@ const rmvRows = (table, args, sqlFilter, client = null) =>
         `DELETE FROM ${table} ${sqlFilter || ''} RETURNING *;`,
         args || []
     ).then(getSolo()).then(getReturn);
+    
+const rmvRow = (table, rowId, client = null) =>
+    rmvRows(table, [rowId], 'WHERE id = $1', client).then(getFirst());
 
 
 // UPDATE
@@ -128,11 +137,11 @@ const updateRows = (table, updateObjArray, { client = direct, idCol = 'id', type
 }
 
 module.exports = { 
-    query,
+    query, getCount,
     getRow, getRows,
     addRows, addRow,
     updateRow, updateRows,
-    rmvRow,
+    rmvRow, rmvRows,
     operation: op => direct.operation(op).then(getReturn),
     file: (...files) => direct.execFiles(files).then(getReturn),
 }
