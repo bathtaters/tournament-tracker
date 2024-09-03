@@ -7,12 +7,13 @@ import Loading from "../common/Loading";
 
 import statsLayout from "./stats.layout";
 import { getPlayerList } from "./services/stats.services";
-import { useStatsQuery, usePlayerQuery, useSettingsQuery } from "../common/common.fetch";
+import { useStatsQuery, usePlayerQuery, useSettingsQuery, useAccessLevel } from "../common/common.fetch";
 import { apiPollMs } from "../../assets/config";
 
 function Stats({ eventid, onPlayerClick, className = 'table-zebra', highlightClass = '', hideTeams, hideStats, hideHidden, showCredits }) {
   // Global state
-  const { data: stats, isLoading, error } = useStatsQuery(eventid, { skip: hideStats, pollingInterval: apiPollMs })
+  const { access } = useAccessLevel()
+  const { data: stats, isLoading, error } = useStatsQuery(eventid, { skip: access < 3 && hideStats, pollingInterval: apiPollMs })
   const { data: players, isLoading: playLoad, error: playErr } = usePlayerQuery(undefined, { pollingInterval: apiPollMs })
   const { data: settings, isLoading: sLoad, error: sErr } = useSettingsQuery()
   
