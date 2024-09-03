@@ -7,7 +7,7 @@ const {
 } = require('../../utils/dbInterface.utils');
 
 // Custom query
-const query = (text, args, splitArgs) => direct.query(text, args, splitArgs)
+const query = (text, args, splitArgs, client) => (client || direct).query(text, args, splitArgs)
     .then(getSolo(text)).then(getReturn);
 
 
