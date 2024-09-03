@@ -36,7 +36,7 @@ async function swapPlayers(req, res) {
   matchData = swapPlayersService(matchData, swap);
 
   // Write changes
-  const result = await match.updateMulti(matchData, 'eventid');
+  const result = await match.updateMulti(matchData);
   if (!result || result.some(r => r.eventid !== eventid))
     throw new Error("Error writing swap to database.");
 
