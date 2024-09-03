@@ -56,3 +56,44 @@ exports.plan = {
         "DELETE FROM settings WHERE id = 'plandates' OR id = 'planslots';",
     ],
 }
+
+exports.log = {
+    logFilter,
+    matchesFilter: (sqlFilter) => sqlFilter.replace(
+        /tableid = [^$]+(\$\d+)[^\s]+/, (_,p) =>
+            `(tableid = ${p} OR tableid IN (SELECT id::STRING FROM match WHERE eventid = ${p}::UUID))`
+    )
+}
+
+/** Build log SQL filter and Args array from parameters */
+function logFilter(tables, timeRange, inclFailed, tableids, userids, timeSort = true) {
+    let sqlFilters = [], args = []
+
+    if (tables?.length) {
+        args.push(tables)
+        sqlFilters.push(`dbtable = ANY($${args.length})`)
+    }
+    if (tableids?.length) {
+        args.push(tableids)
+        sqlFilters.push(`tableid = ANY($${args.length})`)
+    }
+    if (userids?.length) {
+        args.push(userids)
+        sqlFilters.push(`userid = ANY($${args.length}::UUID[])`)
+    }
+    
+    if (timeRange?.after) {
+        args.push(timeRange.after.toISOString())
+        sqlFilters.push(`ts >= $${args.length}::TIMESTAMPTZ`)
+    }
+    if (timeRange?.before) {
+        args.push(timeRange.before.toISOString())
+        sqlFilters.push(`ts <= $${args.length}::TIMESTAMPTZ`)
+    }
+
+    if (!inclFailed) sqlFilters.push('error IS NULL')
+
+    const sortStr = timeSort ? ' ORDER BY ts DESC' : ''
+
+    return [`WHERE ${sqlFilters.join(' AND ')}${sortStr}`, args]
+}
