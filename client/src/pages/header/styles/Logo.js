@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
-import logoLight from "../../../assets/images/logo2023_light.png"
-import logoDark from "../../../assets/images/logo2023_dark.png"
+import logoLight from "../../../assets/images/logo2024_light.png"
+import logoDark from "../../../assets/images/logo2024_dark.png"
 
 import { defaultSettings } from "../../common/services/fetch.services";
 
