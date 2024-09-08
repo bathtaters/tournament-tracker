@@ -11,4 +11,5 @@ module.exports = {
   rootPath: join(__dirname,'..','..'), // Update if this file moves
   sqlFilesPath: join(__dirname,'..','db','sql'), // Update if this file moves
   morganLog: 'common', // morgan log format or 'debug' for custom logging
+  env: process.env.NODE_ENV,
 }
