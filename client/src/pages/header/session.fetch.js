@@ -6,7 +6,7 @@ export const sessionApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
     
     login: build.mutation({
-        query: ({ name, password }) => ({ url: `/session`, method: 'PUT', body: { name, password } }),
+        query: ({ name, password }) => ({ url: `/session`, method: 'POST', body: { name, password } }),
         transformResponse: saveSession,
         invalidatesTags: ['Session'],
         onQueryStarted: sessionLogin,
