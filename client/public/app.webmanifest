@@ -10,7 +10,7 @@
   "start_url": "/home",
   "icons": [
     { "src": "/icons/icon-16.png", "sizes": "16x16", "type": "image/png" },
-    { "src": "/icons/favicon.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/icons/icon-32.png", "sizes": "32x32", "type": "image/png" },
     { "src": "/icons/icon-44.png", "sizes": "44x44", "type": "image/png" },
     { "src": "/icons/icon-71.png", "sizes": "71x71", "type": "image/png" },
     { "src": "/icons/icon-150.png", "sizes": "150x150", "type": "image/png" },
@@ -23,7 +23,8 @@
     { "src": "/icons/icon-152-ios.png", "sizes": "152x152", "type": "image/png" },
     { "src": "/icons/icon-167-ios.png", "sizes": "167x167", "type": "image/png" },
     { "src": "/icons/icon-1024-ios.png", "sizes": "1024x1024", "type": "image/png" },
-    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icons/favicon.ico", "sizes": "256x256", "type": "image/x-icon" }
   ],
   "screenshots": [
     {
