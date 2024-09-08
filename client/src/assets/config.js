@@ -2,6 +2,8 @@
 
 export const debugLogging = false
 
+export const sessionCookie = 'tt-session' // Key for visible session cookie (Must match API session.middleware)
+
 export const apiPollMs = 30000 // How often to poll API for updates
 
 export const suggestText = {
