@@ -10,14 +10,12 @@ const logger = require('../../utils/log.adapter');
 const retryAttempts = 15;
 const retryPauseMs = 1000;
 
-// Connect to the DB
-let staticPool;
-async function openConnection(asUser = 'api', cfg = null) {
-  if (staticPool) { await closeConnection(); }
-  const connStr = getConnStr(asUser, cfg); // Build URI
+const connStr = getConnStr('api', null);
+let staticPool = new Pool(parse(connStr));
 
+// Setup DB
+async function openConnection() {
   try {
-    staticPool = new Pool(parse(connStr));
     await testDatabase(runOperation).then(test => { if (!test) throw { code: '3D000' } });
   }
   catch(e) {
@@ -26,16 +24,16 @@ async function openConnection(asUser = 'api', cfg = null) {
       console.error('DB Does Not Exist! Creating now...');
       try { await resetDatabase(true, false, runOperation); } catch (err) { throw err; }
     }
-    else throw new Error(`Unable to connect to DB: "${connStr}": ${e.message || e.description || e}`);
+    throw new Error(`Unable to connect to DB: "${connStr}": ${e.message || e.description || e}`);
   }
-  return logger.info('Connected to DB server.');
 }
+openConnection()
 
 // Disconnect from DB
 async function closeConnection() {
   if (!staticPool) { throw new Error("Attempting to close connection before opening."); }
   await staticPool.end();
-  staticPool = undefined;
+  staticPool = null;
   return logger.info('Disconnected from DB server.');
 }
 
@@ -89,4 +87,4 @@ async function runOperation(operation = client => {}, maxAttempts = retryAttempt
   }
 }
 
-module.exports = { openConnection, closeConnection, runOperation, resetDatabase, isConnected: () => !!staticPool }
+module.exports = { staticPool, closeConnection, runOperation, resetDatabase }

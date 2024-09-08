@@ -31,6 +31,22 @@ CREATE TABLE log (
     INDEX row_idx (tableid) -- filter
 ) WITH (ttl_expiration_expression = 'ts + INTERVAL ''1 year''', ttl_job_cron = '@monthly');
 
+-- Add express-session Table --
+-------------------------------
+CREATE TABLE session (
+    -- Cookie table
+    sid STRING NOT NULL PRIMARY KEY,
+    sess JSONB NOT NULL,
+    expire TIMESTAMPTZ NOT NULL,
+    
+    -- Index
+    INDEX IDX_session_expire (expire)
+);
+-- Change player.session from UUID to STRING
+ALTER TABLE player DROP COLUMN session;
+ALTER TABLE player ADD COLUMN session STRING;
+
+
 
 
 -- Non-SQL Updates --

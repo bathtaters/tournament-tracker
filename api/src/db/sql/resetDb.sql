@@ -32,7 +32,7 @@ CREATE TABLE player (
     name STRING,
     password STRING NULL,
     access SMALLINT NOT NULL DEFAULT 1,
-    session UUID NULL,
+    session STRING NULL,
     credits DECIMAL DEFAULT 0,
     hide BOOL DEFAULT false,
 
@@ -115,6 +115,16 @@ CREATE TABLE log (
     INDEX time_idx (ts), -- sort
     INDEX row_idx (tableid) -- filter
 ) WITH (ttl_expiration_expression = 'ts + INTERVAL ''1 year''', ttl_job_cron = '@monthly');
+
+CREATE TABLE session (
+    -- Session cookies
+    sid STRING NOT NULL PRIMARY KEY,
+    sess JSONB NOT NULL,
+    expire TIMESTAMPTZ NOT NULL,
+    
+    -- Index
+    INDEX IDX_session_expire (expire)
+);
 
 
 -- Perms --

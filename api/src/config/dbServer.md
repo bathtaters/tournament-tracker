@@ -17,7 +17,8 @@
 		"cert": "$HOME/.postgresql/root.crt",
 		"opts": ""
 	},
-	"pwsalt": "[random string]"
+	"pwsalt": "[random string]",
+	"sessionSecret": "[random string]"
 }
 ```
 
