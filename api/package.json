@@ -5,7 +5,7 @@
   "main": "./src/server.js",
   "scripts": {
     "start": "export NODE_ENV=production; node ./src/server.js",
-    "dev": "export NODE_ENV=development; node ./src/server.js",
+    "dev": "export NODE_ENV=development; node --watch ./src/server.js",
     "sync": "node -e 'require(\"./src/services/init.services.js\")(true)'",
     "test": "jest",
     "inspect": "node --inspect ./src/server.js"
