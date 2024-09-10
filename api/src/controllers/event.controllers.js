@@ -36,10 +36,10 @@ async function createEvent (req, res) {
   if (body.players) body.playercount = body.players.length;
 
   const eventData = { ...defs, ...body, slot };
-  return event.add(eventData, req.session.user || req.sessionID).then(res.sendAndLog);
+  return event.add(eventData, req.session.user).then(res.sendAndLog);
 }
 async function removeEvent (req, res) {
-  return event.rmv(matchedData(req).id, req.session.user || req.sessionID).then(res.sendAndLog);
+  return event.rmv(matchedData(req).id, req.session.user).then(res.sendAndLog);
 }
 
 // Manually set event data (Guess day-slot if missing when updating day)
@@ -50,13 +50,13 @@ async function updateEvent (req, res) {
   if ('day' in body && !('slot' in body))
     body.slot = await event.getLastSlot(body.day, id).then(s => s + 1);
   
-  return event.set(id, body, req.session.user || req.sessionID).then(res.sendAndLog);
+  return event.set(id, body, req.session.user).then(res.sendAndLog);
 }
 
 // Enable plan for all eventIds, disable plan for all missing eventIds
 function setPlan(req, res) {
   const { events } = matchedData(req);
-  return event.setPlan(events, req.session.user || req.sessionID).then(res.sendAndLog);
+  return event.setPlan(events, req.session.user).then(res.sendAndLog);
 }
 
 module.exports = {

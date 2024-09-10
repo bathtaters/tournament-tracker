@@ -30,19 +30,19 @@ async function genPlanAsync(userid) {
         throw err
     }
 }
-const genPlan = (req, res) => { genPlanAsync(req.session.user || req.sessionID); res.sendAndLog({ submitted: true })  }
+const genPlan = (req, res) => { genPlanAsync(req.session.user); res.sendAndLog({ submitted: true })  }
 
 // Move all planned events to schedule, move all other events to unscheduled, & goto Plan Start
 const savePlan = async (req, res) => {
-    await plan.update({ day: null }, false, 'plan', req.session.user || req.sessionID)
-    const ids = await plan.update({ plan: false }, null, null, req.session.user || req.sessionID)
+    await plan.update({ day: null }, false, 'plan', req.session.user)
+    const ids = await plan.update({ plan: false }, null, null, req.session.user)
 
-    await setting.batchSet(planStatus(0), req.session.user || req.sessionID)
+    await setting.batchSet(planStatus(0), req.session.user)
     return res.sendAndLog(ids)
 }
 
 // Remove all voters/planned events and settings
-const resetPlan = (req, res) => plan.reset(req.session.user || req.sessionID).then(() => res.sendAndLog({ success: true }))
+const resetPlan = (req, res) => plan.reset(req.session.user).then(() => res.sendAndLog({ success: true }))
 
 module.exports = {
     getStatus,

@@ -49,7 +49,7 @@ async function setSettings(req,res) {
   
   const settingsArray = toObjArray(settings);
 
-  const set = await setting.batchSet(settingsArray, req.session.user || req.sessionID)
+  const set = await setting.batchSet(settingsArray, req.session.user)
     .then(r => r && r.map(s => s.id));
   return res.sendAndLog({ success: true, set });
 }

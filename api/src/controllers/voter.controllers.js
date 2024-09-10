@@ -17,8 +17,8 @@ const getAllVotes = (_, res) => voter.get().then(arrToObj('id')).then(toDateStr)
 const setVoters = async (req, res) => {
   const { voters } = matchedData(req);
   
-  const rmv = await voter.rmvOther(voters, req.session.user || req.sessionID);
-  const add = await voter.add(voters, req.session.user || req.sessionID);
+  const rmv = await voter.rmvOther(voters, req.session.user);
+  const add = await voter.add(voters, req.session.user);
   
   res.sendAndLog([ ...add, ...rmv ]);
 }
@@ -26,7 +26,7 @@ const setVoters = async (req, res) => {
 // Update player's vote
 const updateVote = (req, res) => {
   const { id, ...body } = matchedData(req);
-  return voter.set(id, body, req.session.user || req.sessionID).then(res.sendAndLog);
+  return voter.set(id, body, req.session.user).then(res.sendAndLog);
 }
 
 module.exports = { 
