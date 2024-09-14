@@ -15,7 +15,7 @@ const query = (text, args, splitArgs, client) => (client || direct).query(text, 
 const getCount = (table, sqlFilter, args, client) => 
     // strTest(table) || strTest(sqlFilter) || 
     (client || direct).query(
-        `SELECT COUNT(*) AS count FROM ${table} ${sqlFilter || ''}`, args || []
+        `SELECT COUNT(*) AS count FROM ${table} ${sqlFilter || ''};`, args || []
     ).then(getFirst()).then(({ count }) => count)
 
 const getRows = (table, sqlFilter, args, cols, limit, offset, client) => 
@@ -72,7 +72,7 @@ const rmvRows = (table, args, sqlFilter, client = null) =>
     ).then(getSolo()).then(getReturn);
     
 const rmvRow = (table, rowId, client = null) =>
-    rmvRows(table, [rowId], 'WHERE id = $1', client).then(getFirst());
+    module.exports.rmvRows(table, [rowId], 'WHERE id = $1', client).then(getFirst());
 
 
 // UPDATE
@@ -96,8 +96,8 @@ const updateRow = (table, rowId, updateObj, { client, idCol, looseMatch, returnA
             : [...Object.values(updateObj || {}), rowId]
 
     ).then(getSolo()).then(getReturn)
-    .then(ret => ret.length ?
-        ret.map(data => ({
+    .then((ret) => ret?.length ?
+        ret.map((data) => ({
             [idCol || 'id']: rowId,
             ...(updateObj || {}),
             ...(data || {error: 'Missing return value.'})
