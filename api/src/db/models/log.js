@@ -78,14 +78,14 @@ const getUser = (userid, timeRange, tables, inclFailed = false, limit = DEFAULT_
  */
 const getUserSessions = async ({ userid, sessionid } = {}) => {
     if (userid) {
-        const res = await db.query(`${qry.userSessions}${qry.userFilter}`, [userid])
+        const res = await db.query(`${qry.userSessions} ${qry.userFilter};`, [userid])
         return res && res.flatMap(({ sessionids }) => sessionids)
     }
     else if (sessionid) {
-        const res = await db.query(`${qry.userSessions}${qry.sessionFilter}`, [sessionid])
+        const res = await db.query(`${qry.userSessions} ${qry.sessionFilter};`, [sessionid])
         return res && res.map(({ userid }) => userid)
     }
-    const res = await db.query(qry.userSessions)
+    const res = await db.query(`${qry.userSessions} ${qry.nonNullFilter};`)
     return arrToObj('userid', {valKey: 'sessionids'})(res)
 }
 

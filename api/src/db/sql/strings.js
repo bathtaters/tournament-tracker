@@ -58,9 +58,10 @@ exports.plan = {
 }
 
 exports.log = {
-    userSessions: 'SELECT userid, ARRAY_AGG(DISTINCT sessionid) AS sessionids FROM log GROUP BY userid',
-    sessionFilter: ' WHERE sessionid = $1',
-    userFilter: ' WHERE userid = $1',
+    userSessions: "SELECT userid, ARRAY_AGG(DISTINCT sessionid) AS sessionids FROM log GROUP BY userid WHERE NOT (action = 'login' AND error IS NOT NULL)",
+    nonNullFilter: "AND sessionid IS NOT NULL AND userid IS NOT NULL",
+    sessionFilter: "AND sessionid = $1 AND userid IS NOT NULL",
+    userFilter: "AND userid = $1 AND sessionid IS NOT NULL",
     logFilter,
     matchesFilter: (sqlFilter) => sqlFilter.replace(
         /tableid = [^$]+(\$\d+)[^\s]+/, (_,p) =>
