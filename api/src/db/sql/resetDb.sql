@@ -102,9 +102,10 @@ CREATE TABLE log (
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     dbtable STRING,         -- Table that was changed
     tableid STRING NULL,    -- Row that was changed (Should only be NULL if action = CREATE and error != NULL)
-    action LOG_ACTION DEFAULT 'update', -- Type of change
+    action LOG_ACTION,      -- Type of change
     data JSONB NULL,        -- Attempted update to data
     userid UUID NULL,       -- Who made the change (Nullable to allow deleting users)
+    sessionid STRING NULL,  -- Session ID of who made the change
     error STRING NULL,      -- NULL if update succeeded, otherwise error message
     ts TIMESTAMPTZ DEFAULT current_timestamp(), -- Date/Time of update
 
@@ -113,7 +114,8 @@ CREATE TABLE log (
 
     -- Indexes
     INDEX time_idx (ts), -- sort
-    INDEX row_idx (tableid) -- filter
+    INDEX row_idx (tableid), -- filter
+    INDEX session_idx (sessionid) -- filter
 ) WITH (ttl_expiration_expression = 'ts + INTERVAL ''1 year''', ttl_job_cron = '@monthly');
 
 CREATE TABLE session (

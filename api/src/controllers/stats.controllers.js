@@ -58,7 +58,7 @@ const resetAllCredits = (includeFinished = false) => includeFinished ?
 
     for (const id of players) {
       credits[id] = 0
-      await player.set(id, { credits: 0 }, req.session.user)
+      await player.set(id, { credits: 0 }, req)
     }
     return res.sendAndLog(credits)
   } :
@@ -74,7 +74,7 @@ const resetAllCredits = (includeFinished = false) => includeFinished ?
     }
     
     for (const id in credits) {
-      await player.set(id, { credits: credits[id] }, req.session.user)
+      await player.set(id, { credits: credits[id] }, req)
     }
     return res.sendAndLog(credits)
   }
@@ -95,7 +95,7 @@ const setCredits = (undo = false) =>
   
     for (const { id, credits } of allPlayers) {
       if (!(id in eventCredits)) eventCredits[id] = didntPlayCredits
-      await player.set(id, { credits: credits + (undo ? -eventCredits[id] : eventCredits[id]) }, req.session.user)
+      await player.set(id, { credits: credits + (undo ? -eventCredits[id] : eventCredits[id]) }, req)
     }
     return res.sendAndLog(eventCredits)
   }

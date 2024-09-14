@@ -30,7 +30,7 @@ async function getEventMatches(req, res) {
 //   { players: {playerid: wincount, ...} , draws: drawCount, drops: [droppedPlayers] }
 async function reportMatch(req, res) {
   const { id, ...body } = matchedData(req);
-  const ret = await match.update(id, { ...emptyReport, ...body }, req.session.user);
+  const ret = await match.update(id, { ...emptyReport, ...body }, req);
   return res.sendAndLog({ id, eventid: ret && ret.eventid, });
 } 
 
@@ -46,7 +46,7 @@ async function unreportMatch(req, res) {
   ...emptyReport,
     wins: (matches.players || []).map(() => 0),
     reported: false
-  }, req.session.user);
+  }, req);
 
   return res.sendAndLog({ id, eventid: matches.eventid, });
 }
@@ -60,10 +60,10 @@ async function updateMatch(req, res) {
   // Update wins array
   let ret;
   const idx = body.key.match(/^wins\.(\d+)$/);
-  if (idx) ret = await match.updateWins(id, +idx[1], body.value, req.session.user);
+  if (idx) ret = await match.updateWins(id, +idx[1], body.value, req);
     
   // Update other data
-  else ret = await match.update(id, { [body.key]: body.value }, req.session.user);
+  else ret = await match.update(id, { [body.key]: body.value }, req);
   
   // Return match & event IDs
   return res.sendAndLog({ id, eventid: ret?.eventid, });
@@ -76,7 +76,7 @@ async function updateDrops(req, res) {
   if (!playerid) throw new Error("Not enough data provided to drop/undrop player.");
 
   // Add/Remove player to drop
-  const ret = await match.dropPlayer(id, playerid, !undrop, req.session.user)
+  const ret = await match.dropPlayer(id, playerid, !undrop, req)
   
   // Return match & event IDs
   return res.sendAndLog({ id, eventid: ret?.eventid });

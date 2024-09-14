@@ -6,12 +6,12 @@ const log = require('./log');
 const getAll = () => db.getRows('settings');
 
 // Batch set from array of row objects
-const batchSet = (settings, userid) => log.addRows('settings', settings, userid, { upsert: true });
+const batchSet = (settings, req) => log.addRows('settings', settings, req, { upsert: true });
 
 module.exports = {  
   batchSet, getAll,
   get: (settings) => Array.isArray(settings) ?
     db.getRows('settings', 'WHERE id = ANY($1)', [settings]) :
     db.getRow('settings', settings),
-  rmv:  (id, userid) => log.rmvRows('settings', id, null, userid),
+  rmv:  (id, req) => log.rmvRows('settings', id, null, req),
 }

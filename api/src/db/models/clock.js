@@ -12,18 +12,18 @@ const get = (eventid) => db.getRow(
     ['id','clocklimit','clockstart','clockmod']
 );
 
-const start = (eventid, userid) => log.updateRows('event', eventid, {
+const start = (eventid, req) => log.updateRows('event', eventid, {
     clockstart: RawPG('now()')
-}, userid);
+}, req);
 
-const pause = (eventid, userid) => log.updateRows('event', eventid, {
+const pause = (eventid, req) => log.updateRows('event', eventid, {
     clockmod: sqlStrings.modPause,
     clockstart: null,
-}, userid);
+}, req);
 
-const reset = (eventid, userid) => log.updateRows('event', eventid, {
+const reset = (eventid, req) => log.updateRows('event', eventid, {
     clockstart: null, clockmod: null
-}, userid);
+}, req);
 
 
 // Exports
