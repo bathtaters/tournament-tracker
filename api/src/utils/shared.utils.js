@@ -106,7 +106,7 @@ exports.toDateStr = (data) => {
  * @param {Date} endDate - Date to end on
  * @returns {Number} Count of total days in range
  */
-exports.dayCount = (startDate, endDate) => 1 + (endDate - startDate) / oneDay
+exports.dayCount = (startDate, endDate) => 1 + Math.abs(endDate - startDate) / oneDay
 
 /**
  * Test if two date objects have the same date
