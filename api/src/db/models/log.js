@@ -1,7 +1,8 @@
 /* *** LOG Operations *** */
 const { sqlSub } = require('../../utils/dbInterface.utils');
+const { arrToObj } = require('../../utils/shared.utils');
 const db = require('../admin/interface');
-const { logFilter, matchesFilter } = require('../sql/strings').log
+const qry = require('../sql/strings').log
 
 // Maximum number of LOG entries to return at a time if not specified
 const DEFAULT_LIMIT = 100
@@ -18,7 +19,7 @@ const DEFAULT_LIMIT = 100
  */
 const get = (timeRange, tables, inclFailed, limit = DEFAULT_LIMIT, offset = 0) => db.getRows(
     'log',
-    ...logFilter(tables, timeRange, inclFailed),
+    ...qry.logFilter(tables, timeRange, inclFailed),
     null, limit, offset
 );
 
@@ -33,8 +34,8 @@ const get = (timeRange, tables, inclFailed, limit = DEFAULT_LIMIT, offset = 0) =
  * @returns {Promise<LogEntry[]>} - A list of matching log entries (Sorted from latest to oldest)
  */
 const getEvent = (eventid, timeRange, inclFailed = false, limit = DEFAULT_LIMIT, offset = 0) => {
-    let [sqlFilter, sqlArgs] = logFilter([TableName.EVENT, TableName.MATCH], timeRange, inclFailed, eventid)
-    return db.getRows('log', matchesFilter(sqlFilter), sqlArgs, null, limit, offset)
+    let [sqlFilter, sqlArgs] = qry.logFilter([TableName.EVENT, TableName.MATCH], timeRange, inclFailed, eventid)
+    return db.getRows('log', qry.matchesFilter(sqlFilter), sqlArgs, null, limit, offset)
 }
 
 
@@ -49,7 +50,7 @@ const getEvent = (eventid, timeRange, inclFailed = false, limit = DEFAULT_LIMIT,
  */
 const getPlayer = (playerid, timeRange, inclFailed = false, limit = DEFAULT_LIMIT, offset = 0) => db.getRows(
     'log',
-    ...logFilter([TableName.PLAYER, TableName.VOTER], timeRange, inclFailed, [playerid]),
+    ...qry.logFilter([TableName.PLAYER, TableName.VOTER], timeRange, inclFailed, [playerid]),
     null, limit, offset
 );
 
@@ -66,9 +67,27 @@ const getPlayer = (playerid, timeRange, inclFailed = false, limit = DEFAULT_LIMI
  */
 const getUser = (userid, timeRange, tables, inclFailed = false, limit = DEFAULT_LIMIT, offset = 0) => db.getRows(
     'log',
-    ...logFilter(tables, timeRange, inclFailed, null, [userid]),
+    ...qry.logFilter(tables, timeRange, inclFailed, null, [userid]),
     null, limit, offset
 );
+
+/**
+ * Get all unique users for a given session ID.
+ * @param {{userid?: string, sessionid?: string}} [filter] - Only lookup related session or user (If both provided, looks up user)
+ * @returns {Promise<{userid: string[]} | string[]>} - If userid provided, 
+ */
+const getUserSessions = async ({ userid, sessionid } = {}) => {
+    if (userid) {
+        const res = await db.query(`${qry.userSessions}${qry.userFilter}`, [userid])
+        return res && res.flatMap(({ sessionids }) => sessionids)
+    }
+    else if (sessionid) {
+        const res = await db.query(`${qry.userSessions}${qry.sessionFilter}`, [sessionid])
+        return res && res.map(({ userid }) => userid)
+    }
+    const res = await db.query(qry.userSessions)
+    return arrToObj('userid', {valKey: 'sessionids'})(res)
+}
 
 /**
  * Add one or more entries to the log
@@ -269,7 +288,7 @@ const TableName = {
 
 
 module.exports = {  
-    get, getEvent, getPlayer, getUser,
+    get, getEvent, getPlayer, getUser, getUserSessions,
     addRows, updateRows, rmvRows, query, 
     login,
     addEntries, rmvEntries, 

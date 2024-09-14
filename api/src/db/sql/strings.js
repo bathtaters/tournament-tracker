@@ -58,11 +58,14 @@ exports.plan = {
 }
 
 exports.log = {
+    userSessions: 'SELECT userid, ARRAY_AGG(DISTINCT sessionid) AS sessionids FROM log GROUP BY userid',
+    sessionFilter: ' WHERE sessionid = $1',
+    userFilter: ' WHERE userid = $1',
     logFilter,
     matchesFilter: (sqlFilter) => sqlFilter.replace(
         /tableid = [^$]+(\$\d+)[^\s]+/, (_,p) =>
             `(tableid = ${p} OR tableid IN (SELECT id::STRING FROM match WHERE eventid = ${p}::UUID))`
-    )
+    ),
 }
 
 /** Build log SQL filter and Args array from parameters */

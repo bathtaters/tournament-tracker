@@ -115,7 +115,7 @@ CREATE TABLE log (
     -- Indexes
     INDEX time_idx (ts), -- sort
     INDEX row_idx (tableid), -- filter
-    INDEX session_idx (sessionid) -- filter
+    INDEX user_session_idx (userid, sessionid) -- filter
 ) WITH (ttl_expiration_expression = 'ts + INTERVAL ''1 year''', ttl_job_cron = '@monthly');
 
 CREATE TABLE session (
