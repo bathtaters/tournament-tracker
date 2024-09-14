@@ -99,10 +99,10 @@ const addEntries = (entries, req) => {
     if (!Array.isArray(entries)) entries = entries ? [entries] : []
     if (req) entries = entries.map((entry) => ({
         ...entry,
-        userid: entry.userid || req.session.user || null,
+        userid: entry.userid || req.session?.user || null,
         sessionid: entry.sessionid || req.sessionID || null,
     }))
-    db.addRows('log', entries)
+    return db.addRows('log', entries)
 }
 
 /**
@@ -244,13 +244,13 @@ const query = (text, args, logMap, req, splitArgs, client) => db.query(text, arg
  * @param {string} name - Name of user attempting to login
  * @returns 
  */
-const login = (req, error, name) => addEntries({
+const login = (userid, sessionid, error, name) => addEntries({
     dbtable: TableName.PLAYER,
     action: LogAction.LOGIN,
     data: error ? null : { success: true },
-    tableid: name || req.session.user,
-    error,
-}, req).then(() => error)
+    tableid: name || userid,
+    userid, sessionid, error,
+}).then(() => error)
 
 
 // -- TYPES -- //
