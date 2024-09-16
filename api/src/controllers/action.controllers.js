@@ -36,7 +36,7 @@ async function swapPlayers(req, res) {
   matchData = swapPlayersService(matchData, swap);
 
   // Write changes
-  const result = await match.updateMulti(matchData, 'eventid');
+  const result = await match.updateMulti(matchData, req);
   if (!result || result.some(r => r.eventid !== eventid))
     throw new Error("Error writing swap to database.");
 
@@ -80,7 +80,7 @@ async function nextRound(req, res) {
   const { eventid, round, matches } = roundService(data, matchData, oppData, allMatchups, autoByes ? asType(autoByes) : autoByesDef);
   
   // Create matches
-  const ret = await event.pushRound(eventid, round, matches);
+  const ret = await event.pushRound(eventid, round, matches, req);
   if (!Array.isArray(ret) || !ret[0]) throw new Error("Error adding round to database");
 
   return res.sendAndLog({
@@ -101,7 +101,7 @@ async function prevRound(req, res) {
   if (round !== roundactive)
     throw new Error("Recieved too many round change requests.");
 
-  await event.popRound(id, round);
+  await event.popRound(id, round, req);
 
   return res.sendAndLog({ id: id, round });
 }

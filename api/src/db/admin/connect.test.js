@@ -1,8 +1,17 @@
 // Imports/Mocks
+jest.mock("pg-connection-string")
+jest.mock("pg", () => ({
+  Pool: jest.fn().mockImplementation(() => ({ name: "STATIC POOL", connect: jest.fn() }))
+}))
+jest.mock('../../services/db.services', () => ({
+  testDatabase: jest.fn().mockImplementation(() => Promise.resolve(true))
+}))
+
 const warnSpy = jest.spyOn(global.console, "warn");
-const connect = require('./connect');
 const utils = require('../../utils/dbConnect.utils');
 jest.mock('../../utils/dbConnect.utils');
+
+const connect = require('./connect');
 
 
 // Mock retryBlock (Forces retry, then resolves)
@@ -37,22 +46,26 @@ describe('runOperation', () => {
       .toBe('Op success');
   });
 
+  it('allows access to staticPool', () => {
+    expect(connect.staticPool).toHaveProperty('name', 'STATIC POOL')
+  })
+
   describe('error handling', () => {
     beforeEach(() => { warnSpy.mockImplementationOnce(()=>{}); });
 
     it('fails on no pool', async () => {
       console.warn('Clear warnSpy');
       await expect(connect.runOperation(mockOp))
-        .rejects.toThrowError("Attempting DB access before successfully opening connection.");
-      expect(warnSpy).toBeCalledTimes(1);
+        .rejects.toThrow("Unable to connect to DB.");
+      expect(warnSpy).toHaveBeenCalledTimes(1);
     });
 
     it('fails on no client', async () => {
       console.warn('Clear warnSpy');
       mockPool.connect.mockResolvedValueOnce(null);
       await expect(connect.runOperation(mockOp, 43, 21, mockPool))
-        .rejects.toThrowError("Unable to connect to DB.");
-      expect(warnSpy).toBeCalledTimes(1);
+        .rejects.toThrow("Unable to connect to DB.");
+      expect(warnSpy).toHaveBeenCalledTimes(1);
     });
 
     it('rollback on operation retry', async () => {
@@ -65,7 +78,7 @@ describe('runOperation', () => {
       
       expect(mockClient.query).toHaveBeenNthCalledWith(2,"ROLLBACK;BEGIN;");
       expect(warnSpy).toBeCalledWith('Rolling back & retrying due to: ERR');
-      expect(warnSpy).toBeCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledTimes(1);
     });
 
     it('rollback on retryBlock error', async () => {
@@ -77,7 +90,7 @@ describe('runOperation', () => {
 
       expect(mockClient.query).toHaveBeenNthCalledWith(2,"ROLLBACK;");
       expect(warnSpy).toBeCalledWith(retryBlockErr, undefined);
-      expect(warnSpy).toBeCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledTimes(1);
     });
 
     it('bubbles up retryBlock error', async () => {
@@ -86,8 +99,8 @@ describe('runOperation', () => {
         .mockImplementationOnce(() => { throw new Error('Test Error'); });
 
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects
-        .toThrowError('Test Error');
-      expect(warnSpy).toBeCalledTimes(1);
+        .toThrow('Test Error');
+      expect(warnSpy).toHaveBeenCalledTimes(1);
     });
 
     it('rollback on operation error', async () => {
@@ -96,16 +109,16 @@ describe('runOperation', () => {
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects.toThrow();
       expect(mockClient.query).toHaveBeenNthCalledWith(2,"ROLLBACK;");
       expect(warnSpy).toBeCalledWith(retryBlockErr, undefined);
-      expect(warnSpy).toBeCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledTimes(1);
     });
 
     it('bubbles up operation error', async () => {
       mockOp.mockImplementationOnce(() => { throw new Error('Test Error'); });
 
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects
-        .toThrowError('Test Error');
+        .toThrow('Test Error');
         expect(warnSpy).toBeCalledWith(retryBlockErr, undefined);
-        expect(warnSpy).toBeCalledTimes(1);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -150,7 +163,7 @@ describe('runOperation', () => {
 
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects.toThrow();
       expect(mockClient.release).toHaveBeenCalledTimes(1);
-      expect(warnSpy).toBeCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledTimes(1);
     });
   });
 

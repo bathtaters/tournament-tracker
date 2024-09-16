@@ -5,6 +5,7 @@ const { name, port, apiVersion: version } = require('./config/meta');
 
 // Setup middleware
 app.use(express.json());
+app.use(require('./middleware/session.middleware'));
 app.use(require('./middleware/log.middleware'));
 app.use(require('./middleware/unescape.middleware'));
 

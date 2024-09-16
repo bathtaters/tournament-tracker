@@ -52,17 +52,17 @@ const getEventCredits = (id, matches, players, opps, credits = {}) => {
 }
 
 const resetAllCredits = (includeFinished = false) => includeFinished ?
-  async function resetAllCredits() {
+  async function resetAllCredits(req) {
     let credits = {}
     const players = await player.list()
 
     for (const id of players) {
       credits[id] = 0
-      await player.set(id, { credits: 0 })
+      await player.set(id, { credits: 0 }, req)
     }
     return res.sendAndLog(credits)
   } :
-  async function resetAllCredits(_, res) {
+  async function resetAllCredits(req, res) {
     const matches = await match.getAll(true).then(matchesByEvent);
     const players = await player.list();
     const opps    = await event.getOpponents(null, true).then(oppsByEvent);
@@ -74,7 +74,7 @@ const resetAllCredits = (includeFinished = false) => includeFinished ?
     }
     
     for (const id in credits) {
-      await player.set(id, { credits: credits[id] })
+      await player.set(id, { credits: credits[id] }, req)
     }
     return res.sendAndLog(credits)
   }
@@ -93,12 +93,12 @@ const setCredits = (undo = false) =>
 
     let eventCredits = getEventCredits(id, matches, players, opps)
   
-  for (const { id, credits } of allPlayers) {
-    if (!(id in eventCredits)) eventCredits[id] = didntPlayCredits
-    await player.set(id, { credits: credits + (undo ? -eventCredits[id] : eventCredits[id]) })
+    for (const { id, credits } of allPlayers) {
+      if (!(id in eventCredits)) eventCredits[id] = didntPlayCredits
+      await player.set(id, { credits: credits + (undo ? -eventCredits[id] : eventCredits[id]) }, req)
+    }
+    return res.sendAndLog(eventCredits)
   }
-  return res.sendAndLog(eventCredits)
-}
 
 
 module.exports = { getAllStats, getStats, resetAllCredits, setCredits }

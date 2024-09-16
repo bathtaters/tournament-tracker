@@ -1,9 +1,9 @@
 // Import
-const { query } = require('../db/admin/directOps');
 const main = require('./dbInterface.utils');
 const {
   strTest, lineCount,
   queryLabels, queryValues,
+  sqlSub,
   getFirst, getReturn, getSolo
 } = main;
 
@@ -14,9 +14,9 @@ describe('strTest', () => {
   it('throws injected strings', () => {
     expect.assertions(2);
     expect(() => strTest('injection attempt'))
-      .toThrowError("Possible SQL injection: injection attempt");
+      .toThrow("Possible SQL injection: injection attempt");
     expect(() => strTest('injection;'))
-      .toThrowError("Possible SQL injection: injection;");
+      .toThrow("Possible SQL injection: injection;");
   });
 
   it('passes non-injected strings', () => {
@@ -30,7 +30,7 @@ describe('strTest', () => {
   it('accepts arrays, throws on injected', () => {
     expect.assertions(1);
     expect(() => strTest(['safe','injection;']))
-      .toThrowError("Possible SQL injection: injection;");
+      .toThrow("Possible SQL injection: injection;");
   });
 
   it('accepts arrays, passes non-injected', () => {
@@ -130,6 +130,32 @@ describe('queryValues', () => {
     expect(queryValues([],['valA'])).toEqual([]);
   });
 });
+
+
+// ---- SQL $Placeholder Substitution --- //
+
+describe('sqlSub', () => {
+  it('substitutes indexes', () => {
+    expect(sqlSub('TEST SQL result = $1 AND true; ', ['"one"']))
+      .toBe('TEST SQL result = "one" AND true; ');
+    expect(sqlSub(
+      'TEST SQL result = $1 AND next = $3 OR final = $2 AND false; ',
+      ['"one"', '"two"', '"three"'],
+    )).toBe('TEST SQL result = "one" AND next = "three" OR final = "two" AND false; ');
+  });
+  it('ignores indexes > args.length and non-numeric', () => {
+      expect(sqlSub('TEST result = $1 AND next = $3;', ['"one"']))
+        .toBe('TEST result = "one" AND next = $3;');
+      expect(sqlSub(
+        'TEST SQL result = $1 AND next = $N OR final = $2;',
+        ['"one"', '"two"', '"three"'],
+      )).toBe('TEST SQL result = "one" AND next = $N OR final = "two";')
+  });
+  it('allows skipping indexes', () => {
+      expect(sqlSub('TEST SQL result = $1 AND next = $3;', ['"one"', '"two"', '"three"']))
+        .toBe('TEST SQL result = "one" AND next = "three";')
+  });
+})
 
 
 // ---- Get First Return Value ---- //

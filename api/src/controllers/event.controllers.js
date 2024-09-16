@@ -6,7 +6,6 @@ const match = require('../db/models/match');
 const defs = require('../config/validation').defaults.event;
 
 // Services/Utils
-const logger = require('../utils/log.adapter');
 const { arrToObj } = require('../utils/shared.utils');
 
 
@@ -37,10 +36,10 @@ async function createEvent (req, res) {
   if (body.players) body.playercount = body.players.length;
 
   const eventData = { ...defs, ...body, slot };
-  return event.add(eventData).then(res.sendAndLog);
+  return event.add(eventData, req).then(res.sendAndLog);
 }
 async function removeEvent (req, res) {
-  return event.rmv(matchedData(req).id).then(res.sendAndLog);
+  return event.rmv(matchedData(req).id, req).then(res.sendAndLog);
 }
 
 // Manually set event data (Guess day-slot if missing when updating day)
@@ -52,13 +51,13 @@ async function updateEvent (req, res) {
   if ('day' in body && !('slot' in body))
     body.slot = await event.getLastSlot(body.day, id).then(s => s + 1);
   
-  return event.set(id, body).then(res.sendAndLog);
+  return event.set(id, body, req).then(res.sendAndLog);
 }
 
 // Enable plan for all eventIds, disable plan for all missing eventIds
 function setPlan(req, res) {
   const { events } = matchedData(req);
-  return event.setPlan(events).then(res.sendAndLog);
+  return event.setPlan(events, req).then(res.sendAndLog);
 }
 
 module.exports = {

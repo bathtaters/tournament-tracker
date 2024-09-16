@@ -96,6 +96,7 @@ module.exports = {
       password: { min: 6, max: 64 },
       access: { min: 0, max: 3 },
       members: { min: 2, max: 12 },
+      session: { min: 32, max: 36 },
     },
     event: {
       title: sharedLimits.title,
@@ -154,7 +155,7 @@ module.exports = {
       password: "string?",
       credits: "float",
       access: "int",
-      session: "uuid?",
+      session: "string?",
       isteam: "boolean",
       members: "uuid[]?",
       hide: "boolean",

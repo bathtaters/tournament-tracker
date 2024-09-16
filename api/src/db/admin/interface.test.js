@@ -32,6 +32,52 @@ afterAll(() => { warnSpy.mockRestore(); });
 
 // ----- SELECT ----- //
 
+describe('getCount', () => {
+  let origDirectMock;
+
+  beforeAll(() => {
+    origDirectMock = direct.query.getMockImplementation();
+    direct.query.mockImplementation((...args) => Promise.resolve({ count: args }));
+  });
+  afterAll(() => {
+    direct.query.mockImplementation(origDirectMock);
+  });
+  
+  it('table param only', () => 
+    expect(ops.getCount('test')).resolves.toEqual([
+      'SELECT COUNT(*) AS count FROM test ;',
+      []
+    ])
+  );
+  it('filter param', () => 
+    expect(ops.getCount('test', 'FILTER')).resolves.toEqual([
+      'SELECT COUNT(*) AS count FROM test FILTER;',
+      []
+    ])
+  );
+  it('args param', () => 
+    expect(ops.getCount('test', 0, ['args'])).resolves.toEqual([
+      'SELECT COUNT(*) AS count FROM test ;',
+      ['args']
+    ])
+  );
+  it('uses sqlHelpers', async () => {
+    await ops.getCount('test');
+    expect(utils.getFirst).toHaveBeenCalledTimes(1);
+    expect(utils.getFirst).toHaveBeenCalledWith();
+    expect(firstInner).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses custom client', async () => {
+    await ops.getCount('test',0,['args'],client);
+    expect(client.query).toHaveBeenCalledTimes(1);
+    expect(client.query).toHaveBeenCalledWith(
+      'SELECT COUNT(*) AS count FROM test ;',
+      ['args'],
+    );
+  });
+})
+
 describe('getRows', () => {
   it('table param only', () => 
     expect(ops.getRows('test')).resolves.toEqual([
@@ -76,6 +122,13 @@ describe('getRows', () => {
     ])
   );
 
+  it('adds limit and offset', () => 
+    expect(ops.getRows('test',0,0,0,12,34)).resolves.toEqual([
+      'SELECT * FROM test  LIMIT 12 OFFSET 34;',
+      []
+    ])
+  );
+
   it('uses sqlHelpers', async () => {
     await ops.getRows('test');
     expect(utils.getReturn).toHaveBeenCalledTimes(1);
@@ -84,7 +137,7 @@ describe('getRows', () => {
   });
 
   it('uses custom client', async () => {
-    await ops.getRows('test',0,'args',0,client);
+    await ops.getRows('test',0,'args',0,0,0,client);
     expect(client.query).toHaveBeenCalledTimes(1);
     expect(client.query).toHaveBeenCalledWith(
       'SELECT * FROM test ;', 'args'
@@ -98,72 +151,99 @@ describe('getRow', () => {
 
   it('uses getRows', async () => {
     await ops.getRow('test', 'ID', 'cols', {getOne: false});
-    expect(getRowsSpy).toBeCalledTimes(1);
+    expect(getRowsSpy).toHaveBeenCalledTimes(1);
   });
   it('table param', async () => {
     await ops.getRow('test', 'ID', 'cols', {getOne: false});
-    expect(getRowsSpy).toBeCalledWith(
+    expect(getRowsSpy).toHaveBeenCalledWith(
       'test',
       expect.anything(),
       expect.anything(),
       expect.anything(),
-      null,
+      expect.anything(),
+      expect.anything(),
+      undefined,
     );
   });
   it('id param', async () => {
     await ops.getRow('test', 'ID', 'cols', {getOne: false});
-    expect(getRowsSpy).toBeCalledWith(
+    expect(getRowsSpy).toHaveBeenCalledWith(
       expect.anything(),
       'WHERE id = $1',
       ['ID'],
       expect.anything(),
-      null,
+      expect.anything(),
+      expect.anything(),
+      undefined,
     );
   });
   it('no id param', async () => {
     await ops.getRow('test', null, 'cols', {getOne: false});
-    expect(getRowsSpy).toBeCalledWith(
+    expect(getRowsSpy).toHaveBeenCalledWith(
       expect.anything(),
       '',
       null,
       expect.anything(),
-      null,
+      expect.anything(),
+      expect.anything(),
+      undefined,
     );
   });
   it('col param', async () => {
     await ops.getRow('test', 'ID', 'cols', {getOne: false});
-    expect(getRowsSpy).toBeCalledWith(
+    expect(getRowsSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
       'cols',
-      null,
+      expect.anything(),
+      expect.anything(),
+      undefined,
     );
   });
   it('idCol param', async () => {
     await ops.getRow('test', 'ID', 'cols', {idCol: 'idCol', getOne: false});
-    expect(getRowsSpy).toBeCalledWith(
+    expect(getRowsSpy).toHaveBeenCalledWith(
       expect.anything(),
       'WHERE idCol = $1',
       expect.anything(),
       expect.anything(),
-      null,
+      expect.anything(),
+      expect.anything(),
+      undefined,
     );
   });
   it('getOne param', async () => {
     await ops.getRow('test', 'ID', 'cols', {getOne: true});
-    expect(getRowsSpy).toBeCalledWith(
+    expect(getRowsSpy).toHaveBeenCalledWith(
       expect.anything(),
-      'WHERE id = $1 LIMIT 1',
+      'WHERE id = $1',
       expect.anything(),
       expect.anything(),
-      null,
+      1,
+      expect.anything(),
+      undefined,
     );
-    expect(utils.getFirst).toHaveBeenCalledWith('ID');
+    expect(utils.getFirst).toHaveBeenCalledWith(true);
+    
+    getRowsSpy.mockClear()
+    await ops.getRow('test', 'ID', 'cols', {getOne: false});
+    expect(getRowsSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      'WHERE id = $1',
+      expect.anything(),
+      expect.anything(),
+      0,
+      expect.anything(),
+      undefined,
+    );
+    expect(utils.getFirst).toHaveBeenCalledWith(false);
   });
   it('client param', async () => {
     await ops.getRow('test', 'ID', 'cols', {getOne: false, client});
-    expect(getRowsSpy).toBeCalledWith(
+    expect(getRowsSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -174,7 +254,7 @@ describe('getRow', () => {
 
   it('uses sqlHelpers', async () => {
     await ops.getRow('test','ID', null, {getOne: true});
-    expect(utils.getFirst).toHaveBeenNthCalledWith(1,'ID');
+    expect(utils.getFirst).toHaveBeenNthCalledWith(1,true);
     await ops.getRow('test','ID', null, {getOne: false});
     expect(utils.getFirst).toHaveBeenNthCalledWith(2,false);
     expect(utils.getFirst).toHaveBeenCalledTimes(2);
@@ -185,29 +265,98 @@ describe('getRow', () => {
 
 // ----- DELETE ----- //
 
-describe('rmvRow', () => {
-  it('correct query', () => 
-    expect(ops.rmvRow('test', 'ID')).resolves.toEqual([
-      'DELETE FROM test WHERE id = $1 RETURNING id;',
-      ['ID']
+describe('rmvRows', () => {
+  it('basic query', () => 
+    expect(ops.rmvRows('test')).resolves.toEqual([
+      'DELETE FROM test  RETURNING *;',
+      []
+    ])
+  );
+
+  it('passes args', () => 
+    expect(ops.rmvRows('test', ['args'])).resolves.toEqual([
+      expect.anything(),
+      ['args'],
+    ])
+  );
+
+  it('passes filter', () => 
+    expect(ops.rmvRows('test', 0, 'FILTER')).resolves.toEqual([
+      'DELETE FROM test FILTER RETURNING *;',
+      expect.anything(),
     ])
   );
 
   it('uses sqlHelpers', async () => {
-    await ops.rmvRow('test','ID');
+    await ops.rmvRows('test', ['args'], 'FILTER');
     expect(utils.getReturn).toHaveBeenCalledTimes(1);
-    expect(utils.getFirst).toHaveBeenCalledTimes(1);
-    expect(utils.getFirst).toHaveBeenCalledWith();
-    expect(firstInner).toHaveBeenCalledTimes(1);
+    expect(utils.getFirst).toHaveBeenCalledTimes(0);
   });
   
   it('uses custom client', async () => {
-    await ops.rmvRow('test', 'ID', client);
+    await ops.rmvRows('test', 0, 0, client);
     expect(client.query).toHaveBeenCalledTimes(1);
     expect(client.query).toHaveBeenCalledWith(
-      'DELETE FROM test WHERE id = $1 RETURNING id;',
-      ['ID']
+      'DELETE FROM test  RETURNING *;',
+      [],
     );
+  });
+});
+
+
+describe('rmvRow', () => {
+  const rmvRowsSpy = jest.spyOn(ops, 'rmvRows');
+
+  it('uses rmvRows', async () => {
+    await ops.rmvRow('test', 'ID');
+    expect(rmvRowsSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('table param', async () => {
+    await ops.rmvRow('test', 'ID');
+    expect(rmvRowsSpy).toHaveBeenCalledWith(
+      'test',
+      expect.anything(),
+      expect.anything(),
+      null,
+    );
+  });
+
+  it('args param', async () => {
+    await ops.rmvRow('test', 'ID');
+    expect(rmvRowsSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      ['ID'],
+      expect.anything(),
+      null,
+    );
+  });
+
+  it('filter param', async () => {
+    await ops.rmvRow('test', 'ID');
+    expect(rmvRowsSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      'WHERE id = $1',
+      null,
+    );
+  });
+
+  it('client param', async () => {
+    await ops.rmvRow('test', 'ID', client);
+    expect(rmvRowsSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      client,
+    );
+  });
+
+  it('uses sqlHelpers', async () => {
+    await ops.rmvRow('test', 'ID');
+    expect(utils.getFirst).toHaveBeenCalledTimes(1);
+    expect(utils.getFirst).toHaveBeenCalledWith();
+    expect(firstInner).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -218,7 +367,7 @@ describe('addRows', () => {
 
   it('correct query', async () => {
     await expect(ops.addRows('test', [{a: 11, b: 12},{a: 21, b: 22}])).resolves.toEqual([
-      'INSERT INTO test (a,b) VALUES 0, 1 RETURNING id;',
+      'INSERT INTO test (a,b) VALUES 0, 1 RETURNING *;',
       [11,12,21,22]
     ]);
     expect(utils.strTest).toHaveBeenCalledTimes(1);
@@ -228,7 +377,7 @@ describe('addRows', () => {
   it('adds empty row', () => {
     warnSpy.mockImplementationOnce(()=>{});
     return expect(ops.addRows('test',[])).resolves.toEqual([
-      'INSERT INTO test DEFAULT VALUES  RETURNING id;',
+      'INSERT INTO test DEFAULT VALUES  RETURNING *;',
       []
     ])
   });
@@ -239,26 +388,19 @@ describe('addRows', () => {
       expect.any(Array)
     ])
   });
-
-  it('disable returning clause', () => {
-    return expect(ops.addRows('test',[{a:1}],{ returning: 0 })).resolves.toEqual([
-      expect.not.stringContaining('RETURNING'),
-      expect.any(Array)
-    ])
-  });
   
   it('uses custom client', async () => {
     await ops.addRows('test', [{a: 11}], { client });
     expect(client.query).toHaveBeenCalledTimes(1);
     expect(client.query).toHaveBeenCalledWith(
-      'INSERT INTO test (a) VALUES 0 RETURNING id;',
+      'INSERT INTO test (a) VALUES 0 RETURNING *;',
       [11]
     );
   });
 
   it('error on missing objArray', () => 
     expect(() => ops.addRows('test'))
-      .toThrowError('Missing rows to add to test table.')
+      .toThrow('Missing rows to add to test table.')
   );
 
   it('warns on empty objects', async () => {
@@ -280,11 +422,11 @@ describe('addRow', () => {
 
   it('uses getRows', async () => {
     await ops.addRow('test', 'obj');
-    expect(addRowsSpy).toBeCalledTimes(1);
+    expect(addRowsSpy).toHaveBeenCalledTimes(1);
   });
   it('table param', async () => {
     await ops.addRow('test', 'obj');
-    expect(addRowsSpy).toBeCalledWith(
+    expect(addRowsSpy).toHaveBeenCalledWith(
       'test',
       expect.anything(),
       expect.anything(),
@@ -292,7 +434,7 @@ describe('addRow', () => {
   });
   it('rowObj param', async () => {
     await ops.addRow('test', 'obj');
-    expect(addRowsSpy).toBeCalledWith(
+    expect(addRowsSpy).toHaveBeenCalledWith(
       expect.anything(),
       ['obj'],
       expect.anything(),
@@ -301,7 +443,7 @@ describe('addRow', () => {
   it('no rowObj param', async () => {
     warnSpy.mockImplementationOnce(()=>{});
     await ops.addRow('test', null);
-    expect(addRowsSpy).toBeCalledWith(
+    expect(addRowsSpy).toHaveBeenCalledWith(
       expect.anything(),
       [],
       expect.anything(),
@@ -309,7 +451,7 @@ describe('addRow', () => {
   });
   it('options param', async () => {
     await ops.addRow('test', 'obj', { test: true });
-    expect(addRowsSpy).toBeCalledWith(
+    expect(addRowsSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.objectContaining({ test: true }),
@@ -319,7 +461,7 @@ describe('addRow', () => {
   it('uses sqlHelpers', async () => {
     await ops.getRow('test','ID');
     expect(utils.getFirst).toHaveBeenCalledTimes(1);
-    expect(utils.getFirst).toHaveBeenCalledWith('ID');
+    expect(utils.getFirst).toHaveBeenCalledWith(true);
     expect(firstInner).toHaveBeenCalledTimes(1);
   });
 });
@@ -328,48 +470,74 @@ describe('addRow', () => {
 // ----- UPDATE ----- //
 
 describe('updateRow', () => {
+  let origDirectMock;
+
+  beforeAll(() => {
+    origDirectMock = direct.query.getMockImplementation();
+    direct.query.mockImplementation((...args) => Promise.resolve([args]));
+  });
+
+  afterAll(() => {
+    direct.query.mockImplementation(origDirectMock);
+  });
+
   it('correct query', async () => {
     await expect(ops.updateRow(
       'test',
       'ID',
       {a: 1, b: 2, c: 3},
-      { returning: 'x' }
-    )).resolves.toEqual({
+    )).resolves.toEqual([{
       id: 'ID',
-      0: 'UPDATE test SET a = $2, b = $3, c = $4 WHERE id = $1 RETURNING x;',
-      1: ['ID', 1, 2, 3],
+      0: 'UPDATE test SET a = $1, b = $2, c = $3 WHERE id = $4 RETURNING *;',
+      1: [1, 2, 3, 'ID'],
       a: 1, b: 2, c: 3,
-    });
+    }]);
     expect(utils.strTest).toHaveBeenCalledTimes(1);
     expect(utils.strTest).toHaveBeenCalledWith(['a','b','c']);
+  });
+
+  it('param idCol', async () => {
+    const res = await ops.updateRow('test','ID',{a: 1},{idCol: 'IDCOL'});
+    expect(res[0][0]).toEqual('UPDATE test SET a = $1 WHERE IDCOL = $2 RETURNING *;');
+  });
+
+  it('param looseMatch', async () => {
+    const res = await ops.updateRow('test','ID',{a: 1},{looseMatch: true});
+    expect(res[0][0]).toBe('UPDATE test SET a = $1 WHERE id ILIKE $2 RETURNING *;');
   });
 
   it('throws on empty updateObj', () => {
     expect.assertions(1);
     return expect(() => ops.updateRow('test','ID'))
-      .toThrowError('No properties provided to update test[ID]');
+      .toThrow('No properties provided to update test[ID]');
   });
 
-  it('sends error on empty return', () => {
+  it('sends error on empty return', async () => {
     direct.query.mockResolvedValueOnce(null);
     return expect(ops.updateRow('test','ID',{a: 1})).resolves
-      .toHaveProperty('error','Missing return value.');
+      .toHaveProperty('0.error','Missing return value.');
   });
   
   it('uses sqlHelpers', async () => {
     await ops.updateRow('test','ID',{a: 1});
     expect(utils.getReturn).toHaveBeenCalledTimes(1);
     expect(utils.getFirst).toHaveBeenCalledTimes(1);
-    expect(utils.getFirst).toHaveBeenCalledWith();
+    expect(utils.getFirst).toHaveBeenCalledWith(true);
     expect(firstInner).toHaveBeenCalledTimes(1);
   });
 
+  it('param returnArray', async () => {
+    await ops.updateRow('test','ID',{a: 1},{returnArray: true});
+    expect(utils.getFirst).toHaveBeenCalledTimes(1);
+    expect(utils.getFirst).toHaveBeenCalledWith(false);
+  });
+
   it('uses custom client', async () => {
-    await ops.updateRow('test', 'ID', {a: 1}, { client });
+    await ops.updateRow('test','ID',{a: 1},{client});
     expect(client.query).toHaveBeenCalledTimes(1);
     expect(client.query).toHaveBeenCalledWith(
-      'UPDATE test SET a = $2 WHERE id = $1 RETURNING id;',
-      ['ID', 1]
+      'UPDATE test SET a = $1 WHERE id = $2 RETURNING *;',
+      [1, 'ID']
     );
   });
 });

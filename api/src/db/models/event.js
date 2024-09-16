@@ -1,5 +1,6 @@
 /* *** EVENT Table Operations *** */
 const db = require('../admin/interface');
+const log = require('./log');
 const strings = require('../sql/strings').event;
 
 // Get event data
@@ -34,34 +35,42 @@ const getRound = id => db.query(strings.maxRound, [id]).then(r => r?.[0]?.round)
 
 
 // Create new event
-const add = eventData => {
+const add = (eventData, req) => {
     eventData.players = (eventData.players || []);
-    return db.addRow('event', eventData);
+    return log.addRows('event', eventData, req)
 }
 
 
-const pushRound = (eventid, round, matchData) => db.operation(client => Promise.all([
+const pushRound = (eventid, round, matchData, req) => db.operation(client => Promise.all([
     // Increase active round counter
-    db.updateRow(
-        'event', eventid,
-        { roundactive: round },
-        { returning: 'roundactive', client }
-    ),
+    log.updateRows('event', eventid, { roundactive: round }, req, { client }),
     // Create matches
-    matchData && db.addRows('match', matchData, { client }),
-]));
+    matchData && log.addRows('match', matchData, req, { client }),
+]))
 
 
-const popRound = (eventid, round) => db.operation(client => Promise.all([
+const popRound = (eventid, round, req) => db.operation(client => Promise.all([
     // Delete matches
-    client.query(strings.deleteRound, [eventid, round]),
+    log.rmvRows('match', [eventid, round], strings.deleteRound, req, client),
     // Decrease active round counter
-    db.updateRow(
-        'event', eventid,
-        { roundactive: round - 1 },
-        { returning: 'roundactive', client }
-    ),
-]));
+    log.updateRows('event', eventid, { roundactive: round - 1 }, req, { client }),
+]))
+
+
+const setPlan = (ids, req) => log.query(strings.plan, [ids], (data, error) => 
+    error ? ids.map((tableid) => ({
+        tableid, error,
+        dbtable: log.TableName.EVENT,
+        action: log.LogAction.UPDATE,
+        data: { plan: true },
+    })) : {
+        dbtable: log.TableName.EVENT,
+        tableid: data.id,
+        data: { plan: data.plan },
+        action: log.LogAction.UPDATE,
+    },
+    req,
+)
 
 
 module.exports = {
@@ -71,7 +80,7 @@ module.exports = {
     
     add, popRound, pushRound,
 
-    rmv:  id => db.rmvRow('event', id),
-    set: (id, newParams) => db.updateRow('event', id, newParams),
-    setPlan: (ids) => db.query(strings.plan, [ids]),
+    rmv: (id, req) => log.rmvRows('event', id, null, req),
+    set: (id, newParams, req) => log.updateRows('event', id, newParams, req),
+    setPlan,
 }

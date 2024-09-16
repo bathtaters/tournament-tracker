@@ -1,6 +1,6 @@
 // Import/Mocks
 const warnSpy = jest.spyOn(global.console, "warn");
-const { arrToObj, insertSorted, filtering, toDateStr } = require('./shared.utils');
+const { arrToObj, insertSorted, filtering, toDateStr, datesAreEqual, dayCount } = require('./shared.utils');
 
 afterAll(() => { warnSpy.mockRestore(); });
 
@@ -213,5 +213,54 @@ describe('toDateStr', () => {
   })
 })
 
-it.todo("dayCount")
-it.todo("datesAreEqual")
+describe("dayCount", () => {
+  it("Correct count of days (inclusive)", () => {
+    expect(dayCount(new Date(2020, 0, 1), new Date(2020, 0, 2))).toBeCloseTo(2)
+    expect(dayCount(new Date(2020, 0, 1), new Date(2020, 0, 10))).toBeCloseTo(10)
+    expect(dayCount(new Date(2012, 5, 4), new Date(2020, 0, 10))).toBeCloseTo(2777, 1)
+  })
+  it("Count of days as decimal", () => {
+    expect(dayCount(new Date(2020, 0, 1, 1, 20), new Date(2020, 0, 2, 23, 45))).toBeCloseTo(2.93)
+    expect(dayCount(new Date(2020, 0, 1, 11, 40), new Date(2020, 3, 10, 17, 30))).toBeCloseTo(101.2)
+  })
+  it("Same day is 1", () => {
+    expect(dayCount(new Date(2020, 0, 1), new Date(2020, 0, 1))).toBeCloseTo(1)
+    expect(dayCount(new Date(2012, 5, 4), new Date(2012, 5, 4))).toBeCloseTo(1)
+  })
+  it("Works with reversed day count", () => {
+    expect(dayCount(new Date(2020, 0, 2), new Date(2020, 0, 1))).toBeCloseTo(2)
+    expect(dayCount(new Date(2020, 0, 10), new Date(2020, 0, 1))).toBeCloseTo(10)
+    expect(dayCount(new Date(2020, 0, 10), new Date(2012, 5, 4))).toBeCloseTo(2777, 1)
+  })
+  it("reversed day count + decimal", () => {
+    expect(dayCount(new Date(2020, 0, 2, 23, 45), new Date(2020, 0, 1, 1, 20))).toBeCloseTo(2.93)
+    expect(dayCount(new Date(2020, 3, 10, 17, 30), new Date(2020, 0, 1, 11, 40))).toBeCloseTo(101.2)
+  })
+})
+
+describe("datesAreEqual", () => {
+  it("Dates are same", () => {
+    expect(datesAreEqual(new Date(2020, 0, 1), new Date(2020, 0, 1))).toBe(true)
+    expect(datesAreEqual(new Date(2012, 5, 4), new Date(2012, 5, 4, 13, 4))).toBe(true)
+  })
+  it("Dates are different", () => {
+    expect(datesAreEqual(new Date(2020, 0, 1), new Date(2020, 0, 2))).toBe(false)
+    expect(datesAreEqual(new Date(2012, 5, 4), new Date(2012, 5, 16))).toBe(false)
+  })
+  it("Months are different", () => {
+    expect(datesAreEqual(new Date(2020, 0, 1), new Date(2020, 1, 1))).toBe(false)
+    expect(datesAreEqual(new Date(2012, 5, 4), new Date(2012, 9, 4))).toBe(false)
+  })
+  it("Years are different", () => {
+    expect(datesAreEqual(new Date(2020, 0, 1), new Date(2021, 0, 1))).toBe(false)
+    expect(datesAreEqual(new Date(2012, 5, 4), new Date(1995, 5, 4))).toBe(false)
+  })
+  it("Full years are different", () => {
+    expect(datesAreEqual(new Date(2020, 0, 1), new Date(1920, 0, 1))).toBe(false)
+    expect(datesAreEqual(new Date(2012, 5, 4), new Date(2112, 5, 4))).toBe(false)
+  })
+  it("Everything is different", () => {
+    expect(datesAreEqual(new Date(2020, 0, 1), new Date(2012, 5, 4))).toBe(false)
+    expect(datesAreEqual(new Date(2022, 8, 12), new Date(2012, 2, 1))).toBe(false)
+  })
+})

@@ -13,7 +13,7 @@ const getStatus = async (_, res) => {
 }
 
 // Send plan data to plan generator, then update database to result & goto Plan Finish
-async function genPlanAsync() {
+async function genPlanAsync(req) {
     await setting.batchSet(planStatus(3, 0))
 
     try {
@@ -22,27 +22,27 @@ async function genPlanAsync() {
         const settings = await setting.getAll().then(fromObjArray)
         
         const planData = await generatePlan(events, voters, settings, updateProg(setting.batchSet))
-        await plan.multiset(planData)
-        await setting.batchSet(planStatus(4, 100))
+        await plan.multiset(planData, req)
+        await setting.batchSet(planStatus(4, 100), req)
 
     } catch (err) {
-        await setting.batchSet(planStatus(2))
+        await setting.batchSet(planStatus(2), req)
         throw err
     }
 }
-const genPlan = (_, res) => { genPlanAsync(); res.sendAndLog({ submitted: true })  }
+const genPlan = (req, res) => { genPlanAsync(req); res.sendAndLog({ submitted: true })  }
 
 // Move all planned events to schedule, move all other events to unscheduled, & goto Plan Start
-const savePlan = async (_, res) => {
-    await plan.update({ day: null }, false, 'plan')
-    const ids = await plan.update({ plan: false })
+const savePlan = async (req, res) => {
+    await plan.update({ day: null }, false, 'plan', req)
+    const ids = await plan.update({ plan: false }, null, null, req)
 
-    await setting.batchSet(planStatus(0))
+    await setting.batchSet(planStatus(0), req)
     return res.sendAndLog(ids)
 }
 
 // Remove all voters/planned events and settings
-const resetPlan = (_, res) => plan.reset().then(() => res.sendAndLog({ success: true }))
+const resetPlan = (req, res) => plan.reset(req).then(() => res.sendAndLog({ success: true }))
 
 module.exports = {
     getStatus,

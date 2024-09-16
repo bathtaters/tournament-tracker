@@ -4,7 +4,8 @@
   "description": "Tournament Tracker backend",
   "main": "./src/server.js",
   "scripts": {
-    "start": "node ./src/server.js",
+    "start": "export NODE_ENV=production; node ./src/server.js",
+    "dev": "export NODE_ENV=development; node --watch ./src/server.js",
     "sync": "node -e 'require(\"./src/services/init.services.js\")(true)'",
     "test": "jest",
     "inspect": "node --inspect ./src/server.js"
@@ -24,8 +25,10 @@
   "homepage": "https://github.com/bathtaters/tournament-tracker#readme",
   "dependencies": {
     "child-process": "^1.0.2",
+    "connect-pg-simple": "^9.0.1",
     "crypto": "^1.0.1",
     "express": "^4.18.1",
+    "express-session": "^1.18.0",
     "express-validator": "^7.0.1",
     "morgan": "^1.10.0",
     "pg": "^8.7.3",
@@ -36,6 +39,8 @@
     "validator": "^13.6.0"
   },
   "devDependencies": {
+    "@types/connect-pg-simple": "^7.0.3",
+    "@types/express-session": "^1.18.0",
     "@types/jest": "^29.0.3",
     "jest": "^29.0.3"
   }

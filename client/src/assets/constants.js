@@ -40,11 +40,6 @@ export const roundButtonText = {
   done: "Event Complete",
 };
 
-// Local var keys
-export const localKeys = {
-  session: 'session',
-};
-
 // Lock Screen captions
 export const roundButtonLockCaption = "Generating round...";
 export const editEventLockCaptions = ["Creating event...", "Updating event..."];

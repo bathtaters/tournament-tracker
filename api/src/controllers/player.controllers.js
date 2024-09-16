@@ -27,21 +27,21 @@ async function getPlayerMatches(req, res) {
 /* SET player database. */
 
 // Create/remove player
-const createPlayer = (req, res) => players.add(matchedData(req)).then(res.sendAndLog);
-const removePlayer = (req, res) => players.rmv(matchedData(req).id).then(res.sendAndLog);
+const createPlayer = (req, res) => players.add(matchedData(req), req).then(res.sendAndLog);
+const removePlayer = (req, res) => players.rmv(matchedData(req).id, req).then(res.sendAndLog);
 
 // Rename
 const updatePlayer = async (req, res) => {
   const { id, ...body } = matchedData(req);
   if (req.body.session === null) body.session = null;
   if (body.password) body.password = await encryptPassword(body.password);
-  return players.set(id, body).then(res.sendAndLog);
+  return players.set(id, body, req).then(res.sendAndLog);
 }
 
 // Reset Session
 const resetPassword = async (req, res) => {
   const { id } = matchedData(req);
-  const session = await players.resetLogin(id);
+  const session = await players.resetLogin(id, req);
   return res.sendAndLog({ session });
 }
 

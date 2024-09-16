@@ -7,17 +7,25 @@ const {
 } = require('../../utils/dbInterface.utils');
 
 // Custom query
-const query = (text, args, splitArgs) => direct.query(text, args, splitArgs)
+const query = (text, args, splitArgs, client) => (client || direct).query(text, args, splitArgs)
     .then(getSolo(text)).then(getReturn);
 
 
 // SELECT
-const getRows = (table, sqlFilter, args, cols, client) => 
+const getCount = (table, sqlFilter, args, client) => 
+    // strTest(table) || strTest(sqlFilter) || 
+    (client || direct).query(
+        `SELECT COUNT(*) AS count FROM ${table} ${sqlFilter || ''};`, args || []
+    ).then(getFirst()).then(({ count }) => count)
+
+const getRows = (table, sqlFilter, args, cols, limit, offset, client) => 
     // strTest(table) || strTest(sqlFilter) || strTest(cols) ||
     (client || direct).query(
         `SELECT ${
             (Array.isArray(cols) ? cols.join(', ') : cols) || '*'
-        } FROM ${table} ${sqlFilter || ''};`,
+        } FROM ${table} ${sqlFilter || ''}${
+            limit ? ` LIMIT ${limit} OFFSET ${offset || 0}` : ''
+        };`,
         args || []
     ).then(getSolo()).then(getReturn);
 
@@ -26,14 +34,14 @@ const getRow = (table, rowId, cols, { idCol = 'id', getOne = true, client, loose
     // strTest(table) || strTest(cols);
     module.exports.getRows( // exports required for unit testing
         table,
-        rowId ? `WHERE ${idCol} ${looseMatch ? 'ILIKE' : '='} $1${getOne ? ' LIMIT 1' : ''}` : '',
+        rowId ? `WHERE ${idCol} ${looseMatch ? 'ILIKE' : '='} $1` : '',
         rowId && [rowId],
-        cols, client
+        cols, rowId && getOne ? 1 : 0, 0, client
     ).then(getFirst(getOne && !!rowId));
 
 
 // INSERT/UPSERT
-const addRows = (table, objArray, { client, upsert, returning = 'id' } = {}) => {
+const addRows = (table, objArray, { client, upsert } = {}) => {
     // strTest(table);
     if (!objArray) throw new Error("Missing rows to add to "+table+" table.");
     const keys = objArray[0] ? Object.keys(objArray[0]) : [];
@@ -45,7 +53,7 @@ const addRows = (table, objArray, { client, upsert, returning = 'id' } = {}) => 
             keys.length ? '('+keys.join(',')+')' : 'DEFAULT'
         } VALUES ${
             queryLabels(objArray, keys).join(', ')
-        }${returning ? ' RETURNING '+returning : ''};`,
+        } RETURNING *;`,
         queryValues(objArray, keys)
     ).then(getSolo()).then(getReturn);
 };
@@ -56,17 +64,20 @@ const addRow = (table, rowObj, options = {}) =>
 
 
 // DELETE
-const rmvRow = (table, rowId, client = null) => 
+const rmvRows = (table, args, sqlFilter, client = null) => 
     // strTest(table) ||
     (client || direct).query(
-        `DELETE FROM ${table} WHERE id = $1 RETURNING id;`,
-        [rowId]
-    ).then(getSolo()).then(getReturn).then(getFirst());
+        `DELETE FROM ${table} ${sqlFilter || ''} RETURNING *;`,
+        args || []
+    ).then(getSolo()).then(getReturn);
+    
+const rmvRow = (table, rowId, client = null) =>
+    module.exports.rmvRows(table, [rowId], 'WHERE id = $1', client).then(getFirst());
 
 
 // UPDATE
-const updateRow = (table, rowId, updateObj, { returning, client, idCol, looseMatch, returnArray } = {}) => {
-    // strTest(table) || strTest(returning);
+const updateRow = (table, rowId, updateObj, { client, idCol, looseMatch, returnArray } = {}) => {
+    // strTest(table);
     const keys = Object.keys(updateObj || {});
 
     if (!keys.length) throw new Error("No properties provided to update "+table+"["+rowId+"]");
@@ -78,15 +89,15 @@ const updateRow = (table, rowId, updateObj, { returning, client, idCol, looseMat
         }${
             rowId == null ? '' :
                 ` WHERE ${idCol || 'id'} ${looseMatch ? 'ILIKE' : '='} $${keys.length + 1}`
-        } RETURNING ${returning || 'id'};`,
+        } RETURNING *;`,
         
         rowId == null
             ? Object.values(updateObj || {})
             : [...Object.values(updateObj || {}), rowId]
 
     ).then(getSolo()).then(getReturn)
-    .then(ret => ret.length ?
-        ret.map(data => ({
+    .then((ret) => ret?.length ?
+        ret.map((data) => ({
             [idCol || 'id']: rowId,
             ...(updateObj || {}),
             ...(data || {error: 'Missing return value.'})
@@ -97,7 +108,7 @@ const updateRow = (table, rowId, updateObj, { returning, client, idCol, looseMat
 };
 
 
-const updateRows = (table, updateObjArray, { returning = 'id', client = direct, idCol = 'id', types = {} } = {}) => {
+const updateRows = (table, updateObjArray, { client = direct, idCol = 'id', types = {} } = {}) => {
     updateObjArray = updateObjArray && updateObjArray.filter((item) => item[idCol])
     if (!updateObjArray?.length) throw new Error(`No properties or keys provided to update ${table}`)
 
@@ -115,7 +126,7 @@ const updateRows = (table, updateObjArray, { returning = 'id', client = direct, 
             ).join(', ')
         }) AS u(${
             keys.join(', ')
-        }) WHERE ${table}.${idCol} = u.${idCol} RETURNING ${table}.${returning};`,
+        }) WHERE ${table}.${idCol} = u.${idCol} RETURNING ${table}.*;`,
 
         updateObjArray.flatMap((item) => keys.map((key) => item[key]))
 
@@ -126,11 +137,11 @@ const updateRows = (table, updateObjArray, { returning = 'id', client = direct, 
 }
 
 module.exports = { 
-    query,
+    query, getCount,
     getRow, getRows,
     addRows, addRow,
     updateRow, updateRows,
-    rmvRow,
+    rmvRow, rmvRows,
     operation: op => direct.operation(op).then(getReturn),
     file: (...files) => direct.execFiles(files).then(getReturn),
 }
