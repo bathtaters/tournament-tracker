@@ -2,11 +2,13 @@ const { matchedData }  = require('express-validator');
 
 // Models
 const event = require('../db/models/event');
+const clock = require('../db/models/clock');
 const match = require('../db/models/match');
 const defs = require('../config/validation').defaults.event;
 
 // Services/Utils
 const { arrToObj } = require('../utils/shared.utils');
+const { calcClock } = require('../services/clock.services')
 
 
 /* GET event database. */
@@ -20,6 +22,13 @@ async function getEvent(req, res) {
   const matches = await match.listByEvent(id).then(sortMatchResult);
 
   return res.sendAndLog({ ...eventData, matches });
+}
+
+// Get clock data only
+function getClock(req, res) {
+  const { id } = matchedData(req)
+  if (!id) throw new Error("Missing event ID.")
+  return clock.get(id).then(calcClock).then(res.sendAndLog)
 }
 
 // All events
@@ -59,9 +68,21 @@ function setPlan(req, res) {
   return event.setPlan(events, req).then(res.sendAndLog);
 }
 
+// Clock operations -- run/pause/reset
+const clockOp = (action) => (req, res) => {
+  const { id } = matchedData(req)
+  if (!id) throw new Error("Missing event ID.")
+  switch(action) {
+    case "run": return clock.run(id, req).then(calcClock).then(res.sendAndLog).catch(catchClockError("run"))
+    case "reset": return clock.reset(id, req).then(calcClock).then(res.sendAndLog)
+    case "pause": return clock.pause(id, req).then(calcClock).then(res.sendAndLog).catch(catchClockError("pause"))
+    default: throw new Error(`Unrecognized clock action: ${action}`)
+  }
+}
+
 module.exports = {
-  getEvent, getAllEvents, setPlan,
-  createEvent, removeEvent, updateEvent,
+  getEvent, getAllEvents, getClock, setPlan,
+  createEvent, removeEvent, updateEvent, clockOp,
 };
 
 
@@ -70,3 +91,12 @@ const sortMatchResult = (result) => result && result.reduce((matchArr, row) => {
   matchArr[row.round - 1] = row.matches;
   return matchArr;
 }, []);
+
+// Clock catcher
+const catchClockError = (action) => (err) => {
+  if (err.message === "Event not found") {
+    if (action === "run") throw new Error("Clock is already running or event not found")
+    if (action === "pause") throw new Error("Clock is not running or event not found")
+  }
+  throw err
+}
