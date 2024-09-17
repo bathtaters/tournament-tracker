@@ -61,7 +61,7 @@ module.exports = {
       playerspermatch: 2,
       notes: '',
       link: '',
-      clocklimit: '01:00:00',
+      clocklimit: { minutes: 50 },
       clockstart: null,
       clockmod: null,
     },
