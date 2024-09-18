@@ -49,6 +49,29 @@ ALTER TABLE player DROP COLUMN session;
 ALTER TABLE player ADD COLUMN session STRING;
 
 
+-- Add timer to EventDetail --
+------------------------------
+
+DROP VIEW eventDetail;
+
+CREATE VIEW eventDetail (
+    id, title, players, playercount, playerspermatch,
+    clocklimit, day, slot, roundactive, roundcount, wincount, notes, link,
+    allreported,
+    anyreported,
+    byes,
+    drops
+) AS SELECT
+    event.id, event.title, event.players, playercount, playerspermatch,
+    clocklimit, day, slot, roundactive, roundcount, wincount, notes, link,
+    BOOL_AND(reported),
+    BOOL_OR(reported) FILTER(
+        WHERE match.round = roundactive AND ARRAY_LENGTH(match.players, 1) != 1),
+    ARRAY_AGG(match.players[1]) FILTER(WHERE ARRAY_LENGTH(match.players, 1) = 1),
+    JSON_AGG(drops)
+FROM event
+LEFT JOIN match ON event.id = match.eventid
+GROUP BY event.id;
 
 
 -- Non-SQL Updates --

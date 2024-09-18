@@ -140,14 +140,14 @@ GRANT SELECT ON TABLE * TO db_read;
 
 CREATE VIEW eventDetail (
     id, title, players, playercount, playerspermatch,
-    day, slot, roundactive, roundcount, wincount, notes, link,
+    clocklimit, day, slot, roundactive, roundcount, wincount, notes, link,
     allreported,
     anyreported,
     byes,
     drops
 ) AS SELECT
     event.id, event.title, event.players, playercount, playerspermatch,
-    day, slot, roundactive, roundcount, wincount, notes, link,
+    clocklimit, day, slot, roundactive, roundcount, wincount, notes, link,
     BOOL_AND(reported),
     BOOL_OR(reported) FILTER(
         WHERE match.round = roundactive AND ARRAY_LENGTH(match.players, 1) != 1),
