@@ -16,6 +16,7 @@ export const typeDefaults = {
   text: 'input input-bordered w-full invalid:input-warning',
   url: 'input input-bordered w-full invalid:input-warning',
   date: 'input input-bordered w-full invalid:input-warning',
+  time: 'input input-bordered w-full min-w-12 pl-2 py-1 invalid:input-warning',
   number: 'input input-bordered w-full invalid:input-warning p-1 text-center hide-arrows ',
   numberSize: 'w-12 sm:w-16 h-8 sm:h-12'
 }
