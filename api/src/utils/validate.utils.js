@@ -1,4 +1,4 @@
-const parseInterval = require('postgres-interval')
+const { intervalKeys, intervalString } = require("./dbInterface.utils")
 
 // Decode validation types to [fullStr, typeStr, leaveWhiteSpace (*), isArray ([]|[?]), isOptional (?)]
 const typeRegex = /^([^[?*]+)(\*)?(\[\??\])?(\?)?$/
@@ -13,9 +13,22 @@ exports.dateOptions = {
 
 // Setup custom validator/sanitizer for intervals
 exports.customInterval = {
-  sanitize: { options: parseInterval },
-  validate: (value) => /^\d{2}(?::\d{2}){0,2}$/.test(value),
+  validate: (value) => {
+    if (typeof value !== "object") return false
+    return intervalKeys.every((key) => isDigitOrNull(value[key]))
+  },
+  sanitize: { options: (value) => {
+    const result = {}
+    intervalKeys.forEach((key) => {
+      if (value[key] || value[key] === 0)
+        result[key] = Number(value[key])
+    })
+    result.toPostgres = function() { return intervalString(this) }
+    return result
+  } },
 }
+const isDigitOrNull = (value) => typeof value === "number" ? true : value == null ? true :
+  typeof value === "string" ? /^\d*$/.test(value) : false
 
 
 // Count escaped string (each escaped char counts as 1)
