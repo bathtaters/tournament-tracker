@@ -108,7 +108,6 @@ module.exports = {
       wincount: sharedLimits.wincount,
       playerspermatch: { min: 1, max: 4 },
       notes: { min: 0, max: 256 },
-      clocklimit: {min: '00:01', max: '24:00:00'},
     },
     match: {
       round:   sharedLimits.rounds,
