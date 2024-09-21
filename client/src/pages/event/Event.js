@@ -5,6 +5,7 @@ import RawData from "../common/RawData";
 import EventHeader from "./components/EventHeader";
 import EventDashboard from "./components/EventDashboard";
 import EditEvent from "../eventEditor/EditEvent";
+import EventClock from "./components/EventClock";
 import Round from "./components/Round";
 import Loading from "../common/Loading";
 import CreditButtons from "./components/subcomponents/CreditButtons";
@@ -14,7 +15,7 @@ import { useEventQuery, useSettingsQuery } from "./event.fetch";
 import { roundArray, useEventClock } from "./services/event.services";
 import { isFinished, useDeleteRound } from "./services/roundButton.services";
 import { useParamIds } from "../common/services/idUrl.services";
-import EventClock from "./components/EventClock";
+import { isZero } from "./services/clock.services";
 
 
 function Event() {
@@ -22,7 +23,7 @@ function Event() {
   const modal = useRef(null);
   const { id } = useParamIds('id');
   const { data, isLoading, error, isFetching } = useEventQuery(id);
-  const { data: clock, error: clockErr } = useEventClock(id, data?.status)
+  const { data: clock, error: clockErr } = useEventClock(id, data?.status, data?.clocklimit)
   const { data: settings, isLoading: sLoad, error: sErr } = useSettingsQuery();
 
   // Handle delete round
@@ -55,7 +56,7 @@ function Event() {
       
       { settings.showcredits && isFinished(data) && <CreditButtons id={id} /> }
 
-      { clock && data?.status === 2 && <EventClock {...clock} /> }
+      { data?.status === 2 && !isZero(clock?.limit) && <EventClock {...clock} /> }
 
       <RawData data={{ ...data, clock }} />
 
