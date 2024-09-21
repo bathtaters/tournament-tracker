@@ -31,3 +31,22 @@ export function clearRoundUpdate(id, { dispatch, queryFulfilled }) {
   }));
   queryFulfilled.catch(update.undo); // rollback
 };
+
+export async function clockUpdate(id, { dispatch, queryFulfilled }) {
+  try {
+    const { data } = await queryFulfilled
+
+    if (data?.limit) {
+      dispatch(fetchApi.util.updateQueryData(
+        'event', id,
+        (draft) => { draft.clocklimit = data.limit }
+      ))
+      dispatch(fetchApi.util.updateQueryData(
+        'event', undefined,
+        (draft) => { draft[id].clocklimit = data.limit }
+      ))
+    }
+  } catch (error) {
+    console.error('Error updating clock:', error)
+  }
+}

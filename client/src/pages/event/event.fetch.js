@@ -6,9 +6,7 @@ import {
 } from '../common/common.fetch';
 import { useMatchQuery } from '../match/match.fetch';
 import { useSetEventMutation } from '../eventEditor/eventEditor.fetch';
-
-import { nextRoundUpdate, clearRoundUpdate } from './services/eventFetch.services'
-import { calcClock, clockPoll } from './services/clock.services';
+import { nextRoundUpdate, clearRoundUpdate, clockUpdate } from './services/eventFetch.services'
 import { debugLogging } from '../../assets/config';
 
 export const eventApi = fetchApi.injectEndpoints({
@@ -18,6 +16,7 @@ export const eventApi = fetchApi.injectEndpoints({
       query: (id) => ({ url: `event/${id}/clock`, method: 'GET' }),
       transformResponse: calcClock,
       providesTags: getTags('Clock'),
+      onQueryStarted: clockUpdate,
     }),
 
     nextRound: build.mutation({
