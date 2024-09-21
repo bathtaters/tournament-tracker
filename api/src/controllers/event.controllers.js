@@ -8,7 +8,6 @@ const defs = require('../config/validation').defaults.event;
 
 // Services/Utils
 const { arrToObj } = require('../utils/shared.utils');
-const { calcClock } = require('../services/clock.services')
 
 
 /* GET event database. */
@@ -25,10 +24,13 @@ async function getEvent(req, res) {
 }
 
 // Get clock data only
-function getClock(req, res) {
+async function getClock(req, res) {
   const { id } = matchedData(req)
   if (!id) throw new Error("Missing event ID.")
-  return clock.get(id).then(calcClock).then(res.sendAndLog)
+  
+  let data = await clock.get(id).then((data) => Array.isArray(data) ? data[0] : data)
+  if (!data) throw new Error("Event not found")
+  return res.sendAndLog(data)
 }
 
 // All events
@@ -69,13 +71,23 @@ function setPlan(req, res) {
 }
 
 // Clock operations -- run/pause/reset
-const clockOp = (action) => (req, res) => {
-  const { id } = matchedData(req)
-  if (!id) throw new Error("Missing event ID.")
+const clockOp = (action) => {
   switch(action) {
-    case "run": return clock.run(id, req).then(calcClock).then(res.sendAndLog).catch(catchClockError("run"))
-    case "reset": return clock.reset(id, req).then(calcClock).then(res.sendAndLog)
-    case "pause": return clock.pause(id, req).then(calcClock).then(res.sendAndLog).catch(catchClockError("pause"))
+    case "run": return (req, res) => {
+      const { id } = matchedData(req)
+      if (!id) throw new Error("Missing event ID.")
+      return clock.run(id, req).then(res.sendAndLog).catch(catchClockError("run"))
+    }
+    case "reset": return (req, res) => {
+      const { id } = matchedData(req)
+      if (!id) throw new Error("Missing event ID.")
+      return clock.reset(id, req).then(res.sendAndLog)
+    }
+    case "pause": return (req, res) => {
+      const { id } = matchedData(req)
+      if (!id) throw new Error("Missing event ID.")
+      return clock.pause(id, req).then(res.sendAndLog).catch(catchClockError("pause"))
+    }
     default: throw new Error(`Unrecognized clock action: ${action}`)
   }
 }
