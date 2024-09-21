@@ -10,8 +10,8 @@ import Loading from "../common/Loading";
 import CreditButtons from "./components/subcomponents/CreditButtons";
 import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 
-import { useEventClock, useEventQuery, useSettingsQuery } from "./event.fetch";
-import { roundArray } from "./services/event.services";
+import { useEventQuery, useSettingsQuery } from "./event.fetch";
+import { roundArray, useEventClock } from "./services/event.services";
 import { isFinished, useDeleteRound } from "./services/roundButton.services";
 import { useParamIds } from "../common/services/idUrl.services";
 import EventClock from "./components/EventClock";

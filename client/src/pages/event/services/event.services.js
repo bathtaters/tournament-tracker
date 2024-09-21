@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useMatchQuery, usePlayerQuery, refetchStats } from '../event.fetch';
+import { useMatchQuery, usePlayerQuery, refetchStats, useClockQuery } from '../event.fetch';
 import { useAccessLevel } from "../../common/common.fetch";
+import { clockPoll, isZero } from './clock.services';
 import { formatCopyRound, formatCopySeats } from "../../../assets/formatting";
 import { apiPollMs } from "../../../assets/config";
 
@@ -28,6 +29,18 @@ export function useRoundEditor({ id, roundactive, matches, playerspermatch }, ro
   }
 
   return { isEditing, setEditing, showEdit: access > 1, handleCopy, handleCopySeats }
+}
+
+export function useEventClock(id, status = 0, eventClock = null, defaultPoll = 0) {
+  const [ pollingInterval, setPoll ] = useState(defaultPoll);
+  const { data, error, isLoading } = useClockQuery(id, { skip: !id, pollingInterval })
+
+  useEffect(() => {
+    if (data) {
+      setPoll(isZero(eventClock) ? 0 : clockPoll(data.state, status))
+    }
+  }, [data, status, eventClock]);
+  return { data, error, isLoading }
 }
 
 
