@@ -28,6 +28,16 @@ module.exports = {
       gridTemplateColumns: {
         'profile': 'max-content 1fr auto',
       },
+      keyframes: {
+        pulse70: {
+          '0%': { opacity: '0.6' },
+          '50%': { opacity: '0.2' },
+          '100%': { opacity: '0.6' },
+        },
+      },
+      animation: {
+        'pulse-pause': 'pulse70 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
     },
   },
   plugins: [

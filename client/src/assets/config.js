@@ -6,6 +6,12 @@ export const sessionCookie = 'tt-session' // Key for visible session cookie (Mus
 
 export const apiPollMs = 30000 // How often to poll API for updates
 
+export const clockFrequency = {
+  fastPoll: 5 * 1000, // 5 seconds
+  slowPoll: 30 * 1000, // 30 seconds
+  tick: 1000, // Update clock = 1 second
+}
+
 export const suggestText = {
   hideListWhenExact: false, // when exact match is entered, hide list
   hideListWhenEmpty: false, // when textbox empty: false = show all / true = show none

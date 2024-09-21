@@ -3,6 +3,7 @@ const { matchedData }  = require('express-validator');
 // Models
 const event = require('../db/models/event');
 const match = require('../db/models/match');
+const clock = require('../db/models/clock');
 
 // Lookup Settings
 const settings = require('../db/models/settings');
@@ -83,6 +84,8 @@ async function nextRound(req, res) {
   const ret = await event.pushRound(eventid, round, matches, req);
   if (!Array.isArray(ret) || !ret[0]) throw new Error("Error adding round to database");
 
+  await clock.reset(id, req);
+
   return res.sendAndLog({
     id: ret[0].id,
     round: ret[0].roundactive,
@@ -102,6 +105,8 @@ async function prevRound(req, res) {
     throw new Error("Recieved too many round change requests.");
 
   await event.popRound(id, round, req);
+
+  await clock.reset(id, req);
 
   return res.sendAndLog({ id: id, round });
 }

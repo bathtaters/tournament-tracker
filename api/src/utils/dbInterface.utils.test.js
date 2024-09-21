@@ -1,11 +1,42 @@
 // Import
 const main = require('./dbInterface.utils');
 const {
+  intervalString,
   strTest, lineCount,
   queryLabels, queryValues,
   sqlSub,
   getFirst, getReturn, getSolo
 } = main;
+
+// ---- Interval Adapter ---- //
+
+describe('intervalString', () => {
+  it('converts object to string', () => {
+    expect(intervalString({ years: 2, months: 3, days: 4, hours: 5, minutes: 16, seconds: 27, milliseconds: 389 }))
+      .toBe("2 years 3 months 4 days 5 hours 16 minutes 27 seconds 389 milliseconds")
+    expect(intervalString({ seconds: 123 })).toBe('123 seconds')
+    expect(intervalString({ seconds: 123, milliseconds: 456 })).toBe('123 seconds 456 milliseconds')
+  })
+  it('uses consistent order', () => {
+    expect(intervalString({ milliseconds: 389, months: 3, seconds: 27, days: 4, hours: 5, minutes: 16, years: 2 }))
+      .toBe("2 years 3 months 4 days 5 hours 16 minutes 27 seconds 389 milliseconds")
+  })
+  it('uses singular nouns', () => {
+    expect(intervalString({ years: 1, months: 1, days: 1, hours: 1, minutes: 1, seconds: 1, milliseconds: 1 }))
+      .toBe("1 year 1 month 1 day 1 hour 1 minute 1 second 1 millisecond")
+  })
+  it('ignores non-interval keys', () => {
+    expect(intervalString({ days: 4, minutes: 6, foo: 11 }))
+      .toBe("4 days 6 minutes")
+  })
+  it('ignores non-numeric values', () => {
+    expect(intervalString({ days: 14, minutes: "6", seconds: 55 }))
+      .toBe("14 days 55 seconds")
+  })
+  it('handles empty object', () => {
+    expect(intervalString({})).toBe('')
+  })
+})
 
 
 // ---- Test String ---- //

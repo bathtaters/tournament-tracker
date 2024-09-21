@@ -1,6 +1,7 @@
 import React from "react";
 import NumberPicker from "./NumberPicker";
 import RangeSelector from "./RangeSelector";
+import TimePicker from "./TimePicker";
 import { RowStyle, InputStyle } from "../../styles/InputFormStyles"
 
 // FormRow
@@ -28,6 +29,9 @@ export function ElementInput({ inputProps = {}, backend, className, wrapperClass
 
   if (inputProps.type === 'range' && !inputProps.disabled)
     return <RangeSelector {...inputProps} className={className} wrapperClass={wrapperClass} />;
+
+  if (inputProps.type === 'time' && !inputProps.disabled)
+    return <TimePicker {...inputProps} backend={backend} className={className} wrapperClass={wrapperClass} />
 
   return (
     <InputStyle disabled={inputProps.disabled} className={wrapperClass}>

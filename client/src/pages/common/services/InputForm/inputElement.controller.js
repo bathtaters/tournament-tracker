@@ -27,6 +27,12 @@ function getLimits(limits, min, max, data, isNumber) {
 const getFormData = ({ id, type, value, limits, disabled, required, setValueAs }, register, onChange) => {
   if (!register) return {}
 
+  if (type === 'time') return {
+    hours: getTimeData("hours", id, value, limits, disabled, required, setValueAs, register, onChange),
+    minutes: getTimeData("minutes", id, value, limits, disabled, required, setValueAs, register, onChange),
+    seconds: getTimeData("seconds", id, value, limits, disabled, required, setValueAs, register, onChange),
+  }
+
   const isNumber = type === 'number'
   return register(id, { 
     value, setValueAs,
@@ -36,6 +42,20 @@ const getFormData = ({ id, type, value, limits, disabled, required, setValueAs }
     pattern: isNumber ? /^\d*$/ : undefined,
   });
 }
+
+// For time type
+const getTimeData = (place, id, value, limits, disabled, required, setValueAs, register, onChange) => getFormData(
+  {
+    id: `${id}.${place}`,
+    type: "number",
+    value: value?.[place],
+    limits: limits?.[place],
+    setValueAs: setValueAs && ((val) => setValueAs(val, place)),
+    disabled, required,
+  },
+  register,
+  onChange && ((ev) => onChange({ ...ev, place })),
+)
 
 
 // Combined getter
@@ -56,7 +76,7 @@ export default function getProps({
   }
 
   return Object.assign(
-    { id: props.id, type: props.type },
+    { id: props.id, type: props.type, disabled: props.disabled, required: props.required },
     getFormData(props, backend.register, onChange),
   )
 }

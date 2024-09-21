@@ -30,7 +30,10 @@ export const editorLayout = (hidePlayers) => [
       label: 'Event URL', id: 'link', type: 'url',
       labelClass: "text-sm",
       inputClass: "input-sm",
-    },
+    },{
+      label: 'Round Timer', id: 'clocklimit',
+      type: 'time',
+    }
   ]
 ];
 

@@ -1,5 +1,16 @@
 // -- Helper functions for PG interface -- //
 
+// Convert a standard interval object into a postgres string
+exports.intervalKeys = ['years', 'months', 'days', 'hours', 'minutes', 'seconds', 'milliseconds']
+exports.intervalString = (interval) => {
+  let result = ""
+  for (const key of exports.intervalKeys) {
+    if (typeof interval[key] === "number")
+      result += ` ${interval[key]} ${interval[key] === 1 ? key.slice(0, -1) : key}`
+  }
+  return result.slice(1)
+}
+
 // Test for SQL injection
 exports.strTest = str => {
   if (Array.isArray(str)) return str.map(exports.strTest);

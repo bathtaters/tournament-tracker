@@ -12,10 +12,10 @@ module.exports = {
     message: "API is not a Teapot."
   },
   clockStates: [
-    "Ended",
+    "Stopped",
     "Running",
-    "Off",
-    "Paused"
+    "Paused",
+    "Ended",
   ],
   points: {
     win: 3,

@@ -39,19 +39,40 @@ describe('getTypeArray', () => {
 // Interval validator [[hh:]mm:]ss
 describe('custom interval validator', () => {
   it('accepts valid intervals', () => {
-    expect(customInterval.validate('01')).toBe(true)
-    expect(customInterval.validate('01:02')).toBe(true)
-    expect(customInterval.validate('01:02:03')).toBe(true)
+    expect(customInterval.validate({ hours: 1 })).toBe(true)
+    expect(customInterval.validate({ hours: 1, minutes: 2 })).toBe(true)
+    expect(customInterval.validate({ hours: 1, minutes: 2, seconds: null })).toBe(true)
+    expect(customInterval.validate({ hours: 0, foo: "any" })).toBe(true)
   })
   it('rejects invalid intervals', () => {
-    expect(customInterval.validate('01:02:03:04')).toBe(false)
-    expect(customInterval.validate('01:0203')).toBe(false)
-    expect(customInterval.validate('1')).toBe(false)
-    expect(customInterval.validate('01:02:03a')).toBe(false)
-    expect(customInterval.validate('a01:02:03')).toBe(false)
+    expect(customInterval.validate({ hours: "a" })).toBe(false)
+    expect(customInterval.validate()).toBe(false)
+    expect(customInterval.validate(1)).toBe(false)
+    expect(customInterval.validate({ hours: 1, minutes: 2, seconds: "a" })).toBe(false)
   })
 })
-
+describe('custom interval sanitizer', () => {
+  it('removes extra keys', () => {
+    expect(customInterval.sanitize.options({ hours: 1, foo: "any" }))
+      .toEqual({ hours: 1, toPostgres: expect.anything() })
+    expect(customInterval.sanitize.options({ minutes: 15, foo: "any", bar: 2 }))
+      .toEqual({ minutes: 15, toPostgres: expect.anything() })
+  })
+  it('converts values to numeric', () => {
+    expect(customInterval.sanitize.options({ hours: 1, minutes: "2" }))
+      .toEqual({ hours: 1, minutes: 2, toPostgres: expect.anything() })
+    expect(customInterval.sanitize.options({ minutes: 15, seconds: "10", hours: true }))
+      .toEqual({ hours: 1, seconds: 10, minutes: 15, toPostgres: expect.anything() })
+  })
+  it('appends toPostgres function', () => {
+    expect(customInterval.sanitize.options({ hours: 3, minutes: 2 })?.toPostgres)
+      .toEqual(expect.any(Function))
+    expect(customInterval.sanitize.options({ hours: 4, minutes: 2 }).toPostgres())
+      .toBe('4 hours 2 minutes')
+    expect(customInterval.sanitize.options({ minutes: 15, seconds: 10, hours: 5 }).toPostgres())
+      .toBe('5 hours 15 minutes 10 seconds')
+  })
+})
 
 // Check escapedLength accurately counts length of escaped string
 //   ex: '&' =esc=> '&amp;' ('amp' has max length of 5)

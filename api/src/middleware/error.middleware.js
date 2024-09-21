@@ -11,10 +11,12 @@ const formatErr = err => err.stack || `${err.name || 'Error'} <${getCode(err)}>:
 // Middleware
 function handleError(err, req, res, _) {
   if (!req.error) req.error = err;
+  const code = getCode(req.error)
   
-  logger.error('Request "'+req.originalUrl+'" encountered:', formatErr(req.error));
+  if (code > 300 || code < 200)
+    logger.error('Request "'+req.originalUrl+'" encountered:', formatErr(req.error));
 
-  res.status(getCode(req.error));
+  res.status(code);
   return res.sendAndLog({ error: getMsg(req.error) });
 }
 

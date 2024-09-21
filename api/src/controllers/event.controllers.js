@@ -2,6 +2,7 @@ const { matchedData }  = require('express-validator');
 
 // Models
 const event = require('../db/models/event');
+const clock = require('../db/models/clock');
 const match = require('../db/models/match');
 const defs = require('../config/validation').defaults.event;
 
@@ -20,6 +21,16 @@ async function getEvent(req, res) {
   const matches = await match.listByEvent(id).then(sortMatchResult);
 
   return res.sendAndLog({ ...eventData, matches });
+}
+
+// Get clock data only
+async function getClock(req, res) {
+  const { id } = matchedData(req)
+  if (!id) throw new Error("Missing event ID.")
+  
+  let data = await clock.get(id).then((data) => Array.isArray(data) ? data[0] : data)
+  if (!data) throw new Error("Event not found")
+  return res.sendAndLog(data)
 }
 
 // All events
@@ -60,9 +71,31 @@ function setPlan(req, res) {
   return event.setPlan(events, req).then(res.sendAndLog);
 }
 
+// Clock operations -- run/pause/reset
+const clockOp = (action) => {
+  switch(action) {
+    case "run": return (req, res) => {
+      const { id } = matchedData(req)
+      if (!id) throw new Error("Missing event ID.")
+      return clock.run(id, req).then(res.sendAndLog).catch(catchClockError("run"))
+    }
+    case "reset": return (req, res) => {
+      const { id } = matchedData(req)
+      if (!id) throw new Error("Missing event ID.")
+      return clock.reset(id, req).then(res.sendAndLog)
+    }
+    case "pause": return (req, res) => {
+      const { id } = matchedData(req)
+      if (!id) throw new Error("Missing event ID.")
+      return clock.pause(id, req).then(res.sendAndLog).catch(catchClockError("pause"))
+    }
+    default: throw new Error(`Unrecognized clock action: ${action}`)
+  }
+}
+
 module.exports = {
-  getEvent, getAllEvents, setPlan,
-  createEvent, removeEvent, updateEvent,
+  getEvent, getAllEvents, getClock, setPlan,
+  createEvent, removeEvent, updateEvent, clockOp,
 };
 
 
@@ -71,3 +104,12 @@ const sortMatchResult = (result) => result && result.reduce((matchArr, row) => {
   matchArr[row.round - 1] = row.matches;
   return matchArr;
 }, []);
+
+// Clock catcher
+const catchClockError = (action) => (err) => {
+  if (err.message === "Event not found") {
+    if (action === "run") throw new Error("Clock is already running or event not found")
+    if (action === "pause") throw new Error("Clock is not running or event not found")
+  }
+  throw err
+}
