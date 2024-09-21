@@ -10,10 +10,11 @@ import Loading from "../common/Loading";
 import CreditButtons from "./components/subcomponents/CreditButtons";
 import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 
-import { useEventQuery, useSettingsQuery } from "./event.fetch";
+import { useEventClock, useEventQuery, useSettingsQuery } from "./event.fetch";
 import { roundArray } from "./services/event.services";
 import { isFinished, useDeleteRound } from "./services/roundButton.services";
 import { useParamIds } from "../common/services/idUrl.services";
+import EventClock from "./components/EventClock";
 
 
 function Event() {
@@ -21,14 +22,15 @@ function Event() {
   const modal = useRef(null);
   const { id } = useParamIds('id');
   const { data, isLoading, error, isFetching } = useEventQuery(id);
+  const { data: clock, error: clockErr } = useEventClock(id, data?.status)
   const { data: settings, isLoading: sLoad, error: sErr } = useSettingsQuery();
 
   // Handle delete round
   const handleDelete = useDeleteRound(data);
   
   // Loading/Error catcher
-  if (isLoading || error || sLoad || sErr || !data)
-    return <Loading loading={isLoading || sLoad} error={error || sErr} altMsg="Event not found" tagName="h3" />;
+  if (isLoading || error || sLoad || sErr || clockErr || !data)
+    return <Loading loading={isLoading || sLoad} error={error || sErr || clockErr} altMsg="Event not found" tagName="h3" />;
 
   // Render
   return (
@@ -53,7 +55,9 @@ function Event() {
       
       { settings.showcredits && isFinished(data) && <CreditButtons id={id} /> }
 
-      <RawData data={data} />
+      { clock && data?.status === 2 && <EventClock {...clock} /> }
+
+      <RawData data={{ ...data, clock }} />
 
       <Modal ref={modal}>
         <EditEvent
