@@ -17,12 +17,12 @@ const run = (eventid, req) => log.query(sqlStrings.start, [eventid], (data, erro
         error: error || "Event not found or clock already running",
         dbtable: log.TableName.EVENT,
         action: log.LogAction.UPDATE,
-        data: { clockstart: "now()" },
+        data: { clockstart: "now() - clockmod", clockmod: null },
     }) : data.map((entry) => ({
         tableid: entry.id || eventid,
         dbtable: log.TableName.EVENT,
         action: log.LogAction.UPDATE,
-        data: { clockstart: entry.clockstart },
+        data: { clockstart: entry.clockstart, clockmod: entry.clockmod },
     })),
     req
 )

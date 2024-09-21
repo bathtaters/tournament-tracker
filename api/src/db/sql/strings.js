@@ -2,10 +2,11 @@
 const RawPG = require('../admin/RawPG');
 
 exports.clock = {
-    start: "UPDATE event SET clockstart = now() WHERE id = $1 AND clockstart IS NULL RETURNING *;",
+    start: "UPDATE event SET clockstart = now() - COALESCE(clockmod, '0 seconds'), clockmod = NULL "+
+        "WHERE id = $1 AND clockstart IS NULL RETURNING *;",
     pause: "UPDATE event SET clockstart = NULL, " +
-        "clockmod = COALESCE(clockmod, '0 seconds') + (now() - (SELECT clockstart FROM event WHERE id = $1)) "+
-        "WHERE id = $1 AND clockstart IS NOT NULL RETURNING *;",
+        "clockmod = now() - (SELECT clockstart FROM event WHERE id = $1) "+
+        "WHERE id = $1 AND clockmod IS NULL AND clockstart IS NOT NULL RETURNING *;",
 }
 
 exports.event = {
