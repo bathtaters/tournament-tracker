@@ -23,7 +23,7 @@ export const ButtonsWrapper = ({ children }) => (
 )
 
 export const ClockStyle = ({ timer, paused }) => (
-    <span className={`countdown font-mono text-3xl md:text-5xl ${paused ? 'animate-pulse-pause' : 'opacity-80'}`}>
+    <span className={`countdown font-mono text-2xl md:text-4xl ${paused ? 'animate-pulse-pause' : 'opacity-80'}`}>
         { timer.map((value, idx) => (<Fragment key={`${idx}num`}>
             {idx !== 0 && ":"}
             <span style={{"--value":value}} />
