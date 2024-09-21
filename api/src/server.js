@@ -1,9 +1,10 @@
 const express = require('express');
 const app = express();
 const logger = require('./utils/log.adapter');
-const { name, port, apiVersion: version } = require('./config/meta');
+const { name, port, apiVersion: version, env } = require('./config/meta');
 
 // Setup middleware
+env === "production" && app.set('trust proxy', 1);
 app.use(express.json());
 app.use(require('./middleware/session.middleware'));
 app.use(require('./middleware/log.middleware'));
