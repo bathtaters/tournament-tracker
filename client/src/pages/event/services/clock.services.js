@@ -13,7 +13,7 @@ export const clockPoll = (clockState, eventStatus = 2) => eventStatus !== 2 ? 0 
 /**
  * Return clock correctly formatted for API
  * @param {ClockData} clock - Clock data
- * @returns {{ id: string, state: int, limit: Interval, remaining?: Interval, end?: Date }}
+ * @returns {{ id: string, state: int, limit: Interval, remaining?: Interval, end?: Number }}
  */
 export function calcClock(clock) {
     if (clock.clockstart) clock.clockstart = new Date(clock.clockstart)
@@ -30,7 +30,7 @@ export function calcClock(clock) {
 
 /**
  * React Hook to update Timer state
- * @param {Date} [endDate] 
+ * @param {Number} [endDate] 
  * @param {Interval} [remaining] 
  * @returns {null | [string, string] | [string, string, string]} - Time array ([mm, ss] | [hh, mm, ss])
  */
@@ -47,12 +47,12 @@ export function useTimer(endDate, remaining) {
 
 /**
  * Return a countdown timer string (If running, null if not)
- * @param {Date} endDate 
- * @param {Interval} remaining 
+ * @param {Number} [endDate] 
+ * @param {Interval} [remaining] 
  * @returns {null | [string, string] | [string, string, string]} - Time array ([mm, ss] | [hh, mm, ss])
  */
 export function formatClock(endDate, remaining) {
-    const range = endDate ? getRange(endDate) : remaining
+    const range = endDate != null ? getRange(endDate) : remaining
     return range ? formatInterval(range) : null
 }
 
@@ -72,10 +72,11 @@ const formatInterval = ({ hours, minutes = 0, seconds = 0 } = {}) => hours ? [
 
 /**
  * Determine if the timer has run out
- * @param {Date} endDate 
- * @param {Interval} remaining 
+ * @param {Number} [endDate] 
+ * @param {Interval} [remaining] 
  * @returns {Boolean} - True if the round has ended
  */
+export const hasEnded = (endDate, remaining) => endDate != null ? endDate < Date.now() : isZero(remaining)
 
 /**
  * Test if an interval is zero.
@@ -89,12 +90,12 @@ export const isZero = (interval) => !interval || !Object.values(interval).some(B
 /**
  * Get State of event clock
  * @param {{ clockstart?: Date, clockmod?: Interval }} clockData 
- * @param {int} end 
+ * @param {Number} [end] 
  * @param {Interval} remaining 
- * @returns {int} - [0: stopped, 1: running, 2: paused, 3: ended]
+ * @returns {Number} - [0: stopped, 1: running, 2: paused, 3: ended]
  */
-const getState = ({ clockstart, clockmod }, end = Number.POSITIVE_INFINITY, remaining = null) =>
-    clockstart !== null ? (end < new Date() ? 3 : 1) :
+const getState = ({ clockmod }, end = Number.POSITIVE_INFINITY, remaining = null) =>
+    end !== null ? (end < Date.now() ? 3 : 1) :
     clockmod === null ? 0 : isZero(remaining) ? 3 : 2
 
 
@@ -112,17 +113,17 @@ const getRemaining = ({ clockmod, clocklimit }) => !clockmod ? clocklimit :
  * Get time ending timestamp of event clock
  * WARNING!! Only works on a running gameclock
  * @param {{ clockstart?: Date, clocklimit?: Interval }} clockData 
- * @returns {Date | null} - Timestamp of when clock ends
+ * @returns {Number | null} - Timestamp of when clock ends
  */
-const getEnd = ({ clockstart, clocklimit }) =>  (console.log("CLOCKSTART",clockstart, typeof(clockstart)) || clockstart) &&
-    new Date(clockstart.getTime() + toMs(clocklimit))
+const getEnd = ({ clockstart, clocklimit }) =>  clockstart &&
+    (clockstart.getTime() + toMs(clocklimit))
 
 /**
  * Convert a date range into an interval
- * @param {Date} endDate - Date that timer ends
+ * @param {Number} endDate - Date that timer ends (As a .getTime() number)
  * @returns {{hours?: int, minutes: int, seconds: int}} - Time until timer ends
  */
-const getRange = (endDate, startDate = new Date()) => {
+const getRange = (endDate, startDate = Date.now()) => {
     const time = (endDate - startDate) / 1000
     if (time <= 0) return {}
     return {
