@@ -1,8 +1,8 @@
 # Tournament Tracker API
 
-###### NOTE: See `/api/src/config/dbServer.md` before running for the first time.
+###### NOTE: See [/api/src/config/dbServer.md](./src//config/dbServer.md) before running for the first time.
 
-### Current Major Version: v1
+### Current Major Version: v2
 _Represented below by api/v[n]_
 
 
@@ -37,10 +37,11 @@ _Represented below by api/v[n]_
 
 | URL | Method | Body | Return | Description |
 |------|------|------|------|------|
-|/|POST|{ session }|{ playerData }|Get player data from session token|
-|/|PUT|{ name, password }|{ session }|Create session|
-|/|DELETE|{ session }|{ success }|Destroy session|
-|/[id]|POST|{ session }|{ valid, isSet }|Get password reset session status|
+|/|GET| | |Fetch session cookie|
+|/player|GET| |{ playerData }|Get player data from session cookie|
+|/|POST|{ name, password }|{ success }|Login (Links session to player)|
+|/|DELETE| |{ success }|Logout (Removes player from session)|
+|/[id]|POST|{ session }|{ valid, isSet }|Get password reset status for player|
 
 ---
 
@@ -74,10 +75,12 @@ _Represented below by api/v[n]_
 |/[id]|GET| |{ eventData }|Data from a event|
 |/all/stats|GET| |{ playerid: { stats }, ..., ranking: [ids] }|Player stats from all events|
 |/[id]/stats|GET| |{ playerid: { stats }, ..., ranking: [ids] }|Player stats from an event|
+|/[id]/clock|GET| |{ id, eventClockData... }|Clock data (limit/start/mod) for the event|
 |/|POST|{ eventData }|{ id }|Create a new event|
 |/plan|POST|{ events: [ ids ] }|[{ id }, ... ]|Set event list for current plan|
 |/[id]|DELETE| |{ id }|Deletes event from database|
 |/[id]|PATCH|{ newData }|{ id, newData }|Update event data|
+|/[id]/clock/[action]|POST| |{ eventData }|Execute the action (run/pause/reset) on the event clock|
 |/[id]/round/[round]|POST| |{ id, round: #, matches: [ ids ] }|Add a round of matches|
 |/[id]/round/[round]|DELETE| |{ id, round: # }|Delete the last round|
 |/all/credits|POST| |{ playerid: credits, ... }|Reset player credits using credits from finished events|
@@ -117,55 +120,15 @@ _Represented below by api/v[n]_
 ---
 
 
-## Database Layout
+## Database
 
-```
-settings:
-	id STRING
-	value STRING
-	type STRING = 'string'
+See [DB creation script](./src/db/sql/resetDb.sql) for the database layout.
 
-player:
-	id UUID = random
-	name UNIQUE STRING
-	password STRING = NULL
-	access SMALLINT = 1 ('player')
-	session UUID = NULL
-	isteam BOOLEAN = 0
-	members [player.id] = NULL
+## Updates
 
-event:
-	id UUID = random
-	title STRING
-	day DATE = NULL
-	slot SMALLINT = 0
-	plan BOOLEAN = false
-	players [player.id] = []
-	playercount SMALLINT = 0
-	roundactive SMALLINT = 0
-	roundcount SMALLINT = 3
-	wincount SMALLINT = 2
-	playerspermatch SMALLINT = 2
-	notes STRING NOT NULL DEFAULT ''
-    link STRING NOT NULL DEFAULT ''
-	
-	(clock:)
-	clocklimit INTERVAL = 60min
-	clockstart TIMESTAMP = NULL
-	clockmod INTERVAL = NULL
-
-match:
-	id UUID = random
-	eventid event.id
-	round SMALLINT
-	players [player.id]
-	wins [SMALLINT]
-	draws SMALLINT = 0
-	drops UUID[] = []
-	reported BOOLEAN = FALSE
-
-voter:
-	id UUID = player.id
-	days DATE[] = []
-	events UUID[] = []
-```
+- To update from v0 to v1
+	- Run [v1 update script](./src/db/sql/db_update_v0-v1.sql) on any v0 databases.
+	- Add `"pwsalt": "[random string]"` to [/api/src/config/dbServer.json](./src//config/dbServer.json)
+- To update from v1 to v2 
+	- Run [v2 update script](./src/db/sql/db_update_v1-v2.sql) on any v1 databases.
+	- Add `"sessionSecret": "[random string]"` to [/api/src/config/dbServer.json](./src//config/dbServer.json)
