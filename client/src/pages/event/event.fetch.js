@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { 
   fetchApi, getTags,
   useEventQuery, usePlayerQuery,
@@ -7,29 +8,43 @@ import { useMatchQuery } from '../match/match.fetch';
 import { useSetEventMutation } from '../eventEditor/eventEditor.fetch';
 
 import { nextRoundUpdate, clearRoundUpdate } from './services/eventFetch.services'
+import { calcClock, clockPoll } from './services/clock.services';
 import { debugLogging } from '../../assets/config';
 
 export const eventApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
 
+    clock: build.query({
+      query: (id) => ({ url: `event/${id}/clock`, method: 'GET' }),
+      transformResponse: calcClock,
+      providesTags: getTags('Clock'),
+    }),
+
     nextRound: build.mutation({
       query: ({ id, roundactive }) => ({ url: `event/${id}/round/${roundactive+1}`, method: 'POST' }),
-      transformResponse: debugLogging ? res => console.log('ROUND+',res) || res : undefined,
-      invalidatesTags: getTags(['Event','Match','Stats','PlayerMatch'], {all:0,addAll:['Stats']}),
+      transformResponse: debugLogging ? (res) => console.log('ROUND+',res) || res : undefined,
+      invalidatesTags: getTags(['Event','Match','Stats','PlayerMatch','Clock'], {all:0,addAll:['Stats']}),
       onQueryStarted: nextRoundUpdate,
     }),
 
     clearRound: build.mutation({
       query: ({ id, roundactive }) => ({ url: `event/${id}/round/${roundactive}`, method: 'DELETE' }),
-      transformResponse: debugLogging ? res => console.log('ROUND-',res) || res : undefined,
-      invalidatesTags: getTags(['Event','Match','Stats','PlayerMatch'], {all:0,addAll:['Stats']}),
+      transformResponse: debugLogging ? (res) => console.log('ROUND-',res) || res : undefined,
+      invalidatesTags: getTags(['Event','Match','Stats','PlayerMatch','Clock'], {all:0,addAll:['Stats']}),
       onQueryStarted: clearRoundUpdate,
     }),
 
     updateCredits: build.mutation({
       query: ({ id, undo = false }) => ({ url: `event/${id}/credits`, method: undo ? 'DELETE' : 'POST' }),
-      transformResponse: debugLogging ? res => console.log('UPD_CREDITS',res) || res : undefined,
+      transformResponse: debugLogging ? (res) => console.log('UPD_CREDITS',res) || res : undefined,
       invalidatesTags: getTags('Player', { addAll: ['Player'] }),
+    }),
+
+    clockAction: build.mutation({
+      // Actions: run, reset, pause
+      query: ({ id, action }) => ({ url: `event/${id}/clock/${action}`, method: 'POST' }),
+      transformResponse: debugLogging ? (res) => console.log('CLOCK_OP',res) || res : undefined,
+      invalidatesTags: getTags('Clock'),
     }),
 
   }),
@@ -37,5 +52,14 @@ export const eventApi = fetchApi.injectEndpoints({
 });
 const refetchStats = (id) => fetchApi.util.invalidateTags(getTags('Stats',{all:0})({id}))
 
+
+export function useEventClock(id, status = 0, defaultPoll = 0) {
+    const [pollingInterval, setPoll] = useState(defaultPoll);
+    const { data, error, isLoading } = eventApi.useClockQuery(id, { skip: !id, pollingInterval })
+  
+    useEffect(() => { if (data) { setPoll(clockPoll(data.state, status)) } }, [data, status]);
+    return { data, error, isLoading }
+}
+
 export { useEventQuery, usePlayerQuery, useSettingsQuery, useStatsQuery, useSetEventMutation, useMatchQuery, refetchStats };
-export const { useNextRoundMutation, useClearRoundMutation, useUpdateCreditsMutation } = eventApi;
+export const { useNextRoundMutation, useClearRoundMutation, useUpdateCreditsMutation, useClockActionMutation } = eventApi;

@@ -11,7 +11,7 @@ export const eventEditorApi = fetchApi.injectEndpoints({
         ({ url: `event/${id}`, method: 'PATCH', body }) :
         ({ url: `event`,       method: 'POST',  body }),
       transformResponse: debugLogging ? res => console.log('SET_EVENT',res) || res : undefined,
-      invalidatesTags: getTags(['Event','Stats'],{addBase:['Schedule',{type:'Stats',id:'TOTAL'}]}),
+      invalidatesTags: getTags(['Event','Stats','Clock'],{addBase:['Schedule',{type:'Stats',id:'TOTAL'}]}),
       onQueryStarted: eventSet,
     }),
 
