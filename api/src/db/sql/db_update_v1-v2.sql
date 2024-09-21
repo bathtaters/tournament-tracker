@@ -73,6 +73,10 @@ FROM event
 LEFT JOIN match ON event.id = match.eventid
 GROUP BY event.id;
 
+-- Update DB version Number --
+------------------------------
+UPSERT INTO settings (id, value) VALUES ('dbversion', '2.0.0');
+
 
 -- Non-SQL Updates --
 ---------------------
