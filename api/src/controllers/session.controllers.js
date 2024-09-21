@@ -14,7 +14,7 @@ async function login(req, res, next) {
 
     req.session.user = user.id;
     await players.startSession(name, req);
-    return res.sendAndLog({ session: req.sessionID });
+    return res.sendAndLog({ success: true });
 }
 
 
