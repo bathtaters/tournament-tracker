@@ -39,7 +39,7 @@ async function player(req, res, next) {
 // Fetch session cookie
 async function fetch(req, res, next) {
     if (!req.sessionID) return next({ status: 500, message: 'Server failed to start a session.' });
-    return next();
+    return res.sendAndLog();
 }
 
 
