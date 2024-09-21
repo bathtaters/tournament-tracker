@@ -76,7 +76,13 @@ const formatInterval = ({ hours, minutes = 0, seconds = 0 } = {}) => hours ? [
  * @param {Interval} remaining 
  * @returns {Boolean} - True if the round has ended
  */
-export const hasEnded = (endDate, remaining) => endDate ? endDate < new Date() : isZero(remaining)
+
+/**
+ * Test if an interval is zero.
+ * @param {any} interval 
+ * @returns {Boolean} - True if sum of interval = zero
+ */
+export const isZero = (interval) => !interval || !Object.values(interval).some(Boolean)
 
 /// --- HELPERS --- ///
 
@@ -158,10 +164,3 @@ function toInterval(ms) {
     if (ms > 31) throw Error(`Clock is set too high: ${JSON.stringify(interval)}`)
     return interval
 }
-
-/**
- * Test if an interval is zero.
- * @param {any} interval 
- * @returns {Boolean} - True if sum of interval = zero
- */
-const isZero = (interval) => !interval || !Object.values(interval).some(Boolean)

@@ -7,6 +7,7 @@ import {
 import { useMatchQuery } from '../match/match.fetch';
 import { useSetEventMutation } from '../eventEditor/eventEditor.fetch';
 import { nextRoundUpdate, clearRoundUpdate, clockUpdate } from './services/eventFetch.services'
+import { calcClock, clockPoll, isZero } from './services/clock.services';
 import { debugLogging } from '../../assets/config';
 
 export const eventApi = fetchApi.injectEndpoints({
@@ -52,11 +53,15 @@ export const eventApi = fetchApi.injectEndpoints({
 const refetchStats = (id) => fetchApi.util.invalidateTags(getTags('Stats',{all:0})({id}))
 
 
-export function useEventClock(id, status = 0, defaultPoll = 0) {
+export function useEventClock(id, status = 0, eventClock = null, defaultPoll = 0) {
     const [pollingInterval, setPoll] = useState(defaultPoll);
     const { data, error, isLoading } = eventApi.useClockQuery(id, { skip: !id, pollingInterval })
   
-    useEffect(() => { if (data) { setPoll(clockPoll(data.state, status)) } }, [data, status]);
+    useEffect(() => {
+      if (data) {
+        setPoll(isZero(eventClock) ? 0 : clockPoll(data.state, status))
+      }
+    }, [data, status, eventClock]);
     return { data, error, isLoading }
 }
 
