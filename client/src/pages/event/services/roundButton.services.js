@@ -2,7 +2,8 @@ import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
 import { useNextRoundMutation, useClearRoundMutation } from "../event.fetch";
 
 import { deleteRoundAlert } from "../../../assets/alerts";
-import { roundButtonText, roundButtonLockCaption, roundThresholdMsg, roundThreshold } from "../../../assets/constants";
+import { roundButtonText, roundButtonLockCaption, roundThresholdMsg } from "../../../assets/constants";
+import { metadata } from "../../../core/services/validation.services";
 import { debugLogging } from "../../../assets/config";
 
 // Get Round Button label
@@ -41,6 +42,9 @@ export default function useRoundButton(event, disabled) {
   // Get button status
   const disableButton = disabled || isLocked || disableRound(event)
 
+  // Show warning?
+  const showWarning = event?.players?.length && event.players.length > metadata.pairingThreshold && isNext(event)
+
   return {
     handleClick: disableButton ? null :
       isNext(event) ? () => {
@@ -49,7 +53,7 @@ export default function useRoundButton(event, disabled) {
       }: deleteRound,
 
     buttonText: getRoundButton(event, isLocked),
-    buttonWarning: event?.players?.length &&  event.players.length > roundThreshold && isNext(event) ? roundThresholdMsg : null
+    buttonWarning: showWarning ? roundThresholdMsg : null
   }
 }
 

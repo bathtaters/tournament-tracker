@@ -12,4 +12,5 @@ module.exports = {
   sqlFilesPath: join(__dirname,'..','db','sql'), // Update if this file moves
   morganLog: 'common', // morgan log format or 'debug' for custom logging
   env: process.env.NODE_ENV,
+  pairingThreshold: 10, // Max number of players to use advanced pairing algorithm for
 }
