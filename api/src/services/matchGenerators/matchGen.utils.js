@@ -106,7 +106,7 @@ exports.getGroupsSimple = (array, width) => {
 // --- RANDOMIZE/2D-IZE ARRAY --- \\
 
 // Fischer-Yates shuffle algo
-function shuffle(array) {
+exports.shuffle = (array) => {
   let currentIndex = array.length,  randomIndex;
 
   // While there remain elements to shuffle...
@@ -132,7 +132,7 @@ function shuffle(array) {
  * @returns {Any[][]} 2-D result array
  */
  exports.randomGroup = (array, groupSize) => {
-  array = shuffle(array.slice());
+  array = exports.shuffle(array.slice());
   if (groupSize < 1) return array;
   let newArr = [];
   for(let i=0; i < array.length; i += groupSize) {
