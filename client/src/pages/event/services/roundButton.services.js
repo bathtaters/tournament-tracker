@@ -43,7 +43,7 @@ export default function useRoundButton(event, disabled) {
   const disableButton = disabled || isLocked || disableRound(event)
 
   // Show warning?
-  const showWarning = event?.players?.length && event.players.length > metadata.pairingThreshold && isNext(event)
+  const showWarning = event?.players?.length && event.players.length > metadata.pairingThreshold && event.status === 2 && isNext(event)
 
   return {
     handleClick: disableButton ? null :
