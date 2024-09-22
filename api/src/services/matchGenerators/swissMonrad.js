@@ -102,7 +102,7 @@ function slowAlgorithm(stats, { playerspermatch, byes, oppData, allMatchups }) {
 
 function noStatsAlgorithm(players, playerspermatch, allMatchups) {
   // If no data provided, do a completely random pairing
-  if (!allMatchups?.length) return randomGroup(players)
+  if (!allMatchups?.length) return randomGroup(players, playerspermatch)
 
   players = shuffle(players) // Randomize array initially
 
