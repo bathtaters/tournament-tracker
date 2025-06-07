@@ -1,23 +1,22 @@
 // Init
 const router = require('express').Router();
 const validate = require('../validators/player.validators');
-const catcher = require('../middleware/catch.middleware');
 const controller = require('../controllers/player.controllers');
 
 
 // *** Player API commands *** \\
 
 // Gets
-router.get('/all',                            catcher(controller.getAllPlayers));
-router.get('/:id',         validate.playerid, catcher(controller.getPlayer));
-router.get('/:id/events',  validate.playerid, catcher(controller.getPlayerEvents));
-router.get('/:id/matches', validate.playerid, catcher(controller.getPlayerMatches));
+router.get('/all',                            controller.getAllPlayers);
+router.get('/:id',         validate.playerid, controller.getPlayer);
+router.get('/:id/events',  validate.playerid, controller.getPlayerEvents);
+router.get('/:id/matches', validate.playerid, controller.getPlayerMatches);
 
 // Sets
-router.post('/',          validate.createPlayer, catcher(controller.createPlayer));
-router.delete('/:id',     validate.playerid,     catcher(controller.removePlayer));
-router.patch('/:id',      validate.updatePlayer, catcher(controller.updatePlayer));
-router.post('/:id/reset', validate.playerid,     catcher(controller.resetPassword));
+router.post('/',          validate.createPlayer, controller.createPlayer);
+router.delete('/:id',     validate.playerid,     controller.removePlayer);
+router.patch('/:id',      validate.updatePlayer, controller.updatePlayer);
+router.post('/:id/reset', validate.playerid,     controller.resetPassword);
 
 
 module.exports = router;
