@@ -28,5 +28,8 @@ app.use(require('./middleware/error.middleware'));
 require('./services/init.services')().then(() => 
 
   // Start server
-  app.listen(port, () => logger.log(`${name} (v${version}) started. Listening on port ${port}.`))
+  app.listen(port, (error) => {
+    if (error) throw error
+    logger.log(`${name} (v${version}) started. Listening on port ${port}.`)
+  })
 );
