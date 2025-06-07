@@ -1,8 +1,8 @@
 // Imports/Spies/Mocks
 const services = require('./validate.services')
+const utils = require('../utils/validate.utils')
 const schemaSpy = jest.spyOn(services, 'getSchema')
 const warnSpy = jest.spyOn(console, 'warn')
-jest.mock('postgres-interval', () => 'parseInterval')
 
 // Mock Config
 jest.mock('../config/validation', () => ({
@@ -295,11 +295,11 @@ describe('getSchema', () => {
   describe('interval', () => {
     it('validation is custom function', () => {
       const result = services.getSchema('test','interval',null,['isIn'],false)
-      expect(result.test.custom.options).toEqual(expect.any(Function))
+      expect(result.test.custom.options).toBe(utils.customInterval.validate)
     })
-    it('sanitize w/ parseInterval', () => {
+    it('sanitize w/ validate.utils', () => {
       const result = services.getSchema('test','interval',null,['isIn'],false)
-      expect(result.test.customSanitizer.options).toBe('parseInterval')
+      expect(result.test.customSanitizer).toBe(utils.customInterval.sanitize)
     })
   })
 

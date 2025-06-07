@@ -116,8 +116,8 @@ describe('queryLabels', () => {
   });
 
   it('from no keys', () => {
-    expect(queryLabels([0,1,2], [])).toBe('');
-    expect(queryLabels([0,1,2], 0)).toBe('');
+    expect(queryLabels([0,1,2], [])).toEqual([]);
+    expect(queryLabels([0,1,2], 0)).toEqual([]);
   });
 
   it('from empty objArray', () => {
