@@ -1,7 +1,7 @@
 # Server Credentials
 
 `dbServer.json` should be created in this directory using this template:
-```
+```json
 {
 	"connectionString": "%PROTO://%NAME:%PASS@%DOM:%PORT/%DB?sslmode=%MODE&sslrootcert=%CERT&options=%OPTS",
 	"users": [
@@ -21,6 +21,30 @@
 	"sessionSecret": "[random string]"
 }
 ```
+
+Or for a locally run database *(Dev ONLY!)*:
+```json
+{
+	"connectionString": "%PROTO://%NAME@%DOM:%PORT/%DB?sslmode=%MODE",
+	"users": [
+		{ "name": "api", "pass": "[ignored w/o SSL]" },
+	],
+	"server": {
+		"proto": "postgresql",
+		"dom": "localhost",
+		"port": "26257",
+		"db": "dbname",
+		"mode": "disable",
+		"cert": "",
+		"opts": ""
+	},
+	"pwsalt": "[random string]",
+	"sessionSecret": "[random string]"
+}
+
+```
+
+###### NOTE: Run using `npm run devdb`, initialize using `npm run initdb`.
 
 ------------
 
