@@ -10,6 +10,7 @@ dbServer.json
 
 # dev-only testing files
 /*/coverage
+/api/cockroach-data
 
 # production
 /client/build

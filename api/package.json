@@ -7,8 +7,10 @@
     "start": "export NODE_ENV=production; node ./src/server.js",
     "dev": "export NODE_ENV=development; node --watch ./src/server.js",
     "sync": "node -e 'require(\"./src/services/init.services.js\")(true)'",
+    "devdb": "cockroach start-single-node --insecure --store=path=\"$PWD/cockroach-data\" --listen-addr=localhost:26257 --http-addr=localhost:9095",
     "test": "jest",
-    "inspect": "node --inspect ./src/server.js"
+    "inspect": "node --inspect ./src/server.js",
+    "initdb": "cockroach sql --host=localhost:26257 --user=root --database=defaultdb --insecure -e \"CREATE USER IF NOT EXISTS api;\" -e \"GRANT admin TO api;\" -e \"CREATE ROLE IF NOT EXISTS db_admin;\" -e \"CREATE ROLE IF NOT EXISTS db_rw;\" -e \"CREATE ROLE IF NOT EXISTS db_read;\""
   },
   "config": {
     "port": "9090"
