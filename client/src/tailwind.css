@@ -2,10 +2,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,300;0,500;0,700;1,100;1,300;1,500;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,500;0,700;0,900;1,100;1,300;1,500;1,700;1,900&display=swap');
 
-/* Load Tailwind */
+
+/* Load/Configure Tailwind + DaisyUI */
 @import 'tailwindcss';
 
 @source './node_modules/react-tailwindcss-datepicker/dist/index.esm.js';
+
+@plugin "daisyui";
+@plugin "daisyui/theme" {
+  name: "corporate";
+  default: true;
+  --color-neutral: #D8D8D8;
+  --color-neutral-content: #444;
+}
+@plugin "daisyui/theme" {
+  name: "business";
+  prefersdark: true;
+  --color-neutral: #1A1A1A;
+  --color-neutral-content: #777;
+}
 
 @theme {
     --font-sans: 'Roboto', sans-serif;
