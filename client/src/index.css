@@ -6,7 +6,22 @@ layer(base);
 
 /* Load Tailwind */
 @import 'tailwindcss';
-@config '../tailwind.config.js';
+
+@source './node_modules/react-tailwindcss-datepicker/dist/index.esm.js';
+
+@theme {
+    --font-sans: 'Roboto', sans-serif;
+    --font-serif: 'Garamond', serif;
+    --font-heading: 'Josefin Sans', sans-serif;
+
+    --animate-pulse-pause: pulse-pause 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+    @keyframes pulse-pause {
+        0%   { opacity: 0.6; }
+        50%  { opacity: 0.2; }
+        100% { opacity: 0.6; }
+    }
+}
 
 @utility active {
   /* NavLink styling */
