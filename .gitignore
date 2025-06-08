@@ -18,6 +18,7 @@ dbServer.json
 
 # generated
 /client/src/assets/validation.json
+/client/src/index.css
 
 # misc
 .DS_Store

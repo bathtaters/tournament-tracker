@@ -17,8 +17,12 @@
     "react-tailwindcss-datepicker": "^2.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "(trap 'kill 0' SIGINT; npm run watch:css & npm run start:react)",
+    "start:react": "react-scripts start",
+    "watch:css": "npx @tailwindcss/cli -i ./src/tailwind.css -o ./src/index.css --watch",
+    "build": "npm run build:css && npm run build:react",
+    "build:css": "npx @tailwindcss/cli -i ./src/tailwind.css -o ./src/index.css --minify",
+    "build:react": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -52,7 +56,6 @@
     "@types/js-cookie": "^3.0.6",
     "@types/react": "^19.1.6",
     "daisyui": "^4.12.10",
-    "postcss": "^8.4.5",
     "react-scripts": "^5.0.0",
     "remote-redux-devtools": "^0.5.16",
     "tailwindcss": "^4.1.8",
