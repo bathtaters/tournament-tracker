@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useLayoutEffect } from "react";
-import FocusTrap from "focus-trap-react";
+import { FocusTrap } from "focus-trap-react";
 
 import { ModalStyle, CloseButton } from "./styles/ModalStyle";
 import { useCloseController, useMsgController, useRefController } from "./services/modal.services";
@@ -33,11 +33,11 @@ function Modal({ children, className = 'sm:max-w-3xl', bgClose = true, startOpen
   }, [isOpen])
 
   // Render into modalRoot
-  return isOpen && (
-    <FocusTrap paused={alertIsOpen} focusTrapOptions={{ escapeDeactivates: false }}>
-      <ModalStyle onClick={bgClose ? () => close() : null} className={className}>
+  return (
+    <FocusTrap active={isOpen} paused={alertIsOpen} focusTrapOptions={{ escapeDeactivates: false, tabbableOptions: { displayCheck: 'legacy-full' } }}>    
+      <ModalStyle isOpen={isOpen} onClick={bgClose ? () => close() : null} className={className}>
         <CloseButton onClick={closeWithMsg} />
-        {children}
+        {isOpen && children}
       </ModalStyle>
     </FocusTrap>
   )

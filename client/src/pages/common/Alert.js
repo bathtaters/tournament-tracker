@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import FocusTrap from "focus-trap-react";
+import { FocusTrap } from "focus-trap-react";
 
 import RawData from "./RawData";
 import {
@@ -39,9 +39,9 @@ function Alert() {
   }, { skip: !isOpen, deps: [close] })
 
   // Render Alert Component to AlertRoot
-  return isOpen && (
-    <FocusTrap focusTrapOptions={{ escapeDeactivates: false }}>
-      <ModalStyle className={alertModalClass + (className ?? '')} z="z-90">
+  return (
+    <FocusTrap active={isOpen} focusTrapOptions={{ escapeDeactivates: false }}>
+      <ModalStyle isOpen={isOpen} className={alertModalClass + (className ?? '')} z="z-90">
         { Boolean(showClose ?? !buttons?.length) && <CloseButton onClick={() => close(showClose || undefined)} /> }
 
         {title && <AlertTitleStyle>{title}</AlertTitleStyle>}
