@@ -9,7 +9,7 @@ const { types } = require("pg");
 async function initServices(syncOnly = false) {
   // Copy validation params to client
   await exportToClient({ ...validation, meta }, 'src', 'assets', 'validation.json')
-    .then(p => console.log('Validate config copied to client --  '+p));
+    .then(p => logger.log('Validate config copied to client --  '+p));
   if (syncOnly) process.exit(0)
 
   // Setup integer parsing for pg

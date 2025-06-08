@@ -21,7 +21,7 @@ async function openConnection() {
   catch(e) {
     // Catch missing DB
     if ((e.code === '42602' || e.code === '3D000')) {
-      console.error('DB Does Not Exist! Creating now...');
+      logger.error('DB Does Not Exist! Creating now...');
       try { await resetDatabase(true, false, runOperation); } catch (err) { throw err; }
     } else {
       throw new Error(`Unable to connect to DB: "${connStr}": ${e.message || e.description || e}`);

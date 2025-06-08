@@ -2,6 +2,7 @@ const plan = require('../db/models/plan')
 const event = require('../db/models/event')
 const voter = require('../db/models/voter')
 const setting = require('../db/models/settings')
+const logger = require('../utils/log.adapter')
 const generatePlan = require('../services/plan.services')
 const { fromObjArray } = require('../services/settings.services')
 const { planStatus, updateProg } = require('../utils/plan.utils')
@@ -33,7 +34,7 @@ async function genPlanAsync(req) {
 
     } catch (err) {
         await setting.batchSet(planStatus(2), req)
-        console.error('Plan generator failed in genPlanAsync:', err)
+        logger.error('Plan generator failed in genPlanAsync:', err)
         throw err
     }
 }

@@ -1,4 +1,5 @@
 const { parentPort } = require("worker_threads")
+const logger = require("../utils/log.adapter")
 const { getEventScores, getPlanScore } = require("../utils/plan.utils")
 
 /** Process worker for multithreading -- value is schedule, extra is all other data */
@@ -87,8 +88,8 @@ function getBestPlan(schedule, { events, voters, slots, dates, slotCount, daysOf
             }
         })
     } catch (e) {
-        console.log(playerLists)
-        console.log(voters)
+        logger.log("PlayerLists:", playerLists)
+        logger.log("Voters:", voters)
         throw e
     }
     
