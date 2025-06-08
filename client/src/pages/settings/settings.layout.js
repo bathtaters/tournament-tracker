@@ -5,7 +5,7 @@ export const layout = [
   {
     label: 'Title', id: 'title', type: 'text', defaultValue: '', required: true,
     className: "w-full m-2",
-    inputClass: "input-lg w-full",
+    inputClass: "input-lg",
     setValueAs: (title) => title.trim() || defaultSettings.title,
   },
 

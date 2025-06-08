@@ -47,7 +47,7 @@ export function DropdownInput({ label, props }) {
     return (
         <MenuItemStyle lessPadding={true}>
             <input
-                className="input w-full"
+                className="input input-ghost bg-base-200"
                 placeholder={label}
                 type={label === "Password" ? "password" : "text"}
                 {...props}

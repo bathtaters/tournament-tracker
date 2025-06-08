@@ -23,7 +23,7 @@ export function MenuStyle({ onSubmit, children }) {
 
 export function MenuItemStyle({ lessPadding, disabled, children }) {
   return (
-    <li className={`px-1${disabled ? ' disabled' : ''}`}>
+    <li className={`px-1${disabled ? ' menu-disabled' : ''}`}>
       <h4 className={`w-full text-xl sm:text-2xl block${lessPadding ? ' p-1 bg-ignore' : ''}`}>
         {children}
       </h4>

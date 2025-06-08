@@ -34,7 +34,7 @@ export const listClassDef = {
   base: "w-full py-0.5 px-2 text-base line-clamp-2 break-words text-ellipsis cursor-default",
   select: "bg-base-300 text-base-content",
   unselect: "bg-base-100 text-base-content",
-  textbox: "w-40 h-full py-1 input input-sm input-bordered align-middle",
+  textbox: "w-40 h-full py-1 input input-sm align-middle",
 }
 
 // Layout-based styling

@@ -12,7 +12,7 @@ export function NotesStyle(props) {
   const ref = useScaleToFitRef([props.value], { padding: 2 })
   return (
     <textarea
-      className="textarea textarea-bordered font-light text-xs sm:text-sm px-2 py-1 resize-none w-full"
+      className="textarea font-light text-xs sm:text-sm px-2 py-1 resize-none w-full"
       ref={ref} {...props}
     />
   )

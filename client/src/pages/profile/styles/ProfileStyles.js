@@ -26,7 +26,7 @@ export const defaultPicClass = "w-full h-full p-[15%] fill-neutral-content"
 export function PlayerDataStyle({ children }) {
   return (
     <div className="grow shrink w-screen sm:max-w-md my-1">
-      <form className="form-control grid grid-flow-row grid-cols-[max-content_1fr_auto] items-center px-4 gap-1">
+      <form className="grid grid-flow-row grid-cols-[max-content_1fr_auto] items-center px-4 gap-1">
         {children}
       </form>
     </div>
