@@ -3,15 +3,15 @@ import Tabs from "../common/Tabs"
 import Loading from "../common/Loading"
 import PlanTabVote from "./components/PlanTabVote"
 import PlanTabView from "./components/PlanTabView"
-import { PlanWrapperStyle, PlanTitleStyle, PlanButton, PlanMessageStyle } from "./styles/PlanStyles"
+import { PlanWrapperStyle, PlanTitleStyle, PlanButton, PlanMessageStyle, PlanErrorStyle } from "./styles/PlanStyles"
 import usePlanVoteController, { planTabs } from "./services/planVote.controller"
 import { planMessage } from "../../assets/constants"
 
 function PlanVote() {    
     const {
         data, events, settings,
-        isLoading, error, isVoter,
-        title, access,
+        isLoading, error, flashError,
+        title, access, isVoter,
         handleSetup, handleGenerate,
         tab, selectTab, showTabs,
     } = usePlanVoteController()
@@ -33,6 +33,8 @@ function PlanVote() {
                 left={access > 2 && <PlanButton className="btn-secondary" onClick={handleSetup}>← Setup</PlanButton>}
                 right={access > 2 && <PlanButton onClick={handleGenerate}>Generate</PlanButton>}
             />
+
+            { flashError && <PlanErrorStyle>Planning error: {flashError}</PlanErrorStyle> }
 
             { showTabs && <Tabs labels={planTabs} value={tab} onChange={selectTab} /> }
             

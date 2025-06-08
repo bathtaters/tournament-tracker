@@ -19,6 +19,12 @@ export const PlanMessageStyle = ({ children }) => (
     </h3>
 )
 
+export const PlanErrorStyle = ({ children }) => (
+    <p className="font-bold text-center text-error/80">
+        {children}
+    </p>
+)
+
 export const PlanRowStyle = ({ children }) => (
     <div className="w-full flex flex-col sm:flex-row justify-stretch gap-4 my-2">
         {children}
