@@ -3,6 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,500;0,700;0,900;1,100;1,300;1,500;1,700;1,900&display=swap');
 
 /* Load Tailwind */
+@reference "tailwindcss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -15,7 +16,7 @@
         @apply text-xs   sm:text-base  print:text-xs;
     }
     
-    h1, h2, h3, h4, h5, h6 { @apply    font-heading pt-1; }
+    h1, h2, h3, h4, h5, h6 { @apply    pt-1; }
     h1 { @apply font-light   text-6xl  sm:text-8xl  print:text-6xl; }
     h2 { @apply font-medium  text-4xl  sm:text-6xl  print:text-4xl; }
     h3 { @apply font-bold    text-2xl  sm:text-4xl  print:text-2xl; }
@@ -29,16 +30,6 @@
     /* Fix daisyUI table formatting */
     .table > thead > tr > th:first-child {
         @apply static;
-    }
-
-    .table-zebra tbody tr:nth-child(even) {
-        @apply bg-base-200/50;
-    }
-    .table-zebra tbody tr.hover\:bg-base-200:nth-child(even):hover {
-        @apply bg-base-200;
-    }
-    .table-zebra tbody tr.hover\:bg-error:nth-child(even):hover {
-        @apply bg-error;
     }
 
     /* Remove input number up/down arrows */

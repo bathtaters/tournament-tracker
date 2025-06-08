@@ -40,28 +40,4 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require('daisyui'),
-  ],
-  daisyui: {
-    themes: [
-      {
-        corporate: {
-          ...require("daisyui/src/theming/themes")["corporate"],
-          'neutral': '#D8D8D8',
-          'neutral-focus': '#BBB',
-          'neutral-content': '#444',
-        },
-      },
-      {
-        business: {
-          ...require("daisyui/src/theming/themes")["business"],
-          'neutral': '#1A1A1A',
-          'neutral-focus': 'black',
-          'neutral-content': '#777',
-        },
-      },
-    ],
-    darkTheme: 'business',
-  }
 }
