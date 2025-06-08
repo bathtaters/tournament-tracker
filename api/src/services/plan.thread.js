@@ -1,6 +1,5 @@
 const { parentPort } = require("worker_threads")
 const { getEventScores, getPlanScore } = require("../utils/plan.utils")
-const { combinationCount, getCombinationN, getArrayCombos } = require("../utils/combination.utils")
 
 /** Process worker for multithreading -- value is schedule, extra is all other data */
 parentPort.on('message', ({ value, extra }) => {
@@ -16,11 +15,13 @@ function getBestPlan(schedule, { events, voters, slots, dates, slotCount, daysOf
         rankIdx = voters.map(() => 0)
 
     // Loop while player list is incomplete
-    while (playerLists.some((players, slot) => players.length !== schedule[slot].playercount)) {
+    while (playerLists.some((players, slot) => schedule[slot] && (players.length !== schedule[slot].playercount))) {
         
         // Force players into empty event slots if no one else voted for them
         if (Object.entries(rankIdx).every(([v, rank]) => voters[v].events.length <= rank)) {
             for (const slot in playerLists) {
+                if (!schedule[slot]) continue
+                
                 while (playerLists[slot].length < schedule[slot].playercount) {
 
                     const voterIdx = voters.findIndex(({ ignoreSlots }, v) =>
@@ -62,7 +63,7 @@ function getBestPlan(schedule, { events, voters, slots, dates, slotCount, daysOf
                     break
                 }
             }
-        }   
+        }
     }
 
     // Generate plan data from playerLists

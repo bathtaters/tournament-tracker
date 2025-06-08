@@ -27,6 +27,7 @@ async function genPlanAsync(req) {
         const settings = await setting.getAll().then(fromObjArray)
         
         const planData = await generatePlan(events, voters, settings, updateProg(setting.batchSet))
+            .then((data) => data.filter(({ id }) => id))
         await plan.multiset(planData, req)
         await setting.batchSet(planStatus(4, 100), req)
 
