@@ -2,7 +2,7 @@ import React from "react";
 
 export function HeaderStyle({ children }) {
   return (<>
-    <div className="fixed top-0 left-0 right-0 z-50 bg-base-200 bg-opacity-90">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-base-200/90">
       <div className="navbar h-24 md:h-40 max-w-4xl m-auto">
         {children}
       </div>
