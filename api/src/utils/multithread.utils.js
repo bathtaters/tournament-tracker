@@ -16,6 +16,9 @@ async function multithread(threadPath, threadCount, dataGenerator, resultCb, ext
     Worker.setMaxListeners(threadCount + 1)
 
     const threadBuffer = new Array(threadCount).fill(null)
+    const terminateAll = () => Promise.allSettled(threadBuffer.map(
+        (thread) => thread?.terminate ? thread.terminate() : Promise.resolve(thread)
+    ))
 
     function getThread(value) {
         return new Promise((res, rej) => {
@@ -40,7 +43,12 @@ async function multithread(threadPath, threadCount, dataGenerator, resultCb, ext
     let index = 0
     for (const value of dataGenerator) {
         // Wait for thread to complete
-        if (threadBuffer[index]) await threadBuffer[index]
+        try {
+            if (threadBuffer[index]) await threadBuffer[index]
+        } catch (err) {
+            await terminateAll()
+            throw err
+        }
 
         // Add thread to promises array
         const current = index
@@ -52,7 +60,7 @@ async function multithread(threadPath, threadCount, dataGenerator, resultCb, ext
         index = (index + 1) % threadCount
     }
 
-    await Promise.all(threadBuffer.filter(Boolean))
+    await Promise.all(threadBuffer.filter(Boolean)).catch(terminateAll)
 }
 
 module.exports = multithread
