@@ -6,7 +6,7 @@
 /* Load/Configure Tailwind + DaisyUI */
 @import 'tailwindcss';
 
-@source './node_modules/react-tailwindcss-datepicker/dist/index.esm.js';
+@source '../node_modules/react-tailwindcss-datepicker/dist/index.esm.js';
 
 @plugin "daisyui";
 @plugin "daisyui/theme" {
@@ -23,32 +23,37 @@
 }
 
 @theme {
-    --font-sans: 'Roboto', sans-serif;
-    --font-serif: 'Garamond', serif;
-    --font-heading: 'Josefin Sans', sans-serif;
-
-    --animate-pulse-pause: pulse-pause 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-
-    @keyframes pulse-pause {
-        0%   { opacity: 0.6; }
-        50%  { opacity: 0.2; }
-        100% { opacity: 0.6; }
-    }
+  --font-sans: 'Roboto', sans-serif;
+  --font-serif: 'Garamond', serif;
+  --font-heading: 'Josefin Sans', sans-serif;
+  
+  --animate-pulse-pause: pulse-pause 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  
+  @keyframes pulse-pause {
+    0%   { opacity: 0.6; }
+    50%  { opacity: 0.2; }
+    100% { opacity: 0.6; }
+  }
 }
+
+/* Temp fix for https://github.com/onesine/react-tailwindcss-datepicker/pull/307 */
+.opacity-1 { @apply opacity-100; }
 
 
 /* Base Styles */
-html { @apply h-full w-full; }
-body {
-    @apply relative  leading-none  font-sans;
-    @apply text-xs   sm:text-base  print:text-xs;
+@layer base {
+  html { @apply h-full w-full; }
+  body {
+      @apply relative  leading-none  font-sans;
+      @apply text-xs   sm:text-base  print:text-xs;
+  }
+  
+  h1, h2, h3, h4, h5, h6 { @apply    font-heading pt-1; }
+  h1 { @apply font-light   text-6xl  sm:text-8xl  print:text-6xl; }
+  h2 { @apply font-medium  text-4xl  sm:text-6xl  print:text-4xl; }
+  h3 { @apply font-bold    text-2xl  sm:text-4xl  print:text-2xl; }
+  h4 { @apply font-medium  text-base sm:text-xl   print:text-base; }
 }
-
-h1, h2, h3, h4, h5, h6 { @apply    font-heading pt-1; }
-h1 { @apply font-light   text-6xl  sm:text-8xl  print:text-6xl; }
-h2 { @apply font-medium  text-4xl  sm:text-6xl  print:text-4xl; }
-h3 { @apply font-bold    text-2xl  sm:text-4xl  print:text-2xl; }
-h4 { @apply font-medium  text-base sm:text-xl   print:text-base; }
 
 
 /* NavLink styling */
