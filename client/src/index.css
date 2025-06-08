@@ -1,12 +1,94 @@
 /* Load Custom Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,300;0,500;0,700;1,100;1,300;1,500;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,500;0,700;0,900;1,100;1,300;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,300;0,500;0,700;1,100;1,300;1,500;1,700&display=swap')
+layer(base);
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,500;0,700;0,900;1,100;1,300;1,500;1,700;1,900&display=swap')
+layer(base);
 
 /* Load Tailwind */
+@import 'tailwindcss';
+
+@config '../tailwind.config.js';
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility active {
+  /* NavLink styling */
+  &a {
+    @apply cursor-default;
+  }
+}
+
+@utility active-parent {
+  & a {
+    @apply cursor-default;
+  }
+  & a .link {
+    @apply cursor-default;
+  }
+}
+
+@utility link {
+  a.active-parent & {
+    @apply cursor-default;
+  }
+}
+
+@utility table {
+  /* Fix daisyUI table formatting */
+  & > thead > tr > th:first-child {
+    @apply static;
+  }
+}
+
+@utility hide-arrows {
+  /* Remove input number up/down arrows */
+  &input[type='number'] {
+    -moz-appearance: textfield;
+  }
+  &input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    @apply m-0;
+  }
+  & input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    @apply m-0;
+  }
+}
+
+@utility select {
+  /* Hide arrow in disabled dropdown */
+  &:disabled {
+    background-image: none;
+  }
+}
+
+@utility bg-ignore {
+  /* Class to ignore background effects */
+  @apply hover:bg-transparent active:bg-transparent focus:bg-transparent;
+}
+
+@utility btn {
+  /* General button styling */
+  @apply uppercase;
+}
+
 @reference "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* Base Styles */
 @layer base {
@@ -21,37 +103,4 @@
     h2 { @apply font-medium  text-4xl  sm:text-6xl  print:text-4xl; }
     h3 { @apply font-bold    text-2xl  sm:text-4xl  print:text-2xl; }
     h4 { @apply font-medium  text-base sm:text-xl   print:text-base; }
-}
-
-@layer components {
-    /* NavLink styling */
-    a.active, a.active-parent, a.active-parent .link { @apply cursor-default; }
-
-    /* Fix daisyUI table formatting */
-    .table > thead > tr > th:first-child {
-        @apply static;
-    }
-
-    /* Remove input number up/down arrows */
-    input[type=number].hide-arrows {
-        -moz-appearance: textfield;
-    }
-    input[type='number'].hide-arrows::-webkit-inner-spin-button,
-    input[type='number'].hide-arrows::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        @apply m-0;
-    }
-
-    /* Hide arrow in disabled dropdown */
-    .select:disabled {
-        background-image: none;
-    }
-
-    /* Class to ignore background effects */
-    .bg-ignore {
-        @apply hover:bg-transparent active:bg-transparent focus:bg-transparent;
-    }
-
-    /* General button styling */
-    .btn { @apply uppercase; }
 }

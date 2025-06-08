@@ -8,6 +8,6 @@ export const TooltipStyle = (props) => (
         opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${props.className || ""}
         after:content-[""] after:absolute after:w-0 after:h-0
         after:top-0 after:left-1/2 after:mt-[-10px] after:ml-[-10px]
-        after:border-[10px] after:border-t-0 after:border-transparent after:border-b-base-300`
+        after:border-10 after:border-t-0 after:border-transparent after:border-b-base-300`
     } />
 )

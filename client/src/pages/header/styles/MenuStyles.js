@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 export function DropdownStyle({ isRight, children }) {
   return (
-    <div className={`${isRight ? "navbar-end" : "navbar-start"} flex-shrink-0 w-auto`}>
+    <div className={`${isRight ? "navbar-end" : "navbar-start"} shrink-0 w-auto`}>
       <div className={`dropdown dropdown-hover ${isRight ? "dropdown-end" : "dropdown-start"}`}>
         {children}
       </div>
@@ -14,7 +14,7 @@ export function DropdownStyle({ isRight, children }) {
 export function MenuStyle({ onSubmit, children }) {
   return (
     <form onSubmit={onSubmit}>
-      <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-300 rounded-box w-52">
+      <ul tabIndex="0" className="dropdown-content menu p-2 shadow-sm bg-base-300 rounded-box w-52">
         {children}
       </ul>
     </form>

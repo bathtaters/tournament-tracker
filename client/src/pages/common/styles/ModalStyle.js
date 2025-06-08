@@ -21,6 +21,6 @@ export function CloseButton({ onClick }) {
     value="✕"
     aria-label="Close"
     onClick={onClick}
-    className="btn btn-ghost btn-circle btn-sm focus-visible:outline-none focus-visible:bg-base-content/20 absolute top-0 right-0"
+    className="btn btn-ghost btn-circle btn-sm focus-visible:outline-hidden focus-visible:bg-base-content/20 absolute top-0 right-0"
     />);
 }

@@ -10,7 +10,7 @@ export const GeneralSectionStyle = ({ header, children }) => (
 
 export const DragBlockWrapper = ({ number, children }) => (
     <div className="w-full flex flex-row items-center">
-        {number && <div className="flex-shrink mr-1 text-xl font-medium opacity-60 ">{number}.</div>}
+        {number && <div className="shrink mr-1 text-xl font-medium opacity-60 ">{number}.</div>}
 
         {children}
     </div>
@@ -21,7 +21,7 @@ export const dragEventStyle = (boxId) =>
     `h-12 sm:h-16 m-1 px-2 font-light text-lg ${
         boxId !== boxIDs.RANKED ? '' :
         'bg-[color-mix(in_oklab,oklch(var(--p)),black_7%)] text-primary-content hover:bg-primary/80 hover:text-primary-content/80 '
-    }relative flex justify-center items-center flex-grow rounded-xl overflow-hidden text-ellipsis `
+    }relative flex justify-center items-center grow rounded-xl overflow-hidden text-ellipsis `
 
 
 export const SideButtonWrapper = ({ hide, children }) => (
