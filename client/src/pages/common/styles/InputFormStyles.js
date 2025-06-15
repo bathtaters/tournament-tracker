@@ -11,13 +11,12 @@ export const elementDefaults = {
   buttonClass: "btn-primary mx-1 sm:mx-4",
 }
 export const typeDefaults = {
-  text: 'input invalid:input-warning',
-  url: 'input invalid:input-warning',
-  date: 'input invalid:input-warning',
+  text: 'input bg-base-200 invalid:input-warning',
+  url: 'input bg-base-200 invalid:input-warning',
+  date: 'input bg-base-200 invalid:input-warning',
   checkbox: 'toggle',
-  time: 'input min-w-12 pl-2 py-1 invalid:input-warning',
-  number: 'input invalid:input-warning p-1 text-center hide-arrows ',
-  numberSize: 'w-12 sm:w-16 h-8 sm:h-12'
+  time: 'input bg-base-200 min-w-12 pl-2 py-1 invalid:input-warning',
+  number: 'input bg-base-200 invalid:input-warning p-1 text-center hide-arrows w-12 sm:w-16 h-8 sm:h-12',
 }
 
 // Form wrapper
@@ -38,7 +37,7 @@ export function FormErrorStyle({ children }) {
 // Row/Column wrapper
 export function RowStyle({ isRow, children }) {
   return (
-    <div className={`flex justify-start ${isRow ? "flex-col sm:flex-row" : "flex-col"} w-full py-1`}>
+    <div className={`flex justify-start items-start ${isRow ? "flex-col sm:flex-row" : "flex-col"} w-full py-1`}>
       {children}
     </div>
   );
@@ -66,14 +65,9 @@ export function ElementStyle({ label, isFragment, isFloating = true, inputProps 
 }
 
 // Apply Disabled Lock to Input Elements
-export function InputStyle({ disabled, className, children }) {
-  return (
-    <label className={(disabled ? "join " : "") + className}>
-      { children }
-      { disabled && <div className="bg-base-200 flex text-secondary pr-1 sm:pr-2 join-item"><LockIcon /></div> }
-    </label>
-  )
-}
+export const LockStyle = () => (
+  <div className="flex text-secondary bg-base-200 pr-1 sm:pr-2 join-item"><LockIcon /></div>
+)
 
 // Input Form Buttons
 export function ButtonContainer({ children }) {

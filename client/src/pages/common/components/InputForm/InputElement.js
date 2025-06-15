@@ -14,7 +14,7 @@ function InputElement({ label, isFragment, className, labelClass, inputClass, in
       label={label} labelClass={labelClass}
     >
       <ElementInput className={inputClass} inputProps={inputProps} backend={props.backend} />
-      { props.disabled && <LockStyle /> }
+      { inputProps.disabled && <LockStyle /> }
     </ElementStyle>
   )
 }

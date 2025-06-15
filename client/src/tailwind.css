@@ -132,3 +132,9 @@
     @apply cursor-pointer
   }
 }
+
+@utility input {
+  &:has(> [disabled]), &:is(:disabled, [disabled]) {
+    @apply text-inherit bg-base-200;
+  }
+}

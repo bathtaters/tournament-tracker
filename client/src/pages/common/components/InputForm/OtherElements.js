@@ -1,7 +1,7 @@
 import NumberPicker from "./NumberPicker";
 import RangeSelector from "./RangeSelector";
 import TimePicker from "./TimePicker";
-import { RowStyle, InputStyle, elementDefaults, typeDefaults } from "../../styles/InputFormStyles"
+import { RowStyle, elementDefaults, typeDefaults } from "../../styles/InputFormStyles"
 
 export const defaultInputType = 'text' // Default <input> "type" attribute
 
@@ -34,9 +34,5 @@ export function ElementInput({ inputProps = {}, className, wrapperClass, backend
   if (inputProps.type === 'time')
     return <TimePicker {...inputProps} backend={backend} className={inputClass} wrapperClass={wrapperClass} />
 
-  return (
-    <InputStyle disabled={inputProps.disabled} className={wrapperClass}>
-      <input {...inputProps} class={`join-item ${inputClass}`} />
-    </InputStyle>
-  )
+  return <input {...inputProps} class={`join-item ${inputClass}`} />
 }
