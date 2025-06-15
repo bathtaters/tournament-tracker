@@ -18,24 +18,19 @@ export const ResetFormStyle = (props) => (
 
 
 export const LockedInput = ({ label, value }) => (<>
-    <label className="label">
-        <h4 className="label-text text-lg font-thin text-right w-full">{label}</h4>
-    </label>
-    <div className="col-span-3 font-light border border-base-content/50 py-2 px-3 cursor-default">
+    <label className="label justify-end font-light w-full" aria-disabled={true}>{label}</label>
+    <div className="input col-span-3 w-full cursor-default">
         {value}
     </div>
 </>)
 
 
 export const PasswordInput = ({ id, label, redBorder, value, onChange }) => (<>
-    <label className="label" htmlFor={id}>
-        <h4 className="label-text text-lg font-thin text-right w-full">{label}</h4>
-    </label>
-
+    <label className="label justify-end font-light w-full" htmlFor={id}>{label}</label>
     <input
         id={id}
         type="password"
-        className={`input input-primary col-span-3 ${redBorder === id ? 'border-error' : ''}`}
+        className={`input bg-base-200 input-primary col-span-3 w-full ${redBorder === id ? 'border-error' : ''}`}
         autoComplete="new-password"
         value={value}
         onChange={onChange}

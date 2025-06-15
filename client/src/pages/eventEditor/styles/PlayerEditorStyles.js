@@ -3,7 +3,7 @@ import React from "react";
 export function PlayerEditorStyle({ label, playerCount, children }) {
   return (
   <div className="m-4 w-full">
-    <label className="label label-text mb-2">{label + (typeof playerCount !== 'number' ? '' : ` (${playerCount})`)}</label>
+    <label className="label mb-2">{label + (typeof playerCount !== 'number' ? '' : ` (${playerCount})`)}</label>
     { children }
   </div> 
   );

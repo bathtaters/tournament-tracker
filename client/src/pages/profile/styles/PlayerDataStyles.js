@@ -17,8 +17,8 @@ export function EditButton({ value, isEditing = true, onClick, disabled }) {
 // STYLES
 export function LabelStyle({ id, children }) {
   return (
-    <label className="label w-full" htmlFor={id}>
-      <h4 className="label-text text-lg font-thin w-full text-right">{children}</h4>
+    <label className="label justify-end font-light w-full" htmlFor={id}>
+      {children}
     </label>
   );
 }
