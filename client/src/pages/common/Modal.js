@@ -34,7 +34,7 @@ function Modal({ children, className = 'sm:max-w-3xl', bgClose = true, startOpen
 
   // Render into modalRoot
   return (
-    <FocusTrap active={isOpen} paused={alertIsOpen} focusTrapOptions={{ escapeDeactivates: false, tabbableOptions: { displayCheck: 'legacy-full' } }}>    
+    <FocusTrap active={isOpen} paused={alertIsOpen} focusTrapOptions={{ escapeDeactivates: false }}>    
       <ModalStyle isOpen={isOpen} onClick={bgClose ? () => close() : null} className={className}>
         <CloseButton onClick={closeWithMsg} />
         {isOpen && children}
