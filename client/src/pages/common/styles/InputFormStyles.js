@@ -45,7 +45,13 @@ export function RowStyle({ isRow, children }) {
 
 // Input Element wrapper
 export function ElementStyle({ label, isFragment, isFloating = true, inputProps = {}, className, labelClass, children }) {
-  if (isFragment) return (<>{children}</>);
+  if (isFragment) return (<>
+    <label className={`label ${labelClass ?? elementDefaults.labelClass}`} htmlFor={inputProps.id}>
+        {label}
+    </label>
+    {children}
+  </>);
+  
   return (
     <span className={`${className ?? elementDefaults.className} w-full flex flex-row p-2`}>{
       inputProps.type === 'checkbox' ?

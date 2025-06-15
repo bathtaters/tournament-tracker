@@ -13,7 +13,7 @@ function InputElement({ label, isFragment, className, labelClass, inputClass, in
       className={className} isFragment={isFragment} inputProps={inputProps}
       label={label} labelClass={labelClass}
     >
-      <ElementInput className={inputClass} inputProps={inputProps} backend={props.backend} />
+      <ElementInput className={inputClass} wrapperClass={inputWrapperClass} inputProps={inputProps} backend={props.backend} />
       { inputProps.disabled && <LockStyle /> }
     </ElementStyle>
   )
