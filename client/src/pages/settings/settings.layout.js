@@ -20,14 +20,14 @@ export const layout = [
   ],
 
   [
-    { label: 'Enable Credits', id: 'showcredits', type: 'toggle' },
-    { label: 'Auto-Report Byes', id: 'autobyes', type: 'toggle' },
-    { label: 'Show Full Standings', id: 'showstandings', type: 'toggle' },
+    { label: 'Enable Credits', id: 'showcredits', type: 'checkbox' },
+    { label: 'Auto-Report Byes', id: 'autobyes', type: 'checkbox' },
+    { label: 'Show Full Standings', id: 'showstandings', type: 'checkbox' },
   ],
   [
-    { label: 'Show Plan Menu', id: 'planmenu', type: 'toggle' },
-    { label: 'Show Plan Events', id: 'planschedule', type: 'toggle' },
-    { label: 'Show Raw Data', id: 'showrawjson', type: 'toggle', inputClass: 'toggle-accent' },
+    { label: 'Show Plan Menu', id: 'planmenu', type: 'checkbox' },
+    { label: 'Show Plan Events', id: 'planschedule', type: 'checkbox' },
+    { label: 'Show Raw Data', id: 'showrawjson', type: 'checkbox', inputClass: 'toggle-accent' },
   ],
 ];
 

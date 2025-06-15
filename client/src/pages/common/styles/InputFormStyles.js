@@ -14,6 +14,7 @@ export const typeDefaults = {
   text: 'input invalid:input-warning',
   url: 'input invalid:input-warning',
   date: 'input invalid:input-warning',
+  checkbox: 'toggle',
   time: 'input min-w-12 pl-2 py-1 invalid:input-warning',
   number: 'input invalid:input-warning p-1 text-center hide-arrows ',
   numberSize: 'w-12 sm:w-16 h-8 sm:h-12'

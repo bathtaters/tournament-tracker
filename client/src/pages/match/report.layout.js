@@ -19,7 +19,7 @@ export default function reportLayout(playerList, players, wincount) {
 
     // Each player - drop
     },{ 
-      label: 'Drop', id: 'drops.'+pid, type: 'toggle',
+      label: 'Drop', id: 'drops.'+pid, type: 'checkbox',
       className: reportStyles.drop,
       labelClass: reportStyles.dropLabel,
       inputClass: reportStyles.dropInput,

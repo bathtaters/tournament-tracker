@@ -14,7 +14,7 @@ export default function getInputProps({
   const options = {
     id, valueAsNumber, onChange, required, setValueAs, backend,
     value: data?.[id],
-    type: type === 'toggle' ? 'checkbox' : type || defaultInputType,
+    type: type || defaultInputType,
     disabled: typeof disabled === 'function' ? disabled(data) : disabled,
     pattern: valueAsNumber ? /^\d*$/ : undefined,
     ...getLimit('min', limits, valueAsNumber, min, data),
