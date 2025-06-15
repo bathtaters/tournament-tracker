@@ -1,82 +1,56 @@
-import { defaultInputType } from "./inputClass.controller";
+import { defaultInputType } from "../../components/InputForm/OtherElements"
 
-// Individual getters
-const getElementId = (id, label) => (id || label || '').replace(/\W/g,'');
-
-const getType = (type) => type === 'toggle' ? 'checkbox' : type || defaultInputType;
-
-const getDisabled = (disabled, data) => typeof disabled === 'function' ? disabled(data) : disabled;
-
-function getLimits(limits, min, max, data, isNumber) {
-  let elemLimits = {};
-  const suffix = isNumber ? '' : 'Length'
-
-  // Min
-  if (typeof min === 'function') elemLimits['min'+suffix] = min(data);
-  else if (typeof min === 'number') elemLimits['min'+suffix] = min;
-  if (elemLimits['min'+suffix] == null && typeof limits?.min === 'number') elemLimits['min'+suffix] = limits.min;
-  
-  // Max
-  if (typeof max === 'function') elemLimits['max'+suffix] = max(data);
-  else if (typeof max === 'number') elemLimits['max'+suffix] = max;
-  if (elemLimits['max'+suffix] == null && typeof limits?.max === 'number') elemLimits['max'+suffix] = limits.max;
-
-  return elemLimits;
-}
-
-const getFormData = ({ id, type, value, limits, disabled, required, setValueAs }, register, onChange) => {
-  if (!register) return {}
-
-  if (type === 'time') return {
-    hours: getTimeData("hours", id, value, limits, disabled, required, setValueAs, register, onChange),
-    minutes: getTimeData("minutes", id, value, limits, disabled, required, setValueAs, register, onChange),
-    seconds: getTimeData("seconds", id, value, limits, disabled, required, setValueAs, register, onChange),
-  }
-
-  const isNumber = type === 'number'
-  return register(id, { 
-    value, setValueAs,
-    disabled, required, 
-    onChange, ...limits,
-    valueAsNumber: isNumber,
-    pattern: isNumber ? /^\d*$/ : undefined,
-  });
-}
-
-// For time type
-const getTimeData = (place, id, value, limits, disabled, required, setValueAs, register, onChange) => getFormData(
-  {
-    id: `${id}.${place}`,
-    type: "number",
-    value: value?.[place],
-    limits: limits?.[place],
-    setValueAs: setValueAs && ((val) => setValueAs(val, place)),
-    disabled, required,
-  },
-  register,
-  onChange && ((ev) => onChange({ ...ev, place })),
-)
-
-
-// Combined getter
-export default function getProps({
-  id, label, type, data,
-  disabled, required, setValueAs,
+export default function getInputProps({
+  id: inputId, type, data,
   limits, min, max,
-  backend, onChange
-}) {
+  backend, onChange,
+  disabled, required, setValueAs,
+}, label = '') {
 
-  const props = {
-    id: id || getElementId(id, label),
-    type: getType(type),
+  const id = inputId || label.replace(/\W/g,'')
+  const valueAsNumber = type === 'number' || type === 'time'
+
+  // Build register options
+  const options = {
+    id, valueAsNumber, onChange, required, setValueAs, backend,
     value: data?.[id],
-    disabled: getDisabled(disabled, data),
-    limits: getLimits(limits, min, max, data, type === 'number'),
-    required, setValueAs,
+    type: type === 'toggle' ? 'checkbox' : type || defaultInputType,
+    disabled: typeof disabled === 'function' ? disabled(data) : disabled,
+    pattern: valueAsNumber ? /^\d*$/ : undefined,
+    ...getLimit('min', limits, valueAsNumber, min, data),
+    ...getLimit('max', limits, valueAsNumber, max, data),
   }
 
-  return Object.assign(
-    { id: props.id, type: props.type, disabled: props.disabled, required: props.required },
-    getFormData(props, backend.register, onChange),
-  )
+  // Build FormData props
+  if (typeof backend.register !== 'function') return baseProps(options)
+  if (type !== 'time') return { ...baseProps(options), ...backend.register(options.id, options) }
+  
+  return {
+    ...baseProps(options),
+    hours:   backend.register(`${options.id}.hours`,   timeOptions('hours',   options)),
+    minutes: backend.register(`${options.id}.minutes`, timeOptions('minutes', options)),
+    seconds: backend.register(`${options.id}.seconds`, timeOptions('seconds', options)),
+  }
+}
+
+
+// --- Helpers --- \\
+
+const baseProps = ({ id, type, disabled, required }) => ({ id, type, disabled, required })
+
+const timeOptions = (place, { value, setValueAs, onChange, limits, valueAsNumber, ...props }) => ({
+  ...props,
+  ...getLimit('min', limits?.[place], valueAsNumber),
+  ...getLimit('max', limits?.[place], valueAsNumber),
+  value: value?.[place],
+  type: 'number',
+  setValueAs: setValueAs && ((val) => setValueAs(val, place)),
+  onChange: onChange && ((ev) => onChange({ ...ev, place })),
+})
+
+const getLimit = (key, limits, isNumber = false, override = null, data = null) => {
+  const value = typeof override === 'function' ? override(data) : override
+  if (typeof value === 'number') return { [isNumber ? key : `${key}Length`]: value }
+  if (typeof limits?.[key] !== 'number') return {}
+  return { [isNumber ? key : `${key}Length`]: limits[key] }
 }

@@ -1,8 +1,9 @@
-import React from "react";
 import NumberPicker from "./NumberPicker";
 import RangeSelector from "./RangeSelector";
 import TimePicker from "./TimePicker";
-import { RowStyle, InputStyle } from "../../styles/InputFormStyles"
+import { RowStyle, InputStyle, elementDefaults, typeDefaults } from "../../styles/InputFormStyles"
+
+export const defaultInputType = 'text' // Default <input> "type" attribute
 
 // FormRow
 
@@ -17,25 +18,25 @@ export function Spacer({ className }) {
 
 // InputElement
 
-export function ElementLabel({ id, label, isLabel, className }) {
-  if (!label) return null;
-  if (isLabel) return (<label className={'label label-text '+className} htmlFor={id}>{label}</label>);
-  return (<span className={'label-text '+className} htmlFor={id}>{label}</span>);
-}
+export function ElementInput({ inputProps = {}, className, wrapperClass, backend }) {
+  const inputClass = `${
+    typeDefaults[inputProps.type || defaultInputType] ?? inputProps.type ?? ""
+  } ${
+    className ?? elementDefaults.inputClass
+  }`
 
-export function ElementInput({ inputProps = {}, backend, className, wrapperClass }) {
-  if (inputProps.type === 'number' && !inputProps.disabled)
-    return <NumberPicker inputProps={inputProps} backend={backend} className={className} wrapperClass={wrapperClass} />;
+  if (inputProps.type === 'number')
+    return <NumberPicker inputProps={inputProps} backend={backend} className={inputClass} wrapperClass={wrapperClass} />;
 
-  if (inputProps.type === 'range' && !inputProps.disabled)
-    return <RangeSelector {...inputProps} className={className} wrapperClass={wrapperClass} />;
+  if (inputProps.type === 'range')
+    return <RangeSelector {...inputProps} className={inputClass} wrapperClass={wrapperClass} />;
 
-  if (inputProps.type === 'time' && !inputProps.disabled)
-    return <TimePicker {...inputProps} backend={backend} className={className} wrapperClass={wrapperClass} />
+  if (inputProps.type === 'time')
+    return <TimePicker {...inputProps} backend={backend} className={inputClass} wrapperClass={wrapperClass} />
 
   return (
     <InputStyle disabled={inputProps.disabled} className={wrapperClass}>
-      <input {...inputProps} className={"join-item "+className} />
+      <input {...inputProps} class={`join-item ${inputClass}`} />
     </InputStyle>
-  );
+  )
 }

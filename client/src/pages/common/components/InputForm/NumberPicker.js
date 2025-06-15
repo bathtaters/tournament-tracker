@@ -1,14 +1,25 @@
-import React from "react"
 import useNumberPicker, { invalidHandler } from "../../services/InputForm/numberPicker.controller"
 
 export default function NumberPicker({ inputProps, backend, className, wrapperClass }) {
   const { decHandler, incHandler } = useNumberPicker(inputProps, backend)
 
   return (
-    <div className={"join "+wrapperClass}>
-      <button type="button" data-action="decrement" className="btn btn-ghost btn-sm sm:btn-md join-item" onClick={decHandler}>－</button>
-      <input {...inputProps} className={"join-item "+className} onInvalid={invalidHandler} pattern="\\d*" />
-      <button type="button" data-action="increment" className="btn btn-ghost btn-sm sm:btn-md join-item" onClick={incHandler}>＋</button>
+    <div className={`join ${wrapperClass}`}>
+      { !inputProps.disabled && <NumberButtonStyle increment={false} handler={decHandler} /> }
+      <input {...inputProps} className={`join-item hide-arrows ${className}`} onInvalid={invalidHandler} />
+      { !inputProps.disabled && <NumberButtonStyle increment={true}  handler={incHandler} /> }
     </div>
   )
 }
+
+const NumberButtonStyle = ({ increment, handler }) => (
+  <button
+    type="button"
+    data-action={increment ? "increment" : "decrement"}
+    className="btn btn-ghost btn-sm sm:btn-md join-item"
+    disabled={!handler}
+    onClick={handler}
+  >
+    {increment ? "＋" : "－"}
+  </button>
+)

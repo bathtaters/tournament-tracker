@@ -4,8 +4,8 @@ import { defaultSettings } from "../common/services/fetch.services";
 export const layout = [
   {
     label: 'Title', id: 'title', type: 'text', defaultValue: '', required: true,
-    className: "w-full m-2",
-    inputClass: "input-lg",
+    className: "px-6 py-3",
+    inputClass: "input-lg w-full",
     setValueAs: (title) => title.trim() || defaultSettings.title,
   },
 

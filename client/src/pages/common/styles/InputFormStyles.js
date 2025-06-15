@@ -1,13 +1,11 @@
-import React from "react"
 import PropTypes from 'prop-types'
-
 import LockIcon from "../icons/LockIcon"
 import WarningIcon from "../icons/WarningIcon"
 
 // Input Element
 export const elementDefaults = {
   className:  "font-light mx-1 sm:mx-4",
-  labelClass: "whitespace-nowrap",
+  labelClass: "",
   inputWrapperClass: "",
   inputClass: "",
   buttonClass: "btn-primary mx-1 sm:mx-4",
@@ -39,17 +37,29 @@ export function FormErrorStyle({ children }) {
 // Row/Column wrapper
 export function RowStyle({ isRow, children }) {
   return (
-    <div className={`m-1 flex justify-start ${isRow ? "flex-col sm:flex-row" : "flex-col"}`}>
+    <div className={`flex justify-start ${isRow ? "flex-col sm:flex-row" : "flex-col"} w-full py-1`}>
       {children}
     </div>
   );
 }
 
 // Input Element wrapper
-export function ElementStyle({ isFragment, isLabel, className, children }) {
-  if (isLabel) return (<label className={'label '+className}>{children}</label>);
+export function ElementStyle({ label, isFragment, inputProps, className, labelClass, children }) {
   if (isFragment) return (<>{children}</>);
-  return (<div className={className}>{children}</div>);
+  return (
+    <span className={`${className ?? elementDefaults.className} w-full flex flex-row p-2`}>{
+      inputProps.type === 'checkbox' ?
+        <label className={`flex gap-2 text-sm text-left w-full ${inputProps.disabled ? 'join' : ''}`} htmlFor={inputProps.id}>
+          {children}
+          <span className={labelClass ?? elementDefaults.labelClass}>{label}</span>
+        </label>
+        :
+        <label className={`floating-label w-full ${inputProps.disabled ? 'join' : ''}`} htmlFor={inputProps.id}>
+          <span className={labelClass ?? elementDefaults.labelClass}>{label}</span>
+          {children}
+        </label>
+    }</span>
+  );
 }
 
 // Apply Disabled Lock to Input Elements

@@ -1,31 +1,22 @@
-import React from "react";
 import PropTypes from 'prop-types';
+import { ElementInput } from "./OtherElements";
+import { ElementStyle, LockStyle } from "../../styles/InputFormStyles";
+import getInputProps from "../../services/InputForm/inputElement.controller";
 
-import { ElementInput, ElementLabel } from "./OtherElements";
-import { ElementStyle } from "../../styles/InputFormStyles";
-
-import getProps from "../../services/InputForm/inputElement.controller";
-import getClasses from "../../services/InputForm/inputClass.controller";
-
-
-function InputElement(props) {
-
-  // Get element styles (or defaults if none provided)
-  const { className, labelClass, inputClass, inputWrapperClass, labelType } = getClasses(props);
+function InputElement({ label, isFragment, className, labelClass, inputClass, inputWrapperClass, ...props }) {
 
   // Get element props
-  const inputProps = getProps(props);
+  const inputProps = getInputProps(props, label)
 
-  // Render
   return (
-    <ElementStyle isFragment={props.isFragment} isLabel={labelType.nest} className={className}>
-      {labelType.first && <ElementLabel id={inputProps.id} label={props.label} isLabel={!labelType.nest} className={labelClass} />}
-
-      <ElementInput inputProps={inputProps} backend={props.backend} className={inputClass} wrapperClass={inputWrapperClass} />
-
-      {!labelType.first && <ElementLabel id={inputProps.id} label={props.label} isLabel={!labelType.nest} className={labelClass} />}
+    <ElementStyle
+      className={className} isFragment={isFragment} inputProps={inputProps}
+      label={label} labelClass={labelClass}
+    >
+      <ElementInput className={inputClass} inputProps={inputProps} backend={props.backend} />
+      { props.disabled && <LockStyle /> }
     </ElementStyle>
-  );
+  )
 }
 
 // Validation
@@ -37,7 +28,6 @@ InputElement.propTypes = {
   className: PropTypes.string,
   labelClass: PropTypes.string,
   inputClass: PropTypes.string,
-  labelIsRight: PropTypes.bool,
   isFragment: PropTypes.bool,
   disabled: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   min: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
@@ -47,6 +37,6 @@ InputElement.propTypes = {
   transform: PropTypes.func,
   stored: PropTypes.arrayOf(PropTypes.object),
   register: PropTypes.func,
-};
+}
 
-export default InputElement;
+export default InputElement
