@@ -1,7 +1,7 @@
 import React from "react"
 import PropTypes from "prop-types"
 import DragBlock from '../../common/DragBlock'
-import { DragBlockWrapper, dragEventStyle, SideButtonWrapper, SideButton, OverlayButton } from "../styles/PlanTabVoteStyles"
+import { DragBlockWrapper, dragEventStyle, SideButtonWrapper, SideButton, OverlayButton, DragIcon } from "../styles/PlanTabVoteStyles"
 import { canDrop, dataType } from "../services/planVote.services"
 import { arrayPad } from "../services/plan.utils"
 
@@ -27,7 +27,7 @@ function EventDragger({ boxId, eventIds, slots, events, onDrop, onClick, numberS
                 >
                     <span>{id && events?.[id]?.title}</span>
                     {id && numberSlots && <OverlayButton onClick={dropEvent(id)}>✕</OverlayButton>}
-                    {id && <div className="absolute right-1 top-0 bottom-1 text-3xl font-thin flex items-center opacity-60">☰</div>}
+                    {id && <DragIcon />}
                 </DragBlock>
                 
                 {numberSlots ?

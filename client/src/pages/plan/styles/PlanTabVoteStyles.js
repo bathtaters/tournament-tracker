@@ -35,9 +35,10 @@ export const SideButton = (props) => (
 )
 
 export const OverlayButton = (props) => (
-    <div className="absolute top-0 bottom-0 left-0 right-0 z-10 opacity-0 hover:opacity-100 md:hover:opacity-0 flex justify-start items-center pl-1">
+    <div className="absolute top-0 bottom-0 left-0 right-0 z-10 opacity-0 hover:opacity-100 md:hidden flex justify-start items-center pl-1">
         <button type="button" className="btn btn-circle btn-sm btn-rror bg-opacity-70" disabled={!props.onClick} {...props} />
     </div>
 )
 
+export const DragIcon = () => <div className="absolute right-1 top-0 bottom-1 text-3xl font-thin flex items-center opacity-60">☰</div>
     

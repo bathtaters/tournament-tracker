@@ -27,7 +27,7 @@ export const PlanErrorStyle = ({ children }) => (
 )
 
 export const PlanRowStyle = ({ children }) => (
-    <div className="w-full flex flex-col sm:flex-row justify-stretch gap-4 my-2">
+    <div className="w-full flex flex-col sm:flex-row justify-stretch gap-0 md:gap-4 my-2">
         {children}
     </div>
 )
