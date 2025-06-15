@@ -5,7 +5,7 @@ import WarningIcon from "../icons/WarningIcon"
 // Input Element
 export const elementDefaults = {
   className:  "font-light mx-1 sm:mx-4",
-  labelClass: "",
+  labelClass: "block mb-1",
   inputWrapperClass: "",
   inputClass: "",
   buttonClass: "btn-primary mx-1 sm:mx-4",
@@ -45,18 +45,20 @@ export function RowStyle({ isRow, children }) {
 }
 
 // Input Element wrapper
-export function ElementStyle({ label, isFragment, inputProps, className, labelClass, children }) {
+export function ElementStyle({ label, isFragment, isFloating = true, inputProps = {}, className, labelClass, children }) {
   if (isFragment) return (<>{children}</>);
   return (
     <span className={`${className ?? elementDefaults.className} w-full flex flex-row p-2`}>{
       inputProps.type === 'checkbox' ?
         <label className={`flex gap-2 text-sm text-left w-full ${inputProps.disabled ? 'join' : ''}`} htmlFor={inputProps.id}>
           {children}
-          <span className={labelClass ?? elementDefaults.labelClass}>{label}</span>
+          <span className={`label ${labelClass ?? elementDefaults.labelClass}`}>{label}</span>
         </label>
-        :
-        <label className={`floating-label w-full ${inputProps.disabled ? 'join' : ''}`} htmlFor={inputProps.id}>
-          <span className={labelClass ?? elementDefaults.labelClass}>{label}</span>
+      :
+        <label className={`${isFloating ? 'floating-label' : ''} w-full ${inputProps.disabled ? 'join' : ''}`} htmlFor={inputProps.id}>
+          <span className={`label ${labelClass ?? (isFloating ? '' : elementDefaults.labelClass)}`}>
+            {label}
+          </span>
           {children}
         </label>
     }</span>

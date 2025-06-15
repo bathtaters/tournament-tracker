@@ -1,5 +1,6 @@
-import React from "react"
 import { PageTitleStyle } from "../../common/styles/CommonStyles"
+import { ElementStyle } from "../../common/styles/InputFormStyles"
+import { titleStyle } from "../../common/EditableList/styles/EditableListStyles"
 
 export const PlanWrapperStyle = ({ children }) => (
     <div className="flex flex-col justify-center items-center gap-2">{children}</div>
@@ -31,14 +32,10 @@ export const PlanRowStyle = ({ children }) => (
     </div>
 )
 
-export const InputWrapperStyle = ({ label, subLabel, children }) => (
-    <div className="w-full">
-        <label className="label">
-            { label && <span className="label-text">{label}</span> }
-            { subLabel && <span className="label-text-alt">{subLabel}</span> }
-        </label>
+export const InputWrapperStyle = ({ label, children }) => (
+    <ElementStyle label={label} isFloating={false} labelClass={titleStyle}>
         {children}
-    </div>
+    </ElementStyle>
 )
 
 export const PlanFooterStyle = ({ children }) => (
