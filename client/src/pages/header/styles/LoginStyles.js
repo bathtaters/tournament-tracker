@@ -11,7 +11,7 @@ export function LoginMenuButton({ initial, src }) {
                 :
                 <>
                     <DefaultProfilePic className={defaultPicClass} />
-                    <div className="absolute font-thin text-sm top-[0.45rem]">{initial}</div>
+                    <div className="absolute font-thin text-sm w-full top-[10%]">{initial}</div>
                 </>
             }
         </label>
