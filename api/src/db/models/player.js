@@ -58,7 +58,7 @@ async function checkPassword(name, password, user, { sessionID }) {
     if (!user?.id) return log.login(null, sessionID, 'Player not found.', name);
 
     let guess;
-    try { guess = await util.encryptPassword(password); }
+    try { guess = await util.encryptPassword(password, user.id); }
     catch (err) { return log.login(user.id, sessionID, err.message || err || 'Error encrypting password.'); }
 
     if (!user.password) return log.login(user.id, sessionID, 'Password not set, contact administrator if you don\'t have a password link.');

@@ -29,17 +29,24 @@ async function getPlayerMatches(req, res) {
 // Create/remove player
 const removePlayer = (req, res) => players.rmv(matchedData(req).id, req).then(res.sendAndLog);
 
-const createPlayer = async (req, res) => {
-  const body = matchedData(req)
-  if (body.password) body.password = await encryptPassword(body.password)
-  return players.add(body, req).then(res.sendAndLog)
+const createPlayer = async (req, res, next) => {
+  const { password, ...body } = matchedData(req)
+  const user = await players.add(body, req)
+  if (!user.id) return next('Player creation failed.')
+
+  if (password) {
+    // Hash password with new User ID & update
+    const hashed = await encryptPassword(password, user.id)
+    await players.set(user.id, { password: hashed }, req)
+  }
+  return res.sendAndLog(user)
 };
 
 // Update player
 const updatePlayer = async (req, res) => {
   const { id, ...body } = matchedData(req);
   if (req.body.session === null) body.session = null;
-  if (body.password) body.password = await encryptPassword(body.password);
+  if (body.password) body.password = await encryptPassword(body.password, id);
   return players.set(id, body, req).then(res.sendAndLog);
 }
 
