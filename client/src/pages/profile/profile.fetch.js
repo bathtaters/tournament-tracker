@@ -9,13 +9,13 @@ export const profileApi = fetchApi.injectEndpoints({
     setupUser: build.query({
       query: ({ id, session }) => ({ url: `/session/${id || 'setup'}`, method: 'POST', body: { session } }),
       transformResponse: debugLogging ? (res) => console.log('CAN_SETUP',res) || res : undefined,
-      providesTags: ['Setup'],
+      providesTags: ['Setup','Session'],
     }),
 
     updatePlayer: build.mutation({
       query: ({ id, ...body }) => ({ url: `player/${id}`, method: 'PATCH', body }),
       transformResponse: debugLogging ? (res) => console.log('UPD_PLAYER',res) || res : undefined,
-      invalidatesTags: getTags('Player',{ all: 0, addBase: ['Setup'] }),
+      invalidatesTags: getTags('Player',{ all: 0, addBase: ['Setup','Session'] }),
       onQueryStarted: playerUpdate,
     }),
 
