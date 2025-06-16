@@ -3,6 +3,7 @@ const { matchedData }  = require('express-validator');
 const players = require('../db/models/player');
 const { encryptPassword } = require('../utils/session.utils');
 const { arrToObj } = require('../utils/shared.utils');
+const { lastAdminError } = require('../config/constants');
 
 /* GET player database. */
 
@@ -27,7 +28,12 @@ async function getPlayerMatches(req, res) {
 /* SET player database. */
 
 // Create/remove player
-const removePlayer = (req, res) => players.rmv(matchedData(req).id, req).then(res.sendAndLog);
+const removePlayer = async (req, res, next) => {
+  const { id } = matchedData(req);
+  const isLast = await players.isLastAdmin(id)
+  if (isLast) return next(lastAdminError)
+  return players.rmv(id, req).then(res.sendAndLog);
+}
 
 const createPlayer = async (req, res, next) => {
   const { password, ...body } = matchedData(req)

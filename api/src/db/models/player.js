@@ -13,6 +13,9 @@ const getUser = name => db.getRow('player', name, ['id','password'], { idCol: 'n
 const hasPass = id => db.getRow('player', id).then(r => Array.isArray(r) ? r.map(util.checkPassword) : r && util.checkPassword(r));
 const list = () => db.getRow('player',null,'id').then(r => r && r.map(p => p.id));
 
+/** Checks if the given player is an admin and, if so, at least 1 other admin exists (=> true). */
+const isLastAdmin = (id) => db.query(strings.isLastAdmin, [id]).then((r) => r?.[0]?.result)
+
 // Start/End/Fetch User Sessions
 const resetLogin = (id, req) => log.updateRows(
     'player',
@@ -68,7 +71,8 @@ async function checkPassword(name, password, user, { sessionID }) {
 
 
 module.exports = {
-    get, getUser, hasPass, list, add,
+    get, getUser, list, add,
+    hasPass, isLastAdmin,
 
     startSession, 
     resetLogin, 

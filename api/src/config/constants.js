@@ -11,6 +11,10 @@ module.exports = {
     status: 418,
     message: "API is not a Teapot."
   },
+  lastAdminError: {
+    status: 409,
+    message: "Cannot remove player, they are the only 'Gonti' left. Try assigning another 'Gonti' in your player list."
+  },
   clockStates: [
     "Stopped",
     "Running",

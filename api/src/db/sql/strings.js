@@ -26,7 +26,11 @@ exports.event = {
 
 exports.player = {
     eventFilter: "SELECT id FROM event WHERE $1::UUID = ANY(players) ORDER BY day ASC;",
-    hasAdminFilter: "WHERE access > 2 LIMIT 2"
+    hasAdminFilter: "WHERE access > 2 LIMIT 2",
+    isLastAdmin: `
+    SELECT (SELECT COUNT(*) FROM player WHERE access > 2 AND id  = $1 LIMIT 1) > 0
+       AND (SELECT COUNT(*) FROM player WHERE access > 2 AND id != $1 LIMIT 1) < 1
+    AS result;`
 }
 
 exports.match = {
