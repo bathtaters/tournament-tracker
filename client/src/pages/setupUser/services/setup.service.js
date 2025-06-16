@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { usePlayerQuery, useResetSessionQuery, useCreatePlayerMutation, useUpdatePlayerMutation } from "../../profile/profile.fetch"
+import { usePlayerQuery, useSetupUserQuery, useCreatePlayerMutation, useUpdatePlayerMutation } from "../../profile/profile.fetch"
 import { useParamIds } from "../../common/services/idUrl.services"
 
 import { getBaseData } from "../../../core/services/validation.services"
@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom"
 export const { min, max } = getBaseData('player').limits.password
 
 
-export default function useResetPassword() {
+export default function useSetupUser() {
     const navigate = useNavigate()
     const params = useParamIds('id','session')
 
@@ -20,7 +20,7 @@ export default function useResetPassword() {
     const disableBtn = redBorder || !password || !confirm || (!params.id && !username)
 
     const { data: player, isLoading: playerLoading } = usePlayerQuery(params.id, { skip: !params.id })
-    const { data, isLoading, error } = useResetSessionQuery(params, { refetchOnFocus: true, refetchOnReconnect: true, refetchOnMountOrArgChange: true })
+    const { data, isLoading, error } = useSetupUserQuery(params, { refetchOnFocus: true, refetchOnReconnect: true, refetchOnMountOrArgChange: true })
 
     const [ createPlayer, { isLoading: createLoading, error: createError } ] = useCreatePlayerMutation()
     const [ updatePlayer, { isLoading: updateLoading, error: updateError } ] = useUpdatePlayerMutation()

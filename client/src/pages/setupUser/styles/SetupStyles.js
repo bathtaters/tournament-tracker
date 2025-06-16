@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 export { PageTitleStyle } from "../../common/styles/CommonStyles"
 
 
-export const IsResetStyle = ({ title, body, link, to }) => (
+export const SetupMessageStyle = ({ title, body, link, to }) => (
     <div className="font-thin text-center flex flex-col p-2 gap-4">
         <h3>{title}</h3>
         <p>{body}</p>
@@ -11,7 +11,7 @@ export const IsResetStyle = ({ title, body, link, to }) => (
 )
 
 
-export const ResetFormStyle = (props) => (
+export const SetupFormStyle = (props) => (
     <form className="w-full grid grid-cols-4 items-center gap-2 px-8 py-2" {...props} />
 )
 

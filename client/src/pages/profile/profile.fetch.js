@@ -6,7 +6,7 @@ import { debugLogging } from '../../assets/config';
 export const profileApi = fetchApi.injectEndpoints({
   endpoints: (build) => ({
 
-    resetSession: build.query({
+    setupUser: build.query({
       query: ({ id, session }) => ({ url: `/session/${id || 'setup'}`, method: 'POST', body: { session } }),
       transformResponse: debugLogging ? (res) => console.log('CAN_SETUP',res) || res : undefined,
       providesTags: ['Setup'],
@@ -33,4 +33,4 @@ export const profileApi = fetchApi.injectEndpoints({
 export const usePlayerState = commonApi.endpoints.player.useQueryState;
 export { useCreatePlayerMutation } from "../players/player.fetch"
 export { usePlayerQuery, useEventQuery, useSettingsQuery } from '../common/common.fetch';
-export const { useResetSessionQuery, useUpdatePlayerMutation, useResetPasswordMutation } = profileApi;
+export const { useSetupUserQuery, useUpdatePlayerMutation, useResetPasswordMutation } = profileApi;

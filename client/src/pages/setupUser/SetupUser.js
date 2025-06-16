@@ -1,26 +1,26 @@
-import useResetPassword from "./services/reset.service"
+import useSetupUser from "./services/setup.service"
 import Loading from "../common/Loading"
-import { IsResetStyle, PageTitleStyle, ResetFormStyle, TextInput, SubmitButton, GridSpacer } from "./styles/ResetStyles"
+import { SetupMessageStyle, PageTitleStyle, SetupFormStyle, TextInput, SubmitButton, GridSpacer } from "./styles/SetupStyles"
 import { setupMessage } from "../../assets/alerts"
 
 
-export default function ResetPassword() {
+export default function SetupUser() {
 
     const {
         isLoading, error, data,
         username, password, confirm, redBorder,
         changeUsername, changePassword, changeConfirm, handleSubmit,
-    } = useResetPassword()
+    } = useSetupUser()
 
     if (isLoading || error) return <Loading loading={isLoading} error={error} altMsg="Loading" />
 
-    if (data.isSet || !data.valid) return <IsResetStyle {...setupMessage(data)} />
+    if (data.isSet || !data.valid) return <SetupMessageStyle {...setupMessage(data)} />
 
     return (
         <div>
             <PageTitleStyle>{data.isCreate ? "Create Admin" : "Set Password"}</PageTitleStyle>
 
-            <ResetFormStyle onSubmit={handleSubmit}>
+            <SetupFormStyle onSubmit={handleSubmit}>
             
                 <TextInput 
                     id="username"
@@ -53,7 +53,7 @@ export default function ResetPassword() {
                 <SubmitButton value="Submit" disabled={!handleSubmit} />
                 <GridSpacer />
                 
-            </ResetFormStyle>
+            </SetupFormStyle>
         </div>
     )
 }
