@@ -1,4 +1,3 @@
-import React from "react"
 import { Link } from "react-router-dom"
 export { PageTitleStyle } from "../../common/styles/CommonStyles"
 
@@ -17,23 +16,16 @@ export const ResetFormStyle = (props) => (
 )
 
 
-export const LockedInput = ({ label, value }) => (<>
-    <label className="label justify-end font-light w-full" aria-disabled={true}>{label}</label>
-    <div className="input col-span-3 w-full cursor-default">
-        {value}
-    </div>
-</>)
-
-
-export const PasswordInput = ({ id, label, redBorder, value, onChange }) => (<>
+export const TextInput = ({ id, label, redBorder, value, onChange, isSecret }) => (<>
     <label className="label justify-end font-light w-full" htmlFor={id}>{label}</label>
     <input
         id={id}
-        type="password"
-        className={`input bg-base-200 input-primary col-span-3 w-full ${redBorder === id ? 'border-error' : ''}`}
-        autoComplete="new-password"
+        type={isSecret ? "password" : "text"}
+        className={`input ${onChange ? 'input-primary ' : ''}${redBorder === id ? 'border-error ' : ''} bg-base-200 w-full col-span-3`}
+        autoComplete={isSecret ? "new-password" : "username"}
         value={value}
         onChange={onChange}
+        disabled={!onChange}
     />
 </>)
 

@@ -1,54 +1,59 @@
-import React from "react"
-import Loading from "../common/Loading"
-import { IsResetStyle, PageTitleStyle, ResetFormStyle, LockedInput, PasswordInput, SubmitButton, GridSpacer } from "./styles/ResetStyles"
 import useResetPassword from "./services/reset.service"
-import { resetPwordSuccess, resetPwordExpired } from "../../assets/alerts"
+import Loading from "../common/Loading"
+import { IsResetStyle, PageTitleStyle, ResetFormStyle, TextInput, SubmitButton, GridSpacer } from "./styles/ResetStyles"
+import { setupMessage } from "../../assets/alerts"
 
 
-function ResetPassword() {
+export default function ResetPassword() {
 
     const {
-        isLoading, error, data, name,
-        password, confirm, redBorder, disableBtn,
-        changePassword, changeConfirm, handleSubmit,
+        isLoading, error, data,
+        username, password, confirm, redBorder,
+        changeUsername, changePassword, changeConfirm, handleSubmit,
     } = useResetPassword()
 
     if (isLoading || error) return <Loading loading={isLoading} error={error} altMsg="Loading" />
 
-    if (data.isSet) return <IsResetStyle {...resetPwordSuccess} />
-    if (!data.valid) return <IsResetStyle {...resetPwordExpired} />
+    if (data.isSet || !data.valid) return <IsResetStyle {...setupMessage(data)} />
 
     return (
         <div>
-            <PageTitleStyle>Set Password</PageTitleStyle>
+            <PageTitleStyle>{data.isCreate ? "Create Admin" : "Set Password"}</PageTitleStyle>
 
             <ResetFormStyle onSubmit={handleSubmit}>
             
-                <LockedInput label="Username" value={name} />
+                <TextInput 
+                    id="username"
+                    label="Username"
+                    value={username}
+                    onChange={changeUsername}
+                    redBorder={redBorder}
+                    isSecret={false}
+                />
 
-                <PasswordInput
+                <TextInput
                     id="password"
                     label="New Password"
                     value={password}
                     onChange={changePassword}
                     redBorder={redBorder}
+                    isSecret={true}
                 />
 
-                <PasswordInput
+                <TextInput
                     id="confirm"
                     label="Confirm Password"
                     value={confirm}
                     onChange={changeConfirm}
                     redBorder={redBorder}
+                    isSecret={true}
                 />
 
                 <GridSpacer />
-                <SubmitButton value="Submit" disabled={disableBtn} />
+                <SubmitButton value="Submit" disabled={!handleSubmit} />
                 <GridSpacer />
                 
             </ResetFormStyle>
         </div>
     )
 }
-
-export default ResetPassword

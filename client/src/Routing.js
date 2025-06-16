@@ -25,6 +25,7 @@ function Routing() {
         <Route path="/players"                    element={<Players        />} />
         <Route path="/profile/:id"                element={<Profile        />} />
         <Route path="/profile/:id/reset/:session" element={<ResetPassword  />} />
+        <Route path="/setup"                      element={<ResetPassword  />} />
         <Route path="*"                           element={<Navigate replace to="/home" />} />
       </Routes>
     </Suspense>

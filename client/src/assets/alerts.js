@@ -109,20 +109,33 @@ export const resetDbAlertConfirm = {
 }
 
 
-// --- Password Reset Messages --- \\
+// --- Setup/Reset Password Messages --- \\
 
-export const resetPwordSuccess = {
-  title: "Password Successfully Reset",
-  body:  "Now use it to sign in at the top right.",
-  link:  "Go to home page",
-  to:    "/home",
-}
-
-export const resetPwordExpired = {
-  title: "Password Link Expired",
-  body:  "You'll need to request a new one.",
-  link:  "Go to home page",
-  to:    "/home",
+export const setupMessage = ({ valid, isSet, isCreate }) => {
+  if (isCreate) {
+    return isSet && valid ? {
+      title: "Account Successfully Created",
+      body:  "You can use it to sign in at the top right.",
+      link:  "Go to home page",
+      to:    "/home",
+    } : {
+      title: "Account Creation Failure",
+      body:  "If this continues to happen, try resetting the database.",
+      link:  "Go to setup page",
+      to:    "/setup",
+    }
+  }
+  return isSet && valid ? {
+    title: "Password Successfully Reset",
+    body:  "You can use it to sign in at the top right.",
+    link:  "Go to home page",
+    to:    "/home",
+  } : {
+    title: "Password Link Expired",
+    body:  "You'll need to request a new one.",
+    link:  "Go to home page",
+    to:    "/home",
+  }
 }
 
 
