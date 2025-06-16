@@ -26,6 +26,7 @@ exports.event = {
 
 exports.player = {
     eventFilter: "SELECT id FROM event WHERE $1::UUID = ANY(players) ORDER BY day ASC;",
+    hasAdminFilter: "WHERE access > 2 LIMIT 2"
 }
 
 exports.match = {

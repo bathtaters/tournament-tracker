@@ -81,4 +81,5 @@ module.exports = {
     
     rmv: (id, req) => log.rmvRows('player', id, null, req),
     set: (id, newParams, req) => log.updateRows('player', id, newParams, req),
+    hasAdmin: () => db.getCount('player', strings.hasAdminFilter),
 }

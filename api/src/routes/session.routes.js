@@ -8,6 +8,7 @@ router.get('/',                          controller.fetch);
 router.get('/player',                    controller.player);
 router.post('/',    validate.login,      controller.login);
 router.delete('/',                       controller.logout);
+router.post('/setup',                    controller.setupStatus);
 router.post('/:id', validate.idSession,  controller.resetStatus);
 
 module.exports = router;

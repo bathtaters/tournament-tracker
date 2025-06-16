@@ -49,8 +49,14 @@ const resetStatus = async (req, res) => {
     const db = await players.hasPass(id);
     if (!db?.id) return res.sendAndLog({ error: 'id' });
     if (db.session !== session) return res.sendAndLog({ error: 'session' });
-    return res.sendAndLog({ valid: true, isSet: !!db.password });
+    return res.sendAndLog({ valid: true, isSet: !!db.password, isCreate: false });
 }
-  
 
-module.exports = { login, logout, player, fetch, resetStatus };
+// Check if user can create admin account
+const setupStatus = async (_, res) => {
+    const adminCount = await players.hasAdmin();
+    if (typeof adminCount !== 'number') return res.sendAndLog({ error: 'Server error' })
+    return res.sendAndLog({ valid: true, isSet: !!adminCount, isCreate: true });
+} 
+
+module.exports = { login, logout, player, fetch, resetStatus, setupStatus };
