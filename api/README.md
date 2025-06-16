@@ -1,6 +1,6 @@
 # Tournament Tracker API
 
-###### NOTE: See [/api/src/config/dbServer.md](./src//config/dbServer.md) before running for the first time.
+###### NOTE: See [/api/src/config/dbServer.md](./src/config/dbServer.md) before running for the first time.
 
 ### Current Major Version: v2
 _Represented below by api/v[n]_
