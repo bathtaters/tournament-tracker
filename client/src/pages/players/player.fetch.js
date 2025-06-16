@@ -15,7 +15,7 @@ export const playerApi = fetchApi.injectEndpoints({
     createPlayer: build.mutation({
       query: (body) => ({ url: `player`, method: 'POST', body, }),
       transformResponse: debugLogging ? res => console.log('ADD_PLAYER',res) || res : undefined,
-      invalidatesTags: getTags('Player'),
+      invalidatesTags: getTags('Player', { addBase: ['Setup'] }),
       onQueryStarted: createUpdate,
     }),
 
