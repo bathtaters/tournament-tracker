@@ -1,14 +1,18 @@
 import { useCallback, useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { usePlayerQuery, useSetupUserQuery, useCreatePlayerMutation, useUpdatePlayerMutation } from "../../profile/profile.fetch"
 import { useParamIds } from "../../common/services/idUrl.services"
+import { hashText } from "../../common/services/basic.services"
+import { useOpenAlert } from "../../common/common.hooks"
+import { hasherAlert } from "../../../assets/alerts"
 
 import { getBaseData } from "../../../core/services/validation.services"
-import { useNavigate } from "react-router-dom"
 export const { min, max } = getBaseData('player').limits.password
 
 
 export default function useSetupUser() {
     const navigate = useNavigate()
+    const openAlert = useOpenAlert()
     const params = useParamIds('id','session')
 
     const [ username,  setUsername  ] = useState('')
@@ -31,9 +35,12 @@ export default function useSetupUser() {
         else setRedBorder('')
     }, [])
 
-    const handleSubmit = disableBtn ? null : () => {
-        if (!isCreate) updatePlayer({ id: params.id, password })
-        else createPlayer({ name: username, password, access: 3 })
+    const handleSubmit = disableBtn ? null : async () => {
+        const hashed = await hashText(password)
+        if (!hashed) return openAlert(hasherAlert)
+        
+        if (!isCreate) updatePlayer({ id: params.id, password: hashed })
+        else createPlayer({ name: username, password: hashed, access: 3 })
     }
 
     // Force redirect if visiting page when a user has already been created

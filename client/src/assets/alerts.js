@@ -111,6 +111,11 @@ export const resetDbAlertConfirm = {
 
 // --- Setup/Reset Password Messages --- \\
 
+export const hasherAlert = {
+  title: 'Browser Error',
+  message: 'Password encryption failed! You may need to upgrade your browser to use this website.',
+}
+
 export const setupMessage = ({ valid, isSet, isCreate }) => {
   if (isCreate) {
     return isSet && valid ? {

@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { useSessionQuery, useSettingsQuery } from "../../common/common.fetch";
 import { useLoginMutation, useLogoutMutation } from "../session.fetch";
+import { hashText } from "../../common/services/basic.services";
+import { useOpenAlert } from "../../common/common.hooks";
+import { hasherAlert } from "../../../assets/alerts";
 import { apiPollMs } from "../../../assets/config";
 
 
 export function useUserSession() {
+    const openAlert = useOpenAlert();
     const { data, isLoading } = useSessionQuery(undefined, { pollingInterval: apiPollMs });
     const { data: settings, isLoading: sLoad, error: sErr } = useSettingsQuery();
 
@@ -13,9 +17,11 @@ export function useUserSession() {
     const [ name,     setName ] = useState('');
     const [ password, setPass ] = useState('');
 
-    const login = (ev) => {
+    const login = async (ev) => {
         ev.preventDefault();
-        apiLogin({ name, password });
+        const hashed = await hashText(password);
+        if (!hashed) return openAlert(hasherAlert);
+        apiLogin({ name, password: hashed });
         setPass('');
     };
     const logout = () => apiLogout();

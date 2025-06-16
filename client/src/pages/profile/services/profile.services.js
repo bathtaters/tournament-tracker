@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
 import { useUpdatePlayerMutation, usePlayerState, useResetPasswordMutation } from "../profile.fetch";
-import { useHotkeys } from "../../common/services/basic.services";
+import { hashText, useHotkeys } from "../../common/services/basic.services";
 import { useOpenAlert } from "../../common/common.hooks";
 import { WRITE } from "../profile.layout";
-import { duplicateNameAlert } from "../../../assets/alerts";
+import { duplicateNameAlert, hasherAlert } from "../../../assets/alerts";
 
 // Generate reset link from suffix
 export const resetLink = (linkSuffix) => `${window.location.href}/reset/${linkSuffix}`
@@ -26,11 +26,15 @@ export default function usePlayerData(rowData, data, access, id) {
   const changeData = (e) => e.target.type === 'checkbox' ? setEditData(e.target.checked) : setEditData(e.target.value);
 
   // Form Submit
-  const saveData = () => {  
+  const saveData = async () => {  
     const body = getUpdateBody(editData, data, rowData, id);
     if (!body) return;
 
     if ('reset' in body) return resetPassword(id);
+    if (body.password) {
+      body.password = await hashText(body.password)
+      if (!body.password) return openAlert(hasherAlert)
+    }
     if (playerIsUnique(body, allPlayers)) return updatePlayer(body);
     return openAlert(duplicateNameAlert(editData));
   };
@@ -43,7 +47,7 @@ export default function usePlayerData(rowData, data, access, id) {
 
   const handleClick = !isEditing ?
     () => setEdit(true) :
-    () => { saveData(); setEdit(false); };
+    () => saveData().then(() => setEdit(false));
 
   useHotkeys({ Enter: handleClick }, { skip: !isEditing });
 
