@@ -10,7 +10,7 @@
     "devdb": "cockroach start-single-node --insecure --store=path=\"$PWD/cockroach-data\" --listen-addr=localhost:26257 --http-addr=localhost:9095",
     "test": "jest",
     "inspect": "node --inspect ./src/server.js",
-    "initdb": "cockroach sql --host=localhost:26257 --user=root --database=defaultdb --insecure -e \"CREATE USER IF NOT EXISTS api;\" -e \"GRANT admin TO api;\" -e \"CREATE ROLE IF NOT EXISTS db_admin;\" -e \"CREATE ROLE IF NOT EXISTS db_rw;\" -e \"CREATE ROLE IF NOT EXISTS db_read;\""
+    "initdb": "./src/config/initDB.sh --host=localhost:26257 --user=root --database=defaultdb --insecure"
   },
   "config": {
     "port": "9090"
