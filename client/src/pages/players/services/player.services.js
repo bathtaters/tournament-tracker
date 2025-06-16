@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useLocalStorage, useOpenAlert } from "../../common/common.hooks";
 import { useAccessLevel, useSettingsQuery } from "../../common/common.fetch";
 import { useDeletePlayerMutation } from "../player.fetch";
@@ -42,6 +42,7 @@ export default function usePlayersController() {
   const modal = useRef(null)
   const openAlert = useOpenAlert()
   const [deleteMode, setDeleteMode] = useState(false)
+  useEffect(() => { if (access < 2) setDeleteMode(false) }, [access])
   
   // Actions
   const toggleDelete = () => setDeleteMode(!deleteMode)
