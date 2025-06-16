@@ -95,13 +95,17 @@ const getUserSessions = async ({ userid, sessionid } = {}) => {
  * @param {Request} [req] - Request object to extract user and session IDs
  * @returns {Promise<LogEntry[]>} - List of new log entries
  */
-const addEntries = (entries, req) => {
+const addEntries = (entries, req, newlyDeletedUsers) => {
     if (!Array.isArray(entries)) entries = entries ? [entries] : []
     if (req) entries = entries.map((entry) => ({
         ...entry,
         userid: entry.userid || req.session?.user || null,
         sessionid: entry.sessionid || req.sessionID || null,
     }))
+    if (newlyDeletedUsers) entries.forEach((entry) => {
+        // Fixes error when user deletes themselves
+        if (newlyDeletedUsers.includes(entry.userid)) entry.userid = null
+    })
     return db.addRows('log', entries)
 }
 
@@ -197,7 +201,7 @@ const rmvRows = async (dbtable, idOrArgs, sqlFilter, req, client) => {
             dbtable, data,
             tableid: data.id,
             action: LogAction.DELETE,
-        })), req)
+        })), req, entries.map(({ id }) => id))
         else await addEntries({
             dbtable,
             tableid: sqlFilter ? sqlSub(sqlFilter, idOrArgs) : idOrArgs,
