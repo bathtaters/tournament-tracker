@@ -10,8 +10,12 @@ on:
   workflow_dispatch:
     inputs:
       # Defaults to DEV (For testing workflow)
+      proc_name:
+        required: true
+        type: string
+        default: "tournament-tracker-test"
       remote_dir:
-        required: false
+        required: true
         type: string
         default: "$HOME/tt_test"
       db_name:
@@ -21,7 +25,7 @@ on:
           
 env:
   # Default to PROD (For push/pull workflow)
-  PROC_NAME: tournament-tracker-backend
+  PROC_NAME: ${{ vars.PROC_NAME || inputs.proc_name || 'tournament-tracker-backend' }}
   REMOTE_DIR: ${{ vars.REMOTE_DIR || inputs.remote_dir || '$HOME/tournament-tracker' }}
   DB_NAME: ${{ vars.DB_NAME || inputs.db_name || 'tt_production' }}
   DB_PROTOCOL: postgresql
