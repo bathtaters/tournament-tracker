@@ -8,7 +8,7 @@ export const READ = 1, WRITE = 2;
 // Player Data layout
 const commonRows = [
   { label: 'Name', id: 'name', required: true, minLength: limits.name.min, maxLength: limits.name.max },
-  { label: 'Visibility', id: 'hide', type: 'checkbox', on: 'Hide', off: 'Show' },
+  { label: 'Visibility', id: 'hide', type: 'toggle', on: 'Hide', off: 'Show' },
 ];
 const creditRow = { label: 'Credits', id: 'credits', type: 'number', required: true, min: limits.credits.min, max: limits.credits.max }
 
