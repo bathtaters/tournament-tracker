@@ -1,4 +1,3 @@
-import React from "react";
 import { DropdownStyle, MenuStyle, MenuLinkStyle, MenuItemStyle, headerButtonStyle } from "./MenuStyles";
 import { defaultPicClass } from "../../profile/styles/ProfileStyles";
 import { ReactComponent as DefaultProfilePic } from "../../../assets/images/blank-user.svg";
@@ -11,7 +10,7 @@ export function LoginMenuButton({ initial, src }) {
                 :
                 <>
                     <DefaultProfilePic className={defaultPicClass} />
-                    <div className="absolute font-thin text-sm w-full top-[10%]">{initial}</div>
+                    <div className="absolute font-thin text-xs w-full top-[16%]">{initial}</div>
                 </>
             }
         </label>
