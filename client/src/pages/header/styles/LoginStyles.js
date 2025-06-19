@@ -48,6 +48,7 @@ export function DropdownInput({ label, props }) {
         <MenuItemStyle lessPadding={true}>
             <input
                 className="input input-ghost bg-base-200"
+                id={label}
                 placeholder={label}
                 type={label === "Password" ? "password" : "text"}
                 {...props}
@@ -59,7 +60,7 @@ export function DropdownInput({ label, props }) {
 export function DropdownButton({ children, onClick }) {
     return (
         <MenuItemStyle lessPadding={true}>
-            <button className="btn btn-primary content-center w-full h-full" type={onClick ? "button" : "submit"} onClick={onClick}>
+            <button className="btn btn-primary content-center w-full" type={onClick ? "button" : "submit"} onClick={onClick}>
                 {children}
             </button>
         </MenuItemStyle>
