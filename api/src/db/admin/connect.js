@@ -11,11 +11,12 @@ const retryAttempts = 15;
 const retryPauseMs = 1000;
 
 const connStr = getConnStr('api', null);
-let staticPool = new Pool(parse(connStr));
+let staticPool = null;
 
 // Setup DB
 async function openConnection() {
   try {
+    if (!staticPool) staticPool = new Pool(parse(connStr));
     await testDatabase(runOperation).then(test => { if (!test) throw { code: '3D000' } });
   }
   catch(e) {
