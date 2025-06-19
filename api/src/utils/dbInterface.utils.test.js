@@ -266,11 +266,11 @@ describe('getSolo', () => {
     lineCountSpy.mockReturnValueOnce(1);
 
     expect(getSolo('q1;')(['solo'])).toEqual(['solo']);
-    expect(getFirstSpy).toBeCalledWith(true);
+    expect(getFirstSpy).toHaveBeenCalledWith(true);
     getFirstSpy.mockClear();
 
     expect(getSolo(['q1'])(['solo'])).toEqual(['solo']);
-    expect(getFirstSpy).toBeCalledWith(true);
+    expect(getFirstSpy).toHaveBeenCalledWith(true);
   });
 });
 

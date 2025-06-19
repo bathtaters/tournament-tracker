@@ -91,7 +91,7 @@ describe('loadFiles', () => {
   it('fails on file error', async () => {
     expect.assertions(1);
     fs.readFile.mockImplementation(() => { throw new Error('Test Error'); });
-    await expect(base.loadFiles(['File'])).rejects.toThrowError('Test Error');
+    await expect(base.loadFiles(['File'])).rejects.toThrow('Test Error');
   });
 
   it('combines files into array', async () => {

@@ -37,14 +37,14 @@ describe('arrToObj', () => {
 
     expect(arrToObj('key')('test')).toBe('test');
 
-    expect(warnSpy).toBeCalledTimes(1);
-    expect(warnSpy).toBeCalledWith('Expected object:','string','test');
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith('Expected object:','string','test');
   });
 
   it('falsy value passesthrough w/o alert', () => {
     expect(arrToObj('key')(0)).toBe(0);
 
-    expect(warnSpy).not.toBeCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 
   it('alerts on missing key', () => {
@@ -53,15 +53,15 @@ describe('arrToObj', () => {
     expect(arrToObj('key',{delKey:0})(testArray.concat({ value: 4 })))
       .toEqual(expectedResult);
 
-    expect(warnSpy).toBeCalledTimes(1);
-    expect(warnSpy).toBeCalledWith('Entry is missing key:','key',{value:4});
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith('Entry is missing key:','key',{value:4});
   });
 
   it('throws on duplicate key', () => {
     expect.assertions(1);
 
     expect(() => arrToObj('key',{delKey:0})(testArray.concat({ key: 'a' })))
-      .toThrowError('Object has duplicate key: [key] = a');
+      .toThrow('Object has duplicate key: [key] = a');
   });
 
   it('uses valKey as value', () => {

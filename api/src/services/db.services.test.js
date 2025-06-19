@@ -23,7 +23,7 @@ describe('testDb', () => {
   it('bubbles up error', () => {
     expect.assertions(1)
     runOperation.mockRejectedValueOnce(new Error('TEST'))
-    expect(() => db.testDatabase(runOperation)).rejects.toThrowError('TEST')
+    expect(() => db.testDatabase(runOperation)).rejects.toThrow('TEST')
   })
 })
 
@@ -37,20 +37,20 @@ describe('resetDb', () => {
     expect.assertions(3)
     testSpy.mockResolvedValueOnce(true)
     expect(await db.resetDatabase(true, false, runOperation)).toBe(2)
-    expect(execFiles).toBeCalledTimes(1)
-    expect(execFiles).toBeCalledWith([expect.stringMatching(exec.reset)])
+    expect(execFiles).toHaveBeenCalledTimes(1)
+    expect(execFiles).toHaveBeenCalledWith([expect.stringMatching(exec.reset)])
   })
   it('calls test on testReset > returns &1', async () => {
     expect.assertions(3)
     expect(await db.resetDatabase(false, true, runOperation)).toBe(1)
-    expect(execFiles).toBeCalledTimes(1)
-    expect(execFiles).toBeCalledWith([expect.stringMatching(exec.test)])
+    expect(execFiles).toHaveBeenCalledTimes(1)
+    expect(execFiles).toHaveBeenCalledWith([expect.stringMatching(exec.test)])
   })
   it('calls both > returns 3', async () => {
     expect.assertions(4)
     testSpy.mockResolvedValueOnce(true)
     expect(await db.resetDatabase(true, true, runOperation)).toBe(3)
-    expect(execFiles).toBeCalledTimes(2)
+    expect(execFiles).toHaveBeenCalledTimes(2)
     expect(execFiles).toHaveBeenNthCalledWith(1, 
       [expect.stringMatching(exec.reset)]
     )
@@ -61,20 +61,20 @@ describe('resetDb', () => {
   it('calls none > returns 0', async () => {
     expect.assertions(2)
     expect(await db.resetDatabase(false, false, runOperation)).toBe(0)
-    expect(execFiles).toBeCalledTimes(0)
+    expect(execFiles).toHaveBeenCalledTimes(0)
   })
   it('runs test after fullReset', async () => {
     expect.assertions(2)
     testSpy.mockResolvedValueOnce(true)
     await db.resetDatabase(false, true, runOperation)
-    expect(testSpy).toBeCalledTimes(0)
+    expect(testSpy).toHaveBeenCalledTimes(0)
     await db.resetDatabase(true, false, runOperation)
-    expect(testSpy).toBeCalledTimes(1)
+    expect(testSpy).toHaveBeenCalledTimes(1)
   })
   it('throws error on failed test', () => {
     expect.assertions(1)
     testSpy.mockResolvedValueOnce(false)
     expect(() => db.resetDatabase(true, false, runOperation)).rejects
-      .toThrowError('ResetDB did not work!')
+      .toThrow('ResetDB did not work!')
   })
 })

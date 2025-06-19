@@ -20,11 +20,11 @@ describe('getSchemaFromCfg', () => {
   
   it('calls getSchema', () => {
     services.getSchemaFromCfg('setA', 'a', 'isIn', false)
-    expect(schemaSpy).toBeCalledTimes(1)
+    expect(schemaSpy).toHaveBeenCalledTimes(1)
   })
   it('passes key', () => {
     services.getSchemaFromCfg('setA', 'a', 'isIn', false)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       'a',
       expect.anything(),
       expect.anything(),
@@ -34,7 +34,7 @@ describe('getSchemaFromCfg', () => {
   })
   it('passes isIn', () => {
     services.getSchemaFromCfg('setA', 'a', 'isIn', false)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -44,7 +44,7 @@ describe('getSchemaFromCfg', () => {
   })
   it('passes falsy optional', () => {
     services.getSchemaFromCfg('setA', 'a', 'isIn', 0)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -53,7 +53,7 @@ describe('getSchemaFromCfg', () => {
     )
     schemaSpy.mockClear()
     services.getSchemaFromCfg('setA', 'a', 'isIn', '')
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -64,7 +64,7 @@ describe('getSchemaFromCfg', () => {
   
   it('gets type from config', () => {
     services.getSchemaFromCfg('setA', 'a', 'isIn', false)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       'type1',
       expect.anything(),
@@ -73,7 +73,7 @@ describe('getSchemaFromCfg', () => {
     )
     schemaSpy.mockClear()
     services.getSchemaFromCfg('setB', 'c', 'isIn', false)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       'type3',
       expect.anything(),
@@ -83,7 +83,7 @@ describe('getSchemaFromCfg', () => {
   })
   it('gets limits from config', () => {
     services.getSchemaFromCfg('setA', 'b', 'isIn', false)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       'lims2',
@@ -92,7 +92,7 @@ describe('getSchemaFromCfg', () => {
     )
     schemaSpy.mockClear()
     services.getSchemaFromCfg('setB', 'd', 'isIn', false)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       undefined,
@@ -103,7 +103,7 @@ describe('getSchemaFromCfg', () => {
 
   it('optional true if optional & isIn = [body]', () => {
     services.getSchemaFromCfg('setA', 'a', ['body'], true)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -112,7 +112,7 @@ describe('getSchemaFromCfg', () => {
     )
     schemaSpy.mockClear()
     services.getSchemaFromCfg('setA', 'a', ['isIn','body'], true)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -121,7 +121,7 @@ describe('getSchemaFromCfg', () => {
     )
     schemaSpy.mockClear()
     services.getSchemaFromCfg('setA', 'a', [], true)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -131,7 +131,7 @@ describe('getSchemaFromCfg', () => {
   })
   it('filters isIn if optional', () => {
     services.getSchemaFromCfg('setA', 'a', ['isIn','body'], true)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -140,7 +140,7 @@ describe('getSchemaFromCfg', () => {
     )
     schemaSpy.mockClear()
     services.getSchemaFromCfg('setA', 'a', ['isInA','isInB'], true)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -149,7 +149,7 @@ describe('getSchemaFromCfg', () => {
     )
     schemaSpy.mockClear()
     services.getSchemaFromCfg('setA', 'a', ['body'], true)
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -390,21 +390,21 @@ describe('getSchema', () => {
     })
     it('throws on missing/invalid typeStr', () => {
       expect(() => services.getSchema('test',undefined,null,['isIn'],false))
-        .toThrowError('test has missing type definition: ')  
+        .toThrow('test has missing type definition: ')  
       expect(() => services.getSchema('test','?wrong',null,['isIn'],false))
-        .toThrowError('test has invalid type definition: ?wrong')
+        .toThrow('test has invalid type definition: ?wrong')
     })
     it('throws on missing/empty isIn', () => {
       expect(() => services.getSchema('test','any',null,undefined,false))
-        .toThrowError('test missing \'in\' array for validation')
+        .toThrow('test missing \'in\' array for validation')
       expect(() => services.getSchema('test','any',null,[],false))
-        .toThrowError('test missing \'in\' array for validation')
+        .toThrow('test missing \'in\' array for validation')
     })
     it('warns on using * w/o string', () => {
       warnSpy.mockImplementationOnce(() => {})
       services.getSchema('test','any*',null,['isIn'],false)
-      expect(warnSpy).toBeCalledTimes(1)
-      expect(warnSpy).toBeCalledWith('* is ignored w/ non-string type: ', 'any*')
+      expect(warnSpy).toHaveBeenCalledTimes(1)
+      expect(warnSpy).toHaveBeenCalledWith('* is ignored w/ non-string type: ', 'any*')
     })
   })
 })

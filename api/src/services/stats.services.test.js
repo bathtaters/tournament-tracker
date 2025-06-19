@@ -74,15 +74,15 @@ describe('toStats', () => {
 
   it('finalizes stats for all players', () => {
     stats({ d1 }, 0, oppos)
-    expect(util.finalize).toBeCalledTimes(4)
+    expect(util.finalize).toHaveBeenCalledTimes(4)
     jest.clearAllMocks()
 
     stats({ d2 }, 0, oppos)
-    expect(util.finalize).toBeCalledTimes(4)
+    expect(util.finalize).toHaveBeenCalledTimes(4)
     jest.clearAllMocks()
 
     stats({ d1, d2 }, 0, oppos)
-    expect(util.finalize).toBeCalledTimes(4)
+    expect(util.finalize).toHaveBeenCalledTimes(4)
   })
 
   // Ranking
@@ -90,12 +90,12 @@ describe('toStats', () => {
     expect(stats({ d1 },0,oppos)).toHaveProperty('ranking', ['p1','p2','p3','p4'])
     d2 = d2.reverse()
     expect(stats({ d2 },0,oppos)).toHaveProperty('ranking', ['p1','p2','p3','p4'])
-    expect(util.rankSort).toBeCalledTimes(2)
+    expect(util.rankSort).toHaveBeenCalledTimes(2)
   })
   it('passes correct args rankSort', () => {
     const res = stats({ d1 }, ['arg2'], oppos, 'arg3')
-    expect(util.rankSort).toBeCalledTimes(1)
-    expect(util.rankSort).toBeCalledWith(res, ['arg2'], 'arg3')
+    expect(util.rankSort).toHaveBeenCalledTimes(1)
+    expect(util.rankSort).toHaveBeenCalledWith(res, ['arg2'], 'arg3')
   })
   it('includes players w/o stats in ranking', () => {
     expect(stats({ d1 }, ['p1','p2','p3','p4','p5','p6'], oppos).ranking)
@@ -105,18 +105,18 @@ describe('toStats', () => {
   // Combining
   it('combines stats for matches', () => {
     stats({ d1 }, 0, oppos)
-    expect(util.combineStats).toBeCalledTimes(0)
-    expect(util.combineFinal).toBeCalledTimes(0)
+    expect(util.combineStats).toHaveBeenCalledTimes(0)
+    expect(util.combineFinal).toHaveBeenCalledTimes(0)
     jest.clearAllMocks()
 
     stats({ d2 }, 0, oppos)
-    expect(util.combineStats).toBeCalledTimes(4)
-    expect(util.combineFinal).toBeCalledTimes(0)
+    expect(util.combineStats).toHaveBeenCalledTimes(4)
+    expect(util.combineFinal).toHaveBeenCalledTimes(0)
     jest.clearAllMocks()
 
     stats({ d1, d2 }, 0, oppos)
-    expect(util.combineStats).toBeCalledTimes(4)
-    expect(util.combineFinal).toBeCalledTimes(4)
+    expect(util.combineStats).toHaveBeenCalledTimes(4)
+    expect(util.combineFinal).toHaveBeenCalledTimes(4)
   })
   it('passes correct args to combiners', () => {
     const res = stats({ d1, d2 }, 0, oppos)
@@ -133,24 +133,24 @@ describe('toStats', () => {
   // Calculating
   it('gets stats for all matches', () => {
     stats({ d1 }, 0, oppos)
-    expect(util.getWLD).toBeCalledTimes(2)
-    expect(util.calcBase).toBeCalledTimes(4)
-    expect(util.calcRates).toBeCalledTimes(4)
-    expect(util.calcOpps).toBeCalledTimes(4)
+    expect(util.getWLD).toHaveBeenCalledTimes(2)
+    expect(util.calcBase).toHaveBeenCalledTimes(4)
+    expect(util.calcRates).toHaveBeenCalledTimes(4)
+    expect(util.calcOpps).toHaveBeenCalledTimes(4)
     jest.clearAllMocks()
 
     stats({ d2 }, 0, oppos)
-    expect(util.getWLD).toBeCalledTimes(4)
-    expect(util.calcBase).toBeCalledTimes(8)
-    expect(util.calcRates).toBeCalledTimes(4)
-    expect(util.calcOpps).toBeCalledTimes(4)
+    expect(util.getWLD).toHaveBeenCalledTimes(4)
+    expect(util.calcBase).toHaveBeenCalledTimes(8)
+    expect(util.calcRates).toHaveBeenCalledTimes(4)
+    expect(util.calcOpps).toHaveBeenCalledTimes(4)
     jest.clearAllMocks()
 
     stats({ d1, d2 }, 0, oppos)
-    expect(util.getWLD).toBeCalledTimes(6)
-    expect(util.calcBase).toBeCalledTimes(12)
-    expect(util.calcRates).toBeCalledTimes(8)
-    expect(util.calcOpps).toBeCalledTimes(8)
+    expect(util.getWLD).toHaveBeenCalledTimes(6)
+    expect(util.calcBase).toHaveBeenCalledTimes(12)
+    expect(util.calcRates).toHaveBeenCalledTimes(8)
+    expect(util.calcOpps).toHaveBeenCalledTimes(8)
   })
   it('passes correct args to calcs', () => {
     const res = stats({ d1 }, 0, oppos, true, 'floor')
@@ -175,7 +175,7 @@ describe('toStats', () => {
   })
   it('passes correct args to finalize', () => {
     const res = stats({ d1 }, 0, oppos, true, 'floor')
-    expect(util.finalize).toBeCalledTimes(4)
+    expect(util.finalize).toHaveBeenCalledTimes(4)
     expect(util.finalize).toHaveBeenNthCalledWith(1, ['1a0'], 'floor')
     expect(util.finalize).toHaveBeenNthCalledWith(2, ['1a1'], 'floor')
     expect(util.finalize).toHaveBeenNthCalledWith(3, ['1b0'], 'floor')

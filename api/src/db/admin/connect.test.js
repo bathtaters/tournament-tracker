@@ -77,7 +77,7 @@ describe('runOperation', () => {
         .toBe('Op success');
       
       expect(mockClient.query).toHaveBeenNthCalledWith(2,"ROLLBACK;BEGIN;");
-      expect(warnSpy).toBeCalledWith('Rolling back & retrying due to: ERR');
+      expect(warnSpy).toHaveBeenCalledWith('Rolling back & retrying due to: ERR');
       expect(warnSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -89,7 +89,7 @@ describe('runOperation', () => {
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects.toThrow();
 
       expect(mockClient.query).toHaveBeenNthCalledWith(2,"ROLLBACK;");
-      expect(warnSpy).toBeCalledWith(retryBlockErr, undefined);
+      expect(warnSpy).toHaveBeenCalledWith(retryBlockErr, undefined);
       expect(warnSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -108,7 +108,7 @@ describe('runOperation', () => {
 
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects.toThrow();
       expect(mockClient.query).toHaveBeenNthCalledWith(2,"ROLLBACK;");
-      expect(warnSpy).toBeCalledWith(retryBlockErr, undefined);
+      expect(warnSpy).toHaveBeenCalledWith(retryBlockErr, undefined);
       expect(warnSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -117,7 +117,7 @@ describe('runOperation', () => {
 
       await expect(connect.runOperation(mockOp, 43, 21, mockPool)).rejects
         .toThrow('Test Error');
-        expect(warnSpy).toBeCalledWith(retryBlockErr, undefined);
+        expect(warnSpy).toHaveBeenCalledWith(retryBlockErr, undefined);
         expect(warnSpy).toHaveBeenCalledTimes(1);
     });
   });

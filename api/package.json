@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/connect-pg-simple": "^7.0.3",
     "@types/express-session": "^1.18.0",
-    "@types/jest": "^29.0.3",
-    "jest": "^29.0.3"
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.2"
   }
 }
