@@ -20,7 +20,7 @@ async function initServices(syncOnly = false) {
   // types.setTypeParser(types.builtins.FLOAT8, parseFloat);
   types.setTypeParser(types.builtins.NUMERIC, parseFloat);
 
-  require('../db/admin/connect'); // Ensure that DB has been loaded
+  require('../db/admin/connect').openConnection(); // Ensure that DB has been loaded
   logger.log('Background services started.');
 }
 

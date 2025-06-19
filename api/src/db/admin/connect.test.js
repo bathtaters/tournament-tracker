@@ -47,7 +47,7 @@ describe('runOperation', () => {
   });
 
   it('allows access to staticPool', () => {
-    expect(connect.staticPool).toHaveProperty('name', 'STATIC POOL')
+    expect(connect.staticPool()).toHaveProperty('name', 'STATIC POOL')
   })
 
   describe('error handling', () => {
