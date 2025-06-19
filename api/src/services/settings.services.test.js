@@ -37,7 +37,7 @@ describe('toObjArray', () => {
   });
   it('date', () => {
     expect(toObjArray({ test: new Date('2022-01-01') }))
-      .toEqual([{ id: 'test', value: '2022-01-01T05:00:00.000Z', type: 'date' }]);
+      .toEqual([{ id: 'test', value: '2022-01-01T00:00:00.000Z', type: 'date' }]);
   });
   it('number', () => {
     expect(toObjArray({ test: 12 }))
