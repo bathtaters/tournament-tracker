@@ -9,7 +9,7 @@ describe('asType', () => {
     expect(asType({ value: 'false', type: 'boolean' })).toBe(false);
   });
   it('date', () => {
-    expect(asType({ value: '01/01/22', type: 'date' })).toEqual(new Date('01/01/22'));
+    expect(asType({ value: '2022-01-01', type: 'date' })).toEqual(new Date('2022-01-01'));
   });
   it('number', () => {
     expect(asType({ value: '12', type: 'bigint' })).toBe(12);
@@ -36,7 +36,7 @@ describe('toObjArray', () => {
       .toEqual([{ id: 'test', value: 'false', type: 'boolean' }]);
   });
   it('date', () => {
-    expect(toObjArray({ test: new Date('01/01/22') }))
+    expect(toObjArray({ test: new Date('2022-01-01') }))
       .toEqual([{ id: 'test', value: '2022-01-01T05:00:00.000Z', type: 'date' }]);
   });
   it('number', () => {

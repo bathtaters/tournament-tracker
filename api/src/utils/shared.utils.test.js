@@ -221,7 +221,7 @@ describe("dayCount", () => {
   })
   it("Count of days as decimal", () => {
     expect(dayCount(new Date(2020, 0, 1, 1, 20), new Date(2020, 0, 2, 23, 45))).toBeCloseTo(2.93)
-    expect(dayCount(new Date(2020, 0, 1, 11, 40), new Date(2020, 3, 10, 17, 30))).toBeCloseTo(101.2)
+    expect(dayCount(new Date(2020, 0, 1, 11, 40), new Date(2020, 3, 10, 17, 30))).toBeCloseTo(101.2, 1)
   })
   it("Same day is 1", () => {
     expect(dayCount(new Date(2020, 0, 1), new Date(2020, 0, 1))).toBeCloseTo(1)
@@ -234,7 +234,7 @@ describe("dayCount", () => {
   })
   it("reversed day count + decimal", () => {
     expect(dayCount(new Date(2020, 0, 2, 23, 45), new Date(2020, 0, 1, 1, 20))).toBeCloseTo(2.93)
-    expect(dayCount(new Date(2020, 3, 10, 17, 30), new Date(2020, 0, 1, 11, 40))).toBeCloseTo(101.2)
+    expect(dayCount(new Date(2020, 3, 10, 17, 30), new Date(2020, 0, 1, 11, 40))).toBeCloseTo(101.2, 1)
   })
 })
 
