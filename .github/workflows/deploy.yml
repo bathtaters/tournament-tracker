@@ -58,7 +58,7 @@ jobs:
           echo '  "server": {' >> temp.json
           echo '    "proto": "${{ env.DB_PROTOCOL }}",' >> temp.json
           echo '    "db": "${{ env.DB_NAME }}",' >> temp.json
-          echo '    "opts": ${{ secrets.DB_OPTS }}",' >> temp.json
+          echo '    "opts": "${{ secrets.DB_OPTS }}",' >> temp.json
           echo '    "dom": "${{ secrets.DB_DOMAIN }}",' >> temp.json
           echo '    "port": "${{ env.DB_PORT }}",' >> temp.json
           echo '    "cert": "${{ env.DB_CERT_PATH }}",' >> temp.json
