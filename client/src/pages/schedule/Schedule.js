@@ -1,15 +1,17 @@
-import React, { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import ScheduleHeader from "./components/ScheduleHeader";
 import DaysContainer from "./components/DaysContainer";
 import EditEvent from "../eventEditor/EditEvent";
+import Settings from "../settings/Settings";
 import Modal from "../common/Modal";
 
 function Schedule() {
   // Local state
-  const modal = useRef(null);
+  const eventModal = useRef(null);
+  const settingsModal = useRef(null);
   const [isEditing, setEdit] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
-  const openEventModal = useCallback(eventid => { setCurrentEvent(eventid); modal.current.open(); }, [modal]);
+  const openEventModal = useCallback(eventid => { setCurrentEvent(eventid); eventModal.current.open(); }, []);
 
   // Render
   return (
@@ -18,11 +20,15 @@ function Schedule() {
 
       <DaysContainer isEditing={isEditing} openEventModal={openEventModal} />
 
-      <Modal ref={modal}>
+      <Modal ref={eventModal}>
         <EditEvent
           eventid={currentEvent}
-          modal={modal}
+          modal={eventModal}
         />
+      </Modal>
+
+      <Modal ref={settingsModal}>
+        <Settings modal={settingsModal} />
       </Modal>
     </div>
   );
