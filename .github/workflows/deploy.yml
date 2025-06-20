@@ -120,4 +120,4 @@ jobs:
         run: rsync -avz api client ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ env.REMOTE_DIR }}/
       
       - name: Restart API server
-        run: ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'npx --yes pm2 restart "${{ env.PROC_NAME }}" || npx --yes pm2 start ${{ env.REMOTE_DIR }}/api/index.js --name "${{ env.PROC_NAME }}"'
+        run: ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'source ~/.nvm/nvm.sh && npx --yes pm2 restart "${{ env.PROC_NAME }}" || npx --yes pm2 start ${{ env.REMOTE_DIR }}/api/index.js --name "${{ env.PROC_NAME }}"'
