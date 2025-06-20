@@ -23,7 +23,7 @@ exports.strTest = str => {
 // Build labels for SQL based on array.length & keys.length (ie. $1, $2, $3)
 exports.queryLabels = (objArray, keys) => {
   const size = Array.isArray(keys) ? keys.filter(k=>k!==undefined).length : +keys;
-  if (!size) return '';
+  if (!size) return [];
   return objArray.map((_,idx) => `(${
       [...Array(size)].map((_,i) => '$'+(idx*size+i+1)).join(', ')
   })`);

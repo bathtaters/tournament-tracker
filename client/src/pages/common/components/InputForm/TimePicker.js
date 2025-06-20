@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 
 function TimePicker({ wrapperClass, className, backend, hours, minutes, seconds }) {
 
@@ -7,12 +7,13 @@ function TimePicker({ wrapperClass, className, backend, hours, minutes, seconds 
     usePadValue(seconds, backend)
     
     return (
-        <div className={"join "+wrapperClass}>
+        <div className={`join ${wrapperClass}`}>
             <input
                 {...hours}
                 id={hours.name}
                 type="number"
-                min={0} max={23}
+                min={hours.min ?? 0}
+                max={hours.max ?? 23}
                 pattern="^\d*$"
                 placeholder="00"
                 className={className}
@@ -22,7 +23,8 @@ function TimePicker({ wrapperClass, className, backend, hours, minutes, seconds 
                 {...minutes}
                 id={minutes.name}
                 type="number"
-                min={0} max={59}
+                min={minutes.min ?? 0}
+                max={minutes.max ?? 59}
                 pattern="^\d*$"
                 placeholder="00"
                 className={className}
@@ -32,7 +34,8 @@ function TimePicker({ wrapperClass, className, backend, hours, minutes, seconds 
                 {...seconds}
                 id={seconds.name}
                 type="number"
-                min={0} max={59}
+                min={seconds.min ?? 0}
+                max={seconds.max ?? 59}
                 pattern="^\d*$"
                 placeholder="00"
                 className={className}

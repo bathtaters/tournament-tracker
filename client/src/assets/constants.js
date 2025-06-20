@@ -1,6 +1,10 @@
 // Import templates
 import { basicTemplate } from "./formatting";
 
+// Import info from package.json
+import pkg from "../../package.json"
+export const { version } = pkg
+
 // -- User Messages -- \\
 
 export const planMessage = {
@@ -11,7 +15,7 @@ export const planMessage = {
 
 // -- String Sets -- \\
 
-export const footerText = "bathtaters – 2022";
+export const footerText = (apiVersion) => `bathtaters • 2022 • UI v${version} • API v${apiVersion || '.....'}`;
 
 export const dragType = { event: "json/eventday", player: "json/matchplayer", vote: "json/vote" };
 export const boxIDs = { RANKED: 'ranked', UNRANKED: 'unranked' };

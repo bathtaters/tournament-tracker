@@ -3,8 +3,8 @@ const logger = require('../utils/log.adapter');
 
 // String formatting
 const defaultError = require('../config/constants').defaultError;
-const getMsg  = err => (err && err.message) || defaultError.message;
-const getCode = err => (err && err.status)  || defaultError.status;
+const getMsg  = err => err?.message || err || defaultError.message;
+const getCode = err => err?.status  || defaultError.status;
 
 const formatErr = err => err.stack || `${err.name || 'Error'} <${getCode(err)}>: ${getMsg(err)}`;
 

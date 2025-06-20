@@ -17,8 +17,8 @@ export function EditButton({ value, isEditing = true, onClick, disabled }) {
 // STYLES
 export function LabelStyle({ id, children }) {
   return (
-    <label className="label w-full" htmlFor={id}>
-      <h4 className="label-text text-lg font-thin w-full text-right">{children}</h4>
+    <label className="label justify-end font-light w-full" htmlFor={id}>
+      {children}
     </label>
   );
 }
@@ -30,7 +30,7 @@ export function InputGroupStyle({ children }) {
 export function SelectOptionStyle({ type, optionClass, ...props  }) {
   return (
     <select
-      className="join-item select select-sm select-primary select-bordered flex-grow min-w-0 disabled:opacity-100 disabled:cursor-text"
+      className="join-item select select-sm select-primary grow disabled:opacity-100 disabled:cursor-text"
       {...props}
     >
       {Object.entries(type).map(([key,val]) => (
@@ -45,7 +45,7 @@ export function InputStyle({ on = 'ON', off = 'OFF', ...props }) {
 
   if (props.type === 'toggle') return (
     <label disabled={props.disabled} className={
-      "swap justify-start z-0 join-item input input-sm input-primary input-bordered flex-grow min-w-0 disabled:opacity-100 disabled:cursor-text"
+      "swap justify-start z-0 join-item input input-sm input-primary grow disabled:opacity-100 disabled:cursor-text"
       + (props.value ? ' swap-active' : '')
     }>
       <input {...props} type="checkbox" />
@@ -56,7 +56,7 @@ export function InputStyle({ on = 'ON', off = 'OFF', ...props }) {
 
   return (
     <input
-      className="join-item input input-sm input-primary input-bordered flex-grow min-w-0 disabled:opacity-100 disabled:cursor-text"
+      className="join-item input input-sm input-primary grow disabled:opacity-100 disabled:cursor-text"
       {...props}
     />
   )

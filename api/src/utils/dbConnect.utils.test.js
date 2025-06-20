@@ -84,8 +84,8 @@ describe('retryBlock', () => {
 
   it('passes args to function', async () => {
     await connectUtils.retryBlock(mockFunc, ['a','b','c'], 1);
-    expect(mockFunc).toBeCalledTimes(1);
-    expect(mockFunc).toBeCalledWith('a','b','c');
+    expect(mockFunc).toHaveBeenCalledTimes(1);
+    expect(mockFunc).toHaveBeenCalledWith('a','b','c');
   });
 
   it('returns result on success', () => {
@@ -100,8 +100,8 @@ describe('retryBlock', () => {
     mockFunc.mockRejectedValueOnce('Fail');
 
     await connectUtils.retryBlock(mockFunc, [], 3);
-    expect(mockFunc).toBeCalledTimes(2);
-    expect(warnSpy).toBeCalledTimes(1);
+    expect(mockFunc).toHaveBeenCalledTimes(2);
+    expect(warnSpy).toHaveBeenCalledTimes(1);
   });
 
   it('calls retryCb on each retry', async () => {
@@ -109,8 +109,8 @@ describe('retryBlock', () => {
     mockFunc.mockRejectedValueOnce('Fail');
 
     await connectUtils.retryBlock(mockFunc, [], 2, 0, 0, retryMock);
-    expect(retryMock).toBeCalledTimes(1);
-    expect(retryMock).toBeCalledWith('Fail');
+    expect(retryMock).toHaveBeenCalledTimes(1);
+    expect(retryMock).toHaveBeenCalledWith('Fail');
   });
 
   it('throws error if err.code not in retryCodes', () => {
@@ -133,13 +133,13 @@ describe('retryBlock', () => {
     mockFunc.mockRejectedValueOnce('Fail');
 
     return expect(connectUtils.retryBlock(mockFunc, [], 1)).rejects
-      .toThrowError('Max retries reached');
+      .toThrow('Max retries reached');
   });
 
   it('works without args', async () => {
     await connectUtils.retryBlock(mockFunc, undefined, 1);
-    expect(mockFunc).toBeCalledTimes(1);
-    expect(mockFunc).toBeCalledWith();
+    expect(mockFunc).toHaveBeenCalledTimes(1);
+    expect(mockFunc).toHaveBeenCalledWith();
   });
 });
 

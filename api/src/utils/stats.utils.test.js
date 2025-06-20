@@ -78,11 +78,11 @@ describe('getWLD', () => {
   })
   it('throws on win > maxwins', () => {
     expect.assertions(5)
-    expect(() => getWLD({ wins: [5], maxwins: 0 })).toThrowError("Invalid maxwins: 0 => [5]")
-    expect(() => getWLD({ wins: [5], maxwins: 3 })).toThrowError("Invalid maxwins: 3 => [5]")
-    expect(() => getWLD({ wins: [0,5], maxwins: 0 })).toThrowError("Invalid maxwins: 0 => [0,5]")
-    expect(() => getWLD({ wins: [0,5], maxwins: 3 })).toThrowError("Invalid maxwins: 3 => [0,5]")
-    expect(() => getWLD({ wins: [3,5], maxwins: 3 })).toThrowError("Invalid maxwins: 3 => [3,5]")
+    expect(() => getWLD({ wins: [5], maxwins: 0 })).toThrow("Invalid maxwins: 0 => [5]")
+    expect(() => getWLD({ wins: [5], maxwins: 3 })).toThrow("Invalid maxwins: 3 => [5]")
+    expect(() => getWLD({ wins: [0,5], maxwins: 0 })).toThrow("Invalid maxwins: 0 => [0,5]")
+    expect(() => getWLD({ wins: [0,5], maxwins: 3 })).toThrow("Invalid maxwins: 3 => [0,5]")
+    expect(() => getWLD({ wins: [3,5], maxwins: 3 })).toThrow("Invalid maxwins: 3 => [3,5]")
   })
 })
 
@@ -251,8 +251,8 @@ describe('combineFinal', () => {
     expect(combined).toHaveProperty('other','fin')
   })
   it('uses combineStats', () => {
-    expect(comboSpy).toBeCalledTimes(1)
-    expect(comboSpy).toBeCalledWith(dataA,dataB)
+    expect(comboSpy).toHaveBeenCalledTimes(1)
+    expect(comboSpy).toHaveBeenCalledWith(dataA,dataB)
   })
   
   it('eventids', () => expect(combined).toHaveProperty('eventids', ['d1','d2','d3']))
@@ -282,14 +282,14 @@ describe('finalize', () => {
     expect(finalized).toHaveProperty('other','input')
   })
   it('skip finalize rates if only 1 event', () => {
-    expect(rateSpy).toBeCalledTimes(0)
+    expect(rateSpy).toHaveBeenCalledTimes(0)
   })
   it('finalizes rates using calcRates', () => {
     rateSpy.mockImplementationOnce(r => r)
     comboResult = { eventids: ['d1','d2','d3'], oppMatch: [1], oppGame: [1] }
     finalize(comboResult, 'floor')
-    expect(rateSpy).toBeCalledTimes(1)
-    expect(rateSpy).toBeCalledWith(comboResult, 'floor')
+    expect(rateSpy).toHaveBeenCalledTimes(1)
+    expect(rateSpy).toHaveBeenCalledWith(comboResult, 'floor')
   })
 
   it('finalizes oppo rates', () => {

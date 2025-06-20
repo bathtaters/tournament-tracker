@@ -1,7 +1,7 @@
 import React from "react"
 
 const TabWrapperStyle = (props) => (
-    <div className="tabs tabs-bordered m-2" {...props} /> 
+    <div className="tabs tabs-border m-2" {...props} /> 
 )
 
 const TabStyle = ({ selected, children, ...props }) => (

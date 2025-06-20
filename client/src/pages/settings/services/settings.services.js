@@ -26,7 +26,7 @@ export function useResetHandler() {
 export const useUpdateLocals = (localIds, dispatch) => 
   useCallback(({ target }) => {
     if (!localIds.includes(target.id)) return;
-    setLocalVar(target.id, target.type === 'checkbox' || target.type === 'toggle' ? target.checked : target.value, dispatch)
+    setLocalVar(target.id, target.type === 'checkbox' ? target.checked : target.value, dispatch)
   }, [localIds, dispatch])
 
 // Get updated values + push local updates

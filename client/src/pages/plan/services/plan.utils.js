@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useRef } from "react"
 import { useDispatch } from "react-redux"
 import { fetchApi } from "../../common/common.fetch"
 import { useSettingsQuery, usePlanStatusQuery, useUpdateSettingsMutation, useUpdateVoterMutation, useVoterQuery } from "../voter.fetch"
@@ -7,20 +7,34 @@ import { plan as config } from "../../../assets/config"
 
 export function usePollStatus(currentStatus, pollStatus) {
     const dispatch = useDispatch()
-    const { data = {} } = usePlanStatusQuery(undefined, {
+    const { data = {}, refetch } = usePlanStatusQuery(undefined, {
         skip: typeof currentStatus !== 'number',
         pollingInterval: pollStatus ? config.statusPoll : undefined,
         refetchOnFocus: true,
         refetchOnReconnect: true,
     })
 
+    // Keep error around for preset time
+    const flashError = useRef({})
     useEffect(() => {
-        if (typeof currentStatus === 'number' && typeof data.planstatus === 'number' && data.planstatus !== currentStatus) dispatch(
-            fetchApi.util.invalidateTags([ 'Settings', 'Schedule', 'Voter', 'Event' ])
-        )
-    }, [currentStatus, data.planstatus, dispatch])
+        if (data.error) {
+            if (flashError.current.timer) clearTimeout(flashError.current.timer)
+            flashError.current = {
+                message: data.error,
+                timer: setTimeout(() => flashError.current = {}, config.errorClear)
+            }
+        }
+    }, [data.error])
+
+    // Force refetches when status changes
+    useEffect(() => {
+        if (typeof currentStatus === 'number' && typeof data.planstatus === 'number' && data.planstatus !== currentStatus) {
+            dispatch(fetchApi.util.invalidateTags([ 'Settings', 'Schedule', 'Voter', 'Event' ]))
+            refetch()
+        }
+    }, [currentStatus, data.planstatus, dispatch, refetch])
     
-    return data
+    return { ...data, error: flashError.current.message, refetch }
 }
 
 export function usePlanSettings(pollStatus = false) {
@@ -33,12 +47,12 @@ export function usePlanSettings(pollStatus = false) {
     const [ updateSettings ] = useUpdateSettingsMutation()
     const [ updateVoter    ] = useUpdateVoterMutation()
 
+    const { planprogress, error: flashError } = usePollStatus(settings?.planstatus, pollStatus)
+
     const setStatus = useCallback((planstatus) => () => updateSettings({ planstatus }), [updateSettings])
 
     const setDays   = useCallback((days)   => updateVoter({ id: voter?.id, days   }), [voter?.id, updateVoter])
     const setEvents = useCallback((events) => updateVoter({ id: voter?.id, events }), [voter?.id, updateVoter])
-
-    const { planprogress } = usePollStatus(settings?.planstatus, pollStatus)
 
     return {
         access: session?.access,
@@ -53,6 +67,7 @@ export function usePlanSettings(pollStatus = false) {
         progress:  planprogress,
         isLoading: sLoad || aLoad || vLoad || eLoad || tLoad,
         error:     sErr  || aErr  || vErr  || eErr  || tErr,
+        flashError,
     }
 }
 

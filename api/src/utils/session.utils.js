@@ -19,10 +19,10 @@ const pwsettings = {
     keylen: 64,
     digest: 'sha512',
 }
-exports.encryptPassword = (password) => new Promise((res, rej) =>
+exports.encryptPassword = (password, salt = '') => new Promise((res, rej) =>
     pbkdf2(
         password,
-        SALT,
+        `${SALT}${salt}`,
         pwsettings.iters,
         pwsettings.keylen,
         pwsettings.digest,

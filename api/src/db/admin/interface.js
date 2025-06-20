@@ -16,7 +16,7 @@ const getCount = (table, sqlFilter, args, client) =>
     // strTest(table) || strTest(sqlFilter) || 
     (client || direct).query(
         `SELECT COUNT(*) AS count FROM ${table} ${sqlFilter || ''};`, args || []
-    ).then(getFirst()).then(({ count }) => count)
+    ).then(getFirst()).then(getReturn).then((r) => Number(r?.[0]?.count))
 
 const getRows = (table, sqlFilter, args, cols, limit, offset, client) => 
     // strTest(table) || strTest(sqlFilter) || strTest(cols) ||

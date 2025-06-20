@@ -1,3 +1,4 @@
+const logger = require('../../utils/log.adapter')
 const { avg, diff, count, getGroups, getGroupsSimple, randomGroup, shuffle } = require('./matchGen.utils');
 const { getCombinations } = require('../../utils/combination.utils');
 const { pairingThreshold } = require('../../config/meta');
@@ -92,8 +93,8 @@ function slowAlgorithm(stats, { playerspermatch, byes, oppData, allMatchups }) {
 
   // Catch error
   if (!bestMatch) {
-    console.error('SWISS MONRAD Input Data:', stats, { playerspermatch, byes, oppData })
-    console.error('SWISS MONRAD Results:', resultsLogObject(stats, playerScores, bestScore))
+    logger.error('SWISS MONRAD Input Data:', stats, { playerspermatch, byes, oppData })
+    logger.error('SWISS MONRAD Results:', resultsLogObject(stats, playerScores, bestScore))
     throw new Error('SWISS MONRAD failed to find best match pairing.')
   }
 
@@ -183,9 +184,9 @@ function fastAlgorithm(stats, { playerspermatch, byes, oppData }) {
 
   // Ensure all players appear exactly once
   if (usedPlayers.size !== players.length) {
-      console.error('SWISS MONRAD Input Data:', stats, { playerspermatch, byes, oppData })
-      console.error('SWISS MONRAD Results:', resultsLogObject(stats, playerScores, bestScore))
-      console.error("Algorithm A failed, falling back on no pairing.")
+      logger.error('SWISS MONRAD Input Data:', stats, { playerspermatch, byes, oppData })
+      logger.error('SWISS MONRAD Results:', resultsLogObject(stats, playerScores, bestScore))
+      logger.error("Algorithm A failed, falling back on no pairing.")
       return getGroupsSimple(players, playerspermatch)
   }
 

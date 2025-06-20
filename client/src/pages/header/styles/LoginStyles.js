@@ -1,4 +1,3 @@
-import React from "react";
 import { DropdownStyle, MenuStyle, MenuLinkStyle, MenuItemStyle, headerButtonStyle } from "./MenuStyles";
 import { defaultPicClass } from "../../profile/styles/ProfileStyles";
 import { ReactComponent as DefaultProfilePic } from "../../../assets/images/blank-user.svg";
@@ -11,7 +10,7 @@ export function LoginMenuButton({ initial, src }) {
                 :
                 <>
                     <DefaultProfilePic className={defaultPicClass} />
-                    <div className="absolute font-thin text-sm top-[0.45rem]">{initial}</div>
+                    <div className="absolute font-thin text-xs w-full top-[16%]">{initial}</div>
                 </>
             }
         </label>
@@ -47,7 +46,8 @@ export function DropdownInput({ label, props }) {
     return (
         <MenuItemStyle lessPadding={true}>
             <input
-                className="input w-full"
+                className="input input-ghost bg-base-200"
+                id={label}
                 placeholder={label}
                 type={label === "Password" ? "password" : "text"}
                 {...props}
@@ -59,7 +59,7 @@ export function DropdownInput({ label, props }) {
 export function DropdownButton({ children, onClick }) {
     return (
         <MenuItemStyle lessPadding={true}>
-            <button className="btn btn-primary content-center w-full h-full" type={onClick ? "button" : "submit"} onClick={onClick}>
+            <button className="btn btn-primary content-center w-full" type={onClick ? "button" : "submit"} onClick={onClick}>
                 {children}
             </button>
         </MenuItemStyle>

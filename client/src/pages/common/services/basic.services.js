@@ -24,6 +24,16 @@ export const nextTempId = (type, exists) => {
 // Generates 'onClick' events for mouse & touch screen (usage: <Tag {...onClickAll(cb)} /> )
 export const onClickAll = (callback) => ({ onMouseDown: callback, onTouchStart: callback })
 
+/** Simple SHA-256 hash of text. Returns null if input is falsy. */
+export const hashText = (text) => !text ? Promise.resolve(null) :
+    window.crypto.subtle
+        .digest("SHA-256", new TextEncoder().encode(text))
+        .then((z) =>
+          Array.from(new Uint8Array(z))
+            .map((d) => d.toString(16).padStart(2, "0"))
+            .join("")
+        )
+
 // Throttle function call, forces call on unmount
 export function useThrottle(interval) {
 	let timer = useRef(null), func = useRef(null)

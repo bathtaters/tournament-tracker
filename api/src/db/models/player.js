@@ -13,6 +13,9 @@ const getUser = name => db.getRow('player', name, ['id','password'], { idCol: 'n
 const hasPass = id => db.getRow('player', id).then(r => Array.isArray(r) ? r.map(util.checkPassword) : r && util.checkPassword(r));
 const list = () => db.getRow('player',null,'id').then(r => r && r.map(p => p.id));
 
+/** Checks if the given player is an admin and, if so, at least 1 other admin exists (=> true). */
+const isLastAdmin = (id) => db.query(strings.isLastAdmin, [id]).then((r) => r?.[0]?.result)
+
 // Start/End/Fetch User Sessions
 const resetLogin = (id, req) => log.updateRows(
     'player',
@@ -58,7 +61,7 @@ async function checkPassword(name, password, user, { sessionID }) {
     if (!user?.id) return log.login(null, sessionID, 'Player not found.', name);
 
     let guess;
-    try { guess = await util.encryptPassword(password); }
+    try { guess = await util.encryptPassword(password, user.id); }
     catch (err) { return log.login(user.id, sessionID, err.message || err || 'Error encrypting password.'); }
 
     if (!user.password) return log.login(user.id, sessionID, 'Password not set, contact administrator if you don\'t have a password link.');
@@ -68,7 +71,8 @@ async function checkPassword(name, password, user, { sessionID }) {
 
 
 module.exports = {
-    get, getUser, hasPass, list, add,
+    get, getUser, list, add,
+    hasPass, isLastAdmin,
 
     startSession, 
     resetLogin, 
@@ -81,4 +85,5 @@ module.exports = {
     
     rmv: (id, req) => log.rmvRows('player', id, null, req),
     set: (id, newParams, req) => log.updateRows('player', id, newParams, req),
+    hasAdmin: () => db.getCount('player', strings.hasAdminFilter),
 }

@@ -3,6 +3,7 @@ const { matchedData }  = require('express-validator');
 const players = require('../db/models/player');
 const { encryptPassword } = require('../utils/session.utils');
 const { arrToObj } = require('../utils/shared.utils');
+const { lastAdminError } = require('../config/constants');
 
 /* GET player database. */
 
@@ -27,14 +28,31 @@ async function getPlayerMatches(req, res) {
 /* SET player database. */
 
 // Create/remove player
-const createPlayer = (req, res) => players.add(matchedData(req), req).then(res.sendAndLog);
-const removePlayer = (req, res) => players.rmv(matchedData(req).id, req).then(res.sendAndLog);
+const removePlayer = async (req, res, next) => {
+  const { id } = matchedData(req);
+  const isLast = await players.isLastAdmin(id)
+  if (isLast) return next(lastAdminError)
+  return players.rmv(id, req).then(res.sendAndLog);
+}
 
-// Rename
+const createPlayer = async (req, res, next) => {
+  const { password, ...body } = matchedData(req)
+  const user = await players.add(body, req)
+  if (!user.id) return next('Player creation failed.')
+
+  if (password) {
+    // Hash password with new User ID & update
+    const hashed = await encryptPassword(password, user.id)
+    await players.set(user.id, { password: hashed }, req)
+  }
+  return res.sendAndLog(user)
+};
+
+// Update player
 const updatePlayer = async (req, res) => {
   const { id, ...body } = matchedData(req);
   if (req.body.session === null) body.session = null;
-  if (body.password) body.password = await encryptPassword(body.password);
+  if (body.password) body.password = await encryptPassword(body.password, id);
   return players.set(id, body, req).then(res.sendAndLog);
 }
 

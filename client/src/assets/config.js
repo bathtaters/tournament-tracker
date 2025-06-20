@@ -38,4 +38,5 @@ export const settings = {
 export const plan = {
   updateDelay: 1000, // ms delay for throttling updates
   statusPoll: 5 * 1000,  // ms interval to poll for status at
+  errorClear: 30 * 1000, // Minimum number of ms to keep error displayed on status page
 }

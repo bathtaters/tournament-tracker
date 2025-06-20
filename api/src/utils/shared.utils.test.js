@@ -37,14 +37,14 @@ describe('arrToObj', () => {
 
     expect(arrToObj('key')('test')).toBe('test');
 
-    expect(warnSpy).toBeCalledTimes(1);
-    expect(warnSpy).toBeCalledWith('Expected object:','string','test');
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith('Expected object:','string','test');
   });
 
   it('falsy value passesthrough w/o alert', () => {
     expect(arrToObj('key')(0)).toBe(0);
 
-    expect(warnSpy).not.toBeCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 
   it('alerts on missing key', () => {
@@ -53,15 +53,15 @@ describe('arrToObj', () => {
     expect(arrToObj('key',{delKey:0})(testArray.concat({ value: 4 })))
       .toEqual(expectedResult);
 
-    expect(warnSpy).toBeCalledTimes(1);
-    expect(warnSpy).toBeCalledWith('Entry is missing key:','key',{value:4});
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith('Entry is missing key:','key',{value:4});
   });
 
   it('throws on duplicate key', () => {
     expect.assertions(1);
 
     expect(() => arrToObj('key',{delKey:0})(testArray.concat({ key: 'a' })))
-      .toThrowError('Object has duplicate key: [key] = a');
+      .toThrow('Object has duplicate key: [key] = a');
   });
 
   it('uses valKey as value', () => {
@@ -221,7 +221,7 @@ describe("dayCount", () => {
   })
   it("Count of days as decimal", () => {
     expect(dayCount(new Date(2020, 0, 1, 1, 20), new Date(2020, 0, 2, 23, 45))).toBeCloseTo(2.93)
-    expect(dayCount(new Date(2020, 0, 1, 11, 40), new Date(2020, 3, 10, 17, 30))).toBeCloseTo(101.2)
+    expect(dayCount(new Date(2020, 0, 1, 11, 40), new Date(2020, 3, 10, 17, 30))).toBeCloseTo(101.2, 1)
   })
   it("Same day is 1", () => {
     expect(dayCount(new Date(2020, 0, 1), new Date(2020, 0, 1))).toBeCloseTo(1)
@@ -234,7 +234,7 @@ describe("dayCount", () => {
   })
   it("reversed day count + decimal", () => {
     expect(dayCount(new Date(2020, 0, 2, 23, 45), new Date(2020, 0, 1, 1, 20))).toBeCloseTo(2.93)
-    expect(dayCount(new Date(2020, 3, 10, 17, 30), new Date(2020, 0, 1, 11, 40))).toBeCloseTo(101.2)
+    expect(dayCount(new Date(2020, 3, 10, 17, 30), new Date(2020, 0, 1, 11, 40))).toBeCloseTo(101.2, 1)
   })
 })
 

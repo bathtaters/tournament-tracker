@@ -13,6 +13,9 @@ export const getToday = () => toDate(new Date());
 // Convert Date String to Object
 export const toDateObj = (dt) => dt === noDate ? null : new Date(dt+'T00:00');
 
+// Test if an object is a date
+export const isDate = (dt) => dt != null && typeof dt === 'object' && typeof dt.getMonth === 'function'
+
 // Build array of days from start/end dates
 export function getDays(start, end) {
   let arr = [];
@@ -47,4 +50,17 @@ export function sortedEvents(eventSlots, existing = []) {
 
   // Append unsorted events to end
   return sorted.concat(unsorted)
+}
+
+// Serialize all dates within an object
+export function serializeDates(obj) {
+  if (isDate(obj)) return obj.toISOString()
+  if (!obj || typeof obj !== 'object') return obj
+
+  if (Array.isArray(obj)) {
+    obj.forEach((_,i) => { obj[i] = serializeDates(obj[i]) })
+  } else {
+    Object.keys(obj).forEach((key) => { obj[key] = serializeDates(obj[key]) })
+  }
+  return obj
 }

@@ -1,24 +1,22 @@
-import React from "react"
 import PropTypes from 'prop-types'
-
 import LockIcon from "../icons/LockIcon"
 import WarningIcon from "../icons/WarningIcon"
 
 // Input Element
 export const elementDefaults = {
   className:  "font-light mx-1 sm:mx-4",
-  labelClass: "whitespace-nowrap",
+  labelClass: "block mb-1",
   inputWrapperClass: "",
   inputClass: "",
   buttonClass: "btn-primary mx-1 sm:mx-4",
 }
 export const typeDefaults = {
-  text: 'input input-bordered w-full invalid:input-warning',
-  url: 'input input-bordered w-full invalid:input-warning',
-  date: 'input input-bordered w-full invalid:input-warning',
-  time: 'input input-bordered w-full min-w-12 pl-2 py-1 invalid:input-warning',
-  number: 'input input-bordered w-full invalid:input-warning p-1 text-center hide-arrows ',
-  numberSize: 'w-12 sm:w-16 h-8 sm:h-12'
+  text: 'input bg-base-200 invalid:input-warning',
+  url: 'input bg-base-200 invalid:input-warning',
+  date: 'input bg-base-200 invalid:input-warning',
+  checkbox: 'toggle',
+  time: 'input bg-base-200 min-w-12 pl-2 py-1 invalid:input-warning',
+  number: 'input bg-base-200 invalid:input-warning p-1 text-center hide-arrows w-12 sm:w-16 h-8 sm:h-12',
 }
 
 // Form wrapper
@@ -30,7 +28,7 @@ export function FormContainer({ onSubmit, children }) {
 export function FormErrorStyle({ children }) {
   return (
     <div className="alert alert-warning shadow-lg">
-      <WarningIcon className="stroke-current flex-shrink-0 h-6 w-6" />
+      <WarningIcon className="stroke-current shrink-0 h-6 w-6" />
       <span>{children}</span>
     </div>
   )
@@ -39,28 +37,43 @@ export function FormErrorStyle({ children }) {
 // Row/Column wrapper
 export function RowStyle({ isRow, children }) {
   return (
-    <div className={`m-1 flex justify-start ${isRow ? "flex-col sm:flex-row" : "flex-col"}`}>
+    <div className={`flex justify-start items-start ${isRow ? "flex-col sm:flex-row" : "flex-col"} w-full py-1`}>
       {children}
     </div>
   );
 }
 
 // Input Element wrapper
-export function ElementStyle({ isFragment, isLabel, className, children }) {
-  if (isLabel) return (<label className={'label '+className}>{children}</label>);
-  if (isFragment) return (<>{children}</>);
-  return (<div className={className}>{children}</div>);
+export function ElementStyle({ label, isFragment, isFloating = true, inputProps = {}, className, labelClass, children }) {
+  if (isFragment) return (<>
+    <label className={`label ${labelClass ?? elementDefaults.labelClass}`} htmlFor={inputProps.id}>
+        {label}
+    </label>
+    {children}
+  </>);
+  
+  return (
+    <span className={`${className ?? elementDefaults.className} w-full flex flex-row p-2`}>{
+      inputProps.type === 'checkbox' ?
+        <label className={`flex gap-2 text-sm text-left w-full ${inputProps.disabled ? 'join' : ''}`} htmlFor={inputProps.id}>
+          {children}
+          <span className={`label ${labelClass ?? elementDefaults.labelClass}`}>{label}</span>
+        </label>
+      :
+        <label className={`${isFloating ? 'floating-label' : ''} w-full ${inputProps.disabled ? 'join' : ''}`} htmlFor={inputProps.id}>
+          <span className={`label ${labelClass ?? (isFloating ? '' : elementDefaults.labelClass)}`}>
+            {label}
+          </span>
+          {children}
+        </label>
+    }</span>
+  );
 }
 
 // Apply Disabled Lock to Input Elements
-export function InputStyle({ disabled, className, children }) {
-  return (
-    <label className={(disabled ? "join " : "") + className}>
-      { children }
-      { disabled && <div className="bg-base-200 flex text-secondary pr-1 sm:pr-2 join-item"><LockIcon /></div> }
-    </label>
-  )
-}
+export const LockStyle = () => (
+  <div className="flex text-secondary bg-base-200 pr-1 sm:pr-2 join-item"><LockIcon /></div>
+)
 
 // Input Form Buttons
 export function ButtonContainer({ children }) {

@@ -98,6 +98,6 @@ describe('swapPlayersService + Utils', () => {
   it('throws error for missing player', () => {
     swaps[1].playerid = 'a'
     expect(() => swapPlayersService(matches, swaps))
-      .toThrowError("Player is not registered for match: a")
+      .toThrow("Player is not registered for match: a")
   })
 })

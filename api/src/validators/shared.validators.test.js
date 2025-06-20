@@ -23,11 +23,11 @@ describe('usingKey', () => {
   
   it('calls getSchema', () => {
     shared.usingKey('a','setA','b', { isIn: 'in', optional: 'opt' })
-    expect(schemaSpy).toBeCalledTimes(1)
+    expect(schemaSpy).toHaveBeenCalledTimes(1)
   })
   it('passes key', () => {
     shared.usingKey('a','setA','b', { isIn: 'in', optional: 'opt' })
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       'a',
       expect.anything(),
       expect.anything(),
@@ -37,7 +37,7 @@ describe('usingKey', () => {
   })
   it('passes isIn', () => {
     shared.usingKey('a','setA','b', { isIn: 'in', optional: 'opt' })
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -47,7 +47,7 @@ describe('usingKey', () => {
   })
   it('passes optional', () => {
     shared.usingKey('a','setA','b', { isIn: 'in', optional: 'opt' })
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -57,7 +57,7 @@ describe('usingKey', () => {
   })
   it('gets type', () => {
     shared.usingKey('a','setA','b', { isIn: 'in', optional: 'opt' })
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       'type2',
       expect.anything(),
@@ -67,7 +67,7 @@ describe('usingKey', () => {
   })
   it('gets limits', () => {
     shared.usingKey('a','setA','b', { isIn: 'in', optional: 'opt' })
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
       'lims2',
@@ -78,7 +78,7 @@ describe('usingKey', () => {
 
   it('uses mainKey if no useKey provided', () => {
     shared.usingKey('a','setA',null, { isIn: 'in', optional: 'opt' })
-    expect(schemaSpy).toBeCalledWith(
+    expect(schemaSpy).toHaveBeenCalledWith(
       expect.anything(),
       'type1',
       'lims1',
@@ -98,7 +98,7 @@ describe('bySet', () => {
 
   it('calls getSchemaFromCfg forEach key', () => {
     shared.bySet('setA')(['a'],['a','b'],'opt',false)
-    expect(schemaCfgSpy).toBeCalledTimes(2)
+    expect(schemaCfgSpy).toHaveBeenCalledTimes(2)
   })
 
   it('passes set to getSchemaFromCfg', () => {
@@ -165,13 +165,13 @@ describe('bySet', () => {
 
   it('ignores falsy keys', () => {
     shared.bySet('setA')(['a'],0,'opt',false)
-    expect(schemaCfgSpy).toBeCalledWith(
+    expect(schemaCfgSpy).toHaveBeenCalledWith(
       expect.anything(),
       'a',
       ['params'],
       expect.anything(),
     )
-    expect(schemaCfgSpy).toBeCalledTimes(1)
+    expect(schemaCfgSpy).toHaveBeenCalledTimes(1)
   })
   it('"all" as key list uses all keys under cfg.types', () => {
     shared.bySet('setB')('all',['d'],'opt',false)
@@ -187,7 +187,7 @@ describe('bySet', () => {
       ['params','body'],
       expect.anything(),
     )
-    expect(schemaCfgSpy).toBeCalledTimes(2)
+    expect(schemaCfgSpy).toHaveBeenCalledTimes(2)
   })
   it('converts key string to array', () => {
     shared.bySet('setB')(['c'],'d','opt',false)
@@ -203,7 +203,7 @@ describe('bySet', () => {
       ['body'],
       expect.anything(),
     )
-    expect(schemaCfgSpy).toBeCalledTimes(2)
+    expect(schemaCfgSpy).toHaveBeenCalledTimes(2)
   })
   
   it('builds object of results', () => {

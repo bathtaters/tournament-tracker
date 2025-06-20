@@ -6,7 +6,7 @@ import { planTitle } from "../../../assets/constants"
 export const planTabs = [ 'Vote', 'View' ]
 
 export default function usePlanVoteController() {
-    const { voter, voters, access, settings, events, setStatus, isLoading, error } = usePlanSettings()
+    const { voter, voters, access, settings, events, setStatus, isLoading, error, flashError } = usePlanSettings()
     
     const [ generatePlan ] = useGenPlanMutation()
 
@@ -17,7 +17,7 @@ export default function usePlanVoteController() {
         data: tab === 1 ? voters : voter,
         events, settings,
         
-        isLoading, error,
+        isLoading, error, flashError,
         isVoter: access && (access > 2 || voter),
         
         title: planTitle[settings.planstatus],

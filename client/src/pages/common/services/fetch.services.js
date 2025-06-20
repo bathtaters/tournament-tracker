@@ -24,6 +24,7 @@ export function getSettings(server) {
   const local = getLocalSettings()
   debugLogging && console.log('SETTINGS', { server, local })
   if (!('planslots' in server)) server.planslots = server.dayslots
+  if (!server.plandates) server.plandates = [server.datestart, server.dateend]
   return { ...defaultSettings, ...server, ...local, saved: Object.keys(server), }
 }
 

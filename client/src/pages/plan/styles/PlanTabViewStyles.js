@@ -19,7 +19,7 @@ export const ViewCellStyle = ({ header, children }) => (
 export const ViewCellSectionStyle = ({ header, children, open = true, ListTag = "ul" }) => (
     <details className="collapse collapse-arrow w-full my-2" open={open}>
         <summary className="collapse-title p-0 min-h-0"><h5>{header || emptyPlaceholder}</h5></summary>
-        <ListTag className="collapse-content !p-0 !min-h-0 font-light list-inside">
+        <ListTag className="collapse-content p-0! min-h-0! font-light list-inside">
             {children}
         </ListTag>
     </details>

@@ -29,7 +29,7 @@ export const classDefault = {
   additional: {
     enabled: [],
     disabled: [],
-    drag: ['cursor-move','hover:bg-neutral-content','hover:bg-opacity-20'],
+    drag: ['cursor-move','hover:bg-neutral-content/20'],
     drop: [],
     illegal: [],
   },

@@ -33,34 +33,29 @@ afterAll(() => { warnSpy.mockRestore(); });
 // ----- SELECT ----- //
 
 describe('getCount', () => {
-  let origDirectMock;
-
-  beforeAll(() => {
-    origDirectMock = direct.query.getMockImplementation();
-    direct.query.mockImplementation((...args) => Promise.resolve({ count: args }));
-  });
-  afterAll(() => {
-    direct.query.mockImplementation(origDirectMock);
-  });
+  afterEach(() => { direct.query.mockClear() });
   
-  it('table param only', () => 
-    expect(ops.getCount('test')).resolves.toEqual([
+  it('table param only', async () => {
+    await ops.getCount('test')
+    expect(direct.query).toHaveBeenCalledWith(
       'SELECT COUNT(*) AS count FROM test ;',
-      []
-    ])
-  );
-  it('filter param', () => 
-    expect(ops.getCount('test', 'FILTER')).resolves.toEqual([
+      expect.anything(),
+    )
+  });
+  it('filter param', async () => {
+    await ops.getCount('test', 'FILTER')
+    expect(direct.query).toHaveBeenCalledWith(
       'SELECT COUNT(*) AS count FROM test FILTER;',
-      []
-    ])
-  );
-  it('args param', () => 
-    expect(ops.getCount('test', 0, ['args'])).resolves.toEqual([
-      'SELECT COUNT(*) AS count FROM test ;',
+      expect.anything(),
+    )
+  });
+  it('args param', async () => {
+    await ops.getCount('test', 0, ['args'])
+    expect(direct.query).toHaveBeenCalledWith(
+      expect.anything(),
       ['args']
-    ])
-  );
+    )
+  });
   it('uses sqlHelpers', async () => {
     await ops.getCount('test');
     expect(utils.getFirst).toHaveBeenCalledTimes(1);

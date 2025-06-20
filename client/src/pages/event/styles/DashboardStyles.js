@@ -12,7 +12,7 @@ export function DashboardStyle({ children }) {
 }
 
 // Dashboard Styles
-export const HeaderStyle    = ({ children }) => <div className="stat font-heading text-right">{children}</div>
+export const HeaderStyle    = ({ children }) => <div className="stat bg-base-100 font-heading text-right">{children}</div>
 export const ValueStyle     = ({ children }) => <div className="stat-value font-medium">{children}</div>
 export const DetailStyle    = ({ children }) => <div className="stat-desc">{children}</div>
 

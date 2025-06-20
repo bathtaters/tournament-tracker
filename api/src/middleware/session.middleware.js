@@ -2,6 +2,7 @@ const session = require('express-session')
 const { env } = require('../config/meta')
 const PgSession = require('connect-pg-simple')(session)
 const sessionSecret = require('../config/dbServer.json').sessionSecret;
+const { staticPool } = require('../db/admin/connect')
 
 const sessionLength = 10 /* days */ * 24 /* h */ * 60 /* m */ * 60 /* s */ * 1000 /* ms */
 
@@ -17,7 +18,7 @@ module.exports = [
         proxy: true,
         store: new PgSession({
             tableName: 'session',
-            pool: require('../db/admin/connect').staticPool,
+            pool: staticPool(),
         }),
         secret: sessionSecret || 'SECRET',
         resave: false,

@@ -7,10 +7,10 @@ export function scheduleAdapter({ schedule, settings }, _, isPlan) {
   if (!schedule || !settings) return debugLogging && console.log('SCHEDULE MISSING', {schedule, settings})
   
   // Get base data
-  const emptyDay = [...Array((isPlan && settings.planslots) || settings.dayslots).values()]
+  const emptyDay = Array((isPlan ? settings.planslots : null) ?? settings.dayslots).fill(undefined)
   const dateRange = getDays(
-    (isPlan && settings.plandates[0]) || settings.datestart,
-    (isPlan && settings.plandates[1]) || settings.dateend
+    (isPlan ? settings.plandates?.[0] : null) ?? settings.datestart,
+    (isPlan ? settings.plandates?.[1] : null) ?? settings.dateend,
   )
 
   let output = []

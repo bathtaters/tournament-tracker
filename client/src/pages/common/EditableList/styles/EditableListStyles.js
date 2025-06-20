@@ -1,9 +1,9 @@
-import React from "react"
+export const titleStyle = "label font-light mb-2"
 
 export function EditableListStyle({ type, count, children }) {
   return (
   <div className="m-4 w-full">
-    <label className="label label-text mb-2">{`${type}s${typeof count !== 'number' ? '' : ` (${count})`}`}</label>
+    <div className={titleStyle}>{`${type}s${typeof count !== 'number' ? '' : ` (${count})`}`}</div>
     { children }
   </div> 
   )

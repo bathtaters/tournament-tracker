@@ -1,3 +1,5 @@
+const { customInterval: { sanitize: { options: interval } } } = require("../utils/validate.utils");
+
 // Define Shared Vars
 const sharedLimits = {
   title:  { min: 1, max: 50 },
@@ -61,7 +63,7 @@ module.exports = {
       playerspermatch: 2,
       notes: '',
       link: '',
-      clocklimit: { minutes: 50 },
+      clocklimit: interval({ minutes: 50 }),
       clockstart: null,
       clockmod: null,
     },

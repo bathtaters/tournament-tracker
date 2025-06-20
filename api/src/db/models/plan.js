@@ -3,12 +3,12 @@ const log = require('./log')
 const sql = require('../sql/strings').plan
 
 // Set multiple events to given dates [{ id, ...data }]
-const multiset = (plan, req) => log.updateRows('event', plan, { types: {
+const multiset = (plan, req) => log.updateRows('event', null, plan, req, { types: {
     id:      'UUID',
     day:     'DATE',
     players: 'UUID[]',
     slot:    'SMALLINT',
-} }, req)
+} })
 
 // De-schedule all un-planned events, schedule all planned events
 const update = (update, id, idCol, req) => log.updateRows('event', id, update, req, { idCol, returnArray: true })

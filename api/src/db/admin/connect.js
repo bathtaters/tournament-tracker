@@ -11,29 +11,36 @@ const retryAttempts = 15;
 const retryPauseMs = 1000;
 
 const connStr = getConnStr('api', null);
-let staticPool = new Pool(parse(connStr));
+
+// Open pool connection
+let _staticPool = null;
+const staticPool = () => {
+  if (!_staticPool) _staticPool = new Pool(parse(connStr));
+  return _staticPool
+}
 
 // Setup DB
 async function openConnection() {
   try {
+    if (!_staticPool) staticPool();
     await testDatabase(runOperation).then(test => { if (!test) throw { code: '3D000' } });
   }
   catch(e) {
     // Catch missing DB
     if ((e.code === '42602' || e.code === '3D000')) {
-      console.error('DB Does Not Exist! Creating now...');
+      logger.error('DB Does Not Exist! Creating now...');
       try { await resetDatabase(true, false, runOperation); } catch (err) { throw err; }
+    } else {
+      throw new Error(`Unable to connect to DB: "${connStr}": ${e.message || e.description || e}`);
     }
-    throw new Error(`Unable to connect to DB: "${connStr}": ${e.message || e.description || e}`);
   }
 }
-openConnection()
 
 // Disconnect from DB
 async function closeConnection() {
-  if (!staticPool) { throw new Error("Attempting to close connection before opening."); }
-  await staticPool.end();
-  staticPool = null;
+  if (!_staticPool) { throw new Error("Attempting to close connection before opening."); }
+  await _staticPool.end();
+  _staticPool = null;
   return logger.info('Disconnected from DB server.');
 }
 
@@ -41,7 +48,7 @@ async function closeConnection() {
 // This gets a client from pool & re-calls operation(client)
 // for up to <maxAttempts> (starting @ <retryCount> w/ delay = 2^<retryCount> secs)
 async function runOperation(operation = client => {}, maxAttempts = retryAttempts, retryCount = 0, usingPool = null) {
-  const pool = usingPool || staticPool;
+  const pool = usingPool || _staticPool;
   if (!pool) throw new Error("Attempting DB access before successfully opening connection.");
   
   let client = await retryBlock(
@@ -87,4 +94,4 @@ async function runOperation(operation = client => {}, maxAttempts = retryAttempt
   }
 }
 
-module.exports = { staticPool, closeConnection, runOperation, resetDatabase }
+module.exports = { staticPool, openConnection, closeConnection, runOperation, resetDatabase }
