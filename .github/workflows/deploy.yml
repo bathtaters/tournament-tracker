@@ -16,6 +16,10 @@ on:
         required: false
         type: string
         default: "tournament-tracker-test"
+      proc_port:
+        required: false
+        type: number
+        default: 3072
       remote_dir:
         required: false
         type: string
@@ -28,6 +32,7 @@ on:
 env:
   # Default to PROD (For push/pull workflow)
   PROC_NAME: ${{ inputs.proc_name || vars.PROC_NAME || 'tournament-tracker-backend' }}
+  PORC_PORT: ${{ inputs.proc_port || vars.PROC_PORT || 3070 }}
   REMOTE_DIR: ${{ inputs.remote_dir || vars.REMOTE_DIR || '~/tournament-tracker' }}
   DB_NAME: ${{ inputs.db_name || vars.DB_NAME || 'tt_production' }}
   DB_USER: api
@@ -124,4 +129,8 @@ jobs:
         run: rsync -avz api client ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ env.REMOTE_DIR }}/
       
       - name: Restart API server
-        run: ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'source ~/.nvm/nvm.sh && npx --yes pm2 restart "${{ env.PROC_NAME }}" || npx --yes pm2 start ${{ env.REMOTE_DIR }}/${{ env.SERVER_PATH }} --name "${{ env.PROC_NAME }}"'
+        run: >
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}
+          'source ~/.nvm/nvm.sh &&
+          PORT=${{ env.PORC_PORT }} npx --yes pm2 restart "${{ env.PROC_NAME }}" --update-env ||
+          PORT=${{ env.PORC_PORT }} npx --yes pm2 start ${{ env.REMOTE_DIR }}/${{ env.SERVER_PATH }} --name "${{ env.PROC_NAME }}"'
