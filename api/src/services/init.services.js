@@ -1,17 +1,9 @@
 // Imports
 const logger = require('../utils/log.adapter');
-const exportToClient = require('../config/exportToClient');
-const meta = require('../config/meta');
-const validation = require('../config/validation');
 const { types } = require("pg");
 
 // To be run when server starts
-async function initServices(syncOnly = false) {
-  // Copy validation params to client
-  await exportToClient({ ...validation, meta }, 'src', 'assets', 'validation.json')
-    .then(p => logger.log('Validate config copied to client --  '+p));
-  if (syncOnly) process.exit(0)
-
+function initServices() {
   // Setup integer parsing for pg
   types.setTypeParser(types.builtins.INT2, parseInt);
   types.setTypeParser(types.builtins.INT4, parseInt);

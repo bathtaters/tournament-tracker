@@ -1,14 +1,12 @@
-// Import
-const join = require('path').join;
-const fs = require('fs/promises');
+/** Copy JSON of validation/meta data from API to client */
 
-// Root path of client project
-const clientBase = join(require('./meta').rootPath,'..','client')
+const fs = require('fs');
+const { join } = require('path');
+const meta = require('../config/meta');
+const validation = require('../config/validation');
 
-// Save JSON of validation to client assets
-const exportToClient = (data, ...clientPath) => {
-  const path = join(clientBase, ...clientPath)
-  return fs.writeFile(path, JSON.stringify(data)).then(() => path)
-}
+const clientPath = join(meta.rootPath,'..','client','src','assets','validation.json')
+const data = JSON.stringify({ ...validation, meta })
 
-module.exports = exportToClient
+fs.writeFileSync(clientPath, data)
+console.log('Validate config copied to client --', clientPath)

@@ -25,11 +25,13 @@ app.use(() => { throw require('./config/constants').missingError; })
 app.use(require('./middleware/error.middleware'));
 
 // Initialize services
-require('./services/init.services')().then(() => 
+if (process.env.NODE_ENV === 'development') {
+  require('./config/exportToClient.js');
+}
+require('./services/init.services')()
 
-  // Start server
-  app.listen(port, (error) => {
-    if (error) throw error
-    logger.log(`${name} (v${version}) started. Listening on port ${port}.`)
-  })
-);
+// Start server
+app.listen(port, (error) => {
+  if (error) throw error
+  logger.log(`${name} (v${version}) started. Listening on port ${port}.`)
+})
