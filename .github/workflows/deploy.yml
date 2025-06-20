@@ -78,17 +78,17 @@ jobs:
           echo '}' >> temp.json
           mv temp.json "${{ env.API_CFG_PATH }}"
       
-      - name: Test API
-        run: cd api && npm test
-      
-      - name: Sync API to client
-        run: cd api && npm run sync
-      
       - name: Upload API
         uses: actions/upload-artifact@v4
         with:
           name: api-code
           path: api
+          
+      - name: Test API
+        run: cd api && npm test
+      
+      - name: Sync API to client
+        run: cd api && npm run sync
       
       - name: Install client packages
         run: cd client && npm ci
