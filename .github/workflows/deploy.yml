@@ -1,3 +1,5 @@
+# !! This workflow requires nvm & rsync installed on the remote host !! #
+
 name: Test, Build & Deploy
 
 on:
@@ -28,11 +30,13 @@ env:
   PROC_NAME: ${{ inputs.proc_name || vars.PROC_NAME || 'tournament-tracker-backend' }}
   REMOTE_DIR: ${{ inputs.remote_dir || vars.REMOTE_DIR || '~/tournament-tracker' }}
   DB_NAME: ${{ inputs.db_name || vars.DB_NAME || 'tt_production' }}
+  DB_USER: api
   DB_PROTOCOL: postgresql
   DB_PORT: 26257
   DB_SSL_MODE: verify-full
   DB_CERT_PATH: $HOME/.postgresql/root.crt
   API_CFG_PATH: ./api/src/config/dbServer.json
+  SERVER_PATH: api/src/server.js
 
 jobs:
   build:
@@ -54,7 +58,7 @@ jobs:
         run: |
           echo '{' > temp.json
           echo '  "connectionString": "%PROTO://%NAME:%PASS@%DOM:%PORT/%DB?sslmode=%MODE&sslrootcert=%CERT&options=%OPTS",' >> temp.json
-          echo '  "users": [{ "name": "api", "pass": "${{ secrets.DB_API_KEY }}" }],' >> temp.json
+          echo '  "users": [{ "name": "${{ env.DB_USER }}", "pass": "${{ secrets.DB_API_KEY }}" }],' >> temp.json
           echo '  "server": {' >> temp.json
           echo '    "proto": "${{ env.DB_PROTOCOL }}",' >> temp.json
           echo '    "db": "${{ env.DB_NAME }}",' >> temp.json
@@ -67,7 +71,7 @@ jobs:
           echo '  "pwsalt": "${{ secrets.SALT }}",' >> temp.json
           echo '  "sessionSecret": "${{ secrets.SESSION }}"' >> temp.json
           echo '}' >> temp.json
-          mv temp.json ${{ env.API_CFG_PATH }}
+          mv temp.json "${{ env.API_CFG_PATH }}"
       
       - name: Test API
         run: cd api && npm test
@@ -120,4 +124,4 @@ jobs:
         run: rsync -avz api client ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ env.REMOTE_DIR }}/
       
       - name: Restart API server
-        run: ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'source ~/.nvm/nvm.sh && npx --yes pm2 restart "${{ env.PROC_NAME }}" || npx --yes pm2 start ${{ env.REMOTE_DIR }}/api/index.js --name "${{ env.PROC_NAME }}"'
+        run: ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'source ~/.nvm/nvm.sh && npx --yes pm2 restart "${{ env.PROC_NAME }}" || npx --yes pm2 start ${{ env.REMOTE_DIR }}/${{ env.SERVER_PATH }} --name "${{ env.PROC_NAME }}"'
