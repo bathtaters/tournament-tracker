@@ -35,7 +35,7 @@ export const formatCopySeats = (matchList, matches, players, playerspermatch) =>
   for (let p = 0; p < playerspermatch; p++) {
     for (const matchId of matchList) {
       const playerId = matches[matchId]?.players?.[p]
-      playerList.push(players?.[playerId]?.name)
+      if (playerId) playerList.push(players?.[playerId]?.name)
     }
   }
   return playerList.map((name, idx) => `${idx+1}. ${name ?? '[Empty]'}`).join('\n')
