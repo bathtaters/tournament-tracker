@@ -8,7 +8,7 @@ export const logInvalidEntries = debugLogging, // Log to console when list conta
   hideListWhenExact = suggestText.hideListWhenExact
 
 // adapt list entry for display
-export const displayEntry = (entry) => entry?.value
+export const displayEntry = (entry) => entry?.value ?? entry?.id
 
 // adapt input text for comparison
 export const adaptInput = (inputVal) => inputVal.toUpperCase()

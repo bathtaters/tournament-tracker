@@ -1,9 +1,10 @@
 import { useState } from "react"
+import { useSuggestText } from "../../SuggestText/SuggestText"
 import { suggestListLayout } from "../styles/EditableListStyles"
 import { debugLogging } from "../../../../assets/config"
 
 
-export default function useListInputController({ data, idKey, nameKey, remaining, onFirstEdit, pushItem, create }, ref) {
+export default function useListInputController({ data, idKey, nameKey, remaining, onFirstEdit, pushItem, create, onSubmit }) {
   // Setup state
   const [isHidden, setHide] = useState(true)
 
@@ -29,16 +30,20 @@ export default function useListInputController({ data, idKey, nameKey, remaining
     return handleNewItem(text)
   }
 
-  return {
-    isHidden, submitHandler,
+  // SuggestText controller
+  const { backend, submit } = useSuggestText(suggestListLayout(remaining, data, nameKey, create), {
+    isHidden,
+    onSubmit: submitHandler,
+    hideStaticWhenEmpty: create.hideOnEmpty,
+  })
 
-    // Build list
-    suggestions: suggestListLayout(remaining, data, nameKey, create),
+  return {
+    backend, isHidden,
 
     // Add Button handler
     addButtonHandler: () => {
       onFirstEdit && onFirstEdit();
-      return isHidden ? setHide(false) : ref.current.submit();
+      return isHidden ? setHide(false) : submit();
     },
   }
 }

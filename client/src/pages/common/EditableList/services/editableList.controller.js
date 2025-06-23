@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { useOpenAlert } from "../../common.hooks"
 import { duplicateItemAlert } from "../../../../assets/alerts"
 
@@ -8,7 +8,6 @@ export default function useEditableListController({ type, value, onChange, query
   const { data, isLoading, error } = query
   
   // Init Local State
-  const suggestRef = useRef(null)
   const openAlert = useOpenAlert()
 
   // Add item to list
@@ -52,5 +51,5 @@ export default function useEditableListController({ type, value, onChange, query
   }
 
   // Pass to renderer
-  return { data, inputData, suggestRef, popItem }
+  return { data, inputData, popItem }
 }
