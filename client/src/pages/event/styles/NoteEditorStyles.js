@@ -1,11 +1,10 @@
-import React from "react"
 import LoadingSpinner from "../../common/components/LoadingSpinner"
 import { useScaleToFitRef } from "../../common/common.hooks"
 
 // Wrapper
-export const NotesWrapperStyle = React.forwardRef(function NotesWrapperStyle({ children }, ref) {
-  return <div className="my-2 mx-10"><div className="indicator w-full" ref={ref}>{children}</div></div>
-})
+export function NotesWrapperStyle({ divRef, children }) {
+  return <div className="my-2 mx-10"><div className="indicator w-full" ref={divRef}>{children}</div></div>
+}
 
 // Main Component
 export function NotesStyle(props) {
