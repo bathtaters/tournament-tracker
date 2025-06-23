@@ -1,5 +1,4 @@
 // --- SHARED UTILITES FOR GENERATING MATCHES --- \\
-const { randomInt } = require('crypto');
 const { getCombinations, getUniqueCombinations } = require('../../utils/combination.utils')
 const { shuffle } = require('../../utils/shared.utils');
 
@@ -114,7 +113,7 @@ exports.getGroupsSimple = (array, width) => {
  * @returns {Any[][]} 2-D result array
  */
  exports.randomGroup = (array, groupSize) => {
-  array = exports.shuffle(array.slice());
+  array = shuffle(array.slice());
   if (groupSize < 1) return array;
   let newArr = [];
   for(let i=0; i < array.length; i += groupSize) {
