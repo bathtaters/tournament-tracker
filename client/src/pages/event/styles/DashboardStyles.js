@@ -13,8 +13,8 @@ export function DashboardStyle({ children }) {
 
 // Dashboard Styles
 export const HeaderStyle    = ({ children }) => <div className="stat bg-base-100 font-heading text-right">{children}</div>
-export const ValueStyle     = ({ children }) => <div className="stat-value font-medium">{children}</div>
-export const DetailStyle    = ({ children }) => <div className="stat-desc">{children}</div>
+export const ValueStyle     = ({ center, children }) => <div className={`stat-value font-medium ${center ? 'text-center' : ''}`}>{children}</div>
+export const DetailStyle    = ({ center,children }) => <div className={`stat-desc ${center ? 'text-center' : ''}`}>{children}</div>
 
 export const EventLinkStyle = ({ text, link }) => (
   <div className="text-center">
