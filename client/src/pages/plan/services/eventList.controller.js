@@ -1,13 +1,14 @@
-import { useRef, useState } from "react"
+import { useState } from "react"
 import { useEventQuery } from "../voter.fetch"
 import { useSetEventMutation } from "../../eventEditor/eventEditor.fetch"
 import { createItemAlert, itemCreateError } from "../../../assets/alerts"
 import { useLockScreen, useOpenAlert } from "../../common/common.hooks"
 import { createLockCaption } from "../../../assets/constants"
+import { useModal } from "../../common/Modal"
 
 export default function useEventList(value, onChange) {
     // Event Editor modal
-    const modal = useRef(null)
+    const { backend, open, close, lock } = useModal()
     const [editId, setEditId] = useState(null)
 
      // Load DB
@@ -37,8 +38,7 @@ export default function useEventList(value, onChange) {
     const filter = ({ status }) => status < 2
 
     return {
-        modal,
-        editId,
+        editId, backend, lock, close,
 
         listProps: {
             value,
@@ -47,7 +47,7 @@ export default function useEventList(value, onChange) {
             filter,
             nameKey: "title",
 
-            onClick: (id) => () => { setEditId(id); modal.current.open() },
+            onClick: (id) => () => { setEditId(id); open() },
 
             autofill: {
                 label: `Fill ${query.data ? Object.values(query.data).filter(filter).length : 'All'}`,

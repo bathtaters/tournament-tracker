@@ -2,7 +2,7 @@ import { usePlayerQuery, useCreatePlayerMutation } from "../player.fetch";
 import { useOpenAlert } from "../../common/common.hooks";
 import { duplicateNameAlert, emptyNameAlert, notLoadedAlert } from "../../../assets/alerts";
 
-export default function useCreatePlayer(modal) {
+export default function useCreatePlayer(close) {
   // Load in global data
   const { data, isLoading, error } = usePlayerQuery()
   const [ createPlayerFetch ] = useCreatePlayerMutation()
@@ -22,7 +22,7 @@ export default function useCreatePlayer(modal) {
 
     // Add player & close modal
     createPlayerFetch(playerData)
-    modal.current.close(true)
+    close(true)
   }
 
   // Catch errors

@@ -1,5 +1,3 @@
-import React, { useRef } from "react";
-import Modal from "../common/Modal";
 import RawData from "../common/RawData";
 
 import EventHeader from "./components/EventHeader";
@@ -7,6 +5,7 @@ import EventDashboard from "./components/EventDashboard";
 import EditEvent from "../eventEditor/EditEvent";
 import EventClock from "./components/EventClock";
 import Round from "./components/Round";
+import { Modal, useModal } from "../common/Modal";
 import Loading from "../common/Loading";
 import CreditButtons from "./components/subcomponents/CreditButtons";
 import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
@@ -20,7 +19,7 @@ import { isZero } from "./services/clock.services";
 
 function Event() {
   // Get data
-  const modal = useRef(null);
+  const { backend, open, close, lock } = useModal()
   const { id } = useParamIds('id');
   const { data, isLoading, error, isFetching } = useEventQuery(id);
   const { data: clock, error: clockErr } = useEventClock(id, data?.status, data?.clocklimit)
@@ -41,7 +40,7 @@ function Event() {
       <EventHeader data={data} disabled={isFetching} />
 
       <DashboardStyle>
-        <EventDashboard data={data} openStats={()=>modal.current.open()} />
+        <EventDashboard data={data} openStats={open} />
 
         {roundArray(data.matches && data.matches.length).map((roundNum, idx) => 
           <Round
@@ -60,10 +59,11 @@ function Event() {
 
       <RawData data={{ ...data, clock }} />
 
-      <Modal ref={modal}>
+      <Modal backend={backend}>
         <EditEvent
           eventid={id}
-          modal={modal}
+          lockModal={lock}
+          closeModal={close}
         />
       </Modal>
     </div>

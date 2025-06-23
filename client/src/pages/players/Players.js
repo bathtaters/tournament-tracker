@@ -1,16 +1,14 @@
-import React from "react";
-import AddPlayer from "./components/AddPlayer";
-import Stats from "../stats/Stats";
-import Modal from "../common/Modal";
-
-import { TitleStyle, StatsStyle, FooterStyle, statsClass } from "./styles/PlayerStyles";
-import { AddButton, RemoveButton, ShowHiddenButton } from "./styles/ButtonStyles";
-
-import usePlayersController from "./services/player.services";
+import AddPlayer from "./components/AddPlayer"
+import Stats from "../stats/Stats"
+import { Modal } from "../common/Modal"
+import { TitleStyle, StatsStyle, FooterStyle, statsClass } from "./styles/PlayerStyles"
+import { AddButton, RemoveButton, ShowHiddenButton } from "./styles/ButtonStyles"
+import usePlayersController from "./services/player.services"
 
 function Players() {
   const {
-    deleteMode, access, modal,
+    backend, open, close, lock,
+    deleteMode, access,
     handlePlayerClick, toggleDelete,
     hideStats, hideHidden, setShowHidden,
   } = usePlayersController()
@@ -32,12 +30,12 @@ function Players() {
       </StatsStyle>
 
       <FooterStyle>
-        { access > 1 && <AddButton disabled={deleteMode} onClick={()=>modal.current.open()} /> }
+        { access > 1 && <AddButton disabled={deleteMode} onClick={open} /> }
         { setShowHidden && <ShowHiddenButton value={!hideHidden} onClick={()=>setShowHidden((h)=>!h)} /> }
         { access > 2 && <RemoveButton onClick={toggleDelete} canDelete={deleteMode} /> }
       </FooterStyle>
 
-      <Modal ref={modal}> <AddPlayer modal={modal} /> </Modal>
+      <Modal backend={backend}> <AddPlayer lockModal={lock} closeModal={close} /> </Modal>
     </div>
   )
 }

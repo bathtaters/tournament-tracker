@@ -1,17 +1,15 @@
-import React from "react"
 import PropTypes from 'prop-types'
-
 import InputForm from "../../common/InputForm"
 import { ReportStyle, ReportTitleStyle, reportStyles } from "../styles/ReportStyles"
-
 import { reportAdapter } from "../services/match.services"
 
-function Report({ title, match, report, layout, modal }) {
+
+export default function Report({ title, match, report, layout, lock, close }) {
 
   // Actions
   const submitReport = reportData => {
-    report(reportAdapter(reportData, match.id, match.eventid));
-    modal.current.close(true);
+    report(reportAdapter(reportData, match.id, match.eventid))
+    close(true)
   }
 
   // Render
@@ -22,7 +20,7 @@ function Report({ title, match, report, layout, modal }) {
         rows={layout}
         submitLabel="Report"
         onSubmit={submitReport}
-        onEdit={modal.current.lock}
+        onEdit={lock}
         isGrid={true}
         className={reportStyles.form}
       />
@@ -37,5 +35,3 @@ Report.propTypes = {
   layout: PropTypes.array.isRequired,
   modal: PropTypes.object.isRequired,
 }
-
-export default Report

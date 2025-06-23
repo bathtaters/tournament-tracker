@@ -1,11 +1,10 @@
-import React from "react"
 import PropTypes from 'prop-types'
 
 import MatchPlayer from "./components/MatchPlayer"
 import MatchWins from "./components/MatchWins"
 import Report from "./components/Report"
 
-import Modal from "../common/Modal"
+import { Modal } from "../common/Modal"
 import Counter from "../common/Counter"
 import RawData from "../common/RawData"
 import Loading from "../common/Loading"
@@ -63,20 +62,21 @@ function Match({ eventid, matchId, wincount, isEditing }) {
           isEditing={isEditing}
           clearReport={clearReport}
           setVal={setVal}
-          openReport={()=>reportModal.current.open()}
+          openReport={reportModal.open}
           showReport={showReport}
         />
       </WinsStyle>
 
       <RawData className="text-xs w-80 m-auto" data={matchData} />
 
-      <Modal ref={reportModal}>
+      <Modal backend={reportModal.backend}>
         <Report
           title={title}
           match={matchData}
           report={report}
           layout={reportLayout(matchData.players, players, wincount)}
-          modal={reportModal}
+          lock={reportModal.lock}
+          close={reportModal.close}
         />
       </Modal>
 
