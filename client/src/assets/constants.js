@@ -76,5 +76,8 @@ export const errorTitle = {
 // FORMAT = msg/TEXT_STATUS: (arg) => `New msg ${arg}.`,
 export const errorMessage = {
   default: "An unknown server error occurred.",
-  PARSING_ERROR: (msg) => "Server is not responding: "+(msg || "Unknown error."),
+  PARSING_ERROR: (args) => {
+    console.error('Invalid server response', args)
+    return "Server is not responding."
+  },
 }
