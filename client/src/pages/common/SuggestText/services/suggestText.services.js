@@ -9,8 +9,8 @@ export function getSuggestions(list, value, setSuggestions, setExact, hideStatic
 
   // Hide all when text box is empty 
   if (hideListWhenEmpty && !len) {
-    setSuggestions && setSuggestions([])
-    setExact && setExact(false)
+    setSuggestions([])
+    setExact(false)
     return [[]]
   }
 
@@ -28,17 +28,18 @@ export function getSuggestions(list, value, setSuggestions, setExact, hideStatic
     return testEntry(inputAdapt, entryAdapt, entry)
   })
 
-  setSuggestions && setSuggestions(matches)
-  setExact && setExact(exact)
+  setSuggestions(matches)
+  setExact(exact)
   return [ matches, exact ]
 }
 
 
 // Auto-select rules (Runs on list change)
-export const autoSelect = (selected, list, setSelected) => {
-  if (!validList(list)) setSelected(-1) // deselect when no list
-  else if ((selected < -1 || selected >= list.length)) setSelected(0) // select 1st entry if out of bounds
-  else if (selected === -1) setSelected(getNonStaticSoloIdx(list))
+export const autoSelect = (selected, list) => {
+  if (selected === -1 || !validList(list)) return -1 // deselect when no list / short-circut deselect
+  else if ((selected < -1 || selected >= list.length)) return 0 // select 1st entry if out of bounds
+  else if (selected === -1) return getNonStaticSoloIdx(list)
+  return selected
 }
 
 

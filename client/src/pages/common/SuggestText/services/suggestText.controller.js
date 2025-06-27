@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef, useTransition } from "react"
+import { useEffect, useState, useRef, useTransition, useMemo, useCallback } from "react"
 import { getSuggestions, autoSelect } from "./suggestText.services"
-import { getSelected, getNext, getPrev, validList, getNonStaticSolo, useHotkeys } from "./suggestText.utils"
+import { getNext, getPrev, validList, getNonStaticSoloIdx, useHotkeys } from "./suggestText.utils"
 import { displayEntry, enterBehavior, hideListWhenExact, getId } from "./suggestText.custom"
 
 /** This must be implemented upstream of SuggestText.
@@ -10,7 +10,7 @@ import { displayEntry, enterBehavior, hideListWhenExact, getId } from "./suggest
  *      - `value: string` - Display value for this row
  *      - `isStatic: bool?` - If true, this value is not filtered as a suggestion
  *          Displayed as per `hideStaticWhenEmpty` setting
- *      - Additional props will be passed to submit/getPick/onSubmit functions
+ *      - Additional props will be passed to submit/picked/onSubmit functions
  *    - `options: object` - Optional options of format { isHidden, onChange/Submit/Focus, hideStaticWhenEmpty }
  *      - `isHidden: bool` - If true, text box is hidden
  *      - `onChange(value, pick, exact, suggestions)` - Called whenever the text value changes
@@ -29,7 +29,7 @@ import { displayEntry, enterBehavior, hideListWhenExact, getId } from "./suggest
  *    - `submit(force?)` - Submits currently selected value (Or `force` if included).
  *      - `force: { id, value, isStatic }?` - List entry to force-submit
  *      - Returns: `Promise<{ id, value, isStatic, result }>` - Submitted list entry w/ result of onSubmit() (if implemented)
- *    - `getPick()` - Returns the currently selected list entry, without submitting
+ *    - `picked` - Currently selected list entry
  *    - `value: string` - Text inside textbox
  *    - `setValue(value)` - Sets the text inside textbox (React useState function)
  */
@@ -42,38 +42,49 @@ export default function useSuggestText(list = [], { isHidden, onChange, onSubmit
   const [, startTransition] = useTransition()
   const [suggestions, setSuggestions] = useState(list)
   const [value, setValue] = useState("")
-  const [selected, setSelected] = useState(-1)
-  const [picked, setPick] = useState(null)
+  const [selected, setSelectedState] = useState(-1)
+  const [pickState, setPick] = useState(null)
   const [exact, setExact] = useState(null)
   const [listIsVisible, setListVisible] = useState(false)
 
   // Basic vars
+  const length = suggestions?.length ?? 0
   const isEmpty = !value || !value.trim()
-  const isExact = !isEmpty && exact //(!Array.isArray(suggestions) ? suggestions : suggestions.length === 1 ? suggestions[0] : false)
-  const selectedValue = !isHidden && getSelected(selected, suggestions)
-  const getPick = () => !isHidden && (picked || isExact || (!isEmpty && getNonStaticSolo(suggestions)))
+  const isExact = !isEmpty && exact
+  const selectedValue = !isHidden && (
+    selected < 0 ? (
+      length === 1 ? suggestions[0] : null
+    ) : selected < length && suggestions[selected]
+  )
+  const nonStaticSoloIdx = useMemo(() => getNonStaticSoloIdx(suggestions), [suggestions])
+  const picked = !isHidden && (pickState || isExact || (
+    !isEmpty && nonStaticSoloIdx != null ? suggestions[nonStaticSoloIdx] : null
+  ))
 
   // Auto update state
-  useEffect(() => autoSelect(selected, suggestions, setSelected), [selected, suggestions])
+  useEffect(() => { setSelectedState((selected) => autoSelect(selected, suggestions)) }, [suggestions])
   // eslint-disable-next-line
   useEffect(() => { startTransition(() => getSuggestions(list, value, setSuggestions, setExact, hideStaticWhenEmpty)) }, [list]) // Pass prop updates to state
 
   // --- Action Handlers --- \\
 
+  // Selected setter + side effects
+  const setSelected = useCallback((selected) => setSelectedState(autoSelect(selected, suggestions)), [suggestions])
+
   // TextBox controller
-  const change = (e) => {
+  const change = useCallback((e) => {
     if (e.target.value !== value) setValue(e.target.value) // Controlled component
 
     // Clear pick value
-    const newPick = e.forcePick || (e.target.value === displayEntry(picked) && picked)
-    if (picked && !newPick) setPick(null)
+    const newPick = e.forcePick || (e.target.value === displayEntry(pickState) && pickState)
+    if (pickState && !newPick) setPick(null)
 
     // Update list
     startTransition(() => {
       const [newSuggestions, newExact] = getSuggestions(list, e.target.value, setSuggestions, setExact)
       onChange && onChange(e.target.value, newPick, newExact, newSuggestions) // User onChange function
     })
-  }
+  }, [value, pickState, list, onChange])
 
   const handleFocus = (isFocused, e) => {
     setListVisible(isFocused)
@@ -81,7 +92,7 @@ export default function useSuggestText(list = [], { isHidden, onChange, onSubmit
   }
 
   const submit = async (forcePick) => {
-    const newPick = forcePick || getPick()
+    const newPick = forcePick || picked
 
     // Reset form
     setPick(null)
@@ -99,7 +110,7 @@ export default function useSuggestText(list = [], { isHidden, onChange, onSubmit
     if (newPick.isStatic) return submit(newPick) // Submit static pick
 
     const pickDisplay = displayEntry(newPick)
-    if (displayEntry(picked) === pickDisplay) return false // Already picked
+    if (displayEntry(pickState) === pickDisplay) return false // Already pickState
 
     // Pick newPick
     change({ target: { value: pickDisplay }, forcePick: newPick })
@@ -110,15 +121,15 @@ export default function useSuggestText(list = [], { isHidden, onChange, onSubmit
 
   // Setup Keyboard UI
   useHotkeys({
-    Enter:     () => enterBehavior(pick, submit, picked, isExact, value),
-    Escape:    () => selected < 0 ? textbox.current.blur() : setSelected(-1),
-    ArrowUp:   () => setSelected(getPrev(selected, suggestions?.length || 0)), 
-    ArrowDown: () => setSelected(getNext(selected, suggestions?.length || 0)),
-  }, { skip: !listIsVisible, deps: [selected, value] })
+    Enter:     () => enterBehavior(pick, submit, pickState, isExact, value), // Missing from deps
+    Escape:    () => selected < 0 || nonStaticSoloIdx != null ? textbox.current.blur() : setSelected(-1),
+    ArrowUp:   () => setSelected(getPrev(selected, length)), 
+    ArrowDown: () => setSelected(getNext(selected, length)),
+  }, { skip: !listIsVisible, deps: [selected, value, length, nonStaticSoloIdx, setSelected] })
 
   const showList = listIsVisible && (!hideListWhenExact || !exact) && validList(suggestions)
   return {
-    value, setValue, submit, getPick,
+    value, setValue, submit, picked,
     backend: {
       boxProps:  {
         value, handleFocus, change, showList,

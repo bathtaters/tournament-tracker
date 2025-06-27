@@ -5,32 +5,23 @@ export { useScrollToRef, useHotkeys } from '../../services/basic.services'
 
 
 // Determine if list is valid
-export const validList = (list) => Array.isArray(list) && Boolean(list.length);
+export const validList = (list) => Array.isArray(list) && Boolean(list.length)
 
 // Hotkey Handlers
-export const getNext = (curr, total) => curr + 1 >= total || curr < 0 ? 0 : curr + 1;
-export const getPrev = (curr, total) => curr <= 0 || curr > total ? total - 1 : curr - 1;
+export const getNext = (curr, total) => curr + 1 >= total || curr < 0 ? 0 : curr + 1
+export const getPrev = (curr, total) => curr <= 0 || curr > total ? total - 1 : curr - 1
 
-// Get value of selection based off index
-export const getSelected = (selected, suggestions) => {
-  if (selected < 0) {
-    if (suggestions.length === 1) return suggestions[0];
-    return;
-  }
-  return selected < suggestions.length && suggestions[selected];
-};
 
-export const getNonStaticSolo = (list) => {
-  const nonStatic = list.filter(entry => !entry.isStatic)
-  return nonStatic.length === 1 && nonStatic[0]
-}
-
+// Get index of entry if it is the ONLY entry where 'isStatic' = FALSE, otherwise return null
 export const getNonStaticSoloIdx = (list) => {
-  let nonStatic = []
-  list.forEach((entry,idx) => !entry.isStatic && nonStatic.push(idx))
-  return nonStatic.length === 1 ? nonStatic[0] : -1
+  let nssIdx = null
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].isStatic) continue
+    else if (nssIdx == null) nssIdx = i
+    else return -1
+  }
+  return nssIdx
 }
-
 
 
 // Hook that works like 'useLayoutEffect', plus triggers effect on 'listenerType' event
