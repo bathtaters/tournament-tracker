@@ -27,7 +27,7 @@ function Modal({ backend: { isOpen, isLocked, close, closeWithMsg }, className =
     <FocusTrap active={isOpen} paused={alertIsOpen} focusTrapOptions={{ escapeDeactivates: false }}>    
       <ModalStyle isOpen={isOpen} onClick={bgClose ? close : undefined} className={className}>
         <CloseButton onClick={closeWithMsg} />
-        {isOpen && children}
+        {children}
       </ModalStyle>
     </FocusTrap>
   )

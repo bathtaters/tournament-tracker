@@ -2,7 +2,7 @@ import React from "react";
 
 // Modal window style (fwdRef for FocusTrap)
 export function ModalStyle({ isOpen, className, onClick, z = 'z-70', children, modalRef }) {
-  return isOpen ? (
+  return isOpen && (
     <div className={`modal modal-open modal-bottom sm:modal-middle h-full w-full ${z}`} onClick={onClick} ref={modalRef}>
       <div
         className={`modal-box max-h-full max-w-full sm:overflow-x-hidden relative p-8 ${className}`}
@@ -11,9 +11,6 @@ export function ModalStyle({ isOpen, className, onClick, z = 'z-70', children, m
         {children}
       </div>
     </div>
-  ) : (
-    <div className="opacity-0">{children}</div>
-    // Fix for focus-trap-react not having anything to focus in React 19
   )
 }
 
