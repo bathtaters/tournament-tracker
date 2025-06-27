@@ -24,8 +24,8 @@ export function ShowHiddenButton({ value, onClick }) {
     <label onClick={onClick}
       className={"join-item btn btn-neutral btn-square btn-md p-1 swap" + (value ? " swap-active" : "")}
     >
-      <EyeIcon className="swap-on stroke-current w-full" isOpen={true} />
-      <EyeIcon className="swap-off stroke-current w-full" isOpen={false} />
+      <EyeIcon className="swap-on w-full" isOpen={true} />
+      <EyeIcon className="swap-off w-full" isOpen={false} />
     </label>
   )
 }
