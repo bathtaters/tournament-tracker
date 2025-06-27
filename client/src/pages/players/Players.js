@@ -35,7 +35,9 @@ function Players() {
         { access > 2 && <RemoveButton onClick={toggleDelete} canDelete={deleteMode} /> }
       </FooterStyle>
 
-      <Modal backend={backend}> <AddPlayer lockModal={lock} closeModal={close} /> </Modal>
+      <Modal backend={backend} className="sm:w-lg">
+        <AddPlayer lockModal={lock} closeModal={close} />
+      </Modal>
     </div>
   )
 }
