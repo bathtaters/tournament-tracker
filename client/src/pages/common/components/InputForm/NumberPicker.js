@@ -1,7 +1,7 @@
 import useNumberPicker, { invalidHandler } from "../../services/InputForm/numberPicker.controller"
 
-export default function NumberPicker({ inputProps, backend, className = "", wrapperClass = "" }) {
-  const { decHandler, incHandler } = useNumberPicker(inputProps, backend)
+export default function NumberPicker({ inputProps, className = "", wrapperClass = "" }) {
+  const { decHandler, incHandler } = useNumberPicker(inputProps)
 
   return (
     <div className={`join ${wrapperClass}`}>

@@ -1,6 +1,3 @@
-// Import templates
-import { basicTemplate } from "./formatting";
-
 // Import info from package.json
 import pkg from "../../package.json"
 export const { version } = pkg
@@ -56,17 +53,6 @@ export const createLockCaption = (type) => `Creating ${type}...`;
 
 export const roundThresholdMsg = "Will not use pairing algorithm due to technical limitations."
 // Threshold set in /api/src/config/meta.js
-
-// Data to extract from form element for error message
-export const formErrorData = ({ min, max, minLength, maxLength, value, id }) => ({ min, max, minLength, maxLength, value, id })
-
-export const formErrorMessages = {
-  min: basicTemplate`Must have at least ${'min'} ${'label'}.`,
-  max: basicTemplate`Can't have more than ${'max'} ${'label'}.`,
-  minLength: basicTemplate`${'label'} should be at least ${'minLength'} characters.`,
-  maxLength: basicTemplate`${'label'} can't be more than ${'maxLength'} characters.`,
-}
-
 
 // FORMAT = endpoint: (arg) => `Endpoint ${arg}`,
 export const errorTitle = {

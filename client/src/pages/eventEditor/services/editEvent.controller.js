@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "../eventEditor.fetch";
 
@@ -22,6 +22,18 @@ export default function useEditEventController(eventid, closeModal, hidePlayers,
   let navigate = useNavigate()
   const openAlert = useOpenAlert()
 
+  // Create/Update event & close modal
+  const submitHandler = useCallback(async (event) => {
+    // Build event object
+    if (!event.title.trim() && !playerList?.length) return closeModal(true)
+    if (eventid) event.id = eventid
+    if (!hidePlayers) event.players = playerList
+
+    // Push event to server (Create/Update)
+    return setEvent(event).then(() => closeModal(true))
+  }, [setEvent, eventid, playerList, hidePlayers, closeModal])
+
+
   // Break early if no data/error
   if (isLoading || error || !closeModal) return { isLoading, error, notLoaded: true }
 
@@ -34,17 +46,6 @@ export default function useEditEventController(eventid, closeModal, hidePlayers,
         closeModal(true)
         navigate(deleteRedirect)
       })
-
-  // Create/Update event & close modal
-  async function submitHandler (event) {    
-    // Build event object
-    if (!event.title.trim() && !playerList?.length) return closeModal(true)
-    if (eventid) event.id = eventid
-    if (!hidePlayers) event.players = playerList
-
-    // Push event to server (Create/Update)
-    return setEvent(event).then(() => closeModal(true))
-  }
 
   return {
     data, playerList, updatePlayerList, submitHandler,

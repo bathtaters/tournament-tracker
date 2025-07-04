@@ -1,37 +1,63 @@
-import { useCallback, useEffect, useMemo } from "react"
-import { useForm } from "react-hook-form"
-import { getDefaultValues, updateDefaults, eraseProps } from "./inputForm.services"
-import { debugLogging } from "../../../../assets/config"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { getDefaultValues, getSetters, submitSanitize, resolveDotNotation } from "./inputForm.services"
 
-const dotRegex = /\S\.\S/
-const submitFilter = (val,key) => val === undefined || dotRegex.test(key)
 
-export default function useFormController({ rows, data, baseData, onSubmit, onEdit, onChange }) {
-  // Generate defaultValues
-  // eslint-disable-next-line
-  const defaultValues = useMemo(() => getDefaultValues(rows, baseData?.defaults), []) // Must guarantee that rows/baseData doesn't change
-
-  // Hooks
-  const { register, formState: { errors, isDirty }, handleSubmit, setValue, getValues } = useForm({
-    mode: 'onChange',
-    defaultValues: updateDefaults(defaultValues, data),
-    shouldUseNativeValidation: true,
-  })
+/**
+ * Controller for InputForm component.
+ * - `rows`: Layout object
+ * - `data`: Current values of data
+ * - `baseData`: 'Defaults' from type definitions (Validation.json)
+ * - `onSubmit: ({ ...formData }) => void`: Function run when form is submitted
+ * - `onEdit?: () => void`: Function run the first time a form is edited
+ * - `onChange?: ({ ...changedData }) => void`: Function run every time any value in the form changes
+ * - `isLoaded?: bool`: Reset form whenever this changes
+ */
+export default function useFormController({ rows, data, baseData, onSubmit, onEdit, onChange, isLoaded }) {
+  // Generate static defaultValues & setters objects
+  const defaultValues = useMemo(() => getDefaultValues(rows, baseData?.defaults), [rows, baseData?.defaults])
+  const setters = useMemo(() => getSetters(rows), [rows])
   
-  // First edit handler
-  // eslint-disable-next-line
-  useEffect(() => { if (onEdit && isDirty) onEdit() }, [isDirty])
+  const [ isChanged, setChanged ] = useState(false)
+  const [ values, udpateValues ] = useState(defaultValues)
 
-  // Submit handler
-  // eslint-disable-next-line
-  const submitController = useCallback(handleSubmit(
-    (data, ev) => onSubmit(eraseProps(data, submitFilter), ev),
-    debugLogging ? console.error : () => {}
-  ), [onSubmit, handleSubmit])
+  const updateValue = useMemo(() => isChanged ? 
+    // Standard method
+    (id, value) => {
+      udpateValues((vals) => ({ ...vals, [id]: typeof value === 'function' ? value(vals[id]) : value }))
+      onChange?.({ [id]: value })
+    // First-change method
+    } : (id, value) => {
+      setChanged(true)
+      udpateValues((vals) => ({ ...vals, [id]: typeof value === 'function' ? value(vals[id]) : value }))
+      onChange?.({ [id]: value })
+      onEdit?.()
+    },
+    [isChanged, onChange, onEdit],
+  )
 
-  return {
-    handleChange: onChange,
-    handleSubmit: submitController,
-    backend: { register, errors, set: setValue, get: getValues },
-  }
+
+  const handleChange = useCallback((id, eventOrSetter) => updateValue(id,
+    typeof eventOrSetter === 'function' ? eventOrSetter : 
+      eventOrSetter.target.type === 'checkbox' ? eventOrSetter.target.checked :
+        eventOrSetter.target.value
+  ), [updateValue])
+
+
+  const resetValues = useCallback(() => {
+    udpateValues({ ...defaultValues, ...data })
+    onChange?.({})
+    setChanged(false)
+  }, [defaultValues, data, onChange])
+
+  const handleSubmit = useCallback((ev) => {
+    ev.preventDefault()
+    const newData = resolveDotNotation(submitSanitize(values, setters))
+    onSubmit(newData)
+    resetValues()
+  }, [values, onSubmit, resetValues, setters])
+
+  // eslint-disable-next-line -- Reset form when data becomes loaded
+  useEffect(() => { if (isLoaded) resetValues() }, [isLoaded])
+
+  return { values, handleChange, handleSubmit }
 }

@@ -1,5 +1,5 @@
 
-export default function RangeSelector({ wrapperClass, boxClass, className, ...inputProps }) {
+export default function RangeSelector({ inputProps, wrapperClass, boxClass, className }) {
     return (
         <div className={`flex ${wrapperClass ?? 'w-full flex-row'}`}>
             <input type="range" className={`range grow ${className ?? 'range-primary'} disabled:cursor-not-allowed`} {...inputProps} />

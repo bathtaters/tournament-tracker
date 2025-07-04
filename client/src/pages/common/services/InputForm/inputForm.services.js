@@ -5,14 +5,48 @@ export const getDefaultValues = (rows, defaults) => flatReduce(rows, ({ id, defa
   if (id) defs[id] = defaultValue ?? defaults?.[id] ?? ''
 })
 
-// Merge defaults w/ current values
-export const updateDefaults = (defaultValues, currentData) => Object.keys(defaultValues).reduce((values, id) => {
-  values[id] = currentData[id] ?? defaultValues[id] ?? ''
-  return values
-}, {})
+// Collect all setValueAs functions
+export const getSetters = (rows) => flatReduce(rows, ({ id, setValueAs }, setters) => {
+  if (id && typeof setValueAs === 'function') setters[id] = setValueAs
+})
 
-// Erase props for which the predicate returns TRUTHY
-export const eraseProps = (obj, predicate) => Object.keys(obj).forEach((key) => { if (predicate(obj[key], key)) delete obj[key] }) || obj
+// Sanitize empty, non-dot fields and apply setValueAs functions
+const dotRegex = /\S\.\S/
+export const submitSanitize = (data, setters) => {
+  const result = {}
+  for (const [key, val] of Object.entries(data)) {
+    if (val !== undefined && !dotRegex.test(key)) {
+      result[key] = key in setters ? setters[key](val, data) : val
+    }
+  }
+  return result
+}
+
+// Convert dot notation to nested JSON
+export function resolveDotNotation(obj) {
+  const result = {}
+
+  for (const key in obj) {
+    const parts = key.split('.')
+    let current = result
+
+    // Walk down path
+    for (let i = 0; i < parts.length - 1; i++) {
+      const part = parts[i]
+      if (!current[part]) {
+        // Add object for alpha key, array for numeric key
+        current[part] = isNaN(Number(parts[i+1])) ? {} : []
+      }
+      current = current[part]
+    }
+    
+    // Assign value
+    current[parts[parts.length - 1]] = obj[key]
+  }
+
+  return result
+}
+
 
 // Get key for row map
 export const getRowKey = (row, i, keySuff) => {
@@ -27,16 +61,6 @@ export const getRowKey = (row, i, keySuff) => {
   return row.id || `${row.label || 'Key'}${keySuff}:${i}`
 }
 
-// Find data in a nested array
-export const findNested = (nestedArray, predicate) => {
-  if (Array.isArray(nestedArray)) {
-    for (const item of nestedArray) {
-      const result = findNested(item, predicate)
-      if (result) return result
-    }
-  }
-  else if (predicate(nestedArray)) return nestedArray
-}
 
 // array.reduce for nested array (Like array.flatMap is to array.map)
 const flatReduce = (nestedArray, callback, initalValue = {}) => {
@@ -44,4 +68,3 @@ const flatReduce = (nestedArray, callback, initalValue = {}) => {
   else callback(nestedArray, initalValue)
   return initalValue
 }
-

@@ -3,8 +3,8 @@ import { defaultInputType } from "../../components/InputForm/OtherElements"
 export default function getInputProps({
   id: inputId, type, data,
   limits, min, max,
-  backend, onChange,
-  disabled, required, setValueAs,
+  onChange,
+  disabled, required,
 }, label = '') {
 
   const id = inputId || label.replace(/\W/g,'')
@@ -12,7 +12,7 @@ export default function getInputProps({
 
   // Build register options
   const options = {
-    id, valueAsNumber, onChange, required, setValueAs, backend,
+    id, valueAsNumber, onChange, required,
     value: data?.[id],
     type: type || defaultInputType,
     disabled: typeof disabled === 'function' ? disabled(data) : disabled,
@@ -22,30 +22,38 @@ export default function getInputProps({
   }
 
   // Build FormData props
-  if (typeof backend.register !== 'function') return baseProps(options)
-  if (type !== 'time') return { ...baseProps(options), ...backend.register(options.id, options) }
+  if (type !== 'time') return baseProps(options)
   
   return {
     ...baseProps(options),
-    hours:   backend.register(`${options.id}.hours`,   timeOptions('hours',   options)),
-    minutes: backend.register(`${options.id}.minutes`, timeOptions('minutes', options)),
-    seconds: backend.register(`${options.id}.seconds`, timeOptions('seconds', options)),
+    hours:   timeOptions('hours',   options),
+    minutes: timeOptions('minutes', options),
+    seconds: timeOptions('seconds', options),
   }
 }
 
 
 // --- Helpers --- \\
 
-const baseProps = ({ id, type, disabled, required }) => ({ id, type, disabled, required })
+const baseProps = ({ id, type, value, disabled, required, onChange, min, max, minLength, maxLength }) => type === "checkbox" ? {
+  id, type, disabled, required,
+  name: id, checked: value,
+  onChange: (ev) => onChange(id, ev),
+} : {
+  id, type, value, disabled, required,
+  min, max, minLength, maxLength,
+  name: id,
+  onChange: (ev) => onChange(id, ev),
+}
 
-const timeOptions = (place, { value, setValueAs, onChange, limits, valueAsNumber, ...props }) => ({
+const timeOptions = (place, { id, value, onChange, limits, valueAsNumber, ...props }) => ({
   ...props,
   ...getLimit('min', limits?.[place], valueAsNumber),
   ...getLimit('max', limits?.[place], valueAsNumber),
+  id: `${id}.${place}`,
   value: value?.[place],
   type: 'number',
-  setValueAs: setValueAs && ((val) => setValueAs(val, place)),
-  onChange: onChange && ((ev) => onChange({ ...ev, place })),
+  onChange: (ev) => onChange(id, (time) => ({ ...time, [place]: ev.target.value })),
 })
 
 const getLimit = (key, limits, isNumber = false, override = null, data = null) => {

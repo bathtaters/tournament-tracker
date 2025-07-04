@@ -1,9 +1,6 @@
 // Format data for display
 import { debugLogging } from "./config";
 
-export const basicTemplate = (statics, ...dictKeys) => (dict = {}) => 
-  dictKeys.reduce((string, key, i) => string + (dict[key] ?? key) + statics[i + 1], statics[0])
-
 export const formatQueryError = (err) => debugLogging ? String(err?.message || err || 'Unknown error') : 'Please refresh page'
 
 export const formatMatchTitle = (matchPlayers, playerData) =>

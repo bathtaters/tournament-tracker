@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
 import LockIcon from "../icons/LockIcon"
-import WarningIcon from "../icons/WarningIcon"
 
 // Input Element
 export const elementDefaults = {
@@ -22,16 +21,6 @@ export const typeDefaults = {
 // Form wrapper
 export function FormContainer({ onSubmit, children }) {
   return (<form onSubmit={onSubmit}>{children}</form>)
-}
-
-// Error Banner
-export function FormErrorStyle({ children }) {
-  return (
-    <div className="alert alert-warning shadow-lg">
-      <WarningIcon className="stroke-current shrink-0 h-6 w-6" />
-      <span>{children}</span>
-    </div>
-  )
 }
 
 // Row/Column wrapper

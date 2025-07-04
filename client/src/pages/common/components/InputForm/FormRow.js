@@ -5,7 +5,7 @@ import { RowWrapper, Spacer } from "./OtherElements";
 import { getRowKey } from "../../services/InputForm/inputForm.services";
 
 // Row Map
-function FormRow({ row, data, baseData, isFragment, backend, onChange, custom, depth = 0, keySuff = ':0' }) {
+function FormRow({ row, data, baseData, isFragment, onChange, custom, depth = 0, keySuff = ':0' }) {
 
   // React element (or no data) => itself
   if (!row || React.isValidElement(row)) return row || null;
@@ -18,7 +18,7 @@ function FormRow({ row, data, baseData, isFragment, backend, onChange, custom, d
           row={r} depth={depth+1}
           keySuff={keySuff+':'+i}
           key={getRowKey(r,i,keySuff)}
-          {...{ data, baseData, isFragment, backend, onChange, custom }}
+          {...{ data, baseData, isFragment, onChange, custom }}
         />
       )}
     </RowWrapper>
@@ -38,7 +38,6 @@ function FormRow({ row, data, baseData, isFragment, backend, onChange, custom, d
     <InputElement
       data={data}
       baseData={baseData}
-      backend={backend}
       limits={baseData?.limits?.[row.id]}
       onChange={onChange}
       {...row}
