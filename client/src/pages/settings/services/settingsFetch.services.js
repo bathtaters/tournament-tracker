@@ -3,8 +3,9 @@ import { serializeDates } from "../../schedule/services/date.utils";
 
 // Update cache for settingsUpdate
 export function settingsUpdate(body, { dispatch, queryFulfilled }) {
+  const serialized = serializeDates(body)
   const update = dispatch(fetchApi.util.updateQueryData(
-    'settings', undefined, (draft) => Object.assign(draft, serializeDates(body))
+    'settings', undefined, (draft) => ({ ...draft, ...serialized })
   ));
   queryFulfilled.catch(update.undo); // rollback
 }

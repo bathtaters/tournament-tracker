@@ -54,13 +54,11 @@ export function sortedEvents(eventSlots, existing = []) {
 
 // Serialize all dates within an object
 export function serializeDates(obj) {
-  if (isDate(obj)) return obj.toISOString()
   if (!obj || typeof obj !== 'object') return obj
-
-  if (Array.isArray(obj)) {
-    obj.forEach((_,i) => { obj[i] = serializeDates(obj[i]) })
-  } else {
-    Object.keys(obj).forEach((key) => { obj[key] = serializeDates(obj[key]) })
-  }
-  return obj
+  else if (typeof obj.toISOString === 'function') return obj.toISOString()
+  else if (Array.isArray(obj)) return obj.map((val) => serializeDates(val))
+  return Object.keys(obj).reduce(
+    (coll, key) => ({ ...coll, key: serializeDates(obj[key]) }),
+    {}
+  )
 }
