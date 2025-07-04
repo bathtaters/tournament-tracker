@@ -5,6 +5,7 @@ import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "../e
 import { editorButtonLayout } from "../eventEditor.layout";
 import { deleteEventAlert } from "../../../assets/alerts";
 import { editEventLockCaptions } from "../../../assets/constants";
+import { getChanged } from "../../common/services/basic.services";
 import { useLockScreen, useOpenAlert } from "../../common/common.hooks";
 
 
@@ -26,12 +27,18 @@ export default function useEditEventController(eventid, closeModal, hidePlayers,
   const submitHandler = useCallback(async (event) => {
     // Build event object
     if (!event.title.trim() && !playerList?.length) return closeModal(true)
-    if (eventid) event.id = eventid
     if (!hidePlayers) event.players = playerList
+
+    // Simplify update data
+    if (eventid) {
+      event = getChanged(data, event)
+      if (!Object.keys(event).length) return closeModal(true)
+      event.id = eventid
+    }
 
     // Push event to server (Create/Update)
     return setEvent(event).then(() => closeModal(true))
-  }, [setEvent, eventid, playerList, hidePlayers, closeModal])
+  }, [data, setEvent, eventid, playerList, hidePlayers, closeModal])
 
 
   // Break early if no data/error
