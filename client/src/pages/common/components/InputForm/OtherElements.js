@@ -34,5 +34,5 @@ export function ElementInput({ inputProps = {}, className, wrapperClass }) {
   if (inputProps.type === 'time')
     return <TimePicker inputProps={inputProps} className={inputClass} wrapperClass={wrapperClass} />
 
-  return <input {...inputProps} className={`join-item ${inputClass}`} />
+  return <input {...inputProps} className={`join-item dark:[color-scheme:dark] ${inputClass}`} />
 }
