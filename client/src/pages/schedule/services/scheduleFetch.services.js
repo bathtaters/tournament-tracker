@@ -35,20 +35,40 @@ export function scheduleAdapter({ schedule, settings }, _, isPlan) {
 
 
 // Change Date of Event - Helper for eventUpdate
-export function updateSchedule(schedule, id, { day, slot }) {
+export function updateSchedule(schedule, id, update) {
   if (!schedule) return
-  
-  // Remove old
-  for (let i = 0; i < schedule.length; i++) {
-    const idx = schedule[i].events.indexOf(id);
-    if (idx === -1) continue;
-    if (i === schedule.length - 1) schedule[i].events.splice(idx,1);
-    else schedule[i].events[idx] = null;
-    break;
+  const result = [], noDateIdx = schedule.length - 1
+
+  // Remove from Schedule
+  for (let idx = 0; idx <= noDateIdx; idx++) {
+    // No info
+    result.push(!schedule[idx]?.events ? schedule[idx]
+      // Unscheduled event -- pop from array
+      : idx === noDateIdx ? {
+        ...schedule[idx],
+        events: schedule[idx].events
+          .filter((eId) => eId === id)
+      // Scheduled event -- replace w/ empty value
+      } : {
+        ...schedule[idx],
+        events: schedule[idx].events
+          .map((eId) => eId === id ? undefined : eId)
+      }
+    )
   }
+  if (!update) return result
+
   
-  // Add new
-  if (!day) schedule[schedule.length - 1].events.push(id);
-  else if (slot) schedule[schedule.findIndex(d => d.day === day)].events[slot - 1] = id;
-  else schedule[schedule.findIndex(d => d.day === day)].events.push(id);
+  // Add to schedule
+  const updateDay = typeof update.day === 'string' ? update.day.slice(0,10) : null
+  const newDay = !updateDay ? -1 : // Unscheduled
+    result.findIndex((entry) => entry?.day === updateDay) // Specific date
+  
+  // Unscheduled OR date not found
+  if (newDay === -1) result[noDateIdx].events.push(id)
+  // No slot
+  else if (!update.slot) result[newDay].events.push(id)
+  // Specific slot
+  else result[newDay].events[update.slot - 1] = id
+  return result
 }
