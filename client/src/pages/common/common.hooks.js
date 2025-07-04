@@ -2,7 +2,7 @@ import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react
 import { useDispatch } from "react-redux";
 import { usePrefetch } from "./common.fetch";
 import { useLockScreen } from '../../core/services/global.services';
-import { equalArrays, useThrottle } from "./services/basic.services";
+import { deepEquals, useThrottle } from "./services/basic.services";
 import { getLocalVar, setLocalVar } from "./services/fetch.services";
 import { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult } from "./services/alert.services";
 export { useOpenAlert, useCloseAlert, useAlertStatus, useAlertResult, useLockScreen }
@@ -58,7 +58,7 @@ export function usePropState(propVal, equalsTest = (oldVal,newVal) => oldVal ===
 
   return [ localVal, setLocal ]
 }
-export const usePropStateList = (propList) => usePropState(propList || [], equalArrays)
+export const usePropStateList = (propList) => usePropState(propList || [], deepEquals)
 
 // Delay and throttle server updates
 export function useServerValue(value, updateServerCallback, { throttleDelay = 500, equalsTest } = {}) {
@@ -85,7 +85,7 @@ export function useServerValue(value, updateServerCallback, { throttleDelay = 50
   return [ localVal, updateLocal ]
 }
 export const useServerListValue = (listValue, updateServerCallback, options = {}) =>
-  useServerValue(listValue || [], updateServerCallback, { equalsTest: equalArrays, ...options })
+  useServerValue(listValue || [], updateServerCallback, { equalsTest: deepEquals, ...options })
 
 
 // Scales height based on internal content (padding = vertical padding, everything is in pixels)

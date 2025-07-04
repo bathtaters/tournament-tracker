@@ -1,12 +1,23 @@
 import { useEffect, useCallback, useState, useRef } from "react";
 import { debugLogging } from "../../../assets/config";
 
-// Checks that 2 arrays are equal (Must be 1D arrays, 2 falsy vars will also be equal)
-export const equalArrays = (a,b) =>
-  (!a && !b) || (
-    a?.length === b?.length && 
-    a.every((v,i) => b[i] === v)
-  );
+/** Test to values for equality, works for arrays/objects but not functions */
+export function deepEquals(val1, val2) {
+  if (val1 === val2) return true
+
+  if (Array.isArray(val1) && Array.isArray(val2)) {
+    if (val1.length !== val2.length) return false
+    return val1.every((item, index) => deepEquals(item, val2[index]))
+  }
+
+  if (typeof val1 === 'object' && typeof val2 === 'object' && val1 && val2) {
+    const keys = Object.keys(val1)
+    if (keys.length !== Object.keys(val2).length) return false
+    return keys.every((key) => deepEquals(val1[key], val2[key]))
+  }
+
+  return false
+}
 
 // Generates a temporary ID
 const TEMP_ID_PREFIX = 'TEMPID'
@@ -33,6 +44,20 @@ export const hashText = (text) => !text ? Promise.resolve(null) :
             .map((d) => d.toString(16).padStart(2, "0"))
             .join("")
         )
+
+/** Remove unchanged properties from updateObject */
+export function getChanged(baseObj, updateObj) {
+  if (!baseObj) return { ...updateObj } // Handle null baseObject
+  
+  const result = {}
+  for (const key in updateObj) {
+    if (!deepEquals(baseObj[key], updateObj[key])) {
+      result[key] = updateObj[key]
+    }
+  }
+  return result
+}
+
 
 // Throttle function call, forces call on unmount
 export function useThrottle(interval) {

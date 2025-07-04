@@ -4,6 +4,7 @@ import { useOpenAlert, useLockScreen } from "../../common/common.hooks"
 import { useResetDbMutation } from "../settings.fetch"
 import { doReset } from './settingsFetch.services'
 import { getLocalSettings, setLocalVar } from "../../common/services/fetch.services"
+import { getChanged } from '../../common/services/basic.services'
 
 import { resetDbAlert, resetDbAlertConfirm } from "../../../assets/alerts"
 import { resetDataLockCaption } from '../../../assets/constants'
@@ -31,7 +32,7 @@ export function getNewSettings(newData, serverData, dispatch) {
   Object.assign(compareData, getLocalSettings())
 
   // Filter out unchanged data
-  const newSettings = getUnqiue(newData, compareData);
+  const newSettings = getChanged(compareData, newData);
 
   // Set local data
   settings.storeLocal.forEach((key) => {
@@ -51,9 +52,3 @@ export const deepFilter = (array, predicate) => array.reduce((res,elem,idx) => {
   else if (predicate(elem,idx,array)) res.push(elem)
   return res
 }, [])
-
-// HELPER -- Returns properties from 'base' that are changed in 'compare'
-const getUnqiue = (base, compare = {}) => Object.keys(base).reduce((obj,key) => {
-  if (base[key] !== compare[key]) obj[key] = base[key]
-  return obj
-}, {})
