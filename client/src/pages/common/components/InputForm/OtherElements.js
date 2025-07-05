@@ -29,7 +29,7 @@ export function ElementInput({ inputProps = {}, className, wrapperClass }) {
     return <NumberPicker inputProps={inputProps} className={inputClass} wrapperClass={wrapperClass} />;
 
   if (inputProps.type === 'range')
-    return <RangeSelector inputProps={inputProps} className={inputClass} wrapperClass={wrapperClass} />;
+    return <RangeSelector {...inputProps} className={inputClass} wrapperClass={wrapperClass} />;
 
   if (inputProps.type === 'time')
     return <TimePicker inputProps={inputProps} className={inputClass} wrapperClass={wrapperClass} />
