@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { getDefaultValues, getSetters, submitSanitize, resolveDotNotation } from "./inputForm.services"
+import { getDefaultValues, getSetters, submitTransform, resolveDotNotation } from "./inputForm.services"
 
 
 /**
@@ -51,7 +51,7 @@ export default function useFormController({ rows, data, baseData, onSubmit, onEd
 
   const handleSubmit = useCallback((ev) => {
     ev.preventDefault()
-    const newData = resolveDotNotation(submitSanitize(values, setters))
+    const newData = resolveDotNotation(submitTransform(values, setters))
     onSubmit(newData)
     resetValues()
   }, [values, onSubmit, resetValues, setters])
