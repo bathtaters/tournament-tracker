@@ -19,10 +19,14 @@ export function deepEquals(val1, val2) {
   return false
 }
 
-// Generates a temporary ID
+// ---- Temporary IDs ---- \\
 const TEMP_ID_PREFIX = 'TEMPID'
-export const isTempId = id => id.slice(0,TEMP_ID_PREFIX.length) === TEMP_ID_PREFIX; 
-const tempId = type => n => `${TEMP_ID_PREFIX}-${type}-${('0000'+n).slice(-4)}`;
+const tempId = (type) => (n) => `${TEMP_ID_PREFIX}-${type}-${('0000'+n).slice(-4)}`;
+
+/** Check if ID is temporary */
+export const isTempId = (id) => id.slice(0,TEMP_ID_PREFIX.length) === TEMP_ID_PREFIX; 
+
+/** Generate a temporary ID */
 export const nextTempId = (type, exists) => {
   if (!exists) return tempId(type)(0);
   let n = 0, id; const getId = tempId(type);
@@ -33,6 +37,11 @@ export const nextTempId = (type, exists) => {
 }
 
 // Generates 'onClick' events for mouse & touch screen (usage: <Tag {...onClickAll(cb)} /> )
+
+/** Generates 'onClick' events for mouse & touch screen:
+ *  ```jsx
+ *   <div {...onClickAll(cb)} />
+ *  ```*/
 export const onClickAll = (callback) => ({ onMouseDown: callback, onTouchStart: callback })
 
 /** Simple SHA-256 hash of text. Returns null if input is falsy. */
@@ -60,6 +69,7 @@ export function getChanged(baseObj, updateObj) {
 
 
 // Throttle function call, forces call on unmount
+/** Throttle function call, forces call on unmount */
 export function useThrottle(interval) {
 	let timer = useRef(null), func = useRef(null)
 
@@ -81,8 +91,11 @@ export function useThrottle(interval) {
   }, [execFunc, interval])
 }
 
-// Listen & handle hotkeys
-// hotkeyMap = { [key]: () => action(), ... } !! MUST BE STATIC
+/**
+ * Listen & handle hotkeys
+ * @param {{ [key: string]: () => any }} hotkeyMap `{ [key]: () => action(), ... }` **MUST BE STATIC**
+ * @param {{ skip: boolean, deps: any[] }} options Skip will disable hotkeys, Deps is dependency array for `hotkeyMap`
+ */
 export function useHotkeys(hotkeyMap, { skip, deps } = {}) {
   const hotkeyHandler = useCallback((ev) => {
     // console.debug(' >> KeyName: ',ev.key); // print names of keys
@@ -107,8 +120,9 @@ export function useHotkeys(hotkeyMap, { skip, deps } = {}) {
 }
 
 
-// Provides a ref to give to an object you want to be scrolled to if invisible
-//    options = see IntersectionObserver options & ScrollIntoView options
+/** Provides a ref to give to an object you want to be scrolled to if invisible
+ *   - `options`: see `IntersectionObserver` options & `ScrollIntoView` options
+ */
 export function useScrollToRef({
   // Observer options
   rootRef = null, threshold = 1.0, rootMargin = "0px",
