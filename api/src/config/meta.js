@@ -2,6 +2,7 @@
 
 const join = require('path').join;
 const pkg = require('../../package.json');
+const serverCfg = require('./dbServer.json');
 
 module.exports = {
   name: pkg.name || 'Untitled',
@@ -13,4 +14,5 @@ module.exports = {
   morganLog: 'common', // morgan log format or 'debug' for custom logging
   env: process.env.NODE_ENV,
   pairingThreshold: 10, // Max number of players to use advanced pairing algorithm for
+  planId: `${serverCfg?.server?.db || pkg.name || '_'}.plan`
 }

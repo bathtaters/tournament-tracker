@@ -3,7 +3,7 @@ const event = require('../db/models/event')
 const voter = require('../db/models/voter')
 const setting = require('../db/models/settings')
 const logger = require('../utils/log.adapter')
-const generatePlan = require('../services/plan.services')
+const { generatePlan } = require('../services/plan.services')
 const { fromObjArray } = require('../services/settings.services')
 const { planStatus, updateProg } = require('../utils/plan.utils')
 
@@ -28,7 +28,9 @@ async function genPlanAsync(req) {
         const settings = await setting.getAll().then(fromObjArray)
         
         const planData = await generatePlan(events, voters, settings, updateProg(setting.batchSet))
-            .then((data) => data.filter(({ id }) => id))
+            .then((data) => data?.filter(({ id }) => id))
+        if (planData == null) return;
+
         await plan.multiset(planData, req)
         await setting.batchSet(planStatus(4, 100), req)
 

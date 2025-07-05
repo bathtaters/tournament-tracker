@@ -1,7 +1,10 @@
 const { Worker } = require("worker_threads")
 
+const processes = {}, cancelled = new Set()
+
 /**
  * Multithreads a process
+ * @param {string} id - Unique ID, used to abort an active process
  * @param {string} threadPath - Path to a file that implements onMessage function
  *  - onMessage(arg) arg is { data: { value: generator.next(), base: baseData } }
  *  - onMessage(arg) should call postMessage(result) followed by close()
@@ -11,14 +14,17 @@ const { Worker } = require("worker_threads")
  * @param {any} [extra] - Additional static data to pass to each thread
  * @returns - Promise that will resolve when all threads are complete
  */
-async function multithread(threadPath, threadCount, dataGenerator, resultCb, extra) {
+async function multithread(id, threadPath, threadCount, dataGenerator, resultCb, extra) {
+    if (id in processes) throw new Error(`Process already active: ${id}`)
+    cancelled.delete(id) // clear
 
     Worker.setMaxListeners(threadCount + 1)
 
     const threadBuffer = new Array(threadCount).fill(null)
     const terminateAll = () => Promise.allSettled(threadBuffer.map(
         (thread) => thread?.terminate ? thread.terminate() : Promise.resolve(thread)
-    ))
+    )).finally(() => { delete processes[id] })
+    processes[id] = terminateAll
 
     function getThread(value) {
         return new Promise((res, rej) => {
@@ -58,9 +64,24 @@ async function multithread(threadPath, threadCount, dataGenerator, resultCb, ext
 
         // Increment index
         index = (index + 1) % threadCount
+        if (isAborted(id)) throw new Error("Aborted by user")
     }
 
     await Promise.all(threadBuffer.filter(Boolean)).catch(terminateAll)
+    if (isAborted(id)) throw new Error("Aborted by user")
+    delete processes[id]
 }
 
-module.exports = multithread
+const isActive = (id) => id in processes
+
+const isAborted = (id) => cancelled.has(id)
+
+const abort = async (id) => {
+    if (id in processes) return processes[id]().then((res) => {
+        cancelled.add(id)
+        return res
+    })
+    throw new Error(`Process not found: ${id}`)
+}
+
+module.exports = { multithread, abort, isActive, isAborted }

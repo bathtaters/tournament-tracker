@@ -1,12 +1,15 @@
 const { join } = require('path')
 const logger = require("../utils/log.adapter")
 const { dayCount } = require("../utils/shared.utils")
-const multithread = require('../utils/multithread.utils')
+const { multithread, abort, isActive, isAborted } = require("../utils/multithread.utils")
 const { filterUnvoted, getVoterSlots, planToEvent, resetEvent, daysOffByPlayer, progUpdatePercent, maxPlan, threadCount } = require("../utils/plan.utils")
 const { permutationCount, getPermutations } = require("../utils/combination.utils")
+const { planId } = require("../config/meta")
 
 const threadFile = join(__dirname, 'plan.thread.js')
 
+const cancelPlan = () => !isActive(planId) ? Promise.resolve(false)
+    : abort(planId).then(() => true).catch(() => false)
 
 // Accepts planEvents, voters & settings, returns event array ({ id, day, slot, players })
 async function generatePlan(events, voters, settings = {}, updateProg, forceEmpties = false) {
@@ -23,7 +26,7 @@ async function generatePlan(events, voters, settings = {}, updateProg, forceEmpt
         throw new Error("Insufficient data to generate a plan (Check players, events and date/slot settings).")
     if (events.some(({ playercount }) => !playercount))
         throw new Error("Invalid event player count: Must be at least 1")
-    
+
     // Calculate initial data
     const slotCount = slots * dayCount(...dates)
     if (!slotCount) throw new Error("No available slots in schedule")
@@ -55,8 +58,15 @@ async function generatePlan(events, voters, settings = {}, updateProg, forceEmpt
         bestPlan = maxPlan(bestPlan, nextPlan)
     }
 
-    // Determine every possible schedule given the events and slots
-    await multithread(threadFile, threadCount, schedules, updateBestPlan, extraData)
+    try {
+        // Determine every possible schedule given the events and slots
+        await multithread(planId, threadFile, threadCount, schedules, updateBestPlan, extraData)
+    } catch (err) {
+        if (!isAborted(planId)) throw err // Actual error
+        // Log 'abort' action
+        logger.warn('Plan generation ended early.', String(err))
+        return
+    }
 
     // Finish 
     if (updateProg) await updateProg(progTotal, progTotal)
@@ -77,4 +87,4 @@ async function generatePlan(events, voters, settings = {}, updateProg, forceEmpt
     return bestPlan.plan.map(planToEvent).concat(remainingEvents.map(resetEvent))
 }
 
-module.exports = generatePlan
+module.exports = { generatePlan, cancelPlan }
