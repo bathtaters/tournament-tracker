@@ -75,7 +75,37 @@ export function getChanged(baseObj, updateObj) {
 }
 
 
-// Throttle function call, forces call on unmount
+const focusDelayMs = 5 // Rough timing between onBlur & onFocus calls when shifting focus
+
+/** Create a focus/blur listeners that will work when focus/blur leaves a parent element.
+ *  - Return object should be spread within parent element:
+ *  ```jsx
+ *  const listeners = useParentFocus(...)
+ *  <div {...listeners} />
+ *  ```
+ */
+export function useParentFocus(focusHandler, blurHandler) {
+    const timeout = useRef(null)
+    if (!focusHandler && !blurHandler) return {}
+
+    return {
+        onFocus: (ev) => {
+            if (timeout.current !== null) clearTimeout(timeout.current)
+            else if (typeof focusHandler === 'function') focusHandler(ev)
+        },
+
+        onBlur: (ev) => {
+            if (timeout.current !== null) clearTimeout(timeout.current)
+
+            timeout.current = setTimeout(() => {
+                if (typeof blurHandler === 'function') blurHandler(ev)
+                timeout.current = null
+            }, focusDelayMs)
+        },
+    }
+}
+
+
 /** Throttle function call, forces call on unmount */
 export function useThrottle(interval) {
 	let timer = useRef(null), func = useRef(null)

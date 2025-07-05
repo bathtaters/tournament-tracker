@@ -1,8 +1,13 @@
+import { eventWithValue, useParentFocus } from "../../services/basic.services"
 
-export default function TimePicker({ inputProps: { hours, minutes, seconds }, wrapperClass, className }) {
-    
+
+export default function TimePicker({ inputProps: { onBlur, hours, minutes, seconds }, wrapperClass, className }) {
+    const value = { hours: padded(hours), minutes: padded(minutes), seconds: padded(seconds) }
+
+    const listeners = useParentFocus(null, onBlur && ((ev) => onBlur(eventWithValue(ev, value))))
+
     return (
-        <div className={`join ${wrapperClass}`}>
+        <div className={`join ${wrapperClass}`} {...listeners}>
             <input
                 {...hours}
                 min={hours.min ?? 0}
@@ -10,7 +15,7 @@ export default function TimePicker({ inputProps: { hours, minutes, seconds }, wr
                 pattern="^\d*$"
                 placeholder="00"
                 className={className}
-                value={padded(hours)}
+                value={value.hours}
             />
             <span className="m-2 text-lg">:</span>
             <input
@@ -20,7 +25,7 @@ export default function TimePicker({ inputProps: { hours, minutes, seconds }, wr
                 pattern="^\d*$"
                 placeholder="00"
                 className={className}
-                value={padded(minutes)}
+                value={value.minutes}
             />
             <span className="m-2 text-lg">:</span>
             <input
@@ -30,7 +35,7 @@ export default function TimePicker({ inputProps: { hours, minutes, seconds }, wr
                 pattern="^\d*$"
                 placeholder="00"
                 className={className}
-                value={padded(seconds)}
+                value={value.seconds}
             />
         </div>
     )

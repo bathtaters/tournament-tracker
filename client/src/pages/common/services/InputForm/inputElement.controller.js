@@ -58,7 +58,7 @@ const baseProps = ({
   },
 }
 
-const timeOptions = (place, { id, value, onChange, limits, valueAsNumber, ...props }) => ({
+const timeOptions = (place, { id, value, onChange, limits, valueAsNumber, onBlur, ...props }) => ({
   ...props,
   ...getLimit('min', limits?.[place], valueAsNumber),
   ...getLimit('max', limits?.[place], valueAsNumber),
