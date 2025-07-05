@@ -16,7 +16,7 @@ function InputForm({
   onSubmit, onEdit, onChange
 }) {
 
-  const { values, handleSubmit, handleChange } = useFormController({ rows, data, baseData, onSubmit, onEdit, onChange, isLoaded })
+  const { values, setters, handleSubmit, handleChange } = useFormController({ rows, data, baseData, onSubmit, onEdit, onChange, isLoaded })
 
   // Render
   return (
@@ -26,6 +26,7 @@ function InputForm({
         <FormRow
           row={rows}
           data={values}
+          setters={setters}
           baseData={baseData}
           isFragment={isGrid}
           onChange={handleChange}

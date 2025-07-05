@@ -36,7 +36,14 @@ export const nextTempId = (type, exists) => {
   } return id;
 }
 
-// Generates 'onClick' events for mouse & touch screen (usage: <Tag {...onClickAll(cb)} /> )
+/** Gets an event with the value replaced. */
+export const eventWithValue = (event, value, isCheckbox = false) => ({
+  ...event,
+  target: {
+    ...event.target,
+    [isCheckbox ? 'checked' : 'value']: value
+  }
+})
 
 /** Generates 'onClick' events for mouse & touch screen:
  *  ```jsx

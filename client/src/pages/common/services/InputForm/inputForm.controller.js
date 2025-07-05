@@ -59,5 +59,5 @@ export default function useFormController({ rows, data, baseData, onSubmit, onEd
   // eslint-disable-next-line -- Reset form when data becomes loaded
   useEffect(() => { if (isLoaded) resetValues() }, [isLoaded])
 
-  return { values, handleChange, handleSubmit }
+  return { values, setters, handleChange, handleSubmit }
 }

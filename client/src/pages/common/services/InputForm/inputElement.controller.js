@@ -1,9 +1,10 @@
 import { defaultInputType } from "../../components/InputForm/OtherElements"
+import { eventWithValue } from "../basic.services"
 
 export default function getInputProps({
   id: inputId, type, data,
   limits, min, max,
-  onChange,
+  onChange, onBlur,
   disabled, required,
 }, label = '') {
 
@@ -12,7 +13,7 @@ export default function getInputProps({
 
   // Build register options
   const options = {
-    id, valueAsNumber, onChange, required,
+    id, valueAsNumber, onChange, onBlur, required,
     value: data?.[id],
     type: type || defaultInputType,
     disabled: typeof disabled === 'function' ? disabled(data) : disabled,
@@ -22,10 +23,10 @@ export default function getInputProps({
   }
 
   // Build FormData props
-  if (type !== 'time') return baseProps(options)
+  if (type !== 'time') return baseProps(options, data)
   
   return {
-    ...baseProps(options),
+    ...baseProps(options, data),
     hours:   timeOptions('hours',   options),
     minutes: timeOptions('minutes', options),
     seconds: timeOptions('seconds', options),
@@ -35,15 +36,26 @@ export default function getInputProps({
 
 // --- Helpers --- \\
 
-const baseProps = ({ id, type, value, disabled, required, onChange, min, max, minLength, maxLength }) => type === "checkbox" ? {
+const baseProps = ({
+  id, type, value, disabled, required,
+  onChange, onBlur, min, max, minLength, maxLength
+}, data) => type === "checkbox" ? {
   id, type, disabled, required,
   name: id, checked: value,
   onChange: (ev) => onChange(id, ev),
+  onBlur: typeof onBlur !== 'function' ? undefined : (ev) => {
+    const newEvent = eventWithValue(ev, onBlur(ev.target.checked, data), true)
+    onChange(id, newEvent)
+  },
 } : {
   id, type, value, disabled, required,
   min, max, minLength, maxLength,
   name: id,
   onChange: (ev) => onChange(id, ev),
+  onBlur: typeof onBlur !== 'function' ? undefined : (ev) => {
+    const newEvent = eventWithValue(ev, onBlur(ev.target.value, data))
+    onChange(id, newEvent)
+  },
 }
 
 const timeOptions = (place, { id, value, onChange, limits, valueAsNumber, ...props }) => ({
