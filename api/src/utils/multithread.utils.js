@@ -1,9 +1,10 @@
 const { Worker } = require("worker_threads")
+const logger = require("../utils/log.adapter")
 
 const processes = {}, cancelled = new Set()
 
 /**
- * Multithreads a process
+ * Multithreads a process, while awaiting its return
  * @param {string} id - Unique ID, used to abort an active process
  * @param {string} threadPath - Path to a file that implements onMessage function
  *  - onMessage(arg) arg is { data: { value: generator.next(), base: baseData } }
@@ -72,6 +73,35 @@ async function multithread(id, threadPath, threadCount, dataGenerator, resultCb,
     delete processes[id]
 }
 
+/**
+ * Spawn a new thread asynchronously
+ * @param {string} id - Unique ID, used to abort an active process
+ * @param {string} threadPath - Path to a file that implements onMessage function
+ *  - onMessage(data) should call parentPort.close()
+ * @param {any} data - Argument to send to thread
+ */
+function spawnAsync(id, threadPath, data) {
+    if (id in processes) throw new Error(`Process already active: ${id}`)
+    cancelled.delete(id) // clear
+
+    const thread = new Worker(threadPath)
+
+    const terminate = () => (thread?.terminate ? thread.terminate() : Promise.resolve(0))
+        .finally(() => { delete processes[id] })
+    processes[id] = terminate
+
+    thread.on('message', (msg) => logger.log(`Message from thread ${id}:`, msg))
+    thread.on('error', (err) => logger.error(`Error from thread ${id}:`, err))
+    thread.on('messageerror', (err) => logger.error(`Error from thread ${id}:`, err))
+    thread.on('exit', (code) => {
+        if (code) logger.error(`Thread ${id} ended with exit code: ${code}`)
+        return terminate()
+    })
+
+    // Spawn
+    thread.postMessage(data)
+}
+
 const isActive = (id) => id in processes
 
 const isAborted = (id) => cancelled.has(id)
@@ -84,4 +114,4 @@ const abort = async (id) => {
     throw new Error(`Process not found: ${id}`)
 }
 
-module.exports = { multithread, abort, isActive, isAborted }
+module.exports = { spawnAsync, multithread, abort, isActive, isAborted }
