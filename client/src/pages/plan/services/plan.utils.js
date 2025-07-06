@@ -128,7 +128,7 @@ function isNextDay(dateA, dateB) {
 export function dateListToRange(dates) {
     let ranges = [], currRange = []
     
-    dates.forEach((date) => {
+    if (dates) dates.forEach((date) => {
         if (isNextDay(currRange[currRange.length - 1], date))
             return currRange[currRange.length ? 1 : 0] = date
 

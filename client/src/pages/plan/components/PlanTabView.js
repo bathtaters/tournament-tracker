@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import {
     ViewWrapperStyle, GeneralSectionStyle, ViewCellStyle,
-    ViewCellSectionStyle, ViewEventStyle, ViewNoDateStyle, ViewDateStyle
+    ViewCellSectionStyle, ViewEventStyle, ViewDateStyle
 } from "../styles/PlanTabViewStyles"
 import { usePlayerQuery } from "../voter.fetch"
 import { dateListToRange, formatDate, indexedKeys } from "../services/plan.utils"
@@ -26,18 +26,16 @@ function PlanTabView({ voters = {}, events = {}, settings = {} }) {
         <ViewWrapperStyle>
             {sortedVoters.map((id) => (
                 <ViewCellStyle key={id} header={players[id]?.name}>
-                    <ViewCellSectionStyle header="Unavailable">
-                        { voter.days?.length ?
-                            dateListToRange(voters[id].days).map((range) =>
-                                <ViewDateStyle key={range.join()} dateRange={range} />
-                            )
-                            :
-                            <ViewNoDateStyle />
-                        }
+                    <ViewCellSectionStyle header="Unavailable" emptyHeader="Available all dates">
+                        {dateListToRange(voters[id].days).map((range) =>
+                            <ViewDateStyle key={range.join()} dateRange={range} />
+                        )}
                     </ViewCellSectionStyle>
-
-                    <ViewCellSectionStyle header="Vote" ListTag="ol">
-                        {voters[id].events.map((id,idx) => <ViewEventStyle key={id || idx} title={events[id]?.title} />)}
+                    
+                    <ViewCellSectionStyle ListTag="ol" header="Votes" emptyHeader="No Votes">
+                        {voters[id].events?.map((id, idx) =>
+                            <ViewEventStyle key={id || idx} title={events[id]?.title} />
+                        )}
                     </ViewCellSectionStyle>
                 </ViewCellStyle>
             ))}

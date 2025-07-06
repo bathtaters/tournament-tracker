@@ -16,16 +16,19 @@ export const ViewCellStyle = ({ header, children }) => (
     </div>
 )
 
-export const ViewCellSectionStyle = ({ header, children, open = true, ListTag = "ul" }) => (
-    <details className="collapse collapse-arrow w-full my-2" open={open}>
-        <summary className="collapse-title p-0 min-h-0"><h5>{header || emptyPlaceholder}</h5></summary>
-        <ListTag className="collapse-content p-0! min-h-0! font-light list-inside">
-            {children}
-        </ListTag>
-    </details>
-)
-
-export const ViewNoDateStyle = () => <i className="opacity-70 font-thin">Available all dates</i>
+export const ViewCellSectionStyle = ({ header, children, open = true, emptyHeader, ListTag = "ul" }) => {
+    const isEmpty = !children?.length
+    return (
+        <details className={`collapse my-2 ${isEmpty ? 'pointer-events-none opacity-80' : 'collapse-arrow'}`} open={isEmpty ? false : open}>
+            <summary className="collapse-title p-1 after:top-4!">
+                <h5>{(isEmpty ? emptyHeader || header : header) || emptyPlaceholder}</h5>
+            </summary>
+            <ListTag className="collapse-content p-0! min-h-0! font-light list-inside">
+                {children}
+            </ListTag>
+        </details>
+    )
+}
 
 export const ViewDateStyle = ({ dateRange }) => (
     <li className="list-disc">
