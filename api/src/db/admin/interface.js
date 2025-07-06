@@ -109,6 +109,7 @@ const updateRow = (table, rowId, updateObj, { client, idCol, looseMatch, returnA
 
 
 const updateRows = (table, updateObjArray, { client = direct, idCol = 'id', types = {} } = {}) => {
+    if (!('id' in types)) types.id = 'UUID'
     updateObjArray = updateObjArray && updateObjArray.filter((item) => item[idCol])
     if (!updateObjArray?.length) throw new Error(`No properties or keys provided to update ${table}`)
 
