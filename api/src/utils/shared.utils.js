@@ -94,6 +94,30 @@ exports.filtering = (object, ignoring = ['id']) => {
   return copy;
 };
 
+const isCloneable = (value) => {
+    if (value === null || ['string', 'number', 'boolean', 'undefined', 'bigint'].includes(typeof value))
+      return true
+    if (isDate(value))
+      return true
+    return false
+  }
+
+/** Sanitize data to be passed through a thread (Removes all invalid data) */
+exports.threadSanitize = (data) => {
+  if (isCloneable(data)) return data
+  if (Array.isArray(data)) return data.map(exports.threadSanitize)
+  if (typeof data === 'object') {
+    const sanitized = {}
+    for (const key in data) {
+      const value = exports.threadSanitize(data[key])
+      if (value !== undefined) sanitized[key] = value
+    }
+    return sanitized
+  }
+  return undefined
+}
+
+
 // DATE FUNCTIONS \\
 
 
