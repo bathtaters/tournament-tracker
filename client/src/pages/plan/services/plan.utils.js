@@ -73,7 +73,7 @@ export function usePlanSettings(pollStatus = false) {
 
 
 // Get plan events from all events
-export const planEvents = (events) => Object.keys(events).filter((id) => events[id].plan)
+export const getPlanned = (events) => indexedKeys(events, ({ plan }) => plan, 'plan')
 
 
 // DATE UTILITIES \\
@@ -199,4 +199,34 @@ export const arrSwap = (arr, idx) => {
         arr[idx[0]],
         ...arr.slice(idx[1] + 1),
     ])
+}
+
+/** 
+ * Orders an object's keys by a property of the objects,
+ * filtering and returning an array of keys.
+ *  - Assumes 1-indexing
+ *  - Any duplicate indexes or indexes < 0 will be appended to the end in any order
+ *  - Any non-numeric or 0 value indexes will be ignored
+ * @param {{ [key: string]: { [valKey: string]: any } }} obj
+ * @param {(value: { [valKey: string]: any }, key: string) => boolean} [filter]
+ *  - Ignores rows where this returns FALSE
+ * @param {string} [idxKey] - Key of the index value (i.e. 'valKey', default: 'idx')
+ * @returns {string[]} - Array of sorted keys
+ */
+export const indexedKeys = (obj, filter, idxKey = 'idx') => {
+  const sorted = [], unsorted = []
+  if (!obj) return sorted
+
+  for (const key in obj) {
+    if (filter && !filter(obj[key], key)) continue
+    
+    const idx = obj[key][idxKey]
+    if (typeof idx !== 'number' || idx === 0) continue
+    if (idx < 0 || (idx - 1) in sorted) {
+      unsorted.push(key)
+    } else {
+      sorted[idx - 1] = key
+    }
+  }
+  return sorted.concat(unsorted)
 }

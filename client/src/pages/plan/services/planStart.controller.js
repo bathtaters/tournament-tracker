@@ -1,6 +1,6 @@
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import { useSetVotersMutation, useSetEventsMutation, useResetPlanMutation } from "../voter.fetch"
-import { usePlanSettings, datePickerToArr, serverDatesToArr } from "./plan.utils"
+import { usePlanSettings, datePickerToArr, serverDatesToArr, indexedKeys, getPlanned } from "./plan.utils"
 import { useOpenAlert, useServerListValue, useServerValue } from "../../common/common.hooks"
 import { plan as config } from "../../../assets/config"
 import { resetPlanAlert } from "../../../assets/alerts"
@@ -8,12 +8,11 @@ import { resetPlanAlert } from "../../../assets/alerts"
 const serverOptions = { throttleDelay: config.updateDelay }
 
 export default function usePlanStartController() {
-
-    // Date Controller
+    
     const { voters, settings, events, setStatus, updateSettings } = usePlanSettings()
-    const updateServerDates = useCallback(
-        (plandates) => updateSettings({ plandates }), [updateSettings]
-    )
+    
+    // Date Controller
+    const updateServerDates = useCallback((plandates) => updateSettings({ plandates }), [updateSettings])
     const [dates, setDates] = useServerListValue(
         serverDatesToArr(settings, settings?.plandates),
         updateServerDates, serverOptions
@@ -25,9 +24,7 @@ export default function usePlanStartController() {
     )
     
     // Slot Controller
-    const updateServerSlots = useCallback(
-        (planslots) => updateSettings({ planslots }), [updateSettings]
-    )
+    const updateServerSlots = useCallback((planslots) => updateSettings({ planslots }), [updateSettings])
     const [slots, setSlots] = useServerValue(
         settings?.planslots ?? settings?.dayslots,
         updateServerSlots, serverOptions
@@ -35,19 +32,15 @@ export default function usePlanStartController() {
     const handleSlotChange = useCallback((ev) => setSlots(+(ev.target.value)), [setSlots])
 
     // Voters Controller
+    const sortedVoters = useMemo(() => indexedKeys(voters), [voters])
     const [ setVoters ] = useSetVotersMutation()
-    const [players, setPlayers] = useServerListValue(
-        voters ? Object.keys(voters) : [],
-        setVoters, serverOptions
-    )
+    const [players, setPlayers] = useServerListValue(sortedVoters, setVoters, serverOptions)
     const handlePlayerChange = useCallback((players) => setPlayers(players), [setPlayers])
     
     // Events Controller
+    const sortedEvents = useMemo(() => getPlanned(events), [events])
     const [ setEventPlan ] = useSetEventsMutation()
-    const [planEvents, setEvents] = useServerListValue(
-        events ? Object.keys(events).filter((id) => events[id].plan) : [],
-        setEventPlan, serverOptions
-    )
+    const [planEvents, setEvents] = useServerListValue(sortedEvents, setEventPlan, serverOptions)
     const handleEventChange = useCallback((events) => setEvents(events), [setEvents])
 
     // Reset Controller
