@@ -1,11 +1,17 @@
+const { join } = require('path')
+const logger = require('../utils/log.adapter')
 const plan = require('../db/models/plan')
 const event = require('../db/models/event')
 const voter = require('../db/models/voter')
 const setting = require('../db/models/settings')
-const logger = require('../utils/log.adapter')
-const { generatePlan } = require('../services/plan.services')
+const { parentPlanId } = require('../services/plan.services')
+const { spawnAsync } = require('../utils/multithread.utils')
 const { fromObjArray } = require('../services/settings.services')
-const { planStatus, updateProg } = require('../utils/plan.utils')
+const { planStatus } = require('../utils/plan.utils')
+const { simpleReq } = require('../db/models/log')
+const { threadSanitize } = require('../utils/shared.utils')
+
+const parentPlanFile = join(__dirname, '../services/plan.services')
 
 // Get plan status (Used for polling)
 const getStatus = async (req, res) => {
@@ -19,33 +25,24 @@ const getStatus = async (req, res) => {
 }
 
 // Send plan data to plan generator, then update database to result & goto Plan Finish
-async function genPlanAsync(req) {
+const genPlan = async (req, res) => {
     await setting.batchSet(planStatus(3, 0))
 
     try {
-        const events   = await event.get(null, false, true)
+        const events   = await event.get(null, false, true).then(threadSanitize)
         const voters   = await voter.get()
         const settings = await setting.getAll().then(fromObjArray)
         
-        const planData = await generatePlan(events, voters, settings, updateProg(setting.batchSet))
-            .then((data) => data?.filter(({ id }) => id))
-        if (planData == null) return;
-
-        await plan.multiset(planData, req)
-        await setting.batchSet(planStatus(4, 100), req)
+        const args = [events, voters, settings]
+        spawnAsync(parentPlanId, parentPlanFile, { args, req: simpleReq(req) })
+        res.sendAndLog({ submitted: true })
 
     } catch (err) {
         await setting.batchSet(planStatus(2), req)
-        logger.error('Plan generator failed in genPlanAsync:', err)
-        throw err
-    }
-}
-const genPlan = (req, res) => {
-    genPlanAsync(req).catch(() => {
+        logger.error('Plan generator failed to initiate:', err)
         req.session.flash = { error: 'Plan generator failed. Report to the site admin if you can.' }
-        req.session.save()
-    })
-    res.sendAndLog({ submitted: true })
+        res.sendAndLog({ submitted: false })
+    }
 }
 
 // Move all planned events to schedule, move all other events to unscheduled, & goto Plan Start
