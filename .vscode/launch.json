@@ -9,7 +9,8 @@
             "program": "${workspaceFolder}/api/src/server.js",
             "request": "launch",
             "skipFiles": ["<node_internals>/**"],
-            "type": "node"
+            "type": "node",
+            "autoAttachChildProcesses": true
         },
         {
             "type": "chrome",
