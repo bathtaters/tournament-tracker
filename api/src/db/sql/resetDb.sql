@@ -15,7 +15,7 @@ USE %DB%;
 
 -- TYPES/ENUMS --
 
-CREATE TYPE LOG_ACTION AS ENUM ('create', 'update', 'delete', 'login');
+CREATE TYPE LOG_ACTION AS ENUM ('create', 'update', 'upsert', 'delete', 'login');
 
 
 -- BASE TABLES --

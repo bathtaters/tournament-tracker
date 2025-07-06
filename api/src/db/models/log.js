@@ -135,13 +135,13 @@ const addRows = async (dbtable, objArray, req, { tableid, ...options } = {}) => 
             dbtable,
             data: dbtable === TableName.SETTINGS && data.value ? { value: data.value } : data,
             tableid: data.id ?? tableid,
-            action: options.upsert ? LogAction.UPDATE : LogAction.CREATE,
+            action: options.upsert ? LogAction.UPSERT : LogAction.CREATE,
         })), req)
         else await addEntries((Array.isArray(objArray) ? objArray : [objArray]).map((data) => ({
             dbtable,
             data: dbtable === TableName.SETTINGS && data.value ? { value: data.value } : data,
             tableid: data.id ?? tableid,
-            action: options.upsert ? LogAction.UPDATE : LogAction.CREATE,
+            action: options.upsert ? LogAction.UPSERT : LogAction.CREATE,
             error: "No return from insert operation.",
         })), req)
         return res
@@ -151,7 +151,7 @@ const addRows = async (dbtable, objArray, req, { tableid, ...options } = {}) => 
             dbtable,
             data: dbtable === TableName.SETTINGS && data.value ? { value: data.value } : data,
             tableid: data.id ?? tableid,
-            action: options.upsert ? LogAction.UPDATE : LogAction.CREATE,
+            action: options.upsert ? LogAction.UPSERT : LogAction.CREATE,
             error: error?.message || error?.toString() || "Unknown error",
         })), req)
         throw error
@@ -263,6 +263,7 @@ const login = (userid, sessionid, error, name) => addEntries({
 const LogAction = {
     CREATE: 'create',
     UPDATE: 'update',
+    UPSERT: 'upsert',
     DELETE: 'delete',
     LOGIN: 'login',
 }
