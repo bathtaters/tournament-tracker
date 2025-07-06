@@ -26,6 +26,7 @@ export default function usePlanVoteController() {
         handleGenerate: () => generatePlan(),
 
         showTabs: Boolean(access && voter && access > 2),
-        tab, selectTab,
+        tab: access > 2 ? tab : 0,
+        selectTab,
     }
 }
