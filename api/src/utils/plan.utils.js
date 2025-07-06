@@ -27,9 +27,6 @@ const planMetrics = [
 /** Convert status number into Settings object array */
 const planStatus = (planstatus, planprogress) => toObjArray(planprogress == null ? { planstatus } : { planstatus, planprogress })
 
-/** Callback to update progress bar */
-const updateProg = (setSettings) => (prog, total) => setSettings(toObjArray({ planprogress: 100 * prog / total }))
-
 /** Remove events no one voted for */
 const filterUnvoted = (events, voters) => {
     let votedEvents = new Set()
@@ -159,7 +156,7 @@ const maxPlan = (...plans) => !plans.length ? null :
 
 module.exports = {
     threadCount, progUpdatePercent,
-    planStatus, updateProg,
+    planStatus,
     filterUnvoted, voterCanPlay, daysOffByPlayer,
     getEventScores, getPlanScore,
     planToEvent, resetEvent,
