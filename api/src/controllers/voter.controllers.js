@@ -18,7 +18,7 @@ const setVoters = async (req, res) => {
   const { voters } = matchedData(req);
   
   const rmv = await voter.rmvOther(voters, req);
-  const add = await voter.add(voters, req);
+  const add = await voter.upsert(voters, req);
   
   res.sendAndLog([ ...add, ...rmv ]);
 }
