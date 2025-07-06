@@ -1,10 +1,10 @@
 import { useState } from "react"
-import { usePropState, useOnClickOutsideRef } from "../../common/common.hooks"
+import { useSyncState, useOnClickOutsideRef } from "../../common/common.hooks"
 
 export default function useTextEditor(serverText, updateServer, { charLimit = 1000 }) {
   // Setup state (editMode + controlledText)
   const [ isEdit, setEdit ] = useState(false)
-  const [ text,   setText ] = usePropState(serverText)
+  const [ text,   setText ] = useSyncState(serverText)
 
   // Truncs text to charLimit & sends to server (only if it's changed)
   const saveText = () => {

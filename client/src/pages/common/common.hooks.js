@@ -47,27 +47,49 @@ export function useLocalStorage(key, initial = null) {
   return [ state, updateValue, setState ]
 }
 
-// Push prop updates to state
-export function usePropState(propVal, equalsTest = (oldVal,newVal) => oldVal === newVal) {
-  const ref = useRef(propVal)
-  const [ localVal, setLocal ] = useState(ref.current)
+/**
+ * useState that syncs its internal state with an external value
+ * and includes a custom equality check.
+ *
+ * @param {any} extValue - The external value to sync with.
+ * @param {(a: any, b: any) => boolean} [isEqual] - Optional custom equality function.
+ * @returns {[any, (val: any) => void]} - The internalValue and a setter function.
+ */
+export function useSyncState(extValue, isEqual) {
+  const prev = useRef(extValue)
+  const [ intVal, setIntVal ] = useState(extValue)
 
-  if (!equalsTest(ref.current, propVal)) ref.current = propVal
-  // eslint-disable-next-line
-  useEffect(() => setLocal(ref.current), [ref.current])
+  useEffect(() => {
+    if (!isEqual?.(prev.current, extValue)) {
+      prev.current = extValue
+      setIntVal(extValue)
+    }
+  }, [extValue, isEqual])
 
-  return [ localVal, setLocal ]
+  return [ intVal, setIntVal ]
 }
-export const usePropStateList = (propList) => usePropState(propList || [], deepEquals)
+export const useSyncStateList = (propList) => useSyncState(propList || [], deepEquals)
 
-// Delay and throttle server updates
+
+/**
+ * Delay and throttle server updates while syncing to external value
+ *
+ * @param {any} value - External value to sync with.
+ * @param {(val: any) => void} serverUpdate - Callback to update the server.
+ * @param {Object} options
+ * @param {(fn: Function) => Function} [options.throttle] - Throttle function wrapper.
+ * @param {(a: any, b: any) => boolean} [options.isEqual] - Custom equality function.
+ *
+ * @returns {[any, (val: any) => void]} - [localValue, setLocalValue]
+ */
+
 export function useServerValue(value, updateServerCallback, { throttleDelay = 500, equalsTest } = {}) {
   // Init hooks
   const throttle = useThrottle(throttleDelay)
-  const [ localVal, setLocal ] = usePropState(value, equalsTest)
+  const [ localVal, setLocal ] = useSyncState(value, equalsTest)
 
   // Update function
-  const updateLocal = useCallback((newValue) => {
+  const setValue = useCallback((newValue) => {
 
     // Uses setState((currVal) => newVal) form
     if (typeof newValue === 'function') return setLocal((local) => {
@@ -82,7 +104,7 @@ export function useServerValue(value, updateServerCallback, { throttleDelay = 50
   }, [setLocal, throttle, updateServerCallback])
 
   // Return value & setter
-  return [ localVal, updateLocal ]
+  return [ localVal, setValue ]
 }
 export const useServerListValue = (listValue, updateServerCallback, options = {}) =>
   useServerValue(listValue || [], updateServerCallback, { equalsTest: deepEquals, ...options })
