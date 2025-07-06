@@ -1,51 +1,63 @@
+import { useCallback } from "react"
 import { useSetVotersMutation, useSetEventsMutation, useResetPlanMutation } from "../voter.fetch"
 import { usePlanSettings, datePickerToArr, serverDatesToArr } from "./plan.utils"
 import { useOpenAlert, useServerListValue, useServerValue } from "../../common/common.hooks"
 import { plan as config } from "../../../assets/config"
 import { resetPlanAlert } from "../../../assets/alerts"
 
+const serverOptions = { throttleDelay: config.updateDelay }
+
 export default function usePlanStartController() {
 
     // Date Controller
     const { voters, settings, events, setStatus, updateSettings } = usePlanSettings()
+    const updateServerDates = useCallback(
+        (plandates) => updateSettings({ plandates }), [updateSettings]
+    )
     const [dates, setDates] = useServerListValue(
         serverDatesToArr(settings, settings?.plandates),
-        (plandates) => updateSettings({ plandates }),
-        { throttleDelay: config.updateDelay }
+        updateServerDates, serverOptions
     )
-    const handleDateChange = (dates) => setDates(datePickerToArr(settings, dates))
+    const { datestart, dateend } = settings
+    const handleDateChange = useCallback(
+        (dates) => setDates(datePickerToArr({ datestart, dateend }, dates)),
+        [datestart, dateend, setDates]
+    )
     
     // Slot Controller
+    const updateServerSlots = useCallback(
+        (planslots) => updateSettings({ planslots }), [updateSettings]
+    )
     const [slots, setSlots] = useServerValue(
         settings?.planslots ?? settings?.dayslots,
-        (planslots) => updateSettings({ planslots }),
-        { throttleDelay: config.updateDelay }
+        updateServerSlots, serverOptions
     )
-    const handleSlotChange = (ev) => setSlots(+(ev.target.value))
+    const handleSlotChange = useCallback((ev) => setSlots(+(ev.target.value)), [setSlots])
 
     // Voters Controller
     const [ setVoters ] = useSetVotersMutation()
     const [players, setPlayers] = useServerListValue(
         voters ? Object.keys(voters) : [],
-        (ids) => setVoters(ids),
-        { throttleDelay: config.updateDelay }
+        setVoters, serverOptions
     )
-    const handlePlayerChange = (players) => setPlayers(players)
+    const handlePlayerChange = useCallback((players) => setPlayers(players), [setPlayers])
     
     // Events Controller
     const [ setEventPlan ] = useSetEventsMutation()
     const [planEvents, setEvents] = useServerListValue(
         events ? Object.keys(events).filter((id) => events[id].plan) : [],
-        (ids) => setEventPlan(ids),
-        { throttleDelay: config.updateDelay }
+        setEventPlan, serverOptions
     )
-    const handleEventChange = (events) => setEvents(events)
+    const handleEventChange = useCallback((events) => setEvents(events), [setEvents])
 
     // Reset Controller
     const openAlert = useOpenAlert()
     const [ resetPlan ] = useResetPlanMutation()
-    const handleReset = () => openAlert(resetPlanAlert, 0)
-        .then((answer) => answer && resetPlan())
+    const handleReset = useCallback(
+        () => openAlert(resetPlanAlert, 0)
+            .then((answer) => answer && resetPlan()),
+        [openAlert, resetPlan]
+    )
 
     return {
         settings, setStatus,
