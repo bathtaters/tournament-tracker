@@ -32,7 +32,7 @@ const getEventScores = (eventId, voters, eventCount, weighted = false) => {
     if (weighted) {
         scores._total /= eventCount * voters.length
         Object.keys(scores).forEach((id) => {
-            scores[id] = scores[id] < 0 ? -1 / unrankedEventFactor : scores[id] / eventCount
+            scores[id] = scores[id] < 0 ? -unrankedEventFactor : scores[id] / eventCount
         })
     }
     return scores
