@@ -19,7 +19,7 @@ exports.event = {
     schedule: {
         prefix: "SELECT COALESCE(TO_CHAR(day), 'none') as day, JSON_OBJECT_AGG(id::STRING, slot) as eventslots FROM event@date_idx ",
         useSettings: "WHERE plan < 1 OR (SELECT value FROM settings WHERE id = 'planschedule') = 'true' ",
-        planOnly: "WHERE plan > 0",
+        planOnly: "WHERE plan > 0 ",
         suffix: "GROUP BY day;",
     },
 }
