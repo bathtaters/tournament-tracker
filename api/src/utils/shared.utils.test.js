@@ -1,6 +1,6 @@
 // Import/Mocks
 const warnSpy = jest.spyOn(global.console, "warn");
-const { arrToObj, insertSorted, filtering, toDateStr, datesAreEqual, dayCount } = require('./shared.utils');
+const { arrToObj, insertSorted, filtering, toDateStr, datesAreEqual, getDayCount } = require('./shared.utils');
 
 afterAll(() => { warnSpy.mockRestore(); });
 
@@ -213,28 +213,28 @@ describe('toDateStr', () => {
   })
 })
 
-describe("dayCount", () => {
+describe("getDayCount", () => {
   it("Correct count of days (inclusive)", () => {
-    expect(dayCount(new Date(2020, 0, 1), new Date(2020, 0, 2))).toBeCloseTo(2)
-    expect(dayCount(new Date(2020, 0, 1), new Date(2020, 0, 10))).toBeCloseTo(10)
-    expect(dayCount(new Date(2012, 5, 4), new Date(2020, 0, 10))).toBeCloseTo(2777, 1)
+    expect(getDayCount(new Date(2020, 0, 1), new Date(2020, 0, 2))).toBeCloseTo(2)
+    expect(getDayCount(new Date(2020, 0, 1), new Date(2020, 0, 10))).toBeCloseTo(10)
+    expect(getDayCount(new Date(2012, 5, 4), new Date(2020, 0, 10))).toBeCloseTo(2777, 1)
   })
   it("Count of days as decimal", () => {
-    expect(dayCount(new Date(2020, 0, 1, 1, 20), new Date(2020, 0, 2, 23, 45))).toBeCloseTo(2.93)
-    expect(dayCount(new Date(2020, 0, 1, 11, 40), new Date(2020, 3, 10, 17, 30))).toBeCloseTo(101.2, 1)
+    expect(getDayCount(new Date(2020, 0, 1, 1, 20), new Date(2020, 0, 2, 23, 45))).toBeCloseTo(2.93)
+    expect(getDayCount(new Date(2020, 0, 1, 11, 40), new Date(2020, 3, 10, 17, 30))).toBeCloseTo(101.2, 1)
   })
   it("Same day is 1", () => {
-    expect(dayCount(new Date(2020, 0, 1), new Date(2020, 0, 1))).toBeCloseTo(1)
-    expect(dayCount(new Date(2012, 5, 4), new Date(2012, 5, 4))).toBeCloseTo(1)
+    expect(getDayCount(new Date(2020, 0, 1), new Date(2020, 0, 1))).toBeCloseTo(1)
+    expect(getDayCount(new Date(2012, 5, 4), new Date(2012, 5, 4))).toBeCloseTo(1)
   })
   it("Works with reversed day count", () => {
-    expect(dayCount(new Date(2020, 0, 2), new Date(2020, 0, 1))).toBeCloseTo(2)
-    expect(dayCount(new Date(2020, 0, 10), new Date(2020, 0, 1))).toBeCloseTo(10)
-    expect(dayCount(new Date(2020, 0, 10), new Date(2012, 5, 4))).toBeCloseTo(2777, 1)
+    expect(getDayCount(new Date(2020, 0, 2), new Date(2020, 0, 1))).toBeCloseTo(2)
+    expect(getDayCount(new Date(2020, 0, 10), new Date(2020, 0, 1))).toBeCloseTo(10)
+    expect(getDayCount(new Date(2020, 0, 10), new Date(2012, 5, 4))).toBeCloseTo(2777, 1)
   })
   it("reversed day count + decimal", () => {
-    expect(dayCount(new Date(2020, 0, 2, 23, 45), new Date(2020, 0, 1, 1, 20))).toBeCloseTo(2.93)
-    expect(dayCount(new Date(2020, 3, 10, 17, 30), new Date(2020, 0, 1, 11, 40))).toBeCloseTo(101.2, 1)
+    expect(getDayCount(new Date(2020, 0, 2, 23, 45), new Date(2020, 0, 1, 1, 20))).toBeCloseTo(2.93)
+    expect(getDayCount(new Date(2020, 3, 10, 17, 30), new Date(2020, 0, 1, 11, 40))).toBeCloseTo(101.2, 1)
   })
 })
 
