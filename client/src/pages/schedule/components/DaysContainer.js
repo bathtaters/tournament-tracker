@@ -1,4 +1,3 @@
-import React from "react"
 import Day from "./Day"
 import Loading from "../../common/Loading"
 import RawData from "../../common/RawData"
@@ -6,7 +5,7 @@ import { DaysContainerStyle } from "../styles/ScheduleStyles"
 import { useScheduleQuery, useSettingsQuery, useEventQuery } from "../schedule.fetch"
 import { useAccessLevel } from "../../common/common.fetch"
 
-function DaysContainer({ isEditing, openEventModal, isPlan }) {
+function DaysContainer({ isEditing, openEventModal, isPlan, expandAll = false }) {
     // Global state
     const { data: settings,  isLoading: settingsLoad, error: settingsErr } = useSettingsQuery()
     const { data: schedule,  isLoading: schedLoad,    error: schedErr    } = useScheduleQuery(Boolean(isPlan))
@@ -34,6 +33,7 @@ function DaysContainer({ isEditing, openEventModal, isPlan }) {
                         isSlotted={Boolean(isPlan ? settings.planslots : settings.dayslots)}
                         setEventModal={openEventModal}
                         showPlayers={isPlan}
+                        expandAll={expandAll}
                     />
                 )}
         </DaysContainerStyle>

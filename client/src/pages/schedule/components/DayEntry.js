@@ -14,7 +14,7 @@ import { useLinkId } from "../../common/services/idUrl.services";
 import { usePlayerQuery } from "../../common/common.fetch";
 
 
-function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, showPlayers = false }) {
+function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, showPlayers = false, expandAll = false }) {
   const { data: players } = usePlayerQuery(undefined, { skip: !showPlayers })
 
   // Setup prefetching
@@ -26,6 +26,7 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, show
 
   return (
     <CollapseContainer
+      open={expandAll}
       enabled={showPlayers}
       content={
         players && data?.players && (
@@ -67,11 +68,14 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, show
 
 DayEntry.propTypes = {
   day: PropTypes.string,
+  slot: PropTypes.number,
+  id: PropTypes.string,
   data: PropTypes.object,
   isEditing: PropTypes.bool,
-  canDrop: PropTypes.func,
   dropHandler: PropTypes.func,
   editEvent: PropTypes.func,
+  showPlayers: PropTypes.bool,
+  expandAll: PropTypes.bool,
 };
 
 export default DayEntry;
