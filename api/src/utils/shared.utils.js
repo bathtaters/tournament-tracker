@@ -81,6 +81,79 @@ exports.insertSorted = (array, item, isBefore = (entry,item) => entry < item) =>
 };
 
 /**
+ * Return each index from an array starting at the midpoint (rounded down),
+ *  and moving outwards until the start & end are reached.
+ * @param {any[] | number} array - Array to iterate over (Also accepts an array length if asValue=false)
+ * @param {boolean} [asValue] - If true yield values instead of keys
+ */
+exports.midOut = function* (array, asValue = false) {
+  let length
+  if (Array.isArray(array)) {
+    array = array.slice()
+    length = array.length - 1
+  } else if (typeof array === 'number' && !asValue) {
+    length = array - 1
+  } else throw new Error(`midOut requires array as parameter: ${array}`)
+  if (length < 0) return // Empty array
+
+  const mid = Math.floor(length / 2)
+  const end = length - mid
+  let offset = 0
+
+  yield(asValue ? array[mid] : mid)
+  while (++offset <= end) {
+    yield(asValue ? array[mid + offset] : mid + offset)
+    if (offset <= mid) yield(asValue ? array[mid - offset] : mid - offset)
+  }
+}
+
+/**
+ * Find the maximum value from an array or object
+ * @param {any[] | { [key: string]: any }} items - Array or Object to iterate through
+ * @param {(value: any, key: string | number) => number | null} [getValue] - Function to get the value used for max
+ *  (Returning null will skip the entry entirely)
+ * @returns {any | undefined} - Item from 'items' with the highest value (or undefined if items is empty)
+ */
+exports.customMax = (items, getValue) => {
+  if (typeof items !== 'object' || !items) throw new Error(`customMax expected iterable: ${items}`)
+  
+  let max = null, result = undefined
+  for (const key in items) {
+    const val = getValue ? getValue(items[key]) : items[key]
+    if (val == null) continue
+    else if (typeof val !== 'number') throw new Error(`getValue expected to return number: ${val}`)
+    else if (max == null || val > max) {
+      max = val
+      result = items[key]
+    }
+  }
+  return result
+}
+
+/**
+ * Find the minimum value from an array or object
+ * @param {any[] | { [key: string]: any }} items - Array or Object to iterate through
+ * @param {(value: any, key: string | number) => number | null} [getValue] - Function to get the value used for max
+ *  (Returning null will skip the entry entirely)
+ * @returns {any | undefined} - Item from 'items' with the lowest value (or undefined if items is empty)
+ */
+exports.customMin = (items, getValue) => {
+  if (typeof items !== 'object' || !items) throw new Error(`customMax expected iterable: ${items}`)
+  
+  let min = null, result = undefined
+  for (const key in items) {
+    const val = getValue ? getValue(items[key]) : items[key]
+    if (val == null) continue
+    else if (typeof val !== 'number') throw new Error(`getValue expected to return number: ${val}`)
+    else if (min == null || val < min) {
+      min = val
+      result = items[key]
+    }
+  }
+  return result
+}
+
+/**
  * Create a shallow copy of 'object' without keys in 'ignoring'
  * @param {Object} object - Object to copy
  * @param {String[]} [ignoring=id] - Keys to ignore when copying
