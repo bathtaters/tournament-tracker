@@ -79,8 +79,8 @@ export const getPlanned = (events) => indexedKeys(events, ({ plan }) => plan, 'p
 // DATE UTILITIES \\
 
 export const datePickerToArr = ({ datestart, dateend } = {}, { startDate, endDate } = {}) => [
-    startDate || datestart,
-    endDate   || dateend,
+    startDate?.toISOString().slice(0,10) || datestart,
+    endDate?.toISOString().slice(0,10) || dateend,
 ]
 
 export const serverDatesToArr = ({ datestart, dateend } = {}, dateArr = []) => [
