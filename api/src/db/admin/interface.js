@@ -118,7 +118,7 @@ const updateRows = (table, updateObjArray, { client = direct, idCol = 'id', type
     strTest(keys)
     strTest(Object.values(types))
 
-    if (returning) returning.split(/\s*,\s*/).map((col) => col.includes('.') ? col : `${table}.${col}`).join(', ')
+    if (returning) returning = returning.split(/\s*,\s*/).map((col) => col.includes('.') ? col : `${table}.${col}`).join(', ')
 
     return client.query(
         `UPDATE ${table} SET ${
