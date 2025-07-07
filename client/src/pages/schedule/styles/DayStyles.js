@@ -1,6 +1,4 @@
-import React from "react";
 import { Link } from "react-router-dom";
-
 import { statusInfo } from '../../../assets/constants';
 import EditIcon from "../../common/icons/EditIcon";
 
@@ -43,6 +41,19 @@ export function EntryLinkStyle({ to, status, children }) {
     </Link>
   );
 }
+
+export const CollapseContainer = ({ content, enabled = false, className = "", open = false, children }) => enabled ? (
+  <details className="collapse" open={open}>
+    <summary className={className}>
+      {children}
+    </summary>
+    <div className="collapse-content">
+      {content}
+    </div>
+  </details>
+) : (
+  <div className={className}>{children}</div>
+)
 
 export const PlayerListStyle = ({ children }) => <ul className="font-light text-center">{children}</ul>
 export const PlayerNameStyle = ({ children }) => <li>{children}</li>

@@ -1,12 +1,10 @@
-import React from "react";
 import PropTypes from 'prop-types';
-
-import Tooltip from "../../common/Tooltip";
 import DragBlock from '../../common/DragBlock';
 import {
   EntryTitleStyle, EntryLinkStyle, EditEventButton,
   PlayerListStyle, PlayerNameStyle, NoPlayerStyle,
   MissingDataStyle, dragAndDropClass,
+  CollapseContainer,
 } from "../styles/DayStyles";
 
 import { usePrefetchEvent } from "../schedule.fetch";
@@ -27,10 +25,10 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, show
   if (id && isTempId(id)) return <MissingDataStyle>...</MissingDataStyle>
 
   return (
-    <Tooltip
-      className="w-full"
-      tooltip={
-        showPlayers && players && data?.players && (
+    <CollapseContainer
+      enabled={showPlayers}
+      content={
+        players && data?.players && (
           <PlayerListStyle>
             {data.players.map((pid) => 
               <PlayerNameStyle key={pid}>{players[pid].name || pid}</PlayerNameStyle>
@@ -62,7 +60,7 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, show
           <EntryLinkStyle to={showPlayers ? undefined : eventUrl} status={data.status}>{data.title}</EntryLinkStyle>
         }
       </DragBlock>
-    </Tooltip>
+    </CollapseContainer>
   );
 }
 
