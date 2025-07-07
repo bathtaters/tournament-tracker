@@ -1,6 +1,6 @@
 const { parentPort } = require("worker_threads")
 const logger = require("../utils/log.adapter")
-const { getDayCount, midOut, customMax } = require("../utils/shared.utils")
+const { getDayCount, midOut, customMax, shuffle } = require("../utils/shared.utils")
 const { multiset } = require("../db/models/plan")
 const { batchSet: setSetting, get: getSetting } = require('../db/models/settings')
 const { toObjArray, asType } = require("./settings.services")
@@ -75,6 +75,9 @@ async function generatePlan(events, voters, settings = {}) {
     const possibleEvents = Array(slotCount).fill().map(() => [])
     /** Selected events by slot @type {{ id: string, players: string[], score: number }[] | null[]} */
     const schedule = Array(slotCount).fill(null)
+
+    // Randomize voters array to allow settling tiebreakers using array position
+    voters = shuffle(voters)
 
     // Get voter availability -- sort by most available
     voters = getVoterSlots(voters, slotsPerDay, dates[0]) // Add ignoreSlots field to each voter
