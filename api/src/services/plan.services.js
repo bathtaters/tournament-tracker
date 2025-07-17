@@ -47,7 +47,7 @@ const preferenceWeight = 1, balanceWeight = 4
  * 
  * May be triggered as a spawned thread providing data object = `{ args: [events, voters, settings], req?: simpleRequest }`
  * @param {{ id: string, playercount: number }[]} events - List of events in plan
- * @param {{ id: string, events: string[], ignoreSlots: number[] }[]} voters - List of voters and their votes
+ * @param {{ id: string, events: string[], days: string[], ignoreSlots: number[] }[]} voters - List of voters and their votes
  * @param {{ plandates?: [string, string], planslots?: number, datestart: string, dateend: string, dayslots: number }} settings - Plan settings
  * @returns {Promise<{ id: string, players: string[], slot: number, day: string }[]>} - Event update data
  */
@@ -108,7 +108,7 @@ async function generatePlan(events, voters, settings = {}) {
         }),
         {},
     )
-    const orderedEvents = Object.keys(eventPrefs).sort((a, b) => eventPrefs[b]._total - eventPrefs[a]._total)
+    const orderedEvents = shuffle(Object.keys(eventPrefs)).sort((a, b) => eventPrefs[b]._total - eventPrefs[a]._total)
 
     await updateProg(5, 100)
     
