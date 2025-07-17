@@ -9,11 +9,12 @@ const unrankedEventFactor = 2
 /** Convert status number into Settings object array */
 const planStatus = (planstatus, planprogress) => toObjArray(planprogress == null ? { planstatus } : { planstatus, planprogress })
 
-/** Remove events no one voted for */
+/** Remove events no one voted for, or that are too large */
 const filterUnvoted = (events, voters) => {
     let votedEvents = new Set()
+    const voterCount = voters.length
     voters.forEach(({ events }) => events.forEach((id) => votedEvents.add(id)))
-    return events.filter(({ id }) => votedEvents.has(id))
+    return events.filter(({ id, playercount = 0 }) => votedEvents.has(id) && voterCount >= playercount)
 }
 
 /** Return { playerid: score_for_event, ..., _total: total_score_for_event },
