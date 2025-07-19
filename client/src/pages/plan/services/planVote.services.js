@@ -59,7 +59,7 @@ export function useRankState(voter, updateVoter) {
 }
 
 // Calculate scores
-export function useVoterScores(voters, events, { plandates }, skip) {
+export function useVoterScores(voters, events, players, { plandates }, skip) {
     const { data: schedule, isLoading, error } = useScheduleQuery(true, { skip })
     const ignore = skip || isLoading,
         message = error ? error : !schedule || !voters ? 'Score data unable to be retrieved' : null
@@ -99,12 +99,12 @@ export function useVoterScores(voters, events, { plandates }, skip) {
                 for (const player of events[eventId].players) {
                     // Skip non-voter players
                     if (!(player in scores)) {
-                        errors.push(`Scheduled player did not vote (${player})`)
+                        errors.push(`${players[player]?.name || player} did not vote`)
                         continue
                     }
                     // Raise alert if player is scheduled on their off day
                     if (voters[player].days.includes(day.day))
-                        errors.push(`Player (${player}) scheduled on off day (${day.day})`)
+                        errors.push(`${players[player]?.name || player} scheduled on off day (${day.day})`)
                     
                     // Add to rankings, register counter, and events array
                     const rank = voters[player].events.indexOf(eventId)
@@ -150,5 +150,5 @@ export function useVoterScores(voters, events, { plandates }, skip) {
         }
 
         return { scores, totals, errors }
-    }, [schedule, voters, plandates, ignore, message])
+    }, [schedule, voters, events, players, plandates, ignore, message])
 }
