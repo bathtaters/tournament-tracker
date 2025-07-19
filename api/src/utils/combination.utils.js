@@ -156,30 +156,6 @@ function* getPermutations(array, slotCount, includeBlanks = false) {
     }
 }
 
-/** Calculate all possible combinations of a multi-dimensional array
- *   from an array of the inner array sizes, returning an array of indexes for each call.
- *    - This will always return a reference to the same, mutating array
- *    - Ex: ([3,5,2]) => [0,0,0]; [0,0,1]; [0,1,0]; [0,1,1]; etc. */
-function* getArrayCombos(arrayOfIdxs) {
-    let next = arrayOfIdxs.map((val) => val ? 0 : null)
-
-    // Trim 'null' values off the end of array
-    let maxIdx = next.length - 1
-    while (next[maxIdx] == null && maxIdx) maxIdx--
-
-    let ptr = maxIdx
-    while (true) {
-        yield next
-
-        ptr = maxIdx
-        while (next[ptr] == null || next[ptr] + 1 >= arrayOfIdxs[ptr]) {
-            next[ptr] = next[ptr] && 0
-            ptr--
-            if (ptr < 0) return
-        }
-        next[ptr]++
-    }
-}
 
 
 // HELPERS \\
@@ -213,8 +189,7 @@ function hasRepeats(array, ignoreValue) {
 
 // EXPORTS \\
 module.exports = {
-    combinationCount, getCombinationN,
-    getCombinations, getUniqueCombinations,
+    getUniqueCombinations, getCombinationN,
+    combinationCount, getCombinations, 
     permutationCount, getPermutations,
-    getArrayCombos,
 }

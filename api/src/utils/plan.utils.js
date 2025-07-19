@@ -87,7 +87,8 @@ const getVoterSlots = (voters, slotsPerDay, startDate) => {
 
 
 module.exports = {
-    getVoterSlots, getEventScores,
     planStatus, filterUnvoted,
-    resetEvent, slotToEvent
+    getEventScores, slotToEvent,
+    resetEvent, getVoterSlots, 
+    _unrankedEventFactor: unrankedEventFactor // For tests
 }
