@@ -18,18 +18,42 @@ const { randomInt } = require('crypto');
  * @param {String} [options.valKey] - If entered will use entry['valKey'] instead of entry in result object 
  * @returns {convertArray:Object} function to convert input array into result object
  */
-exports.arrToObj = (key, { delKey=false, valKey=null, combo=false }={}) =>
-  obj => typeof obj !== 'object' ? 
-    obj && logger.warn('Expected object:',typeof obj,obj) || obj
-    :
-    (Array.isArray(obj) ? obj : [obj]).reduce((o,e) => {
-      if (!e || !e[key]) logger.warn('Entry is missing key:',key,e);
-      else if (o[e[key]] && !combo) throw new Error(`Object has duplicate key: [${key}] = ${e[key]}`);
-      else if (!combo) o[e[key]] = valKey ? e[valKey] : e;
-      else o[e[key]] = (o[e[key]] || []).concat(valKey ? e[valKey] : e);
-      if (delKey && !valKey) delete e[key];
-      return o;
-    }, {});
+exports.arrToObj = (key, { delKey=false, valKey=null, combo=false }={}) => (obj) => {
+  if (typeof obj !== 'object') {
+    if (obj) logger.warn('Expected object:',typeof obj,obj)
+    return obj
+  }
+
+  const result = {}
+  if (!Array.isArray(obj)) obj = [obj] // Force non-arrays to process as arrays
+  for (const entry of obj) {
+    // Get entry's 'key'
+    const resKey = entry?.[key]
+    if (!resKey) {
+      logger.warn('Entry is missing key:', key, entry)
+      continue
+    }
+
+    // Get entry's 'value' according to options
+    const value = valKey ? entry[valKey] :
+      delKey ? minusKey(entry, key) : { ...entry }
+    
+    if (!(resKey in result)) {
+      result[resKey] = combo ? [value] : value
+    } else if (combo) { // Duplicate keys if combo is TRUE
+      result[resKey].push(value)
+    } else { // Duplicate keys if combo is FALSE
+      throw new Error(`Object has duplicate key: [${key}] = ${resKey}`)
+    }
+  }
+  return result
+}
+
+/** Return a copy of obj without the specified key -- arrToObj helper */
+const minusKey = (obj, rmvKey) => Object.keys(obj).reduce(
+  (res, key) => key === rmvKey ? res : ({ ...res, [key]: obj[key] }),
+  {}
+)
 
 /** Fischer-Yates shuffle algorithm
  *    - Reorder array in place, returning array */
@@ -116,10 +140,11 @@ exports.midOut = function* (array, asValue = false) {
  */
 exports.customMax = (items, getValue) => {
   if (typeof items !== 'object' || !items) throw new Error(`customMax expected iterable: ${items}`)
-  
+    
+    const isArr = Array.isArray(items)
   let max = null, result = undefined
   for (const key in items) {
-    const val = getValue ? getValue(items[key]) : items[key]
+    const val = getValue ? getValue(items[key], isArr ? +key : key) : items[key]
     if (val == null) continue
     else if (typeof val !== 'number') throw new Error(`getValue expected to return number: ${val}`)
     else if (max == null || val > max) {
@@ -140,9 +165,10 @@ exports.customMax = (items, getValue) => {
 exports.customMin = (items, getValue) => {
   if (typeof items !== 'object' || !items) throw new Error(`customMax expected iterable: ${items}`)
   
+  const isArr = Array.isArray(items)
   let min = null, result = undefined
   for (const key in items) {
-    const val = getValue ? getValue(items[key]) : items[key]
+    const val = getValue ? getValue(items[key], isArr ? +key : key) : items[key]
     if (val == null) continue
     else if (typeof val !== 'number') throw new Error(`getValue expected to return number: ${val}`)
     else if (min == null || val < min) {
