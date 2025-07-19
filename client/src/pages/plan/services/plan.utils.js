@@ -90,22 +90,20 @@ export const serverDatesToArr = ({ datestart, dateend } = {}, dateArr = []) => [
 
 export const dateArrToPicker = (dates) => ({ startDate: dates[0], endDate: dates[1] })
 
-export function useDateRangeList([ dateStart, dateEnd ]) {
-    return useMemo(() => {
-        if (!dateStart || !dateEnd) return []
+export function dateRangeList(dateStart, dateEnd) {
+    if (!dateStart || !dateEnd) return []
 
-        let arr = []
-        let date = new Date(dateStart)
-        const end = new Date(dateEnd)
-        
-        while (date <= end) {
-            arr.push(date.toISOString().slice(0,10))
-            date.setDate(date.getDate() + 1)
-        }
-        return arr
-
-    }, [dateStart, dateEnd])
+    let arr = []
+    let date = new Date(dateStart)
+    const end = new Date(dateEnd)
+    
+    while (date <= end) {
+        arr.push(date.toISOString().slice(0,10))
+        date.setDate(date.getDate() + 1)
+    }
+    return arr
 }
+export const useDateRangeList = ([ dateStart, dateEnd ]) => useMemo(() => dateRangeList(dateStart, dateEnd), [dateStart, dateEnd])
 
 export const formatDate = (date, incYear) => date &&
     new Date(date).toLocaleDateString(undefined, {

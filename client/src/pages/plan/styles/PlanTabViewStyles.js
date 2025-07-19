@@ -36,6 +36,31 @@ export const ViewDateStyle = ({ dateRange }) => (
     </li>
 )
 
-export const ViewEventStyle = ({ title }) => (
-    <li className="list-decimal">{title || '-'}</li>
+export const ViewEventStyle = ({ title, isRegistered, isUnvoted }) => (
+    <li className={isUnvoted ? "list-inside ml-4 opacity-80 italic" : "list-decimal"}>
+        {title || '-'}
+        {isRegistered && <div aria-label="registered" className="status status-success ml-2" />}
+    </li>
 )
+
+export const ViewScoreStyle = ({ title, score, children }) => {
+    const rounded = Math.round(score * 100)
+    return (
+        <div className="w-full text-center font-light text-sm mt-2">
+            <div
+                title={title}
+                aria-valuenow={rounded}
+                role="progressbar"
+                className="radial-progress"
+                style={{ "--value": rounded, "--size": "4rem" }}
+            >
+                {score.toLocaleString(undefined, {
+                    style: 'percent',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })}
+            </div>
+            {children}
+        </div>
+    )
+}
