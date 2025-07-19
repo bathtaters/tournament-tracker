@@ -4,7 +4,7 @@ import Loading from "../common/Loading"
 import PlanTabVote from "./components/PlanTabVote"
 import PlanTabView from "./components/PlanTabView"
 import { PlanWrapperStyle, PlanTitleStyle, PlanButton, PlanMessageStyle, PlanErrorStyle } from "./styles/PlanStyles"
-import usePlanVoteController, { planTabs } from "./services/planVote.controller"
+import usePlanViewController, { planTabs } from "./services/planVote.controller"
 import { planMessage } from "../../assets/constants"
 
 function PlanVote() {    
@@ -12,9 +12,9 @@ function PlanVote() {
         data, events, settings,
         isLoading, error, flashError,
         title, access, isVoter,
-        handleSetup, handleGenerate,
+        setStatus, handleGenerate,
         tab, selectTab, showTabs,
-    } = usePlanVoteController()
+    } = usePlanViewController()
     
     if (isLoading || error) return (
         <Loading loading={isLoading} error={error} altMsg="Loading..." />
@@ -30,7 +30,7 @@ function PlanVote() {
         <PlanWrapperStyle>
             <PlanTitleStyle
                 title={title}
-                left={access > 2 && <PlanButton className="btn-secondary" onClick={handleSetup}>← Setup</PlanButton>}
+                left={access > 2 && <PlanButton className="btn-secondary" onClick={setStatus(1)}>← Setup</PlanButton>}
                 right={access > 2 && <PlanButton onClick={handleGenerate}>Generate</PlanButton>}
             />
 
