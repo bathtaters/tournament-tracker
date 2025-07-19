@@ -2,10 +2,11 @@ import { useMemo } from "react"
 import {
     ViewWrapperStyle, GeneralSectionStyle, ViewCellStyle,
     ViewCellSectionStyle, ViewEventStyle, ViewDateStyle,
-    ViewScoreStyle
+    ViewScoreStyle,
+    ViewErrors
 } from "../styles/PlanTabViewStyles"
 import RawData from "../../common/RawData"
-import { PlanErrors, PlanRowStyle } from "../styles/PlanStyles"
+import { PlanRowStyle } from "../styles/PlanStyles"
 import { usePlayerQuery } from "../voter.fetch"
 import { useVoterScores } from "../services/planVote.services"
 import { dateListToRange, formatDate, indexedKeys } from "../services/plan.utils"
@@ -16,10 +17,10 @@ function PlanTabView({ voters = {}, events = {}, settings = {}, showScores = fal
     const dateRange = settings.plandates || []
 
     const sortedVoters = useMemo(() => indexedKeys(voters), [voters])
-    const { scores, totals, errors } = useVoterScores(voters, events, settings, !showScores)
+    const { scores, totals, errors } = useVoterScores(voters, events, players, settings, !showScores)
 
     return (<>
-        <PlanErrors errors={errors} />
+        <ViewErrors errors={errors} />
 
         <PlanRowStyle>
             <GeneralSectionStyle header={"Schedule Range"}> 

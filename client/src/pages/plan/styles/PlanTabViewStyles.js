@@ -16,6 +16,13 @@ export const ViewCellStyle = ({ header, children }) => (
     </div>
 )
 
+export const ViewErrors = ({ errors }) => !errors?.length ? null : (
+    <div className="flex flex-wrap justify-center items-center gap-2 mt-4">
+        <h4 className="text-error">Issues:</h4>
+        {errors.map((msg) => <div className="badge badge-error font-light text-sm">{msg}</div>)}
+    </div>
+)
+
 export const ViewCellSectionStyle = ({ header, children, open = true, emptyHeader, ListTag = "ul" }) => {
     const isEmpty = !children?.length
     return (

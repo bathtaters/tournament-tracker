@@ -32,13 +32,6 @@ export const PlanRowStyle = ({ children }) => (
     </div>
 )
 
-export const PlanErrors = ({ errors }) => !errors?.length ? null : (
-    <div className="flex justify-center items-center gap-2 mt-4">
-        <h4 className="text-error">Errors:</h4>
-        {errors.map((msg) => <div className="badge badge-error">{msg}</div>)}
-    </div>
-)
-
 export const InputWrapperStyle = ({ label, children }) => (
     <ElementStyle label={label} isFloating={false} labelClass={titleStyle}>
         {children}
