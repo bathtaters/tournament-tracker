@@ -20,11 +20,13 @@ function spawnAsync(id, threadPath, data) {
         .finally(() => { delete processes[id] })
     processes[id] = terminate
 
+    let hasExited = false
     thread.on('message', (msg) => logger.log(`Message from thread ${id}:`, msg))
     thread.on('error', (err) => logger.error(`Error from thread ${id}:`, err))
     thread.on('messageerror', (err) => logger.error(`Error from thread ${id}:`, err))
     thread.on('exit', (code) => {
-        if (code) logger.error(`Thread ${id} ended with exit code: ${code}`)
+        if (!hasExited && code) logger.error(`Thread ${id} ended with exit code: ${code}`)
+        hasExited = true
         return terminate()
     })
 
