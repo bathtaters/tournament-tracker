@@ -35,7 +35,7 @@ function PlanTabView({ voters = {}, events = {}, settings = {}, showScores = fal
             {sortedVoters.map((id) => (
                 <ViewCellStyle key={id} header={players[id]?.name}>
                     { scores && (
-                        <ViewScoreStyle title="Accuracy" score={scores[id].weighted}>
+                        <ViewScoreStyle title="Plan accuracy" score={scores[id].weighted}>
                             <RawData data={scores[id]} className="text-xs" />
                         </ViewScoreStyle>
                     )}

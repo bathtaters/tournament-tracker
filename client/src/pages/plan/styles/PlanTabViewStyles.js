@@ -46,7 +46,12 @@ export const ViewDateStyle = ({ dateRange }) => (
 export const ViewEventStyle = ({ title, isRegistered, isUnvoted }) => (
     <li className={isUnvoted ? "list-inside ml-4 opacity-80 italic" : "list-decimal"}>
         {title || '-'}
-        {isRegistered && <div aria-label="registered" className="status status-success ml-2" />}
+        {(isRegistered || isUnvoted) && (
+            <div
+                className={`ml-2 status ${isUnvoted ? 'status-info' : 'status-success'}`}
+                aria-label="registered" title={isUnvoted ? "Registered, didn't vote for" : "Registered"}
+            />
+        )}
     </li>
 )
 
