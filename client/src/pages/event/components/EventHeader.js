@@ -9,30 +9,33 @@ import useRoundButton from "../services/roundButton.services";
 import { WarningTextStyle } from "../styles/RoundStyles";
 
 function EventHeader({ data, disabled }) {
-  const { handleClick, buttonText, buttonWarning } = useRoundButton(data, disabled)
-  const { access } = useAccessLevel()
+  const { handleClick, buttonText, buttonWarning } = useRoundButton(
+    data,
+    disabled
+  );
+  const { access } = useAccessLevel();
 
-  return (<>
-    { data?.link && <EventLinkStyle text={data.link} link={data.link} /> }
+  return (
+    <>
+      {data?.link && <EventLinkStyle text={data.link} link={data.link} />}
 
-    {access > 1 && 
-      <RoundButton
-        onClick={handleClick}
-        value={buttonText}
-      />
-    }
+      {access > 1 && <RoundButton onClick={handleClick} value={buttonText} />}
 
-    { access > 1 && buttonWarning && <WarningTextStyle>{buttonWarning}</WarningTextStyle> }
+      {access > 1 && buttonWarning && (
+        <WarningTextStyle>{buttonWarning}</WarningTextStyle>
+      )}
 
-    {access > 1 ?
-      <NotesEditor id={data.id} notes={data.notes} />
-      
-    : data.notes &&
-      <NotesWrapperStyle>
-        <NotesStyle disabled={true} value={data.notes} />
-      </NotesWrapperStyle>
-    }
-  </>)
+      {access > 1 ? (
+        <NotesEditor id={data.id} notes={data.notes} />
+      ) : (
+        data.notes && (
+          <NotesWrapperStyle>
+            <NotesStyle disabled={true} value={data.notes} />
+          </NotesWrapperStyle>
+        )
+      )}
+    </>
+  );
 }
 
-export default EventHeader
+export default EventHeader;

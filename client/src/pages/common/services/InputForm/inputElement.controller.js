@@ -1,82 +1,137 @@
-import { defaultInputType } from "./inputClass.controller";
+import { defaultInputType } from "../../components/InputForm/OtherElements";
+import { eventWithValue } from "../basic.services";
 
-// Individual getters
-const getElementId = (id, label) => (id || label || '').replace(/\W/g,'');
-
-const getType = (type) => type === 'toggle' ? 'checkbox' : type || defaultInputType;
-
-const getDisabled = (disabled, data) => typeof disabled === 'function' ? disabled(data) : disabled;
-
-function getLimits(limits, min, max, data, isNumber) {
-  let elemLimits = {};
-  const suffix = isNumber ? '' : 'Length'
-
-  // Min
-  if (typeof min === 'function') elemLimits['min'+suffix] = min(data);
-  else if (typeof min === 'number') elemLimits['min'+suffix] = min;
-  if (elemLimits['min'+suffix] == null && typeof limits?.min === 'number') elemLimits['min'+suffix] = limits.min;
-  
-  // Max
-  if (typeof max === 'function') elemLimits['max'+suffix] = max(data);
-  else if (typeof max === 'number') elemLimits['max'+suffix] = max;
-  if (elemLimits['max'+suffix] == null && typeof limits?.max === 'number') elemLimits['max'+suffix] = limits.max;
-
-  return elemLimits;
-}
-
-const getFormData = ({ id, type, value, limits, disabled, required, setValueAs }, register, onChange) => {
-  if (!register) return {}
-
-  if (type === 'time') return {
-    hours: getTimeData("hours", id, value, limits, disabled, required, setValueAs, register, onChange),
-    minutes: getTimeData("minutes", id, value, limits, disabled, required, setValueAs, register, onChange),
-    seconds: getTimeData("seconds", id, value, limits, disabled, required, setValueAs, register, onChange),
-  }
-
-  const isNumber = type === 'number'
-  return register(id, { 
-    value, setValueAs,
-    disabled, required, 
-    onChange, ...limits,
-    valueAsNumber: isNumber,
-    pattern: isNumber ? /^\d*$/ : undefined,
-  });
-}
-
-// For time type
-const getTimeData = (place, id, value, limits, disabled, required, setValueAs, register, onChange) => getFormData(
+export default function getInputProps(
   {
-    id: `${id}.${place}`,
-    type: "number",
-    value: value?.[place],
-    limits: limits?.[place],
-    setValueAs: setValueAs && ((val) => setValueAs(val, place)),
-    disabled, required,
+    id: inputId,
+    type,
+    data,
+    limits,
+    min,
+    max,
+    onChange,
+    onBlur,
+    disabled,
+    required,
   },
-  register,
-  onChange && ((ev) => onChange({ ...ev, place })),
-)
+  label = ""
+) {
+  const id = inputId || label.replace(/\W/g, "");
+  const valueAsNumber = type === "number" || type === "time";
 
-
-// Combined getter
-export default function getProps({
-  id, label, type, data,
-  disabled, required, setValueAs,
-  limits, min, max,
-  backend, onChange
-}) {
-
-  const props = {
-    id: id || getElementId(id, label),
-    type: getType(type),
+  // Build register options
+  const options = {
+    id,
+    valueAsNumber,
+    onChange,
+    onBlur,
+    required,
     value: data?.[id],
-    disabled: getDisabled(disabled, data),
-    limits: getLimits(limits, min, max, data, type === 'number'),
-    required, setValueAs,
-  }
+    type: type || defaultInputType,
+    disabled: typeof disabled === "function" ? disabled(data) : disabled,
+    pattern: valueAsNumber ? /^\d*$/ : undefined,
+    ...getLimit("min", limits, valueAsNumber, min, data),
+    ...getLimit("max", limits, valueAsNumber, max, data),
+  };
 
-  return Object.assign(
-    { id: props.id, type: props.type, disabled: props.disabled, required: props.required },
-    getFormData(props, backend.register, onChange),
-  )
+  // Build FormData props
+  if (type !== "time") return baseProps(options, data);
+
+  return {
+    ...baseProps(options, data),
+    hours: timeOptions("hours", options),
+    minutes: timeOptions("minutes", options),
+    seconds: timeOptions("seconds", options),
+  };
 }
+
+// --- Helpers --- \\
+
+const baseProps = (
+  {
+    id,
+    type,
+    value,
+    disabled,
+    required,
+    onChange,
+    onBlur,
+    min,
+    max,
+    minLength,
+    maxLength,
+  },
+  data
+) =>
+  type === "checkbox"
+    ? {
+        id,
+        type,
+        disabled,
+        required,
+        name: id,
+        checked: value,
+        onChange: (ev) => onChange(id, ev),
+        onBlur:
+          typeof onBlur !== "function"
+            ? undefined
+            : (ev) => {
+                const newEvent = eventWithValue(
+                  ev,
+                  onBlur(ev.target.checked, data),
+                  true
+                );
+                onChange(id, newEvent);
+              },
+      }
+    : {
+        id,
+        type,
+        value,
+        disabled,
+        required,
+        min,
+        max,
+        minLength,
+        maxLength,
+        name: id,
+        onChange: (ev) => onChange(id, ev),
+        onBlur:
+          typeof onBlur !== "function"
+            ? undefined
+            : (ev) => {
+                const newEvent = eventWithValue(
+                  ev,
+                  onBlur(ev.target.value, data)
+                );
+                onChange(id, newEvent);
+              },
+      };
+
+const timeOptions = (
+  place,
+  { id, value, onChange, limits, valueAsNumber, onBlur, ...props }
+) => ({
+  ...props,
+  ...getLimit("min", limits?.[place], valueAsNumber),
+  ...getLimit("max", limits?.[place], valueAsNumber),
+  id: `${id}.${place}`,
+  value: value?.[place],
+  type: "number",
+  onChange: (ev) =>
+    onChange(id, (time) => ({ ...time, [place]: ev.target.value })),
+});
+
+const getLimit = (
+  key,
+  limits,
+  isNumber = false,
+  override = null,
+  data = null
+) => {
+  const value = typeof override === "function" ? override(data) : override;
+  if (typeof value === "number")
+    return { [isNumber ? key : `${key}Length`]: value };
+  if (typeof limits?.[key] !== "number") return {};
+  return { [isNumber ? key : `${key}Length`]: limits[key] };
+};

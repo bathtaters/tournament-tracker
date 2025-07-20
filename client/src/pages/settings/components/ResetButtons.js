@@ -16,13 +16,21 @@ function SettingsButtons({ onClick, value }) {
 
 // Render 'Reset' buttons + Logic
 function ResetButtons({ visible }) {
-  const resetHandler = useResetHandler()
+  const resetHandler = useResetHandler();
 
-  return visible && (
-    <ResetButtonStyle>
-      <SettingsButtons value="Reset Data" onClick={()=>resetHandler(false)} />
-      <SettingsButtons value="Full Reset" onClick={()=>resetHandler(true)}  />
-    </ResetButtonStyle>
+  return (
+    visible && (
+      <ResetButtonStyle>
+        <SettingsButtons
+          value="Reset Data"
+          onClick={() => resetHandler(false)}
+        />
+        <SettingsButtons
+          value="Full Reset"
+          onClick={() => resetHandler(true)}
+        />
+      </ResetButtonStyle>
+    )
   );
 }
 

@@ -1,39 +1,80 @@
-import React from "react"
-import DaysContainer from "../schedule/components/DaysContainer"
-import { PlanWrapperStyle, PlanTitleStyle, PlanFooterStyle, PlanButton } from "./styles/PlanStyles"
-import { useSavePlanMutation } from "./voter.fetch"
-import { usePlanSettings } from "./services/plan.utils"
-import { useOpenAlert } from "../common/common.hooks"
-import { savePlanAlert } from "../../assets/alerts"
-import { planTitle } from "../../assets/constants"
+import { useState } from "react";
+import DaysContainer from "../schedule/components/DaysContainer";
+import PlanTabView from "./components/PlanTabView";
+import Tabs from "../common/Tabs";
+import {
+  PlanWrapperStyle,
+  PlanTitleStyle,
+  PlanFooterStyle,
+  PlanButton,
+} from "./styles/PlanStyles";
+import usePlanViewController, {
+  finishTabs,
+} from "./services/planVote.controller";
+import { planTitle } from "../../assets/constants";
 
 function PlanFinish() {
-    const { access, settings, setStatus } = usePlanSettings()
-    const [ savePlan ] = useSavePlanMutation()
-    const openAlert = useOpenAlert()
+  const [isExpanded, setExpanded] = useState(false);
 
-    const handleClick = async () => {
-        const answer = await openAlert(savePlanAlert, 0)
-        if (answer) savePlan()
-    }
+  const {
+    data,
+    events,
+    settings,
+    access,
+    setStatus,
+    handleSave,
+    showTabs,
+    tab,
+    selectTab,
+  } = usePlanViewController();
 
-    return (
-        <PlanWrapperStyle>
-            <PlanTitleStyle
-                title={planTitle[settings.planstatus]}
-                left={access > 2 && <PlanButton className="btn-secondary" onClick={setStatus(2)}>← Re-Vote</PlanButton>}
-            />
-            
-            <DaysContainer isPlan={true} />
+  return (
+    <PlanWrapperStyle>
+      <PlanTitleStyle
+        title={planTitle[settings.planstatus]}
+        left={
+          access > 2 && (
+            <PlanButton className="btn-secondary" onClick={setStatus(2)}>
+              ← Re-Vote
+            </PlanButton>
+          )
+        }
+        right={
+          tab === 0 && (
+            <PlanButton
+              className={isExpanded ? "btn-neutral" : "btn-primary"}
+              onClick={() => setExpanded((x) => !x)}
+            >
+              {isExpanded ? "Collapse" : "Expand"}
+            </PlanButton>
+          )
+        }
+      />
 
-            {access > 2 && 
-                <PlanFooterStyle>
-                    <PlanButton className="btn-error" onClick={handleClick}>Save Schedule</PlanButton>
-                </PlanFooterStyle>
-            }
-        </PlanWrapperStyle>
-    )
+      {showTabs && (
+        <Tabs labels={finishTabs} value={tab} onChange={selectTab} />
+      )}
 
+      {tab === 0 && <DaysContainer isPlan={true} expandAll={isExpanded} />}
+
+      {tab === 1 && (
+        <PlanTabView
+          voters={data}
+          events={events}
+          settings={settings}
+          showScores={showTabs}
+        />
+      )}
+
+      {access > 2 && (
+        <PlanFooterStyle>
+          <PlanButton className="btn-error" onClick={handleSave}>
+            Save Schedule
+          </PlanButton>
+        </PlanFooterStyle>
+      )}
+    </PlanWrapperStyle>
+  );
 }
 
-export default PlanFinish
+export default PlanFinish;

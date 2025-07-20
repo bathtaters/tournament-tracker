@@ -1,47 +1,107 @@
-import React from "react"
+import { useMemo } from "react";
 import {
-    ViewWrapperStyle, GeneralSectionStyle, ViewCellStyle,
-    ViewCellSectionStyle, ViewEventStyle, ViewNoDateStyle, ViewDateStyle
-} from "../styles/PlanTabViewStyles"
-import { usePlayerQuery } from "../voter.fetch"
-import { dateListToRange, formatDate } from "../services/plan.utils"
-import { PlanRowStyle } from "../styles/PlanStyles"
+  ViewWrapperStyle,
+  GeneralSectionStyle,
+  ViewCellStyle,
+  ViewCellSectionStyle,
+  ViewEventStyle,
+  ViewDateStyle,
+  ViewScoreStyle,
+  ViewErrors,
+} from "../styles/PlanTabViewStyles";
+import RawData from "../../common/RawData";
+import { PlanRowStyle } from "../styles/PlanStyles";
+import { usePlayerQuery } from "../voter.fetch";
+import { useVoterScores } from "../services/planVote.services";
+import {
+  dateListToRange,
+  formatDate,
+  indexedKeys,
+} from "../services/plan.utils";
 
+function PlanTabView({
+  voters = {},
+  events = {},
+  settings = {},
+  showScores = false,
+}) {
+  const { data: players = {} } = usePlayerQuery();
+  const dateRange = settings.plandates || [];
 
-function PlanTabView({ voters = {}, events = {}, settings = {} }) {
-    const { data: players = {} } = usePlayerQuery()
-    const dateRange = settings.plandates || []
+  const sortedVoters = useMemo(() => indexedKeys(voters), [voters]);
+  const { scores, totals, errors } = useVoterScores(
+    voters,
+    events,
+    players,
+    settings,
+    !showScores
+  );
 
-    return (<>
-        <PlanRowStyle>
-            <GeneralSectionStyle header={"Schedule Range"}> 
-                {formatDate(dateRange[0], true)} – {formatDate(dateRange[1], true)}
-            </GeneralSectionStyle>
-            
-            <GeneralSectionStyle header={"Events Per Day"}> {settings.dayslots}</GeneralSectionStyle>
-        </PlanRowStyle>
+  return (
+    <>
+      <ViewErrors errors={errors} />
 
-        <ViewWrapperStyle>
-            {Object.values(voters).map((voter) => (
+      <PlanRowStyle>
+        <GeneralSectionStyle header={"Schedule Range"}>
+          {formatDate(dateRange[0], true)} – {formatDate(dateRange[1], true)}
+        </GeneralSectionStyle>
 
-                <ViewCellStyle key={voter.id} header={players[voter.id]?.name}>
-                    <ViewCellSectionStyle header="Unavailable">
-                        { voter.days?.length ?
-                            dateListToRange(voter.days).map((range) =>
-                                <ViewDateStyle key={range.join()} dateRange={range} />
-                            )
-                            :
-                            <ViewNoDateStyle />
-                        }
-                    </ViewCellSectionStyle>
+        <GeneralSectionStyle header={"Events Per Day"}>
+          {" "}
+          {settings.dayslots}
+        </GeneralSectionStyle>
+      </PlanRowStyle>
 
-                    <ViewCellSectionStyle header="Vote" ListTag="ol">
-                        {voter.events.map((id,idx) => <ViewEventStyle key={id || idx} title={events[id]?.title} />)}
-                    </ViewCellSectionStyle>
-                </ViewCellStyle>
-            ))}
-        </ViewWrapperStyle>
-    </>)
+      <ViewWrapperStyle>
+        <RawData data={totals} />
+        {sortedVoters.map((id) => (
+          <ViewCellStyle key={id} header={players[id]?.name}>
+            {scores && (
+              <ViewScoreStyle title="Plan accuracy" score={scores[id].weighted}>
+                <RawData data={scores[id]} className="text-xs" />
+              </ViewScoreStyle>
+            )}
+
+            <ViewCellSectionStyle
+              header="Unavailable"
+              emptyHeader="Available all dates"
+            >
+              {dateListToRange(voters[id].days).map((range) => (
+                <ViewDateStyle key={range.join()} dateRange={range} />
+              ))}
+            </ViewCellSectionStyle>
+
+            <ViewCellSectionStyle
+              ListTag="ol"
+              header="Votes"
+              emptyHeader="No Votes"
+            >
+              {voters[id].events?.map((evId, idx) => (
+                <ViewEventStyle
+                  key={evId || idx}
+                  title={events[evId]?.title}
+                  isRegistered={scores?.[id]?.events?.includes(evId)}
+                />
+              ))}
+              {scores?.[id]?.events &&
+                scores[id].events.map(
+                  (evId, idx) =>
+                    !voters[id].events.includes(evId) && (
+                      <ViewEventStyle
+                        key={evId || idx}
+                        title={events[evId]?.title}
+                        isUnvoted={true}
+                      />
+                    )
+                )}
+            </ViewCellSectionStyle>
+
+            <RawData data={voters[id]} className="text-xs" />
+          </ViewCellStyle>
+        ))}
+      </ViewWrapperStyle>
+    </>
+  );
 }
 
-export default PlanTabView
+export default PlanTabView;

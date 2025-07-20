@@ -1,38 +1,52 @@
-import React from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 import FormRow from "./components/InputForm/FormRow";
-import FormError from "./components/InputForm/FormError";
-import { FormContainer, ButtonContainer, ButtonElement } from "./styles/InputFormStyles";
-import useFormController  from "./services/InputForm/inputForm.controller";
-
+import {
+  FormContainer,
+  ButtonContainer,
+  ButtonElement,
+} from "./styles/InputFormStyles";
+import useFormController from "./services/InputForm/inputForm.controller";
 
 function InputForm({
   // Layout data
-  rows = ['custom'], buttons = [], children,
+  rows = ["custom"],
+  buttons = [],
+  children,
   // Backend data
-  data = {}, baseData = {},
+  data = {},
+  baseData = {},
+  isLoaded = true,
   // Styling
-  className = "flex justify-center", submitLabel = "Save", rowFirst = false, isGrid,
+  className = "flex justify-center",
+  submitLabel = "Save",
+  rowFirst = false,
+  isGrid,
   // Event handlers
-  onSubmit, onEdit, onChange
+  onSubmit,
+  onEdit,
+  onChange,
 }) {
-
-  const { handleSubmit, handleChange, backend } = useFormController({ rows, data, baseData, onSubmit, onEdit, onChange })
+  const { values, setters, handleSubmit, handleChange } = useFormController({
+    rows,
+    data,
+    baseData,
+    onSubmit,
+    onEdit,
+    onChange,
+    isLoaded,
+  });
 
   // Render
   return (
     <FormContainer onSubmit={handleSubmit}>
-
-      <FormError errors={backend.errors} rows={rows} />
-
       <div className={className}>
         <FormRow
           row={rows}
-          data={data || {}}
+          data={values}
+          setters={setters}
           baseData={baseData}
           isFragment={isGrid}
-          backend={backend}
           onChange={handleChange}
           custom={children}
           depth={+rowFirst}
@@ -41,9 +55,13 @@ function InputForm({
 
       <ButtonContainer>
         <ButtonElement label={submitLabel} isSubmit={true} />
-        {buttons.map(ButtonElement)}
+        {buttons.map((btnProps, idx) => (
+          <ButtonElement
+            {...btnProps}
+            key={btnProps.key ?? btnProps.label ?? idx}
+          />
+        ))}
       </ButtonContainer>
-
     </FormContainer>
   );
 }
@@ -56,6 +74,7 @@ InputForm.propTypes = {
 
   data: PropTypes.object,
   baseData: PropTypes.object,
+  isLoaded: PropTypes.bool,
 
   className: PropTypes.string,
   submitLabel: PropTypes.string,

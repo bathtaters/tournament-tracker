@@ -1,41 +1,63 @@
-import React from "react";
 import NumberPicker from "./NumberPicker";
 import RangeSelector from "./RangeSelector";
 import TimePicker from "./TimePicker";
-import { RowStyle, InputStyle } from "../../styles/InputFormStyles"
+import {
+  RowStyle,
+  elementDefaults,
+  typeDefaults,
+} from "../../styles/InputFormStyles";
+
+export const defaultInputType = "text"; // Default <input> "type" attribute
 
 // FormRow
 
 export function RowWrapper({ isFragment = false, depth, children }) {
-  if (isFragment) return (<>{children}</>);
-  return (<RowStyle isRow={Boolean(depth % 2)}>{children}</RowStyle>);
+  if (isFragment) return <>{children}</>;
+  return <RowStyle isRow={Boolean(depth % 2)}>{children}</RowStyle>;
 }
 
 export function Spacer({ className }) {
-  return (<div className={className} />);
+  return <div className={className} />;
 }
 
 // InputElement
 
-export function ElementLabel({ id, label, isLabel, className }) {
-  if (!label) return null;
-  if (isLabel) return (<label className={'label label-text '+className} htmlFor={id}>{label}</label>);
-  return (<span className={'label-text '+className} htmlFor={id}>{label}</span>);
-}
+export function ElementInput({ inputProps = {}, className, wrapperClass }) {
+  const inputClass = `${
+    typeDefaults[inputProps.type || defaultInputType] ?? inputProps.type ?? ""
+  } ${className ?? elementDefaults.inputClass}`;
 
-export function ElementInput({ inputProps = {}, backend, className, wrapperClass }) {
-  if (inputProps.type === 'number' && !inputProps.disabled)
-    return <NumberPicker inputProps={inputProps} backend={backend} className={className} wrapperClass={wrapperClass} />;
+  if (inputProps.type === "number")
+    return (
+      <NumberPicker
+        inputProps={inputProps}
+        className={inputClass}
+        wrapperClass={wrapperClass}
+      />
+    );
 
-  if (inputProps.type === 'range' && !inputProps.disabled)
-    return <RangeSelector {...inputProps} className={className} wrapperClass={wrapperClass} />;
+  if (inputProps.type === "range")
+    return (
+      <RangeSelector
+        {...inputProps}
+        className={inputClass}
+        wrapperClass={wrapperClass}
+      />
+    );
 
-  if (inputProps.type === 'time' && !inputProps.disabled)
-    return <TimePicker {...inputProps} backend={backend} className={className} wrapperClass={wrapperClass} />
+  if (inputProps.type === "time")
+    return (
+      <TimePicker
+        inputProps={inputProps}
+        className={inputClass}
+        wrapperClass={wrapperClass}
+      />
+    );
 
   return (
-    <InputStyle disabled={inputProps.disabled} className={wrapperClass}>
-      <input {...inputProps} className={"join-item "+className} />
-    </InputStyle>
+    <input
+      {...inputProps}
+      className={`join-item dark:[color-scheme:dark] ${inputClass}`}
+    />
   );
 }

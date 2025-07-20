@@ -15,7 +15,7 @@ USE %DB%;
 
 -- TYPES/ENUMS --
 
-CREATE TYPE LOG_ACTION AS ENUM ('create', 'update', 'delete', 'login');
+CREATE TYPE LOG_ACTION AS ENUM ('create', 'update', 'upsert', 'delete', 'login');
 
 
 -- BASE TABLES --
@@ -55,7 +55,7 @@ CREATE TABLE event (
     title STRING NULL,
     day DATE NULL,
     slot SMALLINT NOT NULL DEFAULT 0,
-    plan BOOL NOT NULL DEFAULT false,
+    plan SMALLINT NOT NULL DEFAULT 0,
     players UUID[] NOT NULL DEFAULT '{}',
     playercount SMALLINT NOT NULL DEFAULT 8,
     roundactive SMALLINT NOT NULL DEFAULT 0,
@@ -94,7 +94,8 @@ CREATE TABLE match (
 CREATE TABLE voter (
     id UUID PRIMARY KEY NOT NULL,
     days DATE[] NOT NULL DEFAULT '{}',
-    events UUID[] NOT NULL DEFAULT '{}'
+    events UUID[] NOT NULL DEFAULT '{}',
+    idx SMALLINT DEFAULT 0;
 );
 
 CREATE TABLE log (
@@ -181,15 +182,6 @@ FROM match,
     UNNEST(match.players) oppid
 WHERE oppid != playerid GROUP BY eventid, playerid;
 
-
--- CREATE OWNER IF NONE EXIST --
-
-INSERT INTO player (id, session, name, access)
-    SELECT 
-        '0fb2b786-7ee7-4a36-831b-ab41e8834fbc',
-        '0fb2b786-7ee7-4a36-831b-ab41e8834fbc',
-        'Admin', 3
-    WHERE NOT EXISTS (SELECT * FROM player WHERE access = 3);
 
 -- ADD VERSION NUMBER TO DB --
 INSERT INTO settings (id, value) VALUES ('dbversion', '2.0.0');

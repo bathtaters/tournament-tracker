@@ -1,31 +1,60 @@
-import { useEffect, useState } from "react"
-import { useGenPlanMutation } from "../voter.fetch"
-import { usePlanSettings } from "./plan.utils"
-import { planTitle } from "../../../assets/constants"
+import { useEffect, useState } from "react";
+import { useGenPlanMutation, useSavePlanMutation } from "../voter.fetch";
+import { usePlanSettings } from "./plan.utils";
+import { savePlanAlert } from "../../../assets/alerts";
+import { planTitle } from "../../../assets/constants";
+import { useOpenAlert } from "../../common/common.hooks";
 
-export const planTabs = [ 'Vote', 'View' ]
+export const planTabs = ["Vote", "View"];
+export const finishTabs = ["Results", "Votes"];
 
-export default function usePlanVoteController() {
-    const { voter, voters, access, settings, events, setStatus, isLoading, error } = usePlanSettings()
-    
-    const [ generatePlan ] = useGenPlanMutation()
+export default function usePlanViewController() {
+  const {
+    voter,
+    voters,
+    access,
+    settings,
+    events,
+    setStatus,
+    isLoading,
+    error,
+    flashError,
+  } = usePlanSettings();
 
-    const [ tab, selectTab ] = useState(!isLoading && access > 2 && !voter ? 1 : 0)
-    useEffect(() => { if (!isLoading && access > 2 && !voter) selectTab(1) }, [isLoading, access, voter])
+  const [generatePlan] = useGenPlanMutation();
+  const [savePlan] = useSavePlanMutation();
+  const openAlert = useOpenAlert();
 
-    return {
-        data: tab === 1 ? voters : voter,
-        events, settings,
-        
-        isLoading, error,
-        isVoter: access && (access > 2 || voter),
-        
-        title: planTitle[settings.planstatus],
-        access: access,
-        handleSetup: setStatus(1),
-        handleGenerate: () => generatePlan(),
+  const handleGenerate = () => generatePlan();
 
-        showTabs: Boolean(access && voter && access > 2),
-        tab, selectTab,
-    }
+  const handleSave = async () => {
+    const answer = await openAlert(savePlanAlert, 0);
+    if (answer) savePlan();
+  };
+
+  const [tab, selectTab] = useState(!isLoading && access > 2 && !voter ? 1 : 0);
+  useEffect(() => {
+    if (!isLoading && access > 2 && !voter) selectTab(1);
+  }, [isLoading, access, voter]);
+
+  return {
+    data: tab === 1 ? voters : voter,
+    events,
+    settings,
+
+    isLoading,
+    error,
+    flashError,
+    isVoter: access && (access > 2 || voter),
+
+    title: planTitle[settings.planstatus],
+    access,
+    handleGenerate,
+    handleSave,
+    setStatus,
+
+    showTabs: Boolean(access && voter && access > 2),
+    tab: access > 2 ? tab : 0,
+    selectTab,
+  };
 }

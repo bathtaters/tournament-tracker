@@ -10,6 +10,7 @@ dbServer.json
 
 # dev-only testing files
 /*/coverage
+/api/cockroach-data
 
 # production
 /client/build
@@ -17,11 +18,11 @@ dbServer.json
 
 # generated
 /client/src/assets/validation.json
+/client/src/index.css
 
 # misc
 .DS_Store
 .env*.local
-package-lock.json
 
 npm-debug.log*
 yarn-debug.log*
