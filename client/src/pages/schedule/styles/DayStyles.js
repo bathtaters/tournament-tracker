@@ -1,6 +1,4 @@
-import React from "react";
 import { Link } from "react-router-dom";
-
 import { statusInfo } from '../../../assets/constants';
 import EditIcon from "../../common/icons/EditIcon";
 
@@ -25,7 +23,7 @@ const baseEntryClass = 'w-full text-sm font-normal text-center break-words line-
 
 export function EntryTitleStyle({ status, children }) {
   return (
-    <div className={`${baseEntryClass} ${statusInfo[status].textClass} pointer-events-none`}>
+    <div className={`${baseEntryClass} ${statusInfo[status].textClass}`}>
       {children}
     </div>
   );
@@ -33,7 +31,7 @@ export function EntryTitleStyle({ status, children }) {
 
 export function EntryLinkStyle({ to, status, children }) {
   if (!to) return (
-    <div to={to} className={`${baseEntryClass} cursor-default`}>
+    <div to={to} className={baseEntryClass}>
       {children}
     </div>
   )
@@ -43,6 +41,19 @@ export function EntryLinkStyle({ to, status, children }) {
     </Link>
   );
 }
+
+export const CollapseContainer = ({ content, enabled = false, className = "", open = false, children }) => enabled ? (
+  <details className="collapse" open={open}>
+    <summary className={`cursor-pointer ${className}`}>
+      {children}
+    </summary>
+    <div className="collapse-content">
+      {content}
+    </div>
+  </details>
+) : (
+  <div className={className}>{children}</div>
+)
 
 export const PlayerListStyle = ({ children }) => <ul className="font-light text-center">{children}</ul>
 export const PlayerNameStyle = ({ children }) => <li>{children}</li>

@@ -1,6 +1,5 @@
-import React, { useRef } from "react";
 import PropTypes from "prop-types";
-import Modal from "../common/Modal";
+import { Modal, useModal } from "../common/Modal";
 import Settings from "../settings/Settings";
 import MainMenu from "./components/MainMenu";
 import LoginMenu from "./components/LoginMenu";
@@ -9,11 +8,11 @@ import Logo from "./styles/Logo";
 
 
 function Header({ title }) {
-  const modal = useRef(null);
+  const { backend, open, close, lock } = useModal()
 
   return (<>
     <HeaderStyle>
-      <MainMenu modal={modal} />
+      <MainMenu openModal={open} />
 
       <TitleStyle>
         <Logo to="/home" title={title} />
@@ -22,8 +21,8 @@ function Header({ title }) {
       <LoginMenu />
     </HeaderStyle>  
 
-    <Modal ref={modal}>
-      <Settings modal={modal} />
+    <Modal backend={backend}>
+      <Settings close={close} lock={lock} />
     </Modal>
   </>);
 }

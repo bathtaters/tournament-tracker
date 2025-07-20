@@ -1,4 +1,5 @@
 import { formatPercent } from '../../assets/formatting';
+import { BasicPlayerNameStyle, FullPlayerNameStyle } from './StatsStyle';
 
 // Stats table classes
 const hdrClass = 'text-md sm:text-lg',
@@ -9,7 +10,7 @@ const hdrClass = 'text-md sm:text-lg',
 // Stats columns
 const statsLayout = [
   { label: '',        get: 'index', cellStyle: indexStyle },
-  { label: 'Name',    get: (id, {players}) => players[id]?.name, cellStyle: titleStyle, hdrClass: 'text-lg', default: '?' },
+  { label: 'Name',    get: (id, {players}) => <FullPlayerNameStyle player={players[id]} />, cellStyle: titleStyle, hdrClass: 'text-lg', default: '?' },
   { label: 'W',   get: (id, {stats}) => stats[id]?.matchRecord?.[0], hdrClass: 'text-lg', default: '-' },
   { label: 'L',   get: (id, {stats}) => stats[id]?.matchRecord?.[1], hdrClass: 'text-lg', default: '-' },
   { label: 'D',   get: (id, {stats}) => stats[id]?.matchRecord?.[2], hdrClass: 'text-lg', default: '-' },
@@ -19,7 +20,10 @@ const statsLayout = [
 ]
 
 const basicLayout = [
-  { label: 'Name',    get: (id, {players}) => players[id]?.name, cellStyle: listStyle,  hdrClass: 'text-lg',  default: '?' },
+  {
+    label: 'Name', cellStyle: listStyle, hdrClass: 'text-lg', default: '?',
+    get: (id, {players}) => <BasicPlayerNameStyle player={players[id]} />,
+  },
 ]
 
 const creditsRow = { label: 'Credits', get: (id, {players}) => players[id]?.credits, hdrClass: 'text-lg', default: '-' }

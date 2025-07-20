@@ -15,11 +15,11 @@ exports.event = {
     maxRound: "SELECT round FROM match WHERE eventid = $1 ORDER BY round DESC LIMIT 1;",
     deleteRound: "WHERE eventid = $1 AND round = $2",
     complete: "LEFT JOIN event ON event.id = eventid WHERE event.roundactive > event.roundcount",
-    plan: "UPDATE event SET plan = NOT(plan) WHERE plan = NOT(id = ANY($1)) RETURNING *;",
+    unplan: "UPDATE event SET plan = 0 WHERE NOT(id = ANY($1)) RETURNING *;",
     schedule: {
         prefix: "SELECT COALESCE(TO_CHAR(day), 'none') as day, JSON_OBJECT_AGG(id::STRING, slot) as eventslots FROM event@date_idx ",
-        useSettings: "WHERE NOT plan OR (SELECT value FROM settings WHERE id = 'planschedule') = 'true' ",
-        planOnly: "WHERE plan ",
+        useSettings: "WHERE plan < 1 OR (SELECT value FROM settings WHERE id = 'planschedule') = 'true' ",
+        planOnly: "WHERE plan > 0 ",
         suffix: "GROUP BY day;",
     },
 }
@@ -54,14 +54,16 @@ exports.match = {
 }
 
 exports.voter = {
-    add: "INSERT INTO voter (id) SELECT id FROM player WHERE id = ANY($1) ON CONFLICT DO NOTHING RETURNING *;",
+    upsert: (ids) => `INSERT INTO voter (id, idx) VALUES ${
+        ids.map((_, idx) => `($${idx * 2 + 1}::UUID, $${idx * 2 + 2})`).join(', ')
+    } ON CONFLICT (id) DO UPDATE SET idx = EXCLUDED.idx RETURNING *;`,
     rmv: "DELETE FROM voter WHERE NOT(id = ANY($1)) RETURNING *;",
 }
 
 exports.plan = {
     reset: [
         "DELETE FROM voter;",
-        "UPDATE event SET plan = FALSE;",
+        "UPDATE event SET plan = 0;",
         "DELETE FROM settings WHERE id = 'plandates' OR id = 'planslots';",
     ],
 }

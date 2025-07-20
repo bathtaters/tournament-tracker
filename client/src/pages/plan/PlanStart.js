@@ -1,4 +1,3 @@
-import React from "react"
 import DatePicker from "react-tailwindcss-datepicker"
 import PlayerEditor from "../eventEditor/components/PlayerEditor"
 import EventList from "./components/EventList"
@@ -54,9 +53,9 @@ function PlanStart() {
             </PlanRowStyle>
 
             <PlanRowStyle>
-                <PlayerEditor type="Voter" value={players.sort()} onChange={handlePlayerChange} fillAll={true}  />
+                <PlayerEditor type="Voter" value={players} onChange={handlePlayerChange} fillAll={true}  />
 
-                <EventList value={events.sort()} onChange={handleEventChange} />
+                <EventList value={events} onChange={handleEventChange} />
             </PlanRowStyle>
 
             {access > 2 && 

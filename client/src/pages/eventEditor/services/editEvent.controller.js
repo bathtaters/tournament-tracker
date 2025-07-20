@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEventQuery, useSetEventMutation, useDeleteEventMutation } from "../eventEditor.fetch";
 
 import { editorButtonLayout } from "../eventEditor.layout";
 import { deleteEventAlert } from "../../../assets/alerts";
 import { editEventLockCaptions } from "../../../assets/constants";
+import { getChanged } from "../../common/services/basic.services";
 import { useLockScreen, useOpenAlert } from "../../common/common.hooks";
 
 
-export default function useEditEventController(eventid, modal, hidePlayers, deleteRedirect) {
+export default function useEditEventController(eventid, closeModal, hidePlayers, deleteRedirect) {
   // Get server data
   const { data, isLoading, error } = useEventQuery(eventid, { skip: !eventid })
 
@@ -22,8 +23,26 @@ export default function useEditEventController(eventid, modal, hidePlayers, dele
   let navigate = useNavigate()
   const openAlert = useOpenAlert()
 
+  // Create/Update event & close modal
+  const submitHandler = useCallback(async (event) => {
+    // Build event object
+    if (!event.title.trim() && !playerList?.length) return closeModal(true)
+    if (!hidePlayers) event.players = playerList
+
+    // Simplify update data
+    if (eventid) {
+      event = getChanged(data, event)
+      if (!Object.keys(event).length) return closeModal(true)
+      event.id = eventid
+    }
+
+    // Push event to server (Create/Update)
+    return setEvent(event).then(() => closeModal(true))
+  }, [data, setEvent, eventid, playerList, hidePlayers, closeModal])
+
+
   // Break early if no data/error
-  if (isLoading || error || !modal) return { isLoading, error, notLoaded: true }
+  if (isLoading || error || !closeModal) return { isLoading, error, notLoaded: true }
 
   // Delete handler (for editorButtons)
   const deleteHandler = () =>
@@ -31,24 +50,13 @@ export default function useEditEventController(eventid, modal, hidePlayers, dele
       .then(res => {
         if (!res) return;
         if (eventid) deleteEvent(eventid)
-        modal.current.close(true)
+        closeModal(true)
         navigate(deleteRedirect)
       })
-
-  // Create/Update event & close modal
-  async function submitHandler (event) {    
-    // Build event object
-    if (!event.title.trim() && !playerList?.length) return modal.current.close(true)
-    if (eventid) event.id = eventid
-    if (!hidePlayers) event.players = playerList
-
-    // Push event to server (Create/Update)
-    return setEvent(event).then(() => modal.current.close(true))
-  }
 
   return {
     data, playerList, updatePlayerList, submitHandler,
     // Button layout
-    buttons: editorButtonLayout(eventid, deleteHandler, modal.current.close),
+    buttons: editorButtonLayout(eventid, deleteHandler, closeModal),
   }
 }

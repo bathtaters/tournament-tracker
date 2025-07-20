@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import { useCallback } from "react"
 
 import { NotesWrapperStyle, NotesStyle, NotesOverlayStyle, CharCountStyle, EditNotesButton } from "../../styles/NoteEditorStyles"
 
@@ -18,7 +18,7 @@ function NotesEditor({ id, notes }) {
   const { text, isEdit, ref, onClick, onChange } = useTextEditor(notes, saveText, { charLimit })
 
   return (
-    <NotesWrapperStyle ref={ref}>
+    <NotesWrapperStyle divRef={ref}>
 
       <NotesOverlayStyle visible={!isEdit} onClick={onClick}>{!text && "Click to add notes"}</NotesOverlayStyle>
 

@@ -1,69 +1,46 @@
-import { useEffect } from "react"
+import { eventWithValue, useParentFocus } from "../../services/basic.services"
 
-function TimePicker({ wrapperClass, className, backend, hours, minutes, seconds }) {
 
-    usePadValue(hours, backend)
-    usePadValue(minutes, backend)
-    usePadValue(seconds, backend)
-    
+export default function TimePicker({ inputProps: { onBlur, hours, minutes, seconds }, wrapperClass, className }) {
+    const value = { hours: padded(hours), minutes: padded(minutes), seconds: padded(seconds) }
+
+    const listeners = useParentFocus(null, onBlur && ((ev) => onBlur(eventWithValue(ev, value))))
+
     return (
-        <div className={`join ${wrapperClass}`}>
+        <div className={`join ${wrapperClass}`} {...listeners}>
             <input
                 {...hours}
-                id={hours.name}
-                type="number"
                 min={hours.min ?? 0}
                 max={hours.max ?? 23}
                 pattern="^\d*$"
-                placeholder="00"
                 className={className}
+                value={value.hours}
             />
             <span className="m-2 text-lg">:</span>
             <input
                 {...minutes}
-                id={minutes.name}
-                type="number"
                 min={minutes.min ?? 0}
                 max={minutes.max ?? 59}
                 pattern="^\d*$"
-                placeholder="00"
                 className={className}
+                value={value.minutes}
             />
             <span className="m-2 text-lg">:</span>
             <input
                 {...seconds}
-                id={seconds.name}
-                type="number"
                 min={seconds.min ?? 0}
                 max={seconds.max ?? 59}
                 pattern="^\d*$"
-                placeholder="00"
                 className={className}
+                value={value.seconds}
             />
         </div>
     )
 }
 
-export default TimePicker
+// Format number boxes
+const zStart = RegExp('^0+') // Remove excess leading zeroes
 
-// Pad value out to 2 digits
-const usePadValue = (props, { set, get }, digits = 2) => {
-    // on load
-    useEffect(() => {
-        set(props.name, String(get(props.name) || "0").padStart(digits, "0"))
-    }, [props.name, get, set, digits])
-
-    // on un-focus
-    const oldBlur = props.onBlur
-    props.onBlur = (ev) => {
-        set(props.name, String(ev.target.value || "0").padStart(digits, "0"))
-        oldBlur && oldBlur(ev)
-    }
-
-    // // on every update
-    // const oldChg = props.onChange
-    // props.onChange = (ev) => {
-    //     set(props.name, String(ev.target.value || "0").padStart(digits, "0"))
-    //     oldChg && oldChg(ev)
-    // }
-}
+const padded = ({ value }, digits = 2) => !value ? '00' :               // Undef/Zero
+    typeof value !== 'string' ? String(value).padStart(digits, "0") :   // Number
+        value.replace(zStart, '').padStart(digits, "0")                 // String

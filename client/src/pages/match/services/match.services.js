@@ -16,9 +16,8 @@ export const formatDraws = (draws) => ' draw' + (draws === 1 ? '' : 's')
 
 
 // Convert report UI to report Query Body (Append event/match IDs & format Drops)
-export const reportAdapter = (reportData, id, eventid) => Object.assign(
-  reportData, {
-    drops: Object.keys(reportData.drops).reduce((d,p) => reportData.drops[p] ?  d.concat(p) : d,[]),
-    eventid, id,
-  }
-)
+export const reportAdapter = (reportData, id, eventid) => ({
+  ...reportData,
+  drops: Object.keys(reportData.drops).reduce((d,p) => reportData.drops[p] ?  d.concat(p) : d,[]),
+  eventid, id,
+})

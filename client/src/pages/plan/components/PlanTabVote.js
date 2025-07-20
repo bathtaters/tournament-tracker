@@ -1,11 +1,11 @@
-import React from "react"
+import { useMemo } from "react"
 import { useUpdateVoterMutation } from "../voter.fetch"
 import { PlanRowStyle } from "../styles/PlanStyles"
 import DateMultiSelect from "./DateMultiSelect"
 import { GeneralSectionStyle } from "../styles/PlanTabVoteStyles"
 import EventDragger from "./EventDragger"
 import { useRankState } from "../services/planVote.services"
-import { planEvents } from "../services/plan.utils"
+import { getPlanned } from "../services/plan.utils"
 import { useServerListValue } from "../../common/common.hooks"
 import { plan as config } from "../../../assets/config"
 
@@ -13,8 +13,7 @@ import { plan as config } from "../../../assets/config"
 function PlanTabVote({ voter, events, settings }) {
     
     const [ updateVoter ] = useUpdateVoterMutation()
-    
-    const eventList = planEvents(events)
+    const sortedEvents = useMemo(() => getPlanned(events), [events])
 
     // Voter.Days
     const [ dates, setDates ] = useServerListValue(
@@ -25,8 +24,7 @@ function PlanTabVote({ voter, events, settings }) {
 
     // Voter.Events
     const { ranked, handleDrop, handleClick } = useRankState(voter, updateVoter)
-
-    const unranked = eventList.filter((id) => !ranked.includes(id))
+    const unranked = sortedEvents.filter((id) => !ranked.includes(id))
     
 
     return (<>
@@ -40,7 +38,7 @@ function PlanTabVote({ voter, events, settings }) {
                     boxId="ranked"
                     eventIds={ranked}
                     events={events}
-                    slots={eventList.length}
+                    slots={sortedEvents.length}
                     onDrop={handleDrop}
                     onClick={handleClick}
                     numberSlots={true}
@@ -52,7 +50,7 @@ function PlanTabVote({ voter, events, settings }) {
                     boxId="unranked"
                     eventIds={unranked}
                     events={events}
-                    slots={Math.min(unranked.length + 1, eventList.length)}
+                    slots={Math.min(unranked.length + 1, sortedEvents.length)}
                     onDrop={handleDrop}
                     onClick={handleClick}
                 />

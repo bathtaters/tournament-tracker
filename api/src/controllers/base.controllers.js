@@ -9,6 +9,7 @@ const setting = require('../db/models/settings');
 // Imports
 const { resetDatabase } = require('../services/db.services');
 const { asType, toObjArray, fromObjArray } = require('../services/settings.services');
+const { cancelPlan } = require('../services/plan.services');
 const { arrToObj } = require('../utils/shared.utils');
 const logger = require('../utils/log.adapter');
 
@@ -51,6 +52,10 @@ async function setSettings(req,res) {
 
   const set = await setting.batchSet(settingsArray, req)
     .then(r => r && r.map(s => s.id));
+
+  if (set.includes('planstatus') && settings['planstatus'] === 2) {
+    if (await cancelPlan()) return res.sendAndLog({ success: true, set, cancelled: true })
+  }
   return res.sendAndLog({ success: true, set });
 }
 

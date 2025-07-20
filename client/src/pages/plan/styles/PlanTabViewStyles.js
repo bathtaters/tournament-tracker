@@ -16,16 +16,26 @@ export const ViewCellStyle = ({ header, children }) => (
     </div>
 )
 
-export const ViewCellSectionStyle = ({ header, children, open = true, ListTag = "ul" }) => (
-    <details className="collapse collapse-arrow w-full my-2" open={open}>
-        <summary className="collapse-title p-0 min-h-0"><h5>{header || emptyPlaceholder}</h5></summary>
-        <ListTag className="collapse-content p-0! min-h-0! font-light list-inside">
-            {children}
-        </ListTag>
-    </details>
+export const ViewErrors = ({ errors }) => !errors?.length ? null : (
+    <div className="flex flex-wrap justify-center items-center gap-2 mt-4">
+        <h4 className="text-error">Issues:</h4>
+        {errors.map((msg) => <div className="badge badge-error font-light text-sm">{msg}</div>)}
+    </div>
 )
 
-export const ViewNoDateStyle = () => <i className="opacity-70 font-thin">Available all dates</i>
+export const ViewCellSectionStyle = ({ header, children, open = true, emptyHeader, ListTag = "ul" }) => {
+    const isEmpty = !children?.length
+    return (
+        <details className={`collapse my-2 ${isEmpty ? 'pointer-events-none opacity-80' : 'collapse-arrow'}`} open={isEmpty ? false : open}>
+            <summary className="collapse-title p-1 after:top-4!">
+                <h5>{(isEmpty ? emptyHeader || header : header) || emptyPlaceholder}</h5>
+            </summary>
+            <ListTag className="collapse-content p-0! min-h-0! font-light list-inside">
+                {children}
+            </ListTag>
+        </details>
+    )
+}
 
 export const ViewDateStyle = ({ dateRange }) => (
     <li className="list-disc">
@@ -33,6 +43,36 @@ export const ViewDateStyle = ({ dateRange }) => (
     </li>
 )
 
-export const ViewEventStyle = ({ title }) => (
-    <li className="list-decimal">{title || '-'}</li>
+export const ViewEventStyle = ({ title, isRegistered, isUnvoted }) => (
+    <li className={isUnvoted ? "list-inside ml-4 opacity-80 italic" : "list-decimal"}>
+        {title || '-'}
+        {(isRegistered || isUnvoted) && (
+            <div
+                className={`ml-2 status ${isUnvoted ? 'status-info' : 'status-success'}`}
+                aria-label="registered" title={isUnvoted ? "Registered, didn't vote for" : "Registered"}
+            />
+        )}
+    </li>
 )
+
+export const ViewScoreStyle = ({ title, score, children }) => {
+    const rounded = Math.round(score * 100)
+    return (
+        <div className="w-full text-center font-light text-sm mt-2">
+            <div
+                title={title}
+                aria-valuenow={rounded}
+                role="progressbar"
+                className="radial-progress"
+                style={{ "--value": rounded, "--size": "4rem" }}
+            >
+                {score.toLocaleString(undefined, {
+                    style: 'percent',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })}
+            </div>
+            {children}
+        </div>
+    )
+}

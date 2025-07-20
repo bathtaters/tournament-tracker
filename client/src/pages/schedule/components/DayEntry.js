@@ -1,12 +1,10 @@
-import React from "react";
 import PropTypes from 'prop-types';
-
-import Tooltip from "../../common/Tooltip";
 import DragBlock from '../../common/DragBlock';
 import {
   EntryTitleStyle, EntryLinkStyle, EditEventButton,
   PlayerListStyle, PlayerNameStyle, NoPlayerStyle,
   MissingDataStyle, dragAndDropClass,
+  CollapseContainer,
 } from "../styles/DayStyles";
 
 import { usePrefetchEvent } from "../schedule.fetch";
@@ -16,7 +14,7 @@ import { useLinkId } from "../../common/services/idUrl.services";
 import { usePlayerQuery } from "../../common/common.fetch";
 
 
-function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, showPlayers = false }) {
+function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, showPlayers = false, expandAll = false }) {
   const { data: players } = usePlayerQuery(undefined, { skip: !showPlayers })
 
   // Setup prefetching
@@ -27,10 +25,11 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, show
   if (id && isTempId(id)) return <MissingDataStyle>...</MissingDataStyle>
 
   return (
-    <Tooltip
-      className="w-full"
-      tooltip={
-        showPlayers && players && data?.players && (
+    <CollapseContainer
+      open={expandAll}
+      enabled={showPlayers}
+      content={
+        players && data?.players && (
           <PlayerListStyle>
             {data.players.map((pid) => 
               <PlayerNameStyle key={pid}>{players[pid].name || pid}</PlayerNameStyle>
@@ -62,18 +61,21 @@ function DayEntry({ day, slot, id, data, isEditing, dropHandler, editEvent, show
           <EntryLinkStyle to={showPlayers ? undefined : eventUrl} status={data.status}>{data.title}</EntryLinkStyle>
         }
       </DragBlock>
-    </Tooltip>
+    </CollapseContainer>
   );
 }
 
 
 DayEntry.propTypes = {
   day: PropTypes.string,
+  slot: PropTypes.number,
+  id: PropTypes.string,
   data: PropTypes.object,
   isEditing: PropTypes.bool,
-  canDrop: PropTypes.func,
   dropHandler: PropTypes.func,
   editEvent: PropTypes.func,
+  showPlayers: PropTypes.bool,
+  expandAll: PropTypes.bool,
 };
 
 export default DayEntry;

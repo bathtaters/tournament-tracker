@@ -1,19 +1,15 @@
-import React, { useRef } from "react";
 import PropTypes from 'prop-types';
-
 import Stats from "../../stats/Stats";
 import StatsRow from "./subcomponents/StatsRow";
 import { EventStatsStyle, ViewStatsStyle, StatsRowStyle, ModalTitleStyle } from "../styles/StatsStyles";
-
-import Modal from "../../common/Modal";
+import { Modal, useModal } from "../../common/Modal";
 import Loading from "../../common/Loading";
-
 import { useStatsQuery, usePlayerQuery } from "../event.fetch";
 import { apiPollMs } from "../../../assets/config";
 
 function EventStats({ event }) {
   // Global
-  const modal = useRef(null);
+  const { backend, open } = useModal();
   const { data,          isLoading,                 error              } = useStatsQuery(event.id, { pollingInterval: apiPollMs });
   const { data: players, isLoading: loadingPlayers, error: playerError } = usePlayerQuery();
 
@@ -26,7 +22,7 @@ function EventStats({ event }) {
   return (
     <EventStatsStyle title={isRanked ? 'Standings' : 'Players'}>
 
-      <ViewStatsStyle onClick={isRanked ? ()=>modal.current.open() : null}>View Stats</ViewStatsStyle>
+      <ViewStatsStyle onClick={isRanked ? open : null}>View Stats</ViewStatsStyle>
 
       <StatsRowStyle>
         { (isRanked ? data.ranking : event.players).map((pid,idx) => 
@@ -41,7 +37,7 @@ function EventStats({ event }) {
         ) }
       </StatsRowStyle>
 
-      <Modal ref={modal}>
+      <Modal backend={backend}>
         <ModalTitleStyle>{event.title+' Stats'}</ModalTitleStyle>
         <Stats eventid={event.id} playerList={data?.ranking} players={players} />
       </Modal>

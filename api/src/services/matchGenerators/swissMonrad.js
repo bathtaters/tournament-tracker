@@ -1,6 +1,7 @@
 const logger = require('../../utils/log.adapter')
-const { avg, diff, count, getGroups, getGroupsSimple, randomGroup, shuffle } = require('./matchGen.utils');
+const { avg, diff, count, getGroups, getGroupsSimple, randomGroup } = require('./matchGen.utils');
 const { getCombinations } = require('../../utils/combination.utils');
+const { shuffle } = require('../../utils/shared.utils');
 const { pairingThreshold } = require('../../config/meta');
 
 

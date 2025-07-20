@@ -1,4 +1,3 @@
-import React from "react";
 import PropTypes from 'prop-types';
 
 import ResetButtons from "./components/ResetButtons";
@@ -16,8 +15,8 @@ import { useAccessLevel } from "../common/common.fetch";
 const baseData = getBaseData('settings');
 
 
-function Settings({ modal }) {
-  const { data, onSubmit, onChange, showLoading, error } = useSettingsController(modal)
+function Settings({ lock, close }) {
+  const { data, onSubmit, onChange, showLoading, error } = useSettingsController(close)
   const { access } = useAccessLevel()
 
   // Catch loading/error
@@ -32,9 +31,9 @@ function Settings({ modal }) {
       data={data}
       baseData={baseData}
       onSubmit={onSubmit}
-      onEdit={modal.current.lock}
+      onEdit={lock}
       onChange={onChange}
-      buttons={buttons(modal.current.close)}
+      buttons={buttons(close)}
     />
 
     <RawData className="text-sm mt-4" data={data} />

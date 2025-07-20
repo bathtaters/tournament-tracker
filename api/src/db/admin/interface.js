@@ -41,7 +41,7 @@ const getRow = (table, rowId, cols, { idCol = 'id', getOne = true, client, loose
 
 
 // INSERT/UPSERT
-const addRows = (table, objArray, { client, upsert } = {}) => {
+const addRows = async (table, objArray, { client, upsert, returning = '*' } = {}) => {
     // strTest(table);
     if (!objArray) throw new Error("Missing rows to add to "+table+" table.");
     const keys = objArray[0] ? Object.keys(objArray[0]) : [];
@@ -53,7 +53,7 @@ const addRows = (table, objArray, { client, upsert } = {}) => {
             keys.length ? '('+keys.join(',')+')' : 'DEFAULT'
         } VALUES ${
             queryLabels(objArray, keys).join(', ')
-        } RETURNING *;`,
+        }${returning ? ` RETURNING ${returning}` : ''};`,
         queryValues(objArray, keys)
     ).then(getSolo()).then(getReturn);
 };
@@ -64,10 +64,10 @@ const addRow = (table, rowObj, options = {}) =>
 
 
 // DELETE
-const rmvRows = (table, args, sqlFilter, client = null) => 
+const rmvRows = (table, args, sqlFilter, client = null, returning = '*') => 
     // strTest(table) ||
     (client || direct).query(
-        `DELETE FROM ${table} ${sqlFilter || ''} RETURNING *;`,
+        `DELETE FROM ${table} ${sqlFilter || ''}${returning ? ` RETURNING ${returning}` : ''};`,
         args || []
     ).then(getSolo()).then(getReturn);
     
@@ -76,7 +76,7 @@ const rmvRow = (table, rowId, client = null) =>
 
 
 // UPDATE
-const updateRow = (table, rowId, updateObj, { client, idCol, looseMatch, returnArray } = {}) => {
+const updateRow = async (table, rowId, updateObj, { client, idCol, looseMatch, returnArray, returning = '*' } = {}) => {
     // strTest(table);
     const keys = Object.keys(updateObj || {});
 
@@ -89,7 +89,7 @@ const updateRow = (table, rowId, updateObj, { client, idCol, looseMatch, returnA
         }${
             rowId == null ? '' :
                 ` WHERE ${idCol || 'id'} ${looseMatch ? 'ILIKE' : '='} $${keys.length + 1}`
-        } RETURNING *;`,
+        }${returning ? ` RETURNING ${returning}` : ''};`,
         
         rowId == null
             ? Object.values(updateObj || {})
@@ -108,7 +108,8 @@ const updateRow = (table, rowId, updateObj, { client, idCol, looseMatch, returnA
 };
 
 
-const updateRows = (table, updateObjArray, { client = direct, idCol = 'id', types = {} } = {}) => {
+const updateRows = async (table, updateObjArray, { client = direct, idCol = 'id', types = {}, returning = '*' } = {}) => {
+    if (!('id' in types)) types.id = 'UUID'
     updateObjArray = updateObjArray && updateObjArray.filter((item) => item[idCol])
     if (!updateObjArray?.length) throw new Error(`No properties or keys provided to update ${table}`)
 
@@ -117,16 +118,19 @@ const updateRows = (table, updateObjArray, { client = direct, idCol = 'id', type
     strTest(keys)
     strTest(Object.values(types))
 
+    if (returning) returning = returning.split(/\s*,\s*/).map((col) => col.includes('.') ? col : `${table}.${col}`).join(', ')
+    const upd = table === 'upd' ? 'u' : 'upd'
+
     return client.query(
         `UPDATE ${table} SET ${
-            updateKeys.map((key) => `${key} = u.${key}`).join(', ')
+            updateKeys.map((key) => `${key} = ${upd}.${key}`).join(', ')
         } FROM (VALUES ${
             updateObjArray.map((_,i) => 
                 `(${keys.map((key, j) => `$${i * keys.length + j + 1}${types[key] ? `::${types[key]}` : ''}`).join(', ')})`
             ).join(', ')
-        }) AS u(${
+        }) AS ${upd}(${
             keys.join(', ')
-        }) WHERE ${table}.${idCol} = u.${idCol} RETURNING ${table}.*;`,
+        }) WHERE ${table}.${idCol} = ${upd}.${idCol}${returning ? ` RETURNING ${returning}` : ''};`,
 
         updateObjArray.flatMap((item) => keys.map((key) => item[key]))
 

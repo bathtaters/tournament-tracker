@@ -1,9 +1,6 @@
 // Format data for display
 import { debugLogging } from "./config";
 
-export const basicTemplate = (statics, ...dictKeys) => (dict = {}) => 
-  dictKeys.reduce((string, key, i) => string + (dict[key] ?? key) + statics[i + 1], statics[0])
-
 export const formatQueryError = (err) => debugLogging ? String(err?.message || err || 'Unknown error') : 'Please refresh page'
 
 export const formatMatchTitle = (matchPlayers, playerData) =>
@@ -35,7 +32,7 @@ export const formatCopySeats = (matchList, matches, players, playerspermatch) =>
   for (let p = 0; p < playerspermatch; p++) {
     for (const matchId of matchList) {
       const playerId = matches[matchId]?.players?.[p]
-      playerList.push(players?.[playerId]?.name)
+      if (playerId) playerList.push(players?.[playerId]?.name)
     }
   }
   return playerList.map((name, idx) => `${idx+1}. ${name ?? '[Empty]'}`).join('\n')

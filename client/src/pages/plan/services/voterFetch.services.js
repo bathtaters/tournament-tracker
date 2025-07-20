@@ -2,7 +2,7 @@ import { getCachedArgs } from '../../../core/services/global.services'
 import { fetchApi } from '../../common/common.fetch'
 import { noDate } from '../../schedule/services/date.utils'
 
-const newVoter = (id) => ({ id, dates: [], games: [], })
+const newVoter = (id, idx = 0) => ({ id, idx, dates: [], games: [], })
 
 export function voterUpdate({ id, ...body }, { dispatch, queryFulfilled }) {
     const updateAll = dispatch(fetchApi.util.updateQueryData('voter', undefined, (draft) => { Object.assign(draft[id], body) }))
@@ -16,7 +16,10 @@ export function voterUpdate({ id, ...body }, { dispatch, queryFulfilled }) {
 export function updateVoters(voters, { dispatch, queryFulfilled, getState }) {
     const updateAll = dispatch(fetchApi.util.updateQueryData('voter', undefined, (draft) => {
         Object.keys(draft).forEach((id) => { if (!voters.includes(id)) delete draft[id] })
-        voters.forEach((id) => { if (!draft[id]) draft[id] = newVoter(id) })
+        voters.forEach((id, idx) => {
+            if (!draft[id]) draft[id] = newVoter(id, idx + 1)
+            else draft[id].idx = idx + 1
+        })
     }))
 
     const updateOne = getCachedArgs(getState(), 'voter').map((voter) => 
@@ -29,11 +32,13 @@ export function updateVoters(voters, { dispatch, queryFulfilled, getState }) {
 
 export function updateEvents(events, { dispatch, queryFulfilled, getState }) {
     const updateAll = dispatch(fetchApi.util.updateQueryData('event', undefined, (draft) => {
-        Object.keys(draft).forEach((id) => { draft[id].plan = events.includes(id) })
+        Object.keys(draft).forEach((id) => { draft[id].plan = events.indexOf(id) + 1 })
     }))
 
     const updateOne = getCachedArgs(getState(), 'event').map((event) => 
-        dispatch(fetchApi.util.updateQueryData('event', event, (draft) => { draft.plan = events.includes(event) }))
+        dispatch(fetchApi.util.updateQueryData('event', event, (draft) => {
+            draft.plan = events.indexOf(event) + 1
+        }))
     )
 
     queryFulfilled.catch(() => { updateAll.undo(); updateOne.forEach((update) => update.undo()) }) // rollback

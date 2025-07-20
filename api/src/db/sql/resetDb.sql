@@ -15,7 +15,7 @@ USE %DB%;
 
 -- TYPES/ENUMS --
 
-CREATE TYPE LOG_ACTION AS ENUM ('create', 'update', 'delete', 'login');
+CREATE TYPE LOG_ACTION AS ENUM ('create', 'update', 'upsert', 'delete', 'login');
 
 
 -- BASE TABLES --
@@ -55,7 +55,7 @@ CREATE TABLE event (
     title STRING NULL,
     day DATE NULL,
     slot SMALLINT NOT NULL DEFAULT 0,
-    plan BOOL NOT NULL DEFAULT false,
+    plan SMALLINT NOT NULL DEFAULT 0,
     players UUID[] NOT NULL DEFAULT '{}',
     playercount SMALLINT NOT NULL DEFAULT 8,
     roundactive SMALLINT NOT NULL DEFAULT 0,
@@ -94,7 +94,8 @@ CREATE TABLE match (
 CREATE TABLE voter (
     id UUID PRIMARY KEY NOT NULL,
     days DATE[] NOT NULL DEFAULT '{}',
-    events UUID[] NOT NULL DEFAULT '{}'
+    events UUID[] NOT NULL DEFAULT '{}',
+    idx SMALLINT DEFAULT 0;
 );
 
 CREATE TABLE log (

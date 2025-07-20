@@ -1,18 +1,17 @@
-import React from "react"
 import PropTypes from 'prop-types'
-
 import InputForm from "../../common/InputForm"
 import { ReportStyle, ReportTitleStyle, reportStyles } from "../styles/ReportStyles"
-
 import { reportAdapter } from "../services/match.services"
+import { useCallback } from 'react'
 
-function Report({ title, match, report, layout, modal }) {
+
+export default function Report({ title, match, report, layout, lock, close }) {
 
   // Actions
-  const submitReport = reportData => {
-    report(reportAdapter(reportData, match.id, match.eventid));
-    modal.current.close(true);
-  }
+  const submitReport = useCallback((reportData) => {
+    report(reportAdapter(reportData, match.id, match.eventid))
+    close(true)
+  }, [match.id, match.eventid, report, close])
 
   // Render
   return (
@@ -22,7 +21,7 @@ function Report({ title, match, report, layout, modal }) {
         rows={layout}
         submitLabel="Report"
         onSubmit={submitReport}
-        onEdit={modal.current.lock}
+        onEdit={lock}
         isGrid={true}
         className={reportStyles.form}
       />
@@ -37,5 +36,3 @@ Report.propTypes = {
   layout: PropTypes.array.isRequired,
   modal: PropTypes.object.isRequired,
 }
-
-export default Report

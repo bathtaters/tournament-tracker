@@ -23,9 +23,7 @@ function EditableList({
 }) {
 
   const {
-    data, inputData,
-    suggestRef, popItem,
-    isLoading, error,
+    data, inputData, popItem, isLoading, error
   } = useEditableListController({ type, value, onChange, query, idKey, nameKey, filter, autofill, isLocked, onFirstChange })
 
 
@@ -46,7 +44,7 @@ function EditableList({
         />
       ) }
 
-      { !isLocked && <ListInput {...inputData} create={create} ref={suggestRef} /> }
+      { !isLocked && <ListInput {...inputData} create={create} /> }
       
     </EditableListStyle>
   )

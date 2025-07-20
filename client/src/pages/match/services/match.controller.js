@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useModal } from "../../common/Modal"
 import { useOpenAlert, useLockScreen } from "../../common/common.hooks"
 import { 
   useMatchQuery, useReportMutation,
@@ -22,8 +22,8 @@ const maxDraws = getLimit('match','setDrawsMax') ?? 0
 
 export default function useMatchController(eventid, matchId) {
   // Base Hooks
-  const reportModal = useRef(null);
   const openAlert = useOpenAlert();
+  const reportModal = useModal();
 
   // Query Hooks
   const { data: matches,  isLoading: loadingMatch,   error: matchError  } = useMatchQuery(eventid, { pollingInterval: apiPollMs })

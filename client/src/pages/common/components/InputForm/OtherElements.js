@@ -18,7 +18,7 @@ export function Spacer({ className }) {
 
 // InputElement
 
-export function ElementInput({ inputProps = {}, className, wrapperClass, backend }) {
+export function ElementInput({ inputProps = {}, className, wrapperClass }) {
   const inputClass = `${
     typeDefaults[inputProps.type || defaultInputType] ?? inputProps.type ?? ""
   } ${
@@ -26,13 +26,13 @@ export function ElementInput({ inputProps = {}, className, wrapperClass, backend
   }`
 
   if (inputProps.type === 'number')
-    return <NumberPicker inputProps={inputProps} backend={backend} className={inputClass} wrapperClass={wrapperClass} />;
+    return <NumberPicker inputProps={inputProps} className={inputClass} wrapperClass={wrapperClass} />;
 
   if (inputProps.type === 'range')
     return <RangeSelector {...inputProps} className={inputClass} wrapperClass={wrapperClass} />;
 
   if (inputProps.type === 'time')
-    return <TimePicker {...inputProps} backend={backend} className={inputClass} wrapperClass={wrapperClass} />
+    return <TimePicker inputProps={inputProps} className={inputClass} wrapperClass={wrapperClass} />
 
-  return <input {...inputProps} class={`join-item ${inputClass}`} />
+  return <input {...inputProps} className={`join-item dark:[color-scheme:dark] ${inputClass}`} />
 }

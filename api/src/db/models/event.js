@@ -5,7 +5,7 @@ const strings = require('../sql/strings').event;
 
 // Get event data
 async function get(id, detail = false, planOnly = false) {
-    if (!id) return db.getRows('event', planOnly ? 'WHERE plan = TRUE' : undefined);
+    if (!id) return db.getRows('event', planOnly ? 'WHERE plan > 0' : undefined);
 
     const eventData = await db.getRow('event'+(detail ? 'Detail' : ''), id);
     if (!eventData || eventData.length === 0) return;
@@ -56,21 +56,35 @@ const popRound = (eventid, round, req) => db.operation(client => Promise.all([
     log.updateRows('event', eventid, { roundactive: round - 1 }, req, { client }),
 ]))
 
+const setPlan = (ids, req) => db.operation((client) => Promise.all([
+    // Clear unplanned events
+    log.query(strings.unplan, [ids], (data, error) =>
+        error ? {
+            dbtable: log.TableName.EVENT,
+            action: log.LogAction.UPDATE,
+            tableid: `NOT IN (${ids.join(',')})`,
+            data: { plan: 0 },
+            error,
+        } : {
+            dbtable: log.TableName.EVENT,
+            action: log.LogAction.UPDATE,
+            tableid: data.id,
+            data,
+        },
+        req,
+        false,
+        client,
+    ),
+    // Set new plan order
+    !ids.length ? Promise.resolve() :
+        log.updateRows(
+            'event', null,
+            ids.map((id, idx) => ({ id, plan: idx + 1 })),
+            req, { client, types: { plan: 'SMALLINT' } },
+        ),
+]))
+    
 
-const setPlan = (ids, req) => log.query(strings.plan, [ids], (data, error) => 
-    error ? ids.map((tableid) => ({
-        tableid, error,
-        dbtable: log.TableName.EVENT,
-        action: log.LogAction.UPDATE,
-        data: { plan: true },
-    })) : {
-        dbtable: log.TableName.EVENT,
-        tableid: data.id,
-        data: { plan: data.plan },
-        action: log.LogAction.UPDATE,
-    },
-    req,
-)
 
 
 module.exports = {

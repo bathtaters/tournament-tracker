@@ -1,17 +1,17 @@
-import { useState, useRef, useCallback } from "react";
-import ScheduleHeader from "./components/ScheduleHeader";
-import DaysContainer from "./components/DaysContainer";
-import EditEvent from "../eventEditor/EditEvent";
-import Settings from "../settings/Settings";
-import Modal from "../common/Modal";
+import { useState, useCallback } from "react"
+import ScheduleHeader from "./components/ScheduleHeader"
+import DaysContainer from "./components/DaysContainer"
+import EditEvent from "../eventEditor/EditEvent"
+import Settings from "../settings/Settings"
+import { Modal, useModal } from "../common/Modal"
 
 function Schedule() {
   // Local state
-  const eventModal = useRef(null);
-  const settingsModal = useRef(null);
+  const { backend, open, close, lock } = useModal();
+  const settingsModal = useModal();
   const [isEditing, setEdit] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
-  const openEventModal = useCallback(eventid => { setCurrentEvent(eventid); eventModal.current.open(); }, []);
+  const openEventModal = useCallback(eventid => { setCurrentEvent(eventid); open(); }, [open]);
 
   // Render
   return (
@@ -20,15 +20,16 @@ function Schedule() {
 
       <DaysContainer isEditing={isEditing} openEventModal={openEventModal} />
 
-      <Modal ref={eventModal}>
+      <Modal backend={backend}>
         <EditEvent
           eventid={currentEvent}
-          modal={eventModal}
+          closeModal={close}
+          lockModal={lock}
         />
       </Modal>
 
-      <Modal ref={settingsModal}>
-        <Settings modal={settingsModal} />
+      <Modal backend={settingsModal.backend}>
+        <Settings close={settingsModal.close} lock={settingsModal.lock} />
       </Modal>
     </div>
   );

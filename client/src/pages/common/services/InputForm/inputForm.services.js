@@ -1,20 +1,53 @@
 import React from "react"
 
-// Collect all default values
+/** Collect all default values */
 export const getDefaultValues = (rows, defaults) => flatReduce(rows, ({ id, defaultValue }, defs) => {
   if (id) defs[id] = defaultValue ?? defaults?.[id] ?? ''
 })
 
-// Merge defaults w/ current values
-export const updateDefaults = (defaultValues, currentData) => Object.keys(defaultValues).reduce((values, id) => {
-  values[id] = currentData[id] ?? defaultValues[id] ?? ''
-  return values
-}, {})
+/** Collect all setValueAs functions */
+export const getSetters = (rows) => flatReduce(rows, ({ id, setValueAs }, setters) => {
+  if (id && typeof setValueAs === 'function') setters[id] = setValueAs
+})
 
-// Erase props for which the predicate returns TRUTHY
-export const eraseProps = (obj, predicate) => Object.keys(obj).forEach((key) => { if (predicate(obj[key], key)) delete obj[key] }) || obj
+/** Remove empty fields and apply setValueAs functions */
+export const submitTransform = (data, setters) => {
+  const result = {}
+  for (const key in data) {
+    if (data[key] !== undefined) {
+      result[key] = setters[key] ? setters[key](data[key], data) : data[key]
+    }
+  }
+  return result
+}
 
-// Get key for row map
+/**  Convert dot notation to nested JSON */
+export function resolveDotNotation(obj) {
+  const result = {}
+
+  for (const key in obj) {
+    const parts = key.split('.')
+    let current = result
+
+    // Walk down path
+    for (let i = 0; i < parts.length - 1; i++) {
+      const part = parts[i]
+      if (!current[part]) {
+        // Add object for alpha key, array for numeric key
+        current[part] = isNaN(Number(parts[i+1])) ? {} : []
+      }
+      current = current[part]
+    }
+    
+    // Assign value
+    current[parts[parts.length - 1]] = obj[key]
+  }
+
+  return result
+}
+
+
+/** Get key for row map */
 export const getRowKey = (row, i, keySuff) => {
   if (!row) return `Null${keySuff}:${i}`
   if (React.isValidElement(row)) return `Elem${keySuff}:${i}`
@@ -27,21 +60,10 @@ export const getRowKey = (row, i, keySuff) => {
   return row.id || `${row.label || 'Key'}${keySuff}:${i}`
 }
 
-// Find data in a nested array
-export const findNested = (nestedArray, predicate) => {
-  if (Array.isArray(nestedArray)) {
-    for (const item of nestedArray) {
-      const result = findNested(item, predicate)
-      if (result) return result
-    }
-  }
-  else if (predicate(nestedArray)) return nestedArray
-}
 
-// array.reduce for nested array (Like array.flatMap is to array.map)
+/** array.reduce for nested array (Like array.flatMap is to array.map) */
 const flatReduce = (nestedArray, callback, initalValue = {}) => {
   if (Array.isArray(nestedArray)) nestedArray.forEach((next) => flatReduce(next, callback, initalValue))
   else callback(nestedArray, initalValue)
   return initalValue
 }
-

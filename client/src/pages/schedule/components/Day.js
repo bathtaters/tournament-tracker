@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import PropTypes from 'prop-types';
 
 import DayEntry from "./DayEntry";
@@ -10,7 +10,7 @@ import { useUpdateSchedule, canDrop, dataType } from "../services/day.services";
 import { weekdays } from '../../../assets/constants';
 
 
-function Day({ events, isEditing, isSlotted, setEventModal, day, eventData, showPlayers }) {
+function Day({ events, isEditing, isSlotted, setEventModal, day, eventData, showPlayers, expandAll }) {
   // Classes & date as DateObj
   const today = getToday();
   const [ { titleCls, borderCls }, date ] = useMemo(() => [ dayClasses(day, today), toDateObj(day) ], [day, today]);
@@ -43,6 +43,7 @@ function Day({ events, isEditing, isSlotted, setEventModal, day, eventData, show
           dropHandler={dropHandler}
           editEvent={setEventModal && (() => setEventModal(eventid))}
           showPlayers={showPlayers}
+          expandAll={expandAll}
           key={eventid || slot}
         />
       )}
@@ -53,8 +54,12 @@ function Day({ events, isEditing, isSlotted, setEventModal, day, eventData, show
 Day.propTypes = {
   events: PropTypes.arrayOf(PropTypes.string),
   isEditing: PropTypes.bool,
+  isSlotted: PropTypes.bool,
   setEventModal: PropTypes.func,
   day: PropTypes.string,
+  eventData: PropTypes.object,
+  showPlayers: PropTypes.bool,
+  expandAll: PropTypes.bool,
 };
 
 export default Day;

@@ -7,6 +7,9 @@ const qry = require('../sql/strings').log
 // Maximum number of LOG entries to return at a time if not specified
 const DEFAULT_LIMIT = 100
 
+/** Simplify Request object for use with log functions */
+const simpleReq = ({ sessionID, session }) => ({ sessionID, session: { user: session?.user } })
+
 /**
  * Get all log entries, optionally filtering by range/table/success
  * @param {{ after?: Date, before?: Date }} [timeRange] - Time period to return entries within
@@ -135,13 +138,13 @@ const addRows = async (dbtable, objArray, req, { tableid, ...options } = {}) => 
             dbtable,
             data: dbtable === TableName.SETTINGS && data.value ? { value: data.value } : data,
             tableid: data.id ?? tableid,
-            action: options.upsert ? LogAction.UPDATE : LogAction.CREATE,
+            action: options.upsert ? LogAction.UPSERT : LogAction.CREATE,
         })), req)
         else await addEntries((Array.isArray(objArray) ? objArray : [objArray]).map((data) => ({
             dbtable,
             data: dbtable === TableName.SETTINGS && data.value ? { value: data.value } : data,
             tableid: data.id ?? tableid,
-            action: options.upsert ? LogAction.UPDATE : LogAction.CREATE,
+            action: options.upsert ? LogAction.UPSERT : LogAction.CREATE,
             error: "No return from insert operation.",
         })), req)
         return res
@@ -151,7 +154,7 @@ const addRows = async (dbtable, objArray, req, { tableid, ...options } = {}) => 
             dbtable,
             data: dbtable === TableName.SETTINGS && data.value ? { value: data.value } : data,
             tableid: data.id ?? tableid,
-            action: options.upsert ? LogAction.UPDATE : LogAction.CREATE,
+            action: options.upsert ? LogAction.UPSERT : LogAction.CREATE,
             error: error?.message || error?.toString() || "Unknown error",
         })), req)
         throw error
@@ -243,9 +246,10 @@ const query = (text, args, logMap, req, splitArgs, client) => db.query(text, arg
 
 /**
  * Simple logging for password attempts
- * @param {Request} req - Request object to extract user and session IDs
- * @param {string} error - Error message of login attempt (Or null if login was successful)
- * @param {string} name - Name of user attempting to login
+ * @param {string} [userid] - User ID extracted from Request object (req.session.user)
+ * @param {string} [sessionid] - Session ID extracted from Request object (req.sessionID)
+ * @param {string} [error] - Error message of login attempt (Or null if login was successful)
+ * @param {string} [name] - Name of user attempting to login
  * @returns 
  */
 const login = (userid, sessionid, error, name) => addEntries({
@@ -263,6 +267,7 @@ const login = (userid, sessionid, error, name) => addEntries({
 const LogAction = {
     CREATE: 'create',
     UPDATE: 'update',
+    UPSERT: 'upsert',
     DELETE: 'delete',
     LOGIN: 'login',
 }
@@ -294,7 +299,7 @@ const TableName = {
 module.exports = {  
     get, getEvent, getPlayer, getUser, getUserSessions,
     addRows, updateRows, rmvRows, query, 
-    login,
-    addEntries, rmvEntries, 
+    login, simpleReq,
+    addEntries, rmvEntries,
     LogAction, TableName,
 }

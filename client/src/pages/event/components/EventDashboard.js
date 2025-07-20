@@ -22,9 +22,9 @@ function EventDashboard({ data, openStats }) {
       <HeaderStyle>
         {access > 1 && <EditEventButton onClick={openStats} />}
         
-        <ValueStyle>{headerValue}</ValueStyle>
+        <ValueStyle center={access <= 1}>{headerValue}</ValueStyle>
 
-        { data.playerspermatch && data.wincount && (<DetailStyle>{headerDetail}</DetailStyle>) }
+        { data.playerspermatch && data.wincount && (<DetailStyle center={access <= 1}>{headerDetail}</DetailStyle>) }
       </HeaderStyle>
 
       { data.players && data.players.length ? <EventStats event={data} /> : null }

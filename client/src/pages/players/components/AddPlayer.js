@@ -1,16 +1,13 @@
-import React from "react";
 import PropTypes from 'prop-types';
-
 import InputForm from "../../common/InputForm";
 import { ModalTitleStyle } from "../styles/PlayerStyles";
 import addPlayerLayout from "../addPlayer.layout";
-
 import useCreatePlayer from "../services/addPlayer.services";
 
-function AddPlayer({ modal }) {
-  const createPlayer = useCreatePlayer(modal)
+function AddPlayer({ closeModal, lockModal }) {
+  const createPlayer = useCreatePlayer(closeModal)
 
-  if (!modal?.current) throw Error('Add Player modal not loaded')
+  if (!closeModal) throw Error('Add Player modal not loaded')
 
   return (
     <div>
@@ -19,8 +16,8 @@ function AddPlayer({ modal }) {
         rows={addPlayerLayout.basic}
         submitLabel="Create"
         onSubmit={createPlayer}
-        onEdit={modal.current.lock}
-        buttons={addPlayerLayout.buttons(modal.current.close)}
+        onEdit={lockModal}
+        buttons={addPlayerLayout.buttons(closeModal)}
       />
     </div>
   )
