@@ -1,28 +1,39 @@
-const db = require('./interface');
-const player = require('../models/player');
-const settings = require('../models/settings');
-const team = require('../models/team');
-const event = require('../db/controllers/event');
-const match = require('../db/controllers/match');
-const clock = require('../models/clock');
+const db = require("./interface");
+const player = require("../models/player");
+const settings = require("../models/settings");
+const team = require("../models/team");
+const event = require("../db/controllers/event");
+const match = require("../db/controllers/match");
+const clock = require("../models/clock");
 
-const initTestFile = require('path').join(__dirname,'dbtest.sql');
+const initTestFile = require("path").join(__dirname, "dbtest.sql");
 
-const hold = (ms) => new Promise(r => setTimeout(r, ms));
+const hold = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function dbCheck() {
-    let temp;
-    
-    // CLEAR DB
-    // console.log('Resetting database...'); await require('../db/admin/connect').resetDb();
-    console.log('Initializing test data...'); await db.file(initTestFile);
+  let temp;
 
-    // Data for testing
-    const playIds = await player.list().then(a => console.log('getPlayIds:',a.map(p=>p.name))||a.map(p => p.id));
-    const useEvent = await event.list().then(r => r.find(d => d.title == 'KLD'));
-    const altEvent = await event.list().then(r => r.find(d => d.title == 'CPY'));
-    
-    /* TEST SETTINGS
+  // CLEAR DB
+  // console.log('Resetting database...'); await require('../db/admin/connect').resetDb();
+  console.log("Initializing test data...");
+  await db.file(initTestFile);
+
+  // Data for testing
+  const playIds = await player.list().then(
+    (a) =>
+      console.log(
+        "getPlayIds:",
+        a.map((p) => p.name)
+      ) || a.map((p) => p.id)
+  );
+  const useEvent = await event
+    .list()
+    .then((r) => r.find((d) => d.title == "KLD"));
+  const altEvent = await event
+    .list()
+    .then((r) => r.find((d) => d.title == "CPY"));
+
+  /* TEST SETTINGS
     await settings.getAll().then(console.log);
     await settings.batchSet({ test1: 'A', test2: 2, test3: {a:1,b:2,c:3} }).then(console.log);
     await settings.getAll().then(console.log);
@@ -32,7 +43,7 @@ async function dbCheck() {
     await settings.getAll().then(console.log);
     //*/
 
-    /* VIEW ALL
+  /* VIEW ALL
     console.log('MATCHES')
     await db.query("SELECT * FROM match;").then(console.log);
     console.log('EVENTS')
@@ -40,8 +51,8 @@ async function dbCheck() {
     console.log('PLAYERS')
     await db.query("SELECT * FROM player;").then(console.log);
     //*/
-    
-    /* TEST VIEWS
+
+  /* TEST VIEWS
     console.log('Getting player/teamView...');
     const t = await db.query("SELECT * FROM player WHERE isteam IS TRUE LIMIT 1;")
     .then(r => console.log(r) || r);
@@ -93,7 +104,7 @@ async function dbCheck() {
     ).then(r => console.log(r) || r);
     //*/
 
-    /* PLAYERS: TEST SUCCESS!
+  /* PLAYERS: TEST SUCCESS!
     console.log('\nPlayers... *******************************');
     await player.list().then(console.log);
     temp = await player.add('NewPlayer');
@@ -106,7 +117,7 @@ async function dbCheck() {
     await player.list().then(r=>console.log(r.map(p=>`${p.name}<${p.id}>`).join(', ')));
     //*/
 
-    /* TEAMS: TEST SUCCESS!
+  /* TEAMS: TEST SUCCESS!
     console.log('\nTeams... *******************************');
     await team.list().then(console.log);
     temp = await team.add(playIds.slice(0,2));
@@ -129,7 +140,7 @@ async function dbCheck() {
     await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.members).length+']'}<${p.id}>`).join(', ')));
     //*/
 
-    /* EVENTS: TEST SUCCESS!
+  /* EVENTS: TEST SUCCESS!
     console.log('\nEvents... *******************************');
     await event.dayList().then(console.log);
     await event.list().then(console.log);
@@ -158,8 +169,8 @@ async function dbCheck() {
     console.log('dropped',playIds.length,'players');
     await event.get(temp).then(console.log);
     //*/
-    
-    /* CLOCKS: TEST SUCCESS!
+
+  /* CLOCKS: TEST SUCCESS!
     console.log('\nClocks... *******************************');
     temp = await event.add({title: 'ClockTest', day: new Date(), clocklimit: 10});
     await event.get(temp).then(console.log);
@@ -186,8 +197,8 @@ async function dbCheck() {
     await clock.reset(temp).then(() => console.log(' 00 RESET CLOCK 00'));
     await clock.getAll(temp).then(console.log);
     //*/
-    
-    /* MATCHES: TEST SUCCESS!
+
+  /* MATCHES: TEST SUCCESS!
     console.log('\nMatches... *******************************');
     console.log('Using Event:',useEvent.title);
     await match.list(useEvent.id).then(console.log);
@@ -243,8 +254,8 @@ async function dbCheck() {
     await match.popRound(useEvent.id);
     await match.list(useEvent.id).then(console.log);
     //*/
-    
-    /*console.log('\nRecords... *******************************');
+
+  /*console.log('\nRecords... *******************************');
     try {
         await event.getRecord().then(console.log);
     } catch (e) { console.error('ERROR getRecord():',e); }
@@ -259,9 +270,9 @@ async function dbCheck() {
     await event.getBreakers(useEvent.id, playIds.slice(1,4)).then(console.log);
     await event.getBreakers(useEvent.id).then(console.log);
     //*/
-    
-    // Close connection
-    console.log('Finished');
+
+  // Close connection
+  console.log("Finished");
 }
 
 dbCheck();

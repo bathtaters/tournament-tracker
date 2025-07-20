@@ -5,11 +5,11 @@ import Loading from "./pages/common/Loading";
 import { usePrefetchBase } from "./pages/common/common.hooks";
 
 // Lazy load each main route
-const Schedule  = lazy(() => import("./pages/schedule/Schedule"));
-const Event     = lazy(() => import("./pages/event/Event"));
-const Players   = lazy(() => import("./pages/players/Players"));
-const Profile   = lazy(() => import("./pages/profile/Profile"));
-const Plan      = lazy(() => import("./pages/plan/Plan"));
+const Schedule = lazy(() => import("./pages/schedule/Schedule"));
+const Event = lazy(() => import("./pages/event/Event"));
+const Players = lazy(() => import("./pages/players/Players"));
+const Profile = lazy(() => import("./pages/profile/Profile"));
+const Plan = lazy(() => import("./pages/plan/Plan"));
 const SetupUser = lazy(() => import("./pages/setupUser/SetupUser"));
 
 function Routing() {
@@ -18,15 +18,15 @@ function Routing() {
   return (
     <Suspense fallback={<Loading loading={true} />}>
       <Routes>
-        <Route path="/"                           element={<Navigate replace to="/home" />} />
-        <Route path="/home"                       element={<Schedule  />} />
-        <Route path="/plan"                       element={<Plan      />} />
-        <Route path="/event/:id"                  element={<Event     />} />
-        <Route path="/players"                    element={<Players   />} />
-        <Route path="/profile/:id"                element={<Profile   />} />
+        <Route path="/" element={<Navigate replace to="/home" />} />
+        <Route path="/home" element={<Schedule />} />
+        <Route path="/plan" element={<Plan />} />
+        <Route path="/event/:id" element={<Event />} />
+        <Route path="/players" element={<Players />} />
+        <Route path="/profile/:id" element={<Profile />} />
         <Route path="/profile/:id/reset/:session" element={<SetupUser />} />
-        <Route path="/setup"                      element={<SetupUser />} />
-        <Route path="*"                           element={<Navigate replace to="/home" />} />
+        <Route path="/setup" element={<SetupUser />} />
+        <Route path="*" element={<Navigate replace to="/home" />} />
       </Routes>
     </Suspense>
   );

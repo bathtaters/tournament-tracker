@@ -1,5 +1,5 @@
 // Imports
-const logger = require('../utils/log.adapter');
+const logger = require("../utils/log.adapter");
 const { types } = require("pg");
 
 // To be run when server starts
@@ -12,8 +12,8 @@ function initServices() {
   // types.setTypeParser(types.builtins.FLOAT8, parseFloat);
   types.setTypeParser(types.builtins.NUMERIC, parseFloat);
 
-  require('../db/admin/connect').openConnection(); // Ensure that DB has been loaded
-  logger.log('Background services started.');
+  require("../db/admin/connect").openConnection(); // Ensure that DB has been loaded
+  logger.log("Background services started.");
 }
 
 module.exports = initServices;

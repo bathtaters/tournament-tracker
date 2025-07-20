@@ -2,30 +2,46 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export function MatchStyle({ children, showRaw }) {
-  const height = showRaw ? 'h-64' : 'h-32';
+  const height = showRaw ? "h-64" : "h-32";
   return (
-    <div className={"m-1 shadow-lg shadow-base-300 rounded-md bg-base-100 flex justify-evenly flex-col relative "+height}>
+    <div
+      className={
+        "m-1 shadow-lg shadow-base-300 rounded-md bg-base-100 flex justify-evenly flex-col relative " +
+        height
+      }
+    >
       {children}
     </div>
   );
 }
 
 // Style to pass to DragBlock in PlayerBox
-export const playerBoxStyle = "inline-block grow rounded-lg px-2 py-1 mx-2 my-1";
+export const playerBoxStyle =
+  "inline-block grow rounded-lg px-2 py-1 mx-2 my-1";
 
 export function PlayerStyle({ children }) {
   return (
-    <div className="flex justify-evenly items-center text-center">{children}</div>
+    <div className="flex justify-evenly items-center text-center">
+      {children}
+    </div>
   );
 }
 
 export function NameStyle({ linkTo, children }) {
   return (
-    <h4 className={'mb-0 pb-0 block text-xl ' + (!linkTo ? 'pointer-events-none' : '')}>{
-      linkTo ? 
-        <Link className="font-light link link-hover" to={linkTo}>{children}</Link> :
-        <span className="font-light" >{children}</span>
-    }</h4>
+    <h4
+      className={
+        "mb-0 pb-0 block text-xl " + (!linkTo ? "pointer-events-none" : "")
+      }
+    >
+      {linkTo ? (
+        <Link className="font-light link link-hover" to={linkTo}>
+          {children}
+        </Link>
+      ) : (
+        <span className="font-light">{children}</span>
+      )}
+    </h4>
   );
 }
 

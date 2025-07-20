@@ -4,11 +4,20 @@ import { FocusTrap } from "focus-trap-react";
 
 import RawData from "./RawData";
 import {
-  AlertTitleStyle, AlertMessageStyle, AlertButtonWrapperStyle, AlertButton, 
-  ModalStyle, CloseButton, alertModalClass,
+  AlertTitleStyle,
+  AlertMessageStyle,
+  AlertButtonWrapperStyle,
+  AlertButton,
+  ModalStyle,
+  CloseButton,
+  alertModalClass,
 } from "./styles/AlertStyles";
 
-import { getButtonProps, useCloseAlert, breakMessage } from "./services/alert.services";
+import {
+  getButtonProps,
+  useCloseAlert,
+  breakMessage,
+} from "./services/alert.services";
 import { useHotkeys } from "./services/basic.services";
 
 /* *** ALERT OPTIONS *** *\
@@ -26,43 +35,56 @@ import { useHotkeys } from "./services/basic.services";
 // Alert base component
 function Alert() {
   // Get alert settings
-  const alertOptions = useSelector((state) => state.alert)
-  const { isOpen, title, message, buttons, className, showClose, escValue } = alertOptions
-  
+  const alertOptions = useSelector((state) => state.alert);
+  const { isOpen, title, message, buttons, className, showClose, escValue } =
+    alertOptions;
+
   // Close alert
-  const close = useCloseAlert()
+  const close = useCloseAlert();
 
   // Setup hotkeys
-  useHotkeys({
-    Enter: () => document.activeElement?.click(), // Enter: Click if on a clickable object
-    Escape: escValue ?? true ? () => close(escValue || undefined) : null,
-  }, { skip: !isOpen, deps: [close] })
+  useHotkeys(
+    {
+      Enter: () => document.activeElement?.click(), // Enter: Click if on a clickable object
+      Escape: (escValue ?? true) ? () => close(escValue || undefined) : null,
+    },
+    { skip: !isOpen, deps: [close] }
+  );
 
   // Render Alert Component to AlertRoot
   return (
     <FocusTrap active={isOpen} focusTrapOptions={{ escapeDeactivates: false }}>
-      <ModalStyle isOpen={isOpen} className={alertModalClass + (className ?? '')} z="z-90">
-        { Boolean(showClose ?? !buttons?.length) && <CloseButton onClick={() => close(showClose || undefined)} /> }
+      <ModalStyle
+        isOpen={isOpen}
+        className={alertModalClass + (className ?? "")}
+        z="z-90"
+      >
+        {Boolean(showClose ?? !buttons?.length) && (
+          <CloseButton onClick={() => close(showClose || undefined)} />
+        )}
 
         {title && <AlertTitleStyle>{title}</AlertTitleStyle>}
 
-        {message && <AlertMessageStyle>{breakMessage(message)}</AlertMessageStyle>}
+        {message && (
+          <AlertMessageStyle>{breakMessage(message)}</AlertMessageStyle>
+        )}
 
-        {buttons &&
+        {buttons && (
           <AlertButtonWrapperStyle>
-            
-            { buttons.map((btn,i) => (
+            {buttons.map((btn, i) => (
               // React key for button is ID => Label => Value => Index
-              <AlertButton {...getButtonProps(btn, close, i)} key={btn.key || btn.id || btn.label || btn.value || i} />
-            )) }
+              <AlertButton
+                {...getButtonProps(btn, close, i)}
+                key={btn.key || btn.id || btn.label || btn.value || i}
+              />
+            ))}
           </AlertButtonWrapperStyle>
-        }
+        )}
 
         <RawData data={alertOptions} className="text-xs" />
-
       </ModalStyle>
     </FocusTrap>
-  )
+  );
 }
 
-export default Alert
+export default Alert;

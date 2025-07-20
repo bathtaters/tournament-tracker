@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { HeaderRow, TableRow } from "./components/DataTableRows";
 import { TableStyle, MissingStyle } from "./styles/DataTableStyles";
 
-import { colCount } from "./services/dataTable.services"
+import { colCount } from "./services/dataTable.services";
 
 /* *** DataTable: Generic Table w/ clickable rows *** *\
   !!!! ColLayout should be STATIC !!!! (Otherwise change 'useMemo' function below & in Styles.GridStyle)
@@ -29,38 +29,58 @@ import { colCount } from "./services/dataTable.services"
 \* ***  ---  *** */
 
 function DataTable({
-  colLayout, rowIds, extra,
-  rowLink, onRowClick, onRowHover,
-  hdrClass, className = '', rowClass = '', cellClass = '',
-  children
+  colLayout,
+  rowIds,
+  extra,
+  rowLink,
+  onRowClick,
+  onRowHover,
+  hdrClass,
+  className = "",
+  rowClass = "",
+  cellClass = "",
+  children,
 }) {
   // Pass clicks to onRowClick
-  const clickHandler = (rowId, idx) => typeof onRowClick === 'function' ?
-    (ev) => onRowClick(rowId, ev, extra, idx) : undefined
+  const clickHandler = (rowId, idx) =>
+    typeof onRowClick === "function"
+      ? (ev) => onRowClick(rowId, ev, extra, idx)
+      : undefined;
 
-  const hoverHandler = (rowId, idx) => typeof onRowHover === 'function' ?
-    (ev) => onRowHover(rowId, ev, extra, idx) : undefined
-  
+  const hoverHandler = (rowId, idx) =>
+    typeof onRowHover === "function"
+      ? (ev) => onRowHover(rowId, ev, extra, idx)
+      : undefined;
+
   // eslint-disable-next-line
-  const colCnt = useMemo(() => colCount(colLayout), [])
-  
+  const colCnt = useMemo(() => colCount(colLayout), []);
+
   // Render
   return (
     <TableStyle className={className} colLayout={colLayout}>
       <HeaderRow className={hdrClass} colLayout={colLayout} />
-      <tbody>{
-        !rowIds?.length ? <MissingStyle colCount={colCnt}>{children}</MissingStyle> :
-        
-          rowIds.map((id, idx) => 
+      <tbody>
+        {!rowIds?.length ? (
+          <MissingStyle colCount={colCnt}>{children}</MissingStyle>
+        ) : (
+          rowIds.map((id, idx) => (
             <TableRow
-              key={id} id={id} index={idx} colLayout={colLayout} extra={extra}
-              className={rowClass} cellClass={cellClass} rowLink={rowLink} 
-              onClick={clickHandler(id, idx)} onHover={hoverHandler(id, idx)}
+              key={id}
+              id={id}
+              index={idx}
+              colLayout={colLayout}
+              extra={extra}
+              className={rowClass}
+              cellClass={cellClass}
+              rowLink={rowLink}
+              onClick={clickHandler(id, idx)}
+              onHover={hoverHandler(id, idx)}
             />
-          )
-      }</tbody>
+          ))
+        )}
+      </tbody>
     </TableStyle>
-  )
+  );
 }
 
-export default DataTable
+export default DataTable;

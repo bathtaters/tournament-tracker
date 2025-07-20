@@ -1,36 +1,36 @@
 // For ExtractMatches
 
 // Run class optimization
-export const optimizeClassSwapping = true
+export const optimizeClassSwapping = true;
 // Class keys to combine
-export const combineKeys = [ 'enabled', 'disabled', 'drop', 'illegal' ]
+export const combineKeys = ["enabled", "disabled", "drop", "illegal"];
 // Output key for common classes
-export const COMMON_CLS = 'common'
+export const COMMON_CLS = "common";
 
 // Default classes
 export const classDefault = {
   border: {
-    baseWeight: 'border',
-    baseColor: 'border-neutral-content',
-    baseStyle: 'border-solid',
-    disabledColor: 'border-transparent',
-    disabledStyle: '',
-    dropColor: 'border-accent',
-    dropStyle: '',
-    illegalColor: '',
-    illegalStyle: '', 
+    baseWeight: "border",
+    baseColor: "border-neutral-content",
+    baseStyle: "border-solid",
+    disabledColor: "border-transparent",
+    disabledStyle: "",
+    dropColor: "border-accent",
+    dropStyle: "",
+    illegalColor: "",
+    illegalStyle: "",
   },
   bg: {
-    baseColor: 'bg-neutral',
-    disabledColor: 'bg-transparent',
-    hoverColor: 'bg-neutral-focus',
-    illegalColor: '',
+    baseColor: "bg-neutral",
+    disabledColor: "bg-transparent",
+    hoverColor: "bg-neutral-focus",
+    illegalColor: "",
   },
   additional: {
     enabled: [],
     disabled: [],
-    drag: ['cursor-move','hover:bg-neutral-content/20'],
+    drag: ["cursor-move", "hover:bg-neutral-content/20"],
     drop: [],
     illegal: [],
   },
-}
+};

@@ -3,12 +3,30 @@
 import { debugLogging } from "../../assets/config";
 
 // Constants
-const DEF_KEY = 'id';
-export const ALL_ID = '_LIST'; 
-export const tagTypes = ['Settings', 'Schedule', 'Event', 'Match', 'Player', 'PlayerMatch', 'Stats', 'Clock', 'Voter', 'Session', 'Setup'];
+const DEF_KEY = "id";
+export const ALL_ID = "_LIST";
+export const tagTypes = [
+  "Settings",
+  "Schedule",
+  "Event",
+  "Match",
+  "Player",
+  "PlayerMatch",
+  "Stats",
+  "Clock",
+  "Voter",
+  "Session",
+  "Setup",
+];
 
 // Helper, gets value from key string (keyStr='propA.propB.0' would get <obj>.propA.propB[0])
-const getVal = (obj,keyStr) => keyStr ? obj && [obj].concat(keyStr.split('.')).reduce(function(a, b) { return a && a[b] }) : obj;
+const getVal = (obj, keyStr) =>
+  keyStr
+    ? obj &&
+      [obj].concat(keyStr.split(".")).reduce(function (a, b) {
+        return a && a[b];
+      })
+    : obj;
 
 // Get Tags - Parameters
 //  types:
@@ -20,27 +38,43 @@ const getVal = (obj,keyStr) => keyStr ? obj && [obj].concat(keyStr.split('.')).r
 //    addBase = add this array of tags unchanged
 //    addAll = add this array of tag types w/ ALL_ID ids
 //    limit > 0 will only look at the first <limit> results
-export default function getTags(types, { key=DEF_KEY, all=true, addBase=[], addAll=[], limit=0 } = {}) {
+export default function getTags(
+  types,
+  { key = DEF_KEY, all = true, addBase = [], addAll = [], limit = 0 } = {}
+) {
   //  Pre-build function w/ static data
 
   // Normalize 'types' input
-  if (typeof types !== 'object') types = types ? {[types]: key} : {};
-  else if (Array.isArray(types)) types = types.reduce((obj,t) => {obj[t] = key; return obj;},{});
+  if (typeof types !== "object") types = types ? { [types]: key } : {};
+  else if (Array.isArray(types))
+    types = types.reduce((obj, t) => {
+      obj[t] = key;
+      return obj;
+    }, {});
 
   // Build tag base
   if (all) addAll = (addAll || []).concat(Object.keys(types));
-  const baseTags = (addBase || []).concat(addAll.map(type => ({ type, id: ALL_ID })));
+  const baseTags = (addBase || []).concat(
+    addAll.map((type) => ({ type, id: ALL_ID }))
+  );
 
   // Create 'getId' function
-  const getId = (type, r, a, k=null) => typeof types[type] === 'function' ? types[type](r,k,a) : getVal(r,types[type]);
-
+  const getId = (type, r, a, k = null) =>
+    typeof types[type] === "function"
+      ? types[type](r, k, a)
+      : getVal(r, types[type]);
 
   // Return callback for [provides|invalidates]Tags
-  return (res,err,arg) => {
+  return (res, err, arg) => {
     // Handle error
-    if (err && debugLogging) console.error('Query error on '+JSON.stringify(types)+':'+JSON.stringify(arg), err);
+    if (err && debugLogging)
+      console.error(
+        "Query error on " + JSON.stringify(types) + ":" + JSON.stringify(arg),
+        err
+      );
 
-    let tags = [...baseTags], i;
+    let tags = [...baseTags],
+      i;
 
     // Array response
     if (Array.isArray(res) && res.length) {
@@ -53,10 +87,14 @@ export default function getTags(types, { key=DEF_KEY, all=true, addBase=[], addA
         }
       }
 
-    // JSON response
-    } else if (res && typeof res === 'object' && Object.keys(res).length) {
+      // JSON response
+    } else if (res && typeof res === "object" && Object.keys(res).length) {
       for (const type in types) {
-        if (types[type] && typeof types[type] !== 'function' && getVal(res, types[type])) {
+        if (
+          types[type] &&
+          typeof types[type] !== "function" &&
+          getVal(res, types[type])
+        ) {
           tags.push({ type, id: getVal(res, types[type]) });
           continue;
         }
@@ -68,10 +106,10 @@ export default function getTags(types, { key=DEF_KEY, all=true, addBase=[], addA
         }
       }
 
-    // Any other response (Or empty Array/JSON)
+      // Any other response (Or empty Array/JSON)
     } else {
       for (const type in types) {
-        if (typeof types[type] === 'function') {
+        if (typeof types[type] === "function") {
           const id = getId(type, res, arg);
           if (id) tags.push({ type, id });
         }

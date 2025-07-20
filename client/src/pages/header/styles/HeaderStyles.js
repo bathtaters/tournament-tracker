@@ -1,14 +1,14 @@
 import React from "react";
 
 export function HeaderStyle({ children }) {
-  return (<>
-    <div className="fixed top-0 left-0 right-0 z-50 bg-base-200/90">
-      <div className="navbar h-24 md:h-40 max-w-4xl m-auto">
-        {children}
+  return (
+    <>
+      <div className="fixed top-0 left-0 right-0 z-50 bg-base-200/90">
+        <div className="navbar h-24 md:h-40 max-w-4xl m-auto">{children}</div>
       </div>
-    </div>
-    <div className="h-24 md:h-40" />
-  </>)
+      <div className="h-24 md:h-40" />
+    </>
+  );
 }
 
 export function TitleStyle({ children }) {
@@ -21,4 +21,4 @@ export function TitleStyle({ children }) {
   );
 }
 
-export const reloadingClass = "animate-spin ease-linear"
+export const reloadingClass = "animate-spin ease-linear";

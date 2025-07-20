@@ -1,44 +1,64 @@
-import React from "react"
+import React from "react";
 
-import DragBlock from "../../common/DragBlock"
-import { NameStyle, PlayerInfoStyle, PlayerDropStyle, VsStyle, playerBoxStyle } from "../styles/MatchStyles"
-import { DropButton } from "../styles/ButtonStyles"
-import { dataType } from "../services/swap.services"
+import DragBlock from "../../common/DragBlock";
+import {
+  NameStyle,
+  PlayerInfoStyle,
+  PlayerDropStyle,
+  VsStyle,
+  playerBoxStyle,
+} from "../styles/MatchStyles";
+import { DropButton } from "../styles/ButtonStyles";
+import { dataType } from "../services/swap.services";
 
-import { useLinkId } from "../../common/services/idUrl.services"
-import { formatRecord } from '../../../assets/formatting'
+import { useLinkId } from "../../common/services/idUrl.services";
+import { formatRecord } from "../../../assets/formatting";
 
-function MatchPlayer({ id, playerData, matchData, handleSwap, handleDrop, canSwap, isEditing, index, record }) {
-  const playerUrl = useLinkId(id,'profile/')
-  const isDrop = matchData.drops && matchData.drops.includes(id)
-  const clickDrop = () => handleDrop(id, isDrop)
-  
-  return (<>
-    { Boolean(index) && <VsStyle>vs.</VsStyle> }
+function MatchPlayer({
+  id,
+  playerData,
+  matchData,
+  handleSwap,
+  handleDrop,
+  canSwap,
+  isEditing,
+  index,
+  record,
+}) {
+  const playerUrl = useLinkId(id, "profile/");
+  const isDrop = matchData.drops && matchData.drops.includes(id);
+  const clickDrop = () => handleDrop(id, isDrop);
 
-    <DragBlock
-      type={dataType}
-      item={{ id: matchData.id, playerid: id, reported: matchData.players?.length !== 1 && matchData.reported }}
-      onDrop={handleSwap}
-      dropCheck={canSwap}
-      className={playerBoxStyle}
-      disabled={!isEditing}
-    >
+  return (
+    <>
+      {Boolean(index) && <VsStyle>vs.</VsStyle>}
 
-      <NameStyle linkTo={!isEditing && playerData ? playerUrl : null}>
-        {(playerData && playerData.name) || '?'}
-      </NameStyle>
-      
-      <PlayerInfoStyle isDrop={isDrop}>
-        { isDrop ? 'Dropped' : formatRecord(record) }
+      <DragBlock
+        type={dataType}
+        item={{
+          id: matchData.id,
+          playerid: id,
+          reported: matchData.players?.length !== 1 && matchData.reported,
+        }}
+        onDrop={handleSwap}
+        dropCheck={canSwap}
+        className={playerBoxStyle}
+        disabled={!isEditing}
+      >
+        <NameStyle linkTo={!isEditing && playerData ? playerUrl : null}>
+          {(playerData && playerData.name) || "?"}
+        </NameStyle>
 
-        <PlayerDropStyle visible={isEditing && matchData.reported}>
-          <DropButton isDrop={isDrop} onClick={clickDrop} />
-        </PlayerDropStyle>
-      </PlayerInfoStyle>
+        <PlayerInfoStyle isDrop={isDrop}>
+          {isDrop ? "Dropped" : formatRecord(record)}
 
-    </DragBlock>
-  </>)
+          <PlayerDropStyle visible={isEditing && matchData.reported}>
+            <DropButton isDrop={isDrop} onClick={clickDrop} />
+          </PlayerDropStyle>
+        </PlayerInfoStyle>
+      </DragBlock>
+    </>
+  );
 }
 
-export default MatchPlayer
+export default MatchPlayer;

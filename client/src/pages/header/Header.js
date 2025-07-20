@@ -6,25 +6,26 @@ import LoginMenu from "./components/LoginMenu";
 import { HeaderStyle, TitleStyle } from "./styles/HeaderStyles";
 import Logo from "./styles/Logo";
 
-
 function Header({ title }) {
-  const { backend, open, close, lock } = useModal()
+  const { backend, open, close, lock } = useModal();
 
-  return (<>
-    <HeaderStyle>
-      <MainMenu openModal={open} />
+  return (
+    <>
+      <HeaderStyle>
+        <MainMenu openModal={open} />
 
-      <TitleStyle>
-        <Logo to="/home" title={title} />
-      </TitleStyle>
+        <TitleStyle>
+          <Logo to="/home" title={title} />
+        </TitleStyle>
 
-      <LoginMenu />
-    </HeaderStyle>  
+        <LoginMenu />
+      </HeaderStyle>
 
-    <Modal backend={backend}>
-      <Settings close={close} lock={lock} />
-    </Modal>
-  </>);
+      <Modal backend={backend}>
+        <Settings close={close} lock={lock} />
+      </Modal>
+    </>
+  );
 }
 
 Header.propTypes = { title: PropTypes.string };

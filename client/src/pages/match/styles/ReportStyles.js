@@ -1,15 +1,15 @@
 import React from "react";
 
-export const ReportStyle = ({ children }) => <div className="min-w-48">{children}</div>
+export const ReportStyle = ({ children }) => (
+  <div className="min-w-48">{children}</div>
+);
 
 export function ReportTitleStyle({ children }) {
-  return (
-    <h3 className="font-light text-center mb-4">{children}</h3>
-  );
+  return <h3 className="font-light text-center mb-4">{children}</h3>;
 }
 
 export function IncompleteStyle() {
-  return <div className="opacity-70 italic font-thin">TBD</div>
+  return <div className="opacity-70 italic font-thin">TBD</div>;
 }
 
 export const reportStyles = {
@@ -20,4 +20,4 @@ export const reportStyles = {
   counterWrappers: "col-span-2",
   dropLabel: "text-sm font-light mx-2",
   dropInput: "ml-1 toggle-accent toggle-sm sm:toggle-md",
-}
+};

@@ -16,21 +16,31 @@ import { isFinished, useDeleteRound } from "./services/roundButton.services";
 import { useParamIds } from "../common/services/idUrl.services";
 import { isZero } from "./services/clock.services";
 
-
 function Event() {
   // Get data
-  const { backend, open, close, lock } = useModal()
-  const { id } = useParamIds('id');
+  const { backend, open, close, lock } = useModal();
+  const { id } = useParamIds("id");
   const { data, isLoading, error, isFetching } = useEventQuery(id);
-  const { data: clock, error: clockErr } = useEventClock(id, data?.status, data?.clocklimit)
+  const { data: clock, error: clockErr } = useEventClock(
+    id,
+    data?.status,
+    data?.clocklimit
+  );
   const { data: settings, isLoading: sLoad, error: sErr } = useSettingsQuery();
 
   // Handle delete round
   const handleDelete = useDeleteRound(data);
-  
+
   // Loading/Error catcher
   if (isLoading || error || sLoad || sErr || clockErr || !data)
-    return <Loading loading={isLoading || sLoad} error={error || sErr || clockErr} altMsg="Event not found" tagName="h3" />;
+    return (
+      <Loading
+        loading={isLoading || sLoad}
+        error={error || sErr || clockErr}
+        altMsg="Event not found"
+        tagName="h3"
+      />
+    );
 
   // Render
   return (
@@ -42,29 +52,26 @@ function Event() {
       <DashboardStyle>
         <EventDashboard data={data} openStats={open} />
 
-        {roundArray(data.matches && data.matches.length).map((roundNum, idx) => 
-          <Round
-            key={`${id}.${roundNum}`}
-            data={data}
-            round={roundNum - 1}
-            deleteRound={!idx ? handleDelete : null}
-          />
+        {roundArray(data.matches && data.matches.length).map(
+          (roundNum, idx) => (
+            <Round
+              key={`${id}.${roundNum}`}
+              data={data}
+              round={roundNum - 1}
+              deleteRound={!idx ? handleDelete : null}
+            />
+          )
         )}
-
       </DashboardStyle>
-      
-      { settings.showcredits && isFinished(data) && <CreditButtons id={id} /> }
 
-      { data?.status === 2 && !isZero(clock?.limit) && <EventClock {...clock} /> }
+      {settings.showcredits && isFinished(data) && <CreditButtons id={id} />}
+
+      {data?.status === 2 && !isZero(clock?.limit) && <EventClock {...clock} />}
 
       <RawData data={{ ...data, clock }} />
 
       <Modal backend={backend}>
-        <EditEvent
-          eventid={id}
-          lockModal={lock}
-          closeModal={close}
-        />
+        <EditEvent eventid={id} lockModal={lock} closeModal={close} />
       </Modal>
     </div>
   );

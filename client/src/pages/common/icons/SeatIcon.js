@@ -1,11 +1,17 @@
-import React from "react"
+import React from "react";
 
 /* Public Domain -- https://www.svgrepo.com/svg/490628/chair-2 */
 
 function SeatIcon({ className = "fill-current stroke-current w-4 h-4" }) {
   return (
-    <svg className={className} version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
-      <path d="M25 2C18.890625 2 12.84375 3 12.84375 3C12.351563 3.078125 11.992188 3.503906 12 
+    <svg
+      className={className}
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 50 50"
+    >
+      <path
+        d="M25 2C18.890625 2 12.84375 3 12.84375 3C12.351563 3.078125 11.992188 3.503906 12 
         4L12 9C11.996094 9.292969 12.121094 9.574219 12.347656 9.769531C12.570313 9.960938 12.863281 10.046875 13.15625 
         10C13.15625 10 13.53125 9.949219 14.03125 9.875L14.9375 25L12 25C11.96875 25 11.9375 25 11.90625 
         25C11.875 25 11.84375 25 11.8125 25C11.335938 25.089844 10.992188 25.511719 11 26L11 
@@ -24,7 +30,7 @@ function SeatIcon({ className = "fill-current stroke-current w-4 h-4" }) {
         Z M 34 31L35 31L35 46L34 46L34 35.1875C34.027344 35.054688 34.027344 34.914063 34 34.78125Z"
       />
     </svg>
-  )
+  );
 }
 
-export default SeatIcon
+export default SeatIcon;

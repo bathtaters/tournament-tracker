@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 import RawDataStyle from "./styles/RawDataStyle";
 import { useShowRaw } from "./common.fetch";
@@ -10,9 +10,11 @@ function RawData({ data, className = "" }) {
 
   if (!showRaw || !data) return null;
 
-  const styleData = JSON.stringify(data).replace(/:/g,': ').replace(/,/g,', ');
-  
-  return (<RawDataStyle className={className}>{styleData}</RawDataStyle>);
+  const styleData = JSON.stringify(data)
+    .replace(/:/g, ": ")
+    .replace(/,/g, ", ");
+
+  return <RawDataStyle className={className}>{styleData}</RawDataStyle>;
 }
 
 RawData.propTypes = { data: PropTypes.any, className: PropTypes.string };

@@ -1,49 +1,146 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta httpEquiv="x-ua-compatible" content="ie=edge" />
-  <meta property="og:title" content="Tournament Tracker" />
-  <meta property="og:site_name" content="Tournament Tracker" />
-  <meta property="og:url" content="%PUBLIC_URL%" />
-  <meta property="og:type" content="website" />
-  <meta property="og:locale" content="en_US" />
-  <meta property="og:description" content="Track and schedule Swiss tournament events" />
-  <meta property="article:author" content="bathtaters" />
-  <meta property="og:image" content="%PUBLIC_URL%/icons/screenshot-wide.png" />
-  <meta name="twitter:title" content="Tournament Tracker" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:description" content="Track and schedule Swiss tournament events" />
-  <meta name="twitter:image" content="%PUBLIC_URL%/icons/screenshot-wide.png" />
-  <title>Tournament Tracker</title>
-  <meta name="description" content="Track and schedule Swiss tournament events" />
-  <meta name="author" content="bathtaters" />
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="white" />
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
-  <meta name="msapplication-TileColor" content="#202020" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="%PUBLIC_URL%/index.html" />
-  <link rel="manifest" href="%PUBLIC_URL%/app.webmanifest" />
-  <link rel="apple-touch-icon" sizes="16x16" href="%PUBLIC_URL%/icons/icon-16.png" type="image/png" />
-  <link rel="apple-touch-icon" sizes="32x32" href="%PUBLIC_URL%/icons/icon-32.png" type="image/png" />
-  <link rel="apple-touch-icon" sizes="44x44" href="%PUBLIC_URL%/icons/icon-44.png" type="image/png" />
-  <link rel="apple-touch-icon" sizes="71x71" href="%PUBLIC_URL%/icons/icon-71.png" type="image/png" />
-  <link rel="apple-touch-icon" sizes="150x150" href="%PUBLIC_URL%/icons/icon-150.png" type="image/png" />
-  <link rel="apple-touch-icon" sizes="310x310" href="%PUBLIC_URL%/icons/icon-310.png" type="image/png" />
-  <link rel="apple-touch-icon" sizes="512x512" href="%PUBLIC_URL%/icons/icon-512.png" type="image/png" />
-  <link rel="apple-touch-icon" sizes="192x192" href="%PUBLIC_URL%/icons/icon-192.png" type="image/png" />
-  <link rel="icon" sizes="120x120" href="%PUBLIC_URL%/icons/icon-120-ios.png" type="image/png" />
-  <link rel="icon" sizes="180x180" href="%PUBLIC_URL%/icons/icon-180-ios.png" type="image/png" />
-  <link rel="icon" sizes="76x76" href="%PUBLIC_URL%/icons/icon-76-ios.png" type="image/png" />
-  <link rel="icon" sizes="152x152" href="%PUBLIC_URL%/icons/icon-152-ios.png" type="image/png" />
-  <link rel="icon" sizes="167x167" href="%PUBLIC_URL%/icons/icon-167-ios.png" type="image/png" />
-  <link rel="icon" sizes="1024x1024" href="%PUBLIC_URL%/icons/icon-1024-ios.png" type="image/png" />
-  <link rel="icon" href="%PUBLIC_URL%/icons/icon.svg" type="image/svg+xml" />
-  <link rel="icon" href="%PUBLIC_URL%/icons/favicon.ico" type="image/x-icon" />
-</head>
-<body>
-  <noscript>You need to enable JavaScript for this web site.</noscript>
-  <div id="root"></div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+    <meta property="og:title" content="Tournament Tracker" />
+    <meta property="og:site_name" content="Tournament Tracker" />
+    <meta property="og:url" content="%PUBLIC_URL%" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:description"
+      content="Track and schedule Swiss tournament events"
+    />
+    <meta property="article:author" content="bathtaters" />
+    <meta
+      property="og:image"
+      content="%PUBLIC_URL%/icons/screenshot-wide.png"
+    />
+    <meta name="twitter:title" content="Tournament Tracker" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:description"
+      content="Track and schedule Swiss tournament events"
+    />
+    <meta
+      name="twitter:image"
+      content="%PUBLIC_URL%/icons/screenshot-wide.png"
+    />
+    <title>Tournament Tracker</title>
+    <meta
+      name="description"
+      content="Track and schedule Swiss tournament events"
+    />
+    <meta name="author" content="bathtaters" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="white"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="black"
+    />
+    <meta name="msapplication-TileColor" content="#202020" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="%PUBLIC_URL%/index.html" />
+    <link rel="manifest" href="%PUBLIC_URL%/app.webmanifest" />
+    <link
+      rel="apple-touch-icon"
+      sizes="16x16"
+      href="%PUBLIC_URL%/icons/icon-16.png"
+      type="image/png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="32x32"
+      href="%PUBLIC_URL%/icons/icon-32.png"
+      type="image/png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="44x44"
+      href="%PUBLIC_URL%/icons/icon-44.png"
+      type="image/png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="71x71"
+      href="%PUBLIC_URL%/icons/icon-71.png"
+      type="image/png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="150x150"
+      href="%PUBLIC_URL%/icons/icon-150.png"
+      type="image/png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="310x310"
+      href="%PUBLIC_URL%/icons/icon-310.png"
+      type="image/png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="512x512"
+      href="%PUBLIC_URL%/icons/icon-512.png"
+      type="image/png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="192x192"
+      href="%PUBLIC_URL%/icons/icon-192.png"
+      type="image/png"
+    />
+    <link
+      rel="icon"
+      sizes="120x120"
+      href="%PUBLIC_URL%/icons/icon-120-ios.png"
+      type="image/png"
+    />
+    <link
+      rel="icon"
+      sizes="180x180"
+      href="%PUBLIC_URL%/icons/icon-180-ios.png"
+      type="image/png"
+    />
+    <link
+      rel="icon"
+      sizes="76x76"
+      href="%PUBLIC_URL%/icons/icon-76-ios.png"
+      type="image/png"
+    />
+    <link
+      rel="icon"
+      sizes="152x152"
+      href="%PUBLIC_URL%/icons/icon-152-ios.png"
+      type="image/png"
+    />
+    <link
+      rel="icon"
+      sizes="167x167"
+      href="%PUBLIC_URL%/icons/icon-167-ios.png"
+      type="image/png"
+    />
+    <link
+      rel="icon"
+      sizes="1024x1024"
+      href="%PUBLIC_URL%/icons/icon-1024-ios.png"
+      type="image/png"
+    />
+    <link rel="icon" href="%PUBLIC_URL%/icons/icon.svg" type="image/svg+xml" />
+    <link
+      rel="icon"
+      href="%PUBLIC_URL%/icons/favicon.ico"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript for this web site.</noscript>
+    <div id="root"></div>
+  </body>
 </html>

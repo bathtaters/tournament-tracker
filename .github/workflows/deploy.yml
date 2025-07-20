@@ -28,7 +28,7 @@ on:
         required: false
         type: string
         default: "tt_test"
-          
+
 env:
   # Default to PROD (For push/pull workflow)
   PROC_NAME: ${{ inputs.proc_name || vars.PROC_NAME || 'tournament-tracker-backend' }}
@@ -50,15 +50,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@main
-      
+
       - name: Install Node.js
         uses: actions/setup-node@main
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
 
       - name: Install API packages
         run: cd api && npm ci
-      
+
       - name: Create API config
         run: |
           echo '{' > temp.json
@@ -77,22 +77,22 @@ jobs:
           echo '  "sessionSecret": "${{ secrets.SESSION }}"' >> temp.json
           echo '}' >> temp.json
           mv temp.json "${{ env.API_CFG_PATH }}"
-      
+
       - name: Upload API
         uses: actions/upload-artifact@v4
         with:
           name: api-code
           path: api
-          
+
       - name: Test API
         run: cd api && npm test
-      
+
       - name: Sync API to client
         run: cd api && npm run sync
-      
+
       - name: Install client packages
         run: cd client && npm ci
-    
+
       - name: Build client
         run: cd client && npm run build
 
@@ -118,7 +118,7 @@ jobs:
         with:
           name: api-code
           path: api
-      
+
       - name: Install SSH key
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_ed25519
@@ -127,7 +127,7 @@ jobs:
 
       - name: Copy builds to host
         run: rsync -avz api client ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ env.REMOTE_DIR }}/
-      
+
       - name: Restart API server
         run: >
           ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}

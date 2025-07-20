@@ -2,13 +2,20 @@ import React from "react";
 import { PageTitleStyle } from "../../common/styles/CommonStyles";
 
 export function HeaderStyle({ children }) {
-  return (<div className="flex justify-evenly items-center gap-4">{children}</div>);
+  return (
+    <div className="flex justify-evenly items-center gap-4">{children}</div>
+  );
 }
 
-export const TitleStyle = ({ children }) => PageTitleStyle({ className: "inline-block", children });
+export const TitleStyle = ({ children }) =>
+  PageTitleStyle({ className: "inline-block", children });
 
 export function DaysContainerStyle({ children }) {
-  return (<div className="flex flex-wrap justify-center min-h-[24rem] mt-4">{children}</div>);
+  return (
+    <div className="flex flex-wrap justify-center min-h-[24rem] mt-4">
+      {children}
+    </div>
+  );
 }
 
 export function HeaderButton({ children, disabled, onClick }) {
@@ -25,7 +32,13 @@ export function HeaderButton({ children, disabled, onClick }) {
 }
 
 export const dayClass = {
-  past:   { titleCls: "text-base-content",                      borderCls: "border-neutral-content" },
-  today:  { titleCls: "text-accent-content dark:text-accent",   borderCls: "border-accent"       },
-  future: { titleCls: "text-primary dark:text-primary-content", borderCls: "border-primary"      },
+  past: { titleCls: "text-base-content", borderCls: "border-neutral-content" },
+  today: {
+    titleCls: "text-accent-content dark:text-accent",
+    borderCls: "border-accent",
+  },
+  future: {
+    titleCls: "text-primary dark:text-primary-content",
+    borderCls: "border-primary",
+  },
 };

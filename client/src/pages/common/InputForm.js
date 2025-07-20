@@ -1,27 +1,45 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 import FormRow from "./components/InputForm/FormRow";
-import { FormContainer, ButtonContainer, ButtonElement } from "./styles/InputFormStyles";
-import useFormController  from "./services/InputForm/inputForm.controller";
-
+import {
+  FormContainer,
+  ButtonContainer,
+  ButtonElement,
+} from "./styles/InputFormStyles";
+import useFormController from "./services/InputForm/inputForm.controller";
 
 function InputForm({
   // Layout data
-  rows = ['custom'], buttons = [], children,
+  rows = ["custom"],
+  buttons = [],
+  children,
   // Backend data
-  data = {}, baseData = {}, isLoaded = true,
+  data = {},
+  baseData = {},
+  isLoaded = true,
   // Styling
-  className = "flex justify-center", submitLabel = "Save", rowFirst = false, isGrid,
+  className = "flex justify-center",
+  submitLabel = "Save",
+  rowFirst = false,
+  isGrid,
   // Event handlers
-  onSubmit, onEdit, onChange
+  onSubmit,
+  onEdit,
+  onChange,
 }) {
-
-  const { values, setters, handleSubmit, handleChange } = useFormController({ rows, data, baseData, onSubmit, onEdit, onChange, isLoaded })
+  const { values, setters, handleSubmit, handleChange } = useFormController({
+    rows,
+    data,
+    baseData,
+    onSubmit,
+    onEdit,
+    onChange,
+    isLoaded,
+  });
 
   // Render
   return (
     <FormContainer onSubmit={handleSubmit}>
-
       <div className={className}>
         <FormRow
           row={rows}
@@ -38,10 +56,12 @@ function InputForm({
       <ButtonContainer>
         <ButtonElement label={submitLabel} isSubmit={true} />
         {buttons.map((btnProps, idx) => (
-          <ButtonElement {...btnProps} key={btnProps.key ?? btnProps.label ?? idx} />
+          <ButtonElement
+            {...btnProps}
+            key={btnProps.key ?? btnProps.label ?? idx}
+          />
         ))}
       </ButtonContainer>
-
     </FormContainer>
   );
 }

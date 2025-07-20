@@ -9,8 +9,8 @@ class ErrorBoundary extends Component {
     // Catch Async errors
     this.asyncHandler = (event) => {
       this.setState({
-        error: event.reason.message || event.reason || 'Unknown Async Error',
-        errorInfo: event.reason
+        error: event.reason.message || event.reason || "Unknown Async Error",
+        errorInfo: event.reason,
       });
       // You can also log error messages to an error reporting service here
     };
@@ -25,16 +25,16 @@ class ErrorBoundary extends Component {
   componentWillUnmount() {
     window.removeEventListener("unhandledrejection", this.asyncHandler);
   }
-  
+
   // Catch errors in any child components
   componentDidCatch(error, errorInfo) {
     this.setState({
       error: error,
-      errorInfo: errorInfo
-    })
+      errorInfo: errorInfo,
+    });
     // You can also log error messages to an error reporting service here
   }
-  
+
   render() {
     // Normally, just render children
     if (!this.state.errorInfo) return this.props.children;
@@ -44,10 +44,12 @@ class ErrorBoundary extends Component {
       <ErrorStyle title="Something went wrong.">
         {this.state.error && this.state.error.toString()}
         <br /> <br />
-        {this.state.errorInfo.componentStack || this.state.errorInfo.stack || this.state.errorInfo.toString()}
+        {this.state.errorInfo.componentStack ||
+          this.state.errorInfo.stack ||
+          this.state.errorInfo.toString()}
       </ErrorStyle>
     );
-  }  
+  }
 }
 
 export default ErrorBoundary;

@@ -1,7 +1,25 @@
-import { useEffect, useState, useRef, useTransition, useMemo, useCallback } from "react"
-import { getSuggestions, autoSelect } from "./suggestText.services"
-import { getNext, getPrev, validList, getNonStaticSoloIdx, useHotkeys } from "./suggestText.utils"
-import { displayEntry, enterBehavior, hideListWhenExact, getId } from "./suggestText.custom"
+import {
+  useEffect,
+  useState,
+  useRef,
+  useTransition,
+  useMemo,
+  useCallback,
+} from "react";
+import { getSuggestions, autoSelect } from "./suggestText.services";
+import {
+  getNext,
+  getPrev,
+  validList,
+  getNonStaticSoloIdx,
+  useHotkeys,
+} from "./suggestText.utils";
+import {
+  displayEntry,
+  enterBehavior,
+  hideListWhenExact,
+  getId,
+} from "./suggestText.custom";
 
 /** This must be implemented upstream of SuggestText.
  *  - Params:
@@ -33,112 +51,159 @@ import { displayEntry, enterBehavior, hideListWhenExact, getId } from "./suggest
  *    - `value: string` - Text inside textbox
  *    - `setValue(value)` - Sets the text inside textbox (React useState function)
  */
-export default function useSuggestText(list = [], { isHidden, onChange, onSubmit, onFocus, hideStaticWhenEmpty } = {}) {
-  
+export default function useSuggestText(
+  list = [],
+  { isHidden, onChange, onSubmit, onFocus, hideStaticWhenEmpty } = {}
+) {
   // --- Component State --- \\
 
   // Setup Local State
-  const textbox = useRef(null)
-  const [, startTransition] = useTransition()
-  const [suggestions, setSuggestions] = useState(list)
-  const [value, setValue] = useState("")
-  const [selected, setSelectedState] = useState(-1)
-  const [pickState, setPick] = useState(null)
-  const [exact, setExact] = useState(null)
-  const [listIsVisible, setListVisible] = useState(false)
+  const textbox = useRef(null);
+  const [, startTransition] = useTransition();
+  const [suggestions, setSuggestions] = useState(list);
+  const [value, setValue] = useState("");
+  const [selected, setSelectedState] = useState(-1);
+  const [pickState, setPick] = useState(null);
+  const [exact, setExact] = useState(null);
+  const [listIsVisible, setListVisible] = useState(false);
 
   // Basic vars
-  const length = suggestions?.length ?? 0
-  const isEmpty = !value || !value.trim()
-  const isExact = !isEmpty && exact
-  const selectedValue = !isHidden && (
-    selected < 0 ? (
-      length === 1 ? suggestions[0] : null
-    ) : selected < length && suggestions[selected]
-  )
-  const nonStaticSoloIdx = useMemo(() => getNonStaticSoloIdx(suggestions), [suggestions])
-  const picked = !isHidden && (pickState || isExact || (
-    !isEmpty && nonStaticSoloIdx != null ? suggestions[nonStaticSoloIdx] : null
-  ))
+  const length = suggestions?.length ?? 0;
+  const isEmpty = !value || !value.trim();
+  const isExact = !isEmpty && exact;
+  const selectedValue =
+    !isHidden &&
+    (selected < 0
+      ? length === 1
+        ? suggestions[0]
+        : null
+      : selected < length && suggestions[selected]);
+  const nonStaticSoloIdx = useMemo(
+    () => getNonStaticSoloIdx(suggestions),
+    [suggestions]
+  );
+  const picked =
+    !isHidden &&
+    (pickState ||
+      isExact ||
+      (!isEmpty && nonStaticSoloIdx != null
+        ? suggestions[nonStaticSoloIdx]
+        : null));
 
   // Auto update state
-  useEffect(() => { setSelectedState((selected) => autoSelect(selected, suggestions)) }, [suggestions])
-  // eslint-disable-next-line
-  useEffect(() => { startTransition(() => getSuggestions(list, value, setSuggestions, setExact, hideStaticWhenEmpty)) }, [list]) // Pass prop updates to state
+  useEffect(() => {
+    setSelectedState((selected) => autoSelect(selected, suggestions));
+  }, [suggestions]);
+  useEffect(() => {
+    startTransition(() =>
+      getSuggestions(list, value, setSuggestions, setExact, hideStaticWhenEmpty)
+    );
+    // eslint-disable-next-line
+  }, [list]); // Pass prop updates to state
 
   // --- Action Handlers --- \\
 
   // Selected setter + side effects
-  const setSelected = useCallback((selected) => setSelectedState(autoSelect(selected, suggestions)), [suggestions])
+  const setSelected = useCallback(
+    (selected) => setSelectedState(autoSelect(selected, suggestions)),
+    [suggestions]
+  );
 
   // TextBox controller
-  const change = useCallback((e) => {
-    if (e.target.value !== value) setValue(e.target.value) // Controlled component
+  const change = useCallback(
+    (e) => {
+      if (e.target.value !== value) setValue(e.target.value); // Controlled component
 
-    // Clear pick value
-    const newPick = e.forcePick || (e.target.value === displayEntry(pickState) && pickState)
-    if (pickState && !newPick) setPick(null)
+      // Clear pick value
+      const newPick =
+        e.forcePick ||
+        (e.target.value === displayEntry(pickState) && pickState);
+      if (pickState && !newPick) setPick(null);
 
-    // Update list
-    startTransition(() => {
-      const [newSuggestions, newExact] = getSuggestions(list, e.target.value, setSuggestions, setExact)
-      onChange && onChange(e.target.value, newPick, newExact, newSuggestions) // User onChange function
-    })
-  }, [value, pickState, list, onChange])
+      // Update list
+      startTransition(() => {
+        const [newSuggestions, newExact] = getSuggestions(
+          list,
+          e.target.value,
+          setSuggestions,
+          setExact
+        );
+        onChange && onChange(e.target.value, newPick, newExact, newSuggestions); // User onChange function
+      });
+    },
+    [value, pickState, list, onChange]
+  );
 
   const handleFocus = (isFocused, e) => {
-    setListVisible(isFocused)
-    onFocus && onFocus(isFocused, e)
-  }
+    setListVisible(isFocused);
+    onFocus && onFocus(isFocused, e);
+  };
 
   const submit = async (forcePick) => {
-    const newPick = forcePick || picked
+    const newPick = forcePick || picked;
 
     // Reset form
-    setPick(null)
-    change({ target: { value: '' } })
-    
+    setPick(null);
+    change({ target: { value: "" } });
+
     // Submit
-    const result = await (onSubmit && onSubmit(value, newPick, exact, suggestions))
-    return newPick && { ...newPick, result }
-  }
+    const result = await (onSubmit &&
+      onSubmit(value, newPick, exact, suggestions));
+    return newPick && { ...newPick, result };
+  };
 
   const pick = (forcePick) => {
-    const newPick = forcePick || isExact || selectedValue
-    
-    if (!newPick) return false // Ignore missing pick
-    if (newPick.isStatic) return submit(newPick) // Submit static pick
+    const newPick = forcePick || isExact || selectedValue;
 
-    const pickDisplay = displayEntry(newPick)
-    if (displayEntry(pickState) === pickDisplay) return false // Already pickState
+    if (!newPick) return false; // Ignore missing pick
+    if (newPick.isStatic) return submit(newPick); // Submit static pick
+
+    const pickDisplay = displayEntry(newPick);
+    if (displayEntry(pickState) === pickDisplay) return false; // Already pickState
 
     // Pick newPick
-    change({ target: { value: pickDisplay }, forcePick: newPick })
-    setPick(newPick)
-  }
+    change({ target: { value: pickDisplay }, forcePick: newPick });
+    setPick(newPick);
+  };
 
   // --- Additional Hooks --- \\
 
   // Setup Keyboard UI
-  useHotkeys({
-    Enter:     () => enterBehavior(pick, submit, pickState, isExact, value), // Missing from deps
-    Escape:    () => selected < 0 || nonStaticSoloIdx != null ? textbox.current.blur() : setSelected(-1),
-    ArrowUp:   () => setSelected(getPrev(selected, length)), 
-    ArrowDown: () => setSelected(getNext(selected, length)),
-  }, { skip: !listIsVisible, deps: [selected, value, length, nonStaticSoloIdx, setSelected] })
+  useHotkeys(
+    {
+      Enter: () => enterBehavior(pick, submit, pickState, isExact, value), // Missing from deps
+      Escape: () =>
+        selected < 0 || nonStaticSoloIdx != null
+          ? textbox.current.blur()
+          : setSelected(-1),
+      ArrowUp: () => setSelected(getPrev(selected, length)),
+      ArrowDown: () => setSelected(getNext(selected, length)),
+    },
+    {
+      skip: !listIsVisible,
+      deps: [selected, value, length, nonStaticSoloIdx, setSelected],
+    }
+  );
 
-  const showList = listIsVisible && (!hideListWhenExact || !exact) && validList(suggestions)
+  const showList =
+    listIsVisible && (!hideListWhenExact || !exact) && validList(suggestions);
   return {
-    value, setValue, submit, picked,
+    value,
+    setValue,
+    submit,
+    picked,
     backend: {
-      boxProps:  {
-        value, handleFocus, change, showList,
+      boxProps: {
+        value,
+        handleFocus,
+        change,
+        showList,
         selected: listIsVisible && getId(selectedValue),
         inputRef: textbox,
       },
       listProps: { suggestions, selected, pick, setSelected, textbox },
       showList,
       isHidden,
-    }
-  }
+    },
+  };
 }

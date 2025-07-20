@@ -10,7 +10,10 @@ import Loading from "./pages/common/Loading";
 import Alert from "./pages/common/Alert";
 import LockScreen from "./pages/common/LockScreen";
 import ErrorBoundary from "./pages/common/ErrorBoundary";
-import { AppWrapperStyle, PageWrapperStyle } from "./pages/common/styles/CommonStyles";
+import {
+  AppWrapperStyle,
+  PageWrapperStyle,
+} from "./pages/common/styles/CommonStyles";
 
 import { useSettingsQuery } from "./pages/common/common.fetch";
 
@@ -18,7 +21,9 @@ function App() {
   const { data, isLoading, error } = useSettingsQuery();
 
   if (isLoading || error)
-    return <Loading loading={isLoading} error={error} className="m-8 text-xl" />;
+    return (
+      <Loading loading={isLoading} error={error} className="m-8 text-xl" />
+    );
 
   return (
     <AppWrapperStyle>
@@ -27,7 +32,9 @@ function App() {
           <DndProvider backend={HTML5Backend}>
             <Alert />
             <Header title={data && data.title} />
-            <PageWrapperStyle><Routing /></PageWrapperStyle>
+            <PageWrapperStyle>
+              <Routing />
+            </PageWrapperStyle>
             <Footer />
             <LockScreen />
           </DndProvider>

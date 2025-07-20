@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { modalCloseAlert } from "../../../assets/alerts";
-import { useOpenAlert } from "../common.hooks"
+import { useOpenAlert } from "../common.hooks";
 
 /** This must be implemented upstream of Modal.
  *  - Params:
@@ -17,29 +17,39 @@ import { useOpenAlert } from "../common.hooks"
  *    - `close(overrideLock?)` - Function to close modal, with option to override the lock
  *    - `setLock(isLocked)` - Function to set the lock state (React useState function)
  */
-export default function useModal(startOpen = false, startLocked = false, lockAlert = undefined) {
-  const openAlert = useOpenAlert()
-  const [isOpen, setOpen] = useState(startOpen)
-  const [isLocked, setLock] = useState(startLocked)
+export default function useModal(
+  startOpen = false,
+  startLocked = false,
+  lockAlert = undefined
+) {
+  const openAlert = useOpenAlert();
+  const [isOpen, setOpen] = useState(startOpen);
+  const [isLocked, setLock] = useState(startLocked);
 
-  const lock = useCallback((lock = true) => setLock(lock), [])
+  const lock = useCallback((lock = true) => setLock(lock), []);
 
-  const open = useCallback(() => setOpen(true), [])
+  const open = useCallback(() => setOpen(true), []);
 
-  const close = useCallback((overrideLock = false) => {
-    if (!overrideLock && isLocked) return;
-    setOpen(false)
-    setLock(startLocked)
-  }, [isLocked, startLocked])
+  const close = useCallback(
+    (overrideLock = false) => {
+      if (!overrideLock && isLocked) return;
+      setOpen(false);
+      setLock(startLocked);
+    },
+    [isLocked, startLocked]
+  );
 
   const closeWithMsg = useCallback(() => {
-    if (!isLocked) return close(true)
-    return openAlert(modalCloseAlert(lockAlert), 0)
-      .then(r => r && close(true))
-  }, [close, isLocked, lockAlert, openAlert])
+    if (!isLocked) return close(true);
+    return openAlert(modalCloseAlert(lockAlert), 0).then(
+      (r) => r && close(true)
+    );
+  }, [close, isLocked, lockAlert, openAlert]);
 
   return {
-    open, close, lock,
-    backend: { isOpen, isLocked, close, closeWithMsg }
-  }
+    open,
+    close,
+    lock,
+    backend: { isOpen, isLocked, close, closeWithMsg },
+  };
 }

@@ -1,15 +1,29 @@
-import useNumberPicker, { invalidHandler } from "../../services/InputForm/numberPicker.controller"
+import useNumberPicker, {
+  invalidHandler,
+} from "../../services/InputForm/numberPicker.controller";
 
-export default function NumberPicker({ inputProps, className = "", wrapperClass = "" }) {
-  const { decHandler, incHandler } = useNumberPicker(inputProps)
+export default function NumberPicker({
+  inputProps,
+  className = "",
+  wrapperClass = "",
+}) {
+  const { decHandler, incHandler } = useNumberPicker(inputProps);
 
   return (
     <div className={`join ${wrapperClass}`}>
-      { !inputProps.disabled && <NumberButtonStyle increment={false} handler={decHandler} /> }
-      <input {...inputProps} className={`join-item ${className}`} onInvalid={invalidHandler} />
-      { !inputProps.disabled && <NumberButtonStyle increment={true}  handler={incHandler} /> }
+      {!inputProps.disabled && (
+        <NumberButtonStyle increment={false} handler={decHandler} />
+      )}
+      <input
+        {...inputProps}
+        className={`join-item ${className}`}
+        onInvalid={invalidHandler}
+      />
+      {!inputProps.disabled && (
+        <NumberButtonStyle increment={true} handler={incHandler} />
+      )}
     </div>
-  )
+  );
 }
 
 const NumberButtonStyle = ({ increment, handler }) => (
@@ -22,4 +36,4 @@ const NumberButtonStyle = ({ increment, handler }) => (
   >
     {increment ? "＋" : "－"}
   </button>
-)
+);

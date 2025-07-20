@@ -1,10 +1,9 @@
 /* Load Custom Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,300;0,500;0,700;1,100;1,300;1,500;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,500;0,700;0,900;1,100;1,300;1,500;1,700;1,900&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,300;0,500;0,700;1,100;1,300;1,500;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,500;0,700;0,900;1,100;1,300;1,500;1,700;1,900&display=swap");
 
 /* Load/Configure Tailwind + DaisyUI */
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @source '../node_modules/react-tailwindcss-datepicker/dist/index.esm.js';
 
@@ -12,49 +11,72 @@
 @plugin "daisyui/theme" {
   name: "corporate";
   default: true;
-  --color-neutral: #D8D8D8;
+  --color-neutral: #d8d8d8;
   --color-neutral-content: #444;
 }
 @plugin "daisyui/theme" {
   name: "business";
   prefersdark: true;
-  --color-neutral: #1A1A1A;
+  --color-neutral: #1a1a1a;
   --color-neutral-content: #777;
 }
 
 @theme {
-  --font-sans: 'Roboto', sans-serif;
-  --font-serif: 'Garamond', serif;
-  --font-heading: 'Josefin Sans', sans-serif;
-  
+  --font-sans: "Roboto", sans-serif;
+  --font-serif: "Garamond", serif;
+  --font-heading: "Josefin Sans", sans-serif;
+
   --animate-pulse-pause: pulse-pause 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  
+
   @keyframes pulse-pause {
-    0%   { opacity: 0.6; }
-    50%  { opacity: 0.2; }
-    100% { opacity: 0.6; }
+    0% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 0.2;
+    }
+    100% {
+      opacity: 0.6;
+    }
   }
 }
 
 /* Temp fix for https://github.com/onesine/react-tailwindcss-datepicker/pull/307 */
-.opacity-1 { @apply opacity-100; }
-
+.opacity-1 {
+  @apply opacity-100;
+}
 
 /* Base Styles */
 @layer base {
-  html { @apply h-full w-full; }
-  body {
-      @apply relative  leading-none  font-sans;
-      @apply text-xs   sm:text-base  print:text-xs;
+  html {
+    @apply h-full w-full;
   }
-  
-  h1, h2, h3, h4, h5, h6 { @apply    font-heading pt-1; }
-  h1 { @apply font-light   text-6xl  sm:text-8xl  print:text-6xl; }
-  h2 { @apply font-medium  text-4xl  sm:text-6xl  print:text-4xl; }
-  h3 { @apply font-bold    text-2xl  sm:text-4xl  print:text-2xl; }
-  h4 { @apply font-medium  text-base sm:text-xl   print:text-base; }
-}
+  body {
+    @apply relative  leading-none  font-sans;
+    @apply text-xs   sm:text-base  print:text-xs;
+  }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading pt-1;
+  }
+  h1 {
+    @apply font-light   text-6xl  sm:text-8xl  print:text-6xl;
+  }
+  h2 {
+    @apply font-medium  text-4xl  sm:text-6xl  print:text-4xl;
+  }
+  h3 {
+    @apply font-bold    text-2xl  sm:text-4xl  print:text-2xl;
+  }
+  h4 {
+    @apply font-medium  text-base sm:text-xl   print:text-base;
+  }
+}
 
 /* NavLink styling */
 @utility active {
@@ -86,27 +108,27 @@
 }
 
 @utility table-zebra {
-    & tbody tr:nth-child(even) {
-        @apply bg-base-200/50;
-    }
-    & tbody tr.hover\:bg-base-200:nth-child(even):hover {
-        @apply bg-base-200;
-    }
-    & tbody tr.hover\:bg-error:nth-child(even):hover {
-        @apply bg-error;
-    }
+  & tbody tr:nth-child(even) {
+    @apply bg-base-200/50;
+  }
+  & tbody tr.hover\:bg-base-200:nth-child(even):hover {
+    @apply bg-base-200;
+  }
+  & tbody tr.hover\:bg-error:nth-child(even):hover {
+    @apply bg-error;
+  }
 }
 
 @utility hide-arrows {
   /* Remove input number up/down arrows */
-  input[type='number']& {
+  input[type="number"]& {
     -moz-appearance: textfield;
   }
-  input[type='number']&::-webkit-inner-spin-button {
+  input[type="number"]&::-webkit-inner-spin-button {
     -webkit-appearance: none;
     @apply m-0;
   }
-  & input[type='number']::-webkit-outer-spin-button {
+  & input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     @apply m-0;
   }
@@ -129,12 +151,13 @@
   @apply uppercase;
 
   &:not(:disabled) {
-    @apply cursor-pointer
+    @apply cursor-pointer;
   }
 }
 
 @utility input {
-  &:has(> [disabled]), &:is(:disabled, [disabled]) {
+  &:has(> [disabled]),
+  &:is(:disabled, [disabled]) {
     @apply text-inherit bg-base-200;
   }
 }

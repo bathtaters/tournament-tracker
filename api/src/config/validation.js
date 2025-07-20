@@ -1,25 +1,30 @@
-const { customInterval: { sanitize: { options: interval } } } = require("../utils/validate.utils");
+const {
+  customInterval: {
+    sanitize: { options: interval },
+  },
+} = require("../utils/validate.utils");
 
 // Define Shared Vars
 const sharedLimits = {
-  title:  { min: 1, max: 50 },
+  title: { min: 1, max: 50 },
   player: { min: 0, max: 32 },
   rounds: { min: 1, max: 20 },
-  wins:   { min: 0, max: 10 },
-  dates:  { min: 0, max: 30 },
-  slots:  { min: 0, max: 10 },
+  wins: { min: 0, max: 10 },
+  dates: { min: 0, max: 30 },
+  slots: { min: 0, max: 10 },
 };
 
-sharedLimits.activeRounds = { 
+sharedLimits.activeRounds = {
   min: sharedLimits.rounds.min - 1,
   max: sharedLimits.rounds.max + 1,
 };
 
 sharedLimits.wincount = { min: 1, max: sharedLimits.wins.max };
 
-const today = (new Date()).toISOString().slice(0,10);
-const tomorrow = (new Date(Date.now() + (24*60*60*1000))).toISOString().slice(0,10);
-
+const today = new Date().toISOString().slice(0, 10);
+const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000)
+  .toISOString()
+  .slice(0, 10);
 
 // Validation Config Vars
 module.exports = {
@@ -61,8 +66,8 @@ module.exports = {
       roundcount: 3,
       wincount: 2,
       playerspermatch: 2,
-      notes: '',
-      link: '',
+      notes: "",
+      link: "",
       clocklimit: interval({ minutes: 50 }),
       clockstart: null,
       clockmod: null,
@@ -112,11 +117,11 @@ module.exports = {
       notes: { min: 0, max: 256 },
     },
     match: {
-      round:   sharedLimits.rounds,
+      round: sharedLimits.rounds,
       players: sharedLimits.player,
-      wins:    { array: sharedLimits.player, elem: sharedLimits.wins, },
-      draws:   sharedLimits.wins,
-      drops:   sharedLimits.player,
+      wins: { array: sharedLimits.player, elem: sharedLimits.wins },
+      draws: sharedLimits.wins,
+      drops: sharedLimits.player,
       setDrawsMax: 1,
     },
     voter: {
@@ -129,7 +134,7 @@ module.exports = {
     plan: {
       voters: { min: 0, max: 100 },
       events: { min: 0, max: 100 },
-    }
+    },
   },
 
   types: {
@@ -189,7 +194,7 @@ module.exports = {
       drops: "uuid[]?",
       reported: "boolean",
       undrop: "boolean",
-      playerid: "uuid"
+      playerid: "uuid",
     },
     voter: {
       id: "uuid",
@@ -204,6 +209,6 @@ module.exports = {
     plan: {
       voters: "uuid[]",
       events: "uuid[]",
-    }
-  }
+    },
+  },
 };
