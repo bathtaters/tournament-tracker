@@ -37,9 +37,14 @@ ALTER TYPE log_action ADD VALUE 'upsert';
 
 -- Update DB version Number --
 ------------------------------
-UPSERT INTO settings (id, value) VALUES ('dbversion', '2.0.0');
+UPSERT INTO settings (id, value) VALUES ('dbversion', '2.1.0');
 
 
 -- Non-SQL Updates --
 ---------------------
-
+-- NOTE: This upgrade will break all passwords! To prepare do one of the following:
+--  1) Sign in as a Gonti user before deployment so your session is remembered
+--     and you can reset your password to not lose access.
+--  2) Use the below SQL directly on the DB to remove any Gontis (player.access = 3),
+--     then use the new http://[domain]/setup endpoint to create a new Gonti user.
+--       > UPDATE player SET "access" = 2 WHERE "access" = 3;
