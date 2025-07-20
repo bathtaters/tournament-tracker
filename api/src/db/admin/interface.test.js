@@ -282,6 +282,18 @@ describe('rmvRows', () => {
     ])
   );
 
+  it('custom returning', async () => {
+    await expect(ops.rmvRows('test', null, null, null, null)).resolves.toEqual([
+      expect.not.stringContaining('RETURNING'),
+      expect.anything(),
+    ])
+    await expect(ops.rmvRows('test', null, null, null, 'custom')).resolves.toEqual([
+      expect.stringContaining('RETURNING custom'),
+      expect.anything(),
+    ])
+  }
+  );
+
   it('uses sqlHelpers', async () => {
     await ops.rmvRows('test', ['args'], 'FILTER');
     expect(utils.getReturn).toHaveBeenCalledTimes(1);
@@ -377,7 +389,18 @@ describe('addRows', () => {
     ])
   });
 
-  it('upsert changes query', () => {
+  it('upsert changes query', async () => {
+    await expect(ops.addRows('test',[{a:1}],{ returning: 'custom' })).resolves.toEqual([
+      expect.stringContaining('RETURNING custom'),
+      expect.any(Array)
+    ])
+    await expect(ops.addRows('test',[{a:1}],{ returning: null })).resolves.toEqual([
+      expect.not.stringContaining('RETURNING'),
+      expect.any(Array)
+    ])
+  });
+
+  it('custom returning', async () => {
     return expect(ops.addRows('test',[{a:1}],{ upsert: 1 })).resolves.toEqual([
       expect.stringMatching(/^UPSERT/),
       expect.any(Array)
@@ -393,9 +416,9 @@ describe('addRows', () => {
     );
   });
 
-  it('error on missing objArray', () => 
-    expect(() => ops.addRows('test'))
-      .toThrow('Missing rows to add to test table.')
+  it('throws on missing objArray', () => 
+    expect(ops.addRows('test')).rejects
+      .toEqual(new Error('Missing rows to add to test table.'))
   );
 
   it('warns on empty objects', async () => {
@@ -496,6 +519,13 @@ describe('updateRow', () => {
     expect(res[0][0]).toEqual('UPDATE test SET a = $1 WHERE IDCOL = $2 RETURNING *;');
   });
 
+  it('param returning', async () => {
+    let res = await ops.updateRow('test','ID',{a: 1},{returning: 'custom'});
+    expect(res[0][0]).toEqual(expect.stringContaining('RETURNING custom'));
+    res = await ops.updateRow('test','ID',{a: 1},{returning: null});
+    expect(res[0][0]).toEqual(expect.not.stringContaining('RETURNING'));
+  });
+
   it('param looseMatch', async () => {
     const res = await ops.updateRow('test','ID',{a: 1},{looseMatch: true});
     expect(res[0][0]).toBe('UPDATE test SET a = $1 WHERE id ILIKE $2 RETURNING *;');
@@ -503,8 +533,8 @@ describe('updateRow', () => {
 
   it('throws on empty updateObj', () => {
     expect.assertions(1);
-    return expect(() => ops.updateRow('test','ID'))
-      .toThrow('No properties provided to update test[ID]');
+    return expect(ops.updateRow('test','ID')).rejects
+      .toEqual(new Error('No properties provided to update test[ID]'));
   });
 
   it('sends error on empty return', async () => {
@@ -527,12 +557,101 @@ describe('updateRow', () => {
     expect(utils.getFirst).toHaveBeenCalledWith(false);
   });
 
+  it('no rowId updates all', async () => {
+    const res = await ops.updateRow('test',null,{a: 1});
+    expect(res[0][0]).toBe('UPDATE test SET a = $1 RETURNING *;');
+  });
+
   it('uses custom client', async () => {
     await ops.updateRow('test','ID',{a: 1},{client});
     expect(client.query).toHaveBeenCalledTimes(1);
     expect(client.query).toHaveBeenCalledWith(
       'UPDATE test SET a = $1 WHERE id = $2 RETURNING *;',
       [1, 'ID']
+    );
+  });
+});
+
+describe('updateRows', () => {
+  let origDirectMock;
+  const testUpdate = [
+    { id: 'A', a: 1, b: 2 },
+    { id: 'B', a: 3, b: 4 },
+  ]
+
+  beforeAll(() => {
+    origDirectMock = direct.query.getMockImplementation();
+    direct.query.mockImplementation((...args) => Promise.resolve([args]));
+  });
+
+  afterAll(() => {
+    direct.query.mockImplementation(origDirectMock);
+  });
+
+  it('correct query', async () => {
+    await expect(ops.updateRows('test', testUpdate,))
+      .resolves.toEqual([{
+        0: 'UPDATE test SET a = upd.a, b = upd.b FROM (VALUES ($1::UUID, $2, $3), ($4::UUID, $5, $6)) AS upd(id, a, b) WHERE test.id = upd.id RETURNING test.*;',
+        1: ['A', 1, 2, 'B', 3, 4],
+      }]);
+  });
+
+  it('checks for SQL injection', async () => {
+    await ops.updateRows('test', testUpdate)
+    expect(utils.strTest).toHaveBeenCalledTimes(2);
+    expect(utils.strTest).toHaveBeenCalledWith(['id','a','b']);
+    expect(utils.strTest).toHaveBeenCalledWith(['UUID']);
+  })
+
+  it('param idCol', async () => {
+    const res = await ops.updateRows('test', testUpdate, { idCol: 'a' });
+    expect(res[0][0]).toContain('WHERE test.a = upd.a');
+  });
+
+  it('param returning', async () => {
+    let res = await ops.updateRows('test', testUpdate, { returning: 'custom' });
+    expect(res[0][0]).toContain('RETURNING test.custom');
+    res = await ops.updateRows('test', testUpdate, { returning: 'other.custom' });
+    expect(res[0][0]).toContain('RETURNING other.custom');
+    res = await ops.updateRows('test', testUpdate, { returning: null });
+    expect(res[0][0]).not.toContain('RETURNING');
+  });
+
+  it('param types', async () => {
+    let res = await ops.updateRows('test', testUpdate, { types: {} })
+    expect(res[0][0]).toContain('$1::UUID,'); // default
+    res = await ops.updateRows('test', testUpdate, { types: { a: "SMALLINT" } })
+    expect(res[0][0]).toContain('$2::SMALLINT,');
+    res = await ops.updateRows('test', testUpdate, { types: { id: null } })
+    expect(res[0][0]).toContain('$1,');
+  });
+
+  it('table named "upd"', async () => {
+    let res = await ops.updateRows('test', testUpdate)
+    expect(res[0][0]).toContain(' = upd.id ');
+    res = await ops.updateRows('upd', testUpdate)
+    expect(res[0][0]).toContain(' = u.id ');
+  })
+
+  it('throws on empty updateObjArr', async () => {
+    expect.assertions(3);
+    const expectErr = new Error('No properties or keys provided to update test')
+    await expect(ops.updateRows('test', [])).rejects.toEqual(expectErr);
+    await expect(ops.updateRows('test', null)).rejects.toEqual(expectErr);
+    await expect(ops.updateRows('test', [{a: 1}, {b: 2}])).rejects.toEqual(expectErr);
+  });
+  
+  it('uses sqlHelpers', async () => {
+    await ops.updateRows('test', testUpdate);
+    expect(utils.getReturn).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses custom client', async () => {
+    await ops.updateRows('test', testUpdate, { client });
+    expect(client.query).toHaveBeenCalledTimes(1);
+    expect(client.query).toHaveBeenCalledWith(
+      expect.stringContaining('UPDATE test SET'),
+      ['A', 1, 2, 'B', 3, 4]
     );
   });
 });
