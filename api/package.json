@@ -4,8 +4,9 @@
   "description": "Tournament Tracker backend",
   "main": "./src/server.js",
   "scripts": {
-    "start": "export NODE_ENV=production; node ./src/server.js",
-    "dev": "export NODE_ENV=development; node --watch ./src/server.js",
+    "start": "export NODE_ENV=production; node ./dist/server.js",
+    "dev": "export NODE_ENV=development; ts-node --watch ./src/server.js",
+    "build": "tsc",
     "sync": "node ./src/config/exportToClient.js",
     "devdb": "cockroach start-single-node --insecure --store=path=\"$PWD/cockroach-data\" --listen-addr=localhost:36257 --sql-addr=localhost:26257 --http-addr=localhost:9095",
     "test": "jest",
@@ -41,8 +42,15 @@
   },
   "devDependencies": {
     "@types/connect-pg-simple": "^7.0.3",
+    "@types/express": "^4.17.21",
     "@types/express-session": "^1.18.0",
     "@types/jest": "^30.0.0",
-    "jest": "^30.0.2"
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.11.0",
+    "@types/validator": "^13.12.0",
+    "jest": "^30.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.0"
   }
 }

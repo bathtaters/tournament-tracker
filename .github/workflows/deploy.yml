@@ -41,7 +41,7 @@ env:
   DB_SSL_MODE: verify-full
   DB_CERT_PATH: $HOME/.postgresql/root.crt
   API_CFG_PATH: ./api/src/config/dbServer.json
-  SERVER_PATH: api/src/server.js
+  SERVER_PATH: api/server.js
 
 jobs:
   build:
@@ -78,14 +78,17 @@ jobs:
           echo '}' >> temp.json
           mv temp.json "${{ env.API_CFG_PATH }}"
 
+      - name: Test API
+        run: cd api && npm test
+
+      - name: Build API (TypeScript)
+        run: cd api && npm run build
+
       - name: Upload API
         uses: actions/upload-artifact@v4
         with:
           name: api-code
-          path: api
-
-      - name: Test API
-        run: cd api && npm test
+          path: api/dist
 
       - name: Sync API to client
         run: cd api && npm run sync
