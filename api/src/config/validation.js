@@ -85,6 +85,8 @@ module.exports = {
       days: [],
       events: [],
     },
+    swap: {},
+    plan: {},
   },
 
   limits: {
