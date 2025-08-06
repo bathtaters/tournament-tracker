@@ -1,25 +1,20 @@
-const {
-  customInterval: {
-    sanitize: { options: interval },
-  },
-} = require("../utils/validate.utils");
+import { customInterval } from "../utils/validate.utils";
+const interval = customInterval.sanitize.options;
 
-// Define Shared Vars
+// Common values
+const MAX_WINS = 10,
+  MAX_ROUNDS = 20;
+
 const sharedLimits = {
   title: { min: 1, max: 50 },
   player: { min: 0, max: 32 },
   rounds: { min: 1, max: 20 },
-  wins: { min: 0, max: 10 },
+  wins: { min: 0, max: MAX_WINS },
+  wincount: { min: 1, max: MAX_WINS },
   dates: { min: 0, max: 30 },
   slots: { min: 0, max: 10 },
+  activeRounds: { min: 0, max: MAX_ROUNDS + 1 },
 };
-
-sharedLimits.activeRounds = {
-  min: sharedLimits.rounds.min - 1,
-  max: sharedLimits.rounds.max + 1,
-};
-
-sharedLimits.wincount = { min: 1, max: sharedLimits.wins.max };
 
 const today = new Date().toISOString().slice(0, 10);
 const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000)
