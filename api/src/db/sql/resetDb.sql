@@ -17,6 +17,10 @@ USE %DB%;
 
 CREATE TYPE LOG_ACTION AS ENUM ('create', 'update', 'upsert', 'delete', 'login');
 
+CREATE TYPE EVENT_FORMAT AS ENUM ('swiss', 'robin', 'eliminate');
+
+CREATE TYPE TEAM_TYPE AS ENUM ('solo', 'unified', 'distributed');
+
 
 -- BASE TABLES --
 
@@ -36,10 +40,6 @@ CREATE TABLE player (
     credits DECIMAL DEFAULT 0,
     hide BOOL DEFAULT false,
 
-    -- Team
-    isteam BOOLEAN NOT NULL DEFAULT FALSE,
-    members UUID[] NULL,
-
     -- Index
     INDEX team_idx (isteam) STORING (name, members),
     INVERTED INDEX member_idx (members) WHERE isteam IS TRUE,
@@ -53,17 +53,23 @@ CREATE TABLE event (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     title STRING NULL,
+    notes STRING NOT NULL DEFAULT '',
+    link STRING NOT NULL DEFAULT '',
+    roundactive SMALLINT NOT NULL DEFAULT 0,
+
+    -- Schedule
     day DATE NULL,
     slot SMALLINT NOT NULL DEFAULT 0,
     plan SMALLINT NOT NULL DEFAULT 0,
-    players UUID[] NOT NULL DEFAULT '{}',
     playercount SMALLINT NOT NULL DEFAULT 8,
-    roundactive SMALLINT NOT NULL DEFAULT 0,
+
+    -- Settings
+    format EVENT_FORMAT DEFAULT 'swiss',
+    team TEAM_TYPE DEFAULT 'solo',
+    players UUID[] NOT NULL DEFAULT '{}',
     roundcount SMALLINT NOT NULL DEFAULT 3,
     wincount SMALLINT NOT NULL DEFAULT 2,
     playerspermatch SMALLINT NOT NULL DEFAULT 2,
-    notes STRING NOT NULL DEFAULT '',
-    link STRING NOT NULL DEFAULT '',
 
     -- Clock base (clocklimit set by user, others set by start/stop/etc)
     clocklimit INTERVAL NOT NULL DEFAULT '60 mins',
@@ -89,6 +95,17 @@ CREATE TABLE match (
     -- Indexes
     INDEX event_idx (eventid, round) STORING (players, draws, reported),
     INVERTED INDEX player_idx (players)
+);
+
+CREATE TABLE team (
+    -- Base
+    id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
+    eventid UUID REFERENCES event(id) ON DELETE CASCADE,
+    name STRING NULL,
+    players UUID[] NOT NULL DEFAULT '{}',
+
+    -- Indexes
+    INDEX event_idx (eventid) STORING (name, players)
 );
 
 CREATE TABLE voter (
