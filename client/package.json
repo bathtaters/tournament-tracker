@@ -56,7 +56,6 @@
     "@types/react": "^19.1.6",
     "daisyui": "^5.0.43",
     "react-scripts": "^5.0.0",
-    "remote-redux-devtools": "^0.5.16",
     "tailwindcss": "^4.1.8",
     "typescript": "^4.9.5",
     "web-vitals": "^5.0.2"
