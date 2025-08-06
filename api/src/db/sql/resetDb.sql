@@ -40,10 +40,6 @@ CREATE TABLE player (
     credits DECIMAL DEFAULT 0,
     hide BOOL DEFAULT false,
 
-    -- Index
-    INDEX team_idx (isteam) STORING (name, members),
-    INVERTED INDEX member_idx (members) WHERE isteam IS TRUE,
-
     -- Rules
     lower_name STRING AS (lower(name)) STORED,
     CONSTRAINT unique_name UNIQUE (lower_name)
@@ -62,6 +58,7 @@ CREATE TABLE event (
     slot SMALLINT NOT NULL DEFAULT 0,
     plan SMALLINT NOT NULL DEFAULT 0,
     playercount SMALLINT NOT NULL DEFAULT 8,
+    teamsize SMALLINT NOT NULL DEFAULT 1,
 
     -- Settings
     format EVENT_FORMAT DEFAULT 'swiss',
@@ -100,12 +97,11 @@ CREATE TABLE match (
 CREATE TABLE team (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
-    eventid UUID REFERENCES event(id) ON DELETE CASCADE,
     name STRING NULL,
     players UUID[] NOT NULL DEFAULT '{}',
 
     -- Indexes
-    INDEX event_idx (eventid) STORING (name, players)
+    INVERTED INDEX player_idx (players)
 );
 
 CREATE TABLE voter (
