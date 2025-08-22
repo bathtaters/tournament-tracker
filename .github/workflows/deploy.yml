@@ -41,7 +41,7 @@ env:
   DB_SSL_MODE: verify-full
   DB_CERT_PATH: $HOME/.postgresql/root.crt
   API_CFG_PATH: ./api/src/config/dbServer.json
-  SERVER_PATH: api/server.js
+  SERVER_PATH: api/server.ts
 
 jobs:
   build:

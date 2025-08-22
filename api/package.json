@@ -2,10 +2,10 @@
   "name": "tournament-tracker-api",
   "version": "2.0.1",
   "description": "Tournament Tracker backend",
-  "main": "./src/server.js",
+  "main": "src/server.ts",
   "scripts": {
     "start": "export NODE_ENV=production; node ./dist/server.js",
-    "dev": "export NODE_ENV=development; ts-node --watch ./src/server.js",
+    "dev": "export NODE_ENV=development; nodemon --watch src --ext ts,js,json src/server.ts",
     "build": "tsc",
     "sync": "ts-node ./src/config/exportToClient.js",
     "devdb": "cockroach start-single-node --insecure --store=path=\"$PWD/cockroach-data\" --listen-addr=localhost:36257 --sql-addr=localhost:26257 --http-addr=localhost:9095",
@@ -49,6 +49,7 @@
     "@types/pg": "^8.11.0",
     "@types/validator": "^13.12.0",
     "jest": "^30.0.2",
+    "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.0"
   }
