@@ -61,7 +61,7 @@ export const getRowKey = (row, i, keySuff) => {
   return row.id || `${row.label || "Key"}${keySuff}:${i}`;
 };
 
-/** array.reduce for nested array (Like array.flatMap is to array.map) */
+/** array.reduce for a nested array (Like array.flatMap is to array.map) */
 const flatReduce = (nestedArray, callback, initalValue = {}) => {
   if (Array.isArray(nestedArray))
     nestedArray.forEach((next) => flatReduce(next, callback, initalValue));

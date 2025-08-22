@@ -1,8 +1,8 @@
-// Logic for maniplulating classes
+// Logic for manipulating classes
 import { extractMatches } from "./dragDrop.utils";
 import {
-  COMMON_CLS,
   classDefault,
+  COMMON_CLS,
   optimizeClassSwapping,
 } from "./dragDrop.constants";
 
@@ -27,7 +27,7 @@ function getDefaultClasses(customBorder, customBgd, additional) {
   // Add in additional classes
   Object.keys(additional).forEach((c) => {
     if (!other[c]) return;
-    else if (typeof additional[c] === "string") other[c].push(additional[c]);
+    if (typeof additional[c] === "string") other[c].push(additional[c]);
     else if (Array.isArray(additional[c])) other[c].push(...additional[c]);
   });
 
@@ -52,7 +52,7 @@ export default function dragClassController(
   bgd,
   other,
   droppable,
-  draggable
+  draggable,
 ) {
   // Get default classes
   const classes = getDefaultClasses(border, bgd, other);

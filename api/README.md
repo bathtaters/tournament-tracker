@@ -1,6 +1,6 @@
 # Tournament Tracker API
 
-###### NOTE: See [/api/src/config/dbServer.md](./src/config/dbServer.md) before running for the first time.
+###### NOTE: See [/api/src/config/dbServer.md](/api/src/config/dbServer.md) before running for the first time.
 
 ### Current Major Version: v2
 
@@ -11,7 +11,7 @@ _Represented below by api/v[n]_
 ### _Meta_ - [Domain]/api/...
 
 | URL              | Method | Body | Return                          | Description                              |
-| ---------------- | ------ | ---- | ------------------------------- | ---------------------------------------- |
+|------------------|--------|------|---------------------------------|------------------------------------------|
 | /version         | GET    |      | "v[n]"                          | API version to use                       |
 | /v[n]/meta       | GET    |      | { connected: t, name, version } | API metadata                             |
 | /v[n]/error      | GET    |      | { error: message } (Code 418)   | Sample error for testing                 |
@@ -23,7 +23,7 @@ _Represented below by api/v[n]_
 ### _Base_ - [Domain]/api/v[n]/...
 
 | URL            | Method | Body               | Return                                                    | Description                                        |
-| -------------- | ------ | ------------------ | --------------------------------------------------------- | -------------------------------------------------- |
+|----------------|--------|--------------------|-----------------------------------------------------------|----------------------------------------------------|
 | /all           | GET    |                    | {settings,schedule,events,players}                        | All objects in DB                                  |
 | /schedule      | GET    |                    | { settings, schedule: { YYYY-MM-DD/none: [ eventids ] } } | Events by date + settings (uses settings.showplan) |
 | /schedule/plan | GET    |                    | { settings, schedule: { YYYY-MM-DD/none: [ eventids ] } } | Planned events by date + relevant settings         |
@@ -35,7 +35,7 @@ _Represented below by api/v[n]_
 ### _Session_ - [Domain]/api/v[n]/session/...
 
 | URL     | Method | Body               | Return           | Description                          |
-| ------- | ------ | ------------------ | ---------------- | ------------------------------------ |
+|---------|--------|--------------------|------------------|--------------------------------------|
 | /       | GET    |                    |                  | Fetch session cookie                 |
 | /player | GET    |                    | { playerData }   | Get player data from session cookie  |
 | /       | POST   | { name, password } | { success }      | Login (Links session to player)      |
@@ -47,7 +47,7 @@ _Represented below by api/v[n]_
 ### _Voter_ - [Domain]/api/v[n]/voter/...
 
 | URL   | Method | Body        | Return                           | Description               |
-| ----- | ------ | ----------- | -------------------------------- | ------------------------- |
+|-------|--------|-------------|----------------------------------|---------------------------|
 | /all  | GET    |             | { playerId: { playerVoteData } } | All vote data by playerID |
 | /[id] | GET    |             | { playerVoteData }               | Vote data for player      |
 | /     | POST   | { id }      | { id }                           | Add player as voter       |
@@ -57,19 +57,19 @@ _Represented below by api/v[n]_
 
 ### _Plan_ - [Domain]/api/v[n]/plan/...
 
-| URL       | Method | Body | Return         | Description                                          |
-| --------- | ------ | ---- | -------------- | ---------------------------------------------------- |
-| /status   | GET    |      | { planStatus } | Get plan status number                               |
-| /save     | POST   |      | [ events ]     | Add plan to schedule, de-scheduling exisiting events |
-| /generate | POST   |      | [ events ]     | Auto-set dates for plan events                       |
-| /         | DELETE |      | { success }    | Remove all voters/events from plan                   |
+| URL       | Method | Body | Return         | Description                                         |
+|-----------|--------|------|----------------|-----------------------------------------------------|
+| /status   | GET    |      | { planStatus } | Get plan status number                              |
+| /save     | POST   |      | [ events ]     | Add plan to schedule, de-scheduling existing events |
+| /generate | POST   |      | [ events ]     | Auto-set dates for plan events                      |
+| /         | DELETE |      | { success }    | Remove all voters/events from plan                  |
 
 ---
 
 ### _Event_ - [Domain]/api/v[n]/event/...
 
 | URL                  | Method | Body                | Return                                       | Description                                             |
-| -------------------- | ------ | ------------------- | -------------------------------------------- | ------------------------------------------------------- |
+|----------------------|--------|---------------------|----------------------------------------------|---------------------------------------------------------|
 | /all                 | GET    |                     | { id: { eventData }, ... }                   | Data from all events by ID                              |
 | /[id]                | GET    |                     | { eventData }                                | Data from a event                                       |
 | /all/stats           | GET    |                     | { playerid: { stats }, ..., ranking: [ids] } | Player stats from all events                            |
@@ -92,7 +92,7 @@ _Represented below by api/v[n]_
 ### _Match_ - [Domain]/api/v[n]/match/...
 
 | URL        | Method | Body                           | Return                     | Description                   |
-| ---------- | ------ | ------------------------------ | -------------------------- | ----------------------------- |
+|------------|--------|--------------------------------|----------------------------|-------------------------------|
 | /all       | GET    |                                | { id: { matchData }, ... } | Data from all matches by ID   |
 | /[id]      | GET    |                                | { matchData }              | Data from a match             |
 | /[id]      | POST   | { players, draws, drops }      | { eventid, id }            | Report match result           |
@@ -106,7 +106,7 @@ _Represented below by api/v[n]_
 ### _Player_ - [Domain]/api/v[n]/player/...
 
 | URL           | Method | Body           | Return                            | Description                                 |
-| ------------- | ------ | -------------- | --------------------------------- | ------------------------------------------- |
+|---------------|--------|----------------|-----------------------------------|---------------------------------------------|
 | /all          | GET    |                | { id: { playerData }, ... }       | Data from all players by ID                 |
 | /[id]         | GET    |                | { playerData }                    | Data from a player                          |
 | /[id]/events  | GET    |                | [ eventids ]                      | List of player's events                     |
@@ -120,13 +120,13 @@ _Represented below by api/v[n]_
 
 ## Database
 
-See [DB creation script](./src/db/sql/resetDb.sql) for the database layout.
+See [DB creation script](/api/src/db/sql/resetDb.sql) for the database layout.
 
 ## Updates
 
 - To update from v0 to v1
-  - Run [v1 update script](./src/db/sql/db_update_v0-v1.sql) on any v0 databases.
-  - Add `"pwsalt": "[random string]"` to [/api/src/config/dbServer.json](./src//config/dbServer.json)
+    - Run [v1 update script](/api/src/db/sql/db_update_v0-v1.sql) on any v0 databases.
+    - Add `"pwsalt": "[random string]"` to [/api/src/config/dbServer.json](/api/src/config/dbServer.json)
 - To update from v1 to v2
-  - Run [v2 update script](./src/db/sql/db_update_v1-v2.sql) on any v1 databases.
-  - Add `"sessionSecret": "[random string]"` to [/api/src/config/dbServer.json](./src//config/dbServer.json)
+    - Run [v2 update script](/api/src/db/sql/db_update_v1-v2.sql) on any v1 databases.
+    - Add `"sessionSecret": "[random string]"` to [/api/src/config/dbServer.json](/api/src/config/dbServer.json)

@@ -11,7 +11,7 @@ function round(eventData, matchData, oppData, allMatchups, autoReportByes) {
   };
 
   // Event has ended
-  if (matchBase.round == eventData.roundcount + 1) return matchBase;
+  if (matchBase.round === eventData.roundcount + 1) return matchBase;
 
   // Collect data for match generator
   let stats = eventData.roundactive
@@ -20,14 +20,14 @@ function round(eventData, matchData, oppData, allMatchups, autoReportByes) {
         eventData.players,
         { solo: oppData },
         true,
-        true
+        true,
       )
     : { ranking: eventData.players, noStats: true };
   if (!stats.ranking) stats.ranking = [];
   if (eventData.drops)
     stats.ranking = stats.ranking.filter((p) => !eventData.drops.includes(p));
 
-  // Generate match table (Can add more alogrithms later)
+  // Generate match table (Can add more algorithms later)
   const matchTable = matchGen(stats, { ...eventData, oppData, allMatchups });
 
   // Format for DB write (auto-reporting byes)

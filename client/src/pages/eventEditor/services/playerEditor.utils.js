@@ -6,11 +6,11 @@ export const playerExists = (player, allPlayers) => {
   return Object.values(allPlayers).some(
     (p) =>
       (eventEditor.checkTeamsForDupe || !p.isteam) &&
-      p.name.toLowerCase() === lower
+      p.name.toLowerCase() === lower,
   );
 };
 
-// Radomizes an array, optionally trimming it to a specific size
+// Randomizes an array, optionally trimming it to a specific size
 export const randomArray = (arr, size) => {
   if (typeof size !== "number" || size > arr.length) size = arr.length;
   let res = [],

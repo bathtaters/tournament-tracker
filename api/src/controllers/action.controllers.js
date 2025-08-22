@@ -59,7 +59,7 @@ async function nextRound(req, res) {
   if (!data) throw new Error("Event not found: " + id);
 
   if (data.roundactive + 1 !== roundactive)
-    throw new Error("Recieved too many round change requests.");
+    throw new Error("Received too many round change requests.");
 
   if (
     !data.players ||
@@ -87,7 +87,7 @@ async function nextRound(req, res) {
     matchData,
     oppData,
     allMatchups,
-    autoByes ? asType(autoByes) : autoByesDef
+    autoByes ? asType(autoByes) : autoByesDef,
   );
 
   // Create matches
@@ -112,7 +112,7 @@ async function prevRound(req, res) {
   if (round == null) throw new Error("No matches found.");
 
   if (round !== roundactive)
-    throw new Error("Recieved too many round change requests.");
+    throw new Error("Received too many round change requests.");
 
   await event.popRound(id, round, req);
 

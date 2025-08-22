@@ -1,8 +1,8 @@
 import React from "react";
 
 import Counter from "../../common/Counter";
-import { winClass, ByeStyle, WinsSeperator } from "../styles/CounterStyles";
-import { ReportButton, ClearReportButton } from "../styles/ButtonStyles";
+import { ByeStyle, winClass, WinsSeparator } from "../styles/CounterStyles";
+import { ClearReportButton, ReportButton } from "../styles/ButtonStyles";
 import { IncompleteStyle } from "../styles/ReportStyles";
 
 import { winValue } from "../services/match.services";
@@ -48,7 +48,7 @@ function WinsBox({ matchData, wincount, index, isEditing, setVal }) {
 
   return (
     <>
-      <WinsSeperator visible={index} />
+      <WinsSeparator visible={index} />
 
       <Counter
         isEditing={isEditing}
@@ -58,7 +58,7 @@ function WinsBox({ matchData, wincount, index, isEditing, setVal }) {
         className={winClass(
           matchData.wins && matchData.wins[index],
           isEditing,
-          matchData
+          matchData,
         )}
       />
     </>

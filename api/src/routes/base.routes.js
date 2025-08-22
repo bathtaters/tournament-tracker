@@ -11,7 +11,7 @@ const { testError } = require("../config/constants");
 router.get("/meta", (_, res) =>
   res.sendAndLog({ connected: true, name, version }),
 );
-router.get("/error", (_, res) => {
+router.get("/error", () => {
   throw testError;
 });
 

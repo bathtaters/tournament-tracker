@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { validList, getNonStaticSoloIdx } from "./suggestText.utils";
+import { getNonStaticSoloIdx, validList } from "./suggestText.utils";
 import {
-  hideListWhenEmpty,
   adaptEntry,
   adaptInput,
-  testEntry,
+  hideListWhenEmpty,
   logInvalidEntries,
+  testEntry,
 } from "./suggestText.custom";
 
 // Filter Suggestions logic
@@ -14,7 +14,7 @@ export function getSuggestions(
   value,
   setSuggestions,
   setExact,
-  hideStaticWhenEmpty
+  hideStaticWhenEmpty,
 ) {
   // Setup registers/constants
   const len = value.length;
@@ -49,7 +49,7 @@ export function getSuggestions(
 // Auto-select rules (Runs on list change)
 export const autoSelect = (selected, list) => {
   if (selected === -1 || !validList(list))
-    return -1; // deselect when no list / short-circut deselect
+    return -1; // deselect when no list / short-circuit deselect
   else if (selected < -1 || selected >= list.length)
     return 0; // select 1st entry if out of bounds
   else if (selected === -1) return getNonStaticSoloIdx(list);

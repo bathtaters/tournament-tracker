@@ -7,7 +7,7 @@ const combinationCount = (arrayLen, slotCount) =>
  * Test if any combination of indexes does not include a match.
  * @param {number[]} indexes - List of indexes to check
  * @param {number[][]} matches - Array containing matching indexes for each index
- * @returns {bool} - True if all indexes are matches
+ * @returns {boolean} - True if all indexes are matches
  */
 const isUnique = (indexes, matches) => {
   for (let a = 0; a < indexes.length; a++) {
@@ -27,7 +27,7 @@ const generateMatches = (array) =>
   array.map((base) =>
     array
       .map((_, i) => i)
-      .filter((i) => array[i].every((item) => !base.includes(item)))
+      .filter((i) => array[i].every((item) => !base.includes(item))),
   );
 
 /** Get the Nth combination of array items in slotCount slots
@@ -92,7 +92,7 @@ function* getUniqueCombinations(array, size) {
  * Generator that yields all combinations of array items of the given size.
  *   (No empties, order doesn't matter)
  * @param {any[]} array - Array containing any type of item
- * @param {number} size - Size of each combination to return
+ * @param {number} slotCount - Size of each combination to return
  * @returns {any[][]} - Next array of size 'size'
  */
 function* getCombinations(array, slotCount) {
@@ -123,7 +123,7 @@ function* getCombinations(array, slotCount) {
   }
 }
 
-/** Calculate count of all possible non-repetative combinations of items in slotCount slots, allowing empty slots */
+/** Calculate count of all possible non-repetitive combinations of items in slotCount slots, allowing empty slots */
 function permutationCount(arrayLength, slotCount, includeBlanks) {
   // Simple permutation formula
   if (!includeBlanks)
@@ -132,7 +132,7 @@ function permutationCount(arrayLength, slotCount, includeBlanks) {
       : fact(arrayLength) / fact(arrayLength - slotCount);
 
   // Flip array & slots order to prevent negative factorials
-  // The variables are interchangable when including blanks
+  // The variables are interchangeable when including blanks
   if (arrayLength < slotCount)
     return permutationCount(slotCount, arrayLength, includeBlanks);
 
@@ -153,7 +153,7 @@ function* getPermutations(array, slotCount, includeBlanks = false) {
   const maxIdx = array.length - +!includeBlanks,
     lastSlot = slotCount - 1;
   let indexes = Array.from({ length: slotCount }, (_, idx) =>
-    idx < array.length ? idx : maxIdx
+    idx < array.length ? idx : maxIdx,
   );
 
   for (let ptr = lastSlot; ptr >= 0; indexes[ptr]++) {

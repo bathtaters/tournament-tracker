@@ -59,7 +59,7 @@ exports.arrToObj =
 const minusKey = (obj, rmvKey) =>
   Object.keys(obj).reduce(
     (res, key) => (key === rmvKey ? res : { ...res, [key]: obj[key] }),
-    {}
+    {},
   );
 
 /** Fischer-Yates shuffle algorithm
@@ -97,13 +97,13 @@ exports.shuffle = (array) => {
  * Based off 'sortedIndex' by 'Web_Designer' on Stack Exchange
  * @param {Array} array - Array to insert into
  * @param {*} item - Item to insert in array
- * @param {isBefore:Boolean} [isBefore=((a,b)=>a<b)] - Callback to test order of items
- * @returns {Array} 'array' with 'item' (Modifys original 'array' also)
+ * @param {(entry: Any, item: Any) => boolean} [isBefore=((a,b)=>a<b)] - Callback to test order of items
+ * @returns {Array} 'array' with 'item' (Modifies original 'array' also)
  */
 exports.insertSorted = (
   array,
   item,
-  isBefore = (entry, item) => entry < item
+  isBefore = (entry, item) => entry < item,
 ) => {
   // Get index
   let low = 0,
@@ -222,7 +222,7 @@ const isCloneable = (value) => {
   if (
     value === null ||
     ["string", "number", "boolean", "undefined", "bigint"].includes(
-      typeof value
+      typeof value,
     )
   )
     return true;
@@ -256,7 +256,7 @@ const isDate = (date) =>
   !isNaN(date);
 
 /**
- * Rescursively search 'data' for Date objects
+ * Recursively search 'data' for Date objects
  * and convert them to date strings of form YYYY-MM-DD
  * @param {any} data
  * @returns Copy of data w/ converted dates
@@ -268,7 +268,7 @@ exports.toDateStr = (data) => {
   if (Array.isArray(data)) return data.map(exports.toDateStr);
   return Object.entries(data).reduce(
     (obj, [key, val]) => Object.assign(obj, { [key]: exports.toDateStr(val) }),
-    {}
+    {},
   );
 };
 

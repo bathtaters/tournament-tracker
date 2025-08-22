@@ -4,19 +4,19 @@ import { FocusTrap } from "focus-trap-react";
 
 import RawData from "./RawData";
 import {
-  AlertTitleStyle,
-  AlertMessageStyle,
-  AlertButtonWrapperStyle,
   AlertButton,
-  ModalStyle,
-  CloseButton,
+  AlertButtonWrapperStyle,
+  AlertMessageStyle,
   alertModalClass,
+  AlertTitleStyle,
+  CloseButton,
+  ModalStyle,
 } from "./styles/AlertStyles";
 
 import {
+  breakMessage,
   getButtonProps,
   useCloseAlert,
-  breakMessage,
 } from "./services/alert.services";
 import { useHotkeys } from "./services/basic.services";
 
@@ -25,7 +25,7 @@ import { useHotkeys } from "./services/basic.services";
   Message = body text
   ClassName = extra modal classes
   DefaultResult = result passed to Close when closed via window [X] or <Esc>
-  ShowClose = forces showing/not window close button (ie. [X]), otherwise shows only w/ no buttons
+  ShowClose = forces showing/not window close button (i.e., [X]), otherwise shows only w/ no buttons
   EscValue = false disables Esc, truthy makes EscValue close result on <Esc>, otherwise enables w/ defaultResult
   Buttons = [ ...buttonLabels ] (onClick => clickedButtonLabel)
     OR
@@ -48,7 +48,7 @@ function Alert() {
       Enter: () => document.activeElement?.click(), // Enter: Click if on a clickable object
       Escape: (escValue ?? true) ? () => close(escValue || undefined) : null,
     },
-    { skip: !isOpen, deps: [close] }
+    { skip: !isOpen, deps: [close] },
   );
 
   // Render Alert Component to AlertRoot

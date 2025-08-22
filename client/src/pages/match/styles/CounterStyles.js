@@ -21,7 +21,7 @@ export function WinsStyle({ children }) {
   );
 }
 
-export function WinsSeperator({ visible }) {
+export function WinsSeparator({ visible }) {
   if (!visible) return;
   return <span className="inline-block text-neutral-content">{" – "}</span>;
 }

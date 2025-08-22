@@ -1,5 +1,6 @@
 import { swapPlayerAlert } from "../../../assets/alerts";
 import { dragType } from "../../../assets/constants";
+
 export const dataType = dragType.player;
 
 // Helpers for swapping player arrays during optimistic updates
@@ -7,16 +8,16 @@ export const dataType = dragType.player;
 export const swapPlayerArrays = (
   baseArr,
   swapArr,
-  swapIndxes,
+  swapIndexes,
   baseKey = "players",
-  swapIdKey = "id"
+  swapIdKey = "id",
 ) => {
   [
-    baseArr[swapArr[0][swapIdKey]][baseKey][swapIndxes[0]],
-    baseArr[swapArr[1][swapIdKey]][baseKey][swapIndxes[1]],
+    baseArr[swapArr[0][swapIdKey]][baseKey][swapIndexes[0]],
+    baseArr[swapArr[1][swapIdKey]][baseKey][swapIndexes[1]],
   ] = [
-    baseArr[swapArr[1][swapIdKey]][baseKey][swapIndxes[1]],
-    baseArr[swapArr[0][swapIdKey]][baseKey][swapIndxes[0]],
+    baseArr[swapArr[1][swapIdKey]][baseKey][swapIndexes[1]],
+    baseArr[swapArr[0][swapIdKey]][baseKey][swapIndexes[0]],
   ];
 };
 

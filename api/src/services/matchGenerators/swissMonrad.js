@@ -27,7 +27,7 @@ const weight = {
 const getMatchupCount = (allMatchups, playerA, playerB) =>
   Number(
     allMatchups.find(({ id, opp }) => playerA === id && playerB === opp)
-      ?.count || 0
+      ?.count || 0,
   );
 
 // Calculate single player's base score
@@ -38,7 +38,7 @@ const getPlayerScore = (stats) =>
         (tot, key) =>
           tot +
           (key in stats && !isNaN(stats[key]) ? stats[key] * weight[key] : 0),
-        0
+        0,
       );
 
 // Calculate score of 2 players (base + rematch penalties)
@@ -58,7 +58,7 @@ const getSoloScore = (player, score, byes) =>
 const canBePaired = (player, opponents = [], playerOpps = [], minCount = 0) =>
   opponents.every(
     (opp) =>
-      opp !== player && playerOpps.filter((o) => o === opp).length === minCount
+      opp !== player && playerOpps.filter((o) => o === opp).length === minCount,
   );
 
 // Get minimum pairings, keyed by player
@@ -66,8 +66,8 @@ const getMinPairings = (oppData) =>
   Object.keys(oppData).reduce((acc, player) => {
     acc[player] = Math.min(
       ...Object.keys(oppData).map(
-        (opp) => oppData[player].filter((id) => id === opp).length
-      )
+        (opp) => oppData[player].filter((id) => id === opp).length,
+      ),
     );
     return acc;
   }, {});
@@ -79,7 +79,7 @@ const getMinMatchups = (match, opps, allMatchups) => {
   for (const opp of opps) {
     const count = match.reduce(
       (sum, player) => sum + getMatchupCount(allMatchups, player, opp),
-      0
+      0,
     );
     if (count < minVal) {
       minVal = count;
@@ -93,7 +93,7 @@ const getMinMatchups = (match, opps, allMatchups) => {
 
 function generateMatchups(
   stats,
-  { playerspermatch, byes, oppData, allMatchups }
+  { playerspermatch, byes, oppData, allMatchups },
 ) {
   // Randomize matches for initial pairing
   if (stats.noStats)
@@ -116,7 +116,7 @@ function slowAlgorithm(stats, { playerspermatch, byes, oppData, allMatchups }) {
   const playerScores = stats.ranking.reduce(
     (scores, player) =>
       Object.assign(scores, { [player]: getPlayerScore(stats[player]) }),
-    {}
+    {},
   );
 
   // Iterate over all possible match groupings, finding the lowest score
@@ -131,10 +131,10 @@ function slowAlgorithm(stats, { playerspermatch, byes, oppData, allMatchups }) {
           : // Standard match (average out scores of each player pair)
             avg(
               [...getCombinations(match, 2)].map(
-                getComboScore(playerScores, oppData, allMatchups || [])
-              )
-            )
-      )
+                getComboScore(playerScores, oppData, allMatchups || []),
+              ),
+            ),
+      ),
     );
     if (!isNaN(bestScore) && val >= bestScore) continue;
     bestScore = val;
@@ -150,7 +150,7 @@ function slowAlgorithm(stats, { playerspermatch, byes, oppData, allMatchups }) {
     });
     logger.error(
       "SWISS MONRAD Results:",
-      resultsLogObject(stats, playerScores, bestScore)
+      resultsLogObject(stats, playerScores, bestScore),
     );
     throw new Error("SWISS MONRAD failed to find best match pairing.");
   }
@@ -171,7 +171,7 @@ function noStatsAlgorithm(players, playerspermatch, allMatchups) {
     // Start match with next player
     const match = [remaining.values().next().value];
     remaining.delete(match[0]);
-    // Add best matches until match is full or you run out of players
+    // Add best matches until match is full, or you run out of players
     while (match.length < playerspermatch && remaining.size) {
       const opp = getMinMatchups(match, remaining, allMatchups);
       match.push(opp);
@@ -206,7 +206,7 @@ function fastAlgorithm(stats, { playerspermatch, byes, oppData }) {
               candidate,
               match,
               oppData[candidate],
-              minPairings[candidate]
+              minPairings[candidate],
             ))
         ) {
           player = candidate;
@@ -238,7 +238,7 @@ function fastAlgorithm(stats, { playerspermatch, byes, oppData }) {
             candidate,
             match,
             oppData[candidate],
-            minPairings[candidate]
+            minPairings[candidate],
           )
         ) {
           opponent = candidate;
@@ -264,7 +264,7 @@ function fastAlgorithm(stats, { playerspermatch, byes, oppData }) {
     });
     logger.error(
       "SWISS MONRAD Results:",
-      resultsLogObject(stats, playerScores, bestScore)
+      resultsLogObject(stats, playerScores, bestScore),
     );
     logger.error("Algorithm A failed, falling back on no pairing.");
     return getGroupsSimple(players, playerspermatch);

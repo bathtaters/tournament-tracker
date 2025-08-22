@@ -46,7 +46,7 @@ describe("arrToObj", () => {
     });
   });
 
-  it("non-object passesthrough w/ alert", () => {
+  it("non-object passes through w/ alert", () => {
     warnSpy.mockImplementationOnce(() => {});
 
     expect(arrToObj("key")("test")).toBe("test");
@@ -55,7 +55,7 @@ describe("arrToObj", () => {
     expect(warnSpy).toHaveBeenCalledWith("Expected object:", "string", "test");
   });
 
-  it("falsy value passesthrough w/o alert", () => {
+  it("falsy value passes through w/o alert", () => {
     expect(arrToObj("key")(0)).toBe(0);
 
     expect(warnSpy).not.toHaveBeenCalled();
@@ -65,7 +65,7 @@ describe("arrToObj", () => {
     warnSpy.mockImplementationOnce(() => {});
 
     expect(
-      arrToObj("key", { delKey: 0 })(testArray.concat({ value: 4 }))
+      arrToObj("key", { delKey: 0 })(testArray.concat({ value: 4 })),
     ).toEqual(expectedResult);
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
@@ -78,7 +78,7 @@ describe("arrToObj", () => {
     expect.assertions(1);
 
     expect(() =>
-      arrToObj("key", { delKey: 0 })(testArray.concat({ key: "a" }))
+      arrToObj("key", { delKey: 0 })(testArray.concat({ key: "a" })),
     ).toThrow("Object has duplicate key: [key] = a");
   });
 
@@ -101,14 +101,14 @@ describe("arrToObj", () => {
   it("combines duplicate keys if combo set", () => {
     // Convert results to arrays
     Object.keys(expectedResult).forEach(
-      (k) => (expectedResult[k] = [expectedResult[k]])
+      (k) => (expectedResult[k] = [expectedResult[k]]),
     );
     // Include duplicate key
     testArray.push({ key: "a", test: 1 });
     expectedResult.a.push({ key: "a", test: 1 });
     // Check
     expect(arrToObj("key", { delKey: 0, combo: 1 })(testArray)).toEqual(
-      expectedResult
+      expectedResult,
     );
   });
 });
@@ -171,8 +171,8 @@ describe("insertSorted", () => {
       insertSorted(
         [{ val: 2 }, { val: 4 }, { val: 6 }, { val: 8 }],
         { newVal: 7 },
-        (a, b) => a.val < b.newVal
-      )
+        (a, b) => a.val < b.newVal,
+      ),
     ).toEqual([{ val: 2 }, { val: 4 }, { val: 6 }, { newVal: 7 }, { val: 8 }]);
   });
 
@@ -226,8 +226,8 @@ describe("customMax", () => {
     expect(
       customMax(
         [{ n: 4 }, { n: 2 }, { n: 9, test: true }, { n: 7 }],
-        ({ n }) => n
-      )
+        ({ n }) => n,
+      ),
     ).toEqual({ n: 9, test: true });
   });
   it("calls getValue for each entry", () => {
@@ -267,8 +267,8 @@ describe("customMin", () => {
     expect(
       customMin(
         [{ n: 4 }, { n: 2, test: true }, { n: 9 }, { n: 7 }],
-        ({ n }) => n
-      )
+        ({ n }) => n,
+      ),
     ).toEqual({ n: 2, test: true });
   });
   it("calls getValue for each entry", () => {
@@ -430,21 +430,21 @@ describe("toDateStr", () => {
       "2021-03-19",
     ]);
     expect(
-      toDateStr({ a: new Date("2004-04-12"), test: "2", x: true })
+      toDateStr({ a: new Date("2004-04-12"), test: "2", x: true }),
     ).toEqual({ a: "2004-04-12", test: "2", x: true });
     expect(
       toDateStr({
         a: 1,
         test: [1, new Date(2021, 3 - 1, 19), true],
         x: new Date("2004-04-12"),
-      })
+      }),
     ).toEqual({ a: 1, test: [1, "2021-03-19", true], x: "2004-04-12" });
     expect(
       toDateStr([
         new Date(2021, 3 - 1, 19),
         { a: new Date("2004-04-12"), test: "2", x: true },
         true,
-      ])
+      ]),
     ).toEqual(["2021-03-19", { a: "2004-04-12", test: "2", x: true }, true]);
   });
 });
@@ -452,48 +452,48 @@ describe("toDateStr", () => {
 describe("getDayCount", () => {
   it("Correct count of days (inclusive)", () => {
     expect(getDayCount(new Date(2020, 0, 1), new Date(2020, 0, 2))).toBeCloseTo(
-      2
+      2,
     );
     expect(
-      getDayCount(new Date(2020, 0, 1), new Date(2020, 0, 10))
+      getDayCount(new Date(2020, 0, 1), new Date(2020, 0, 10)),
     ).toBeCloseTo(10);
     expect(
-      getDayCount(new Date(2012, 5, 4), new Date(2020, 0, 10))
+      getDayCount(new Date(2012, 5, 4), new Date(2020, 0, 10)),
     ).toBeCloseTo(2777, 1);
   });
   it("Count of days as decimal", () => {
     expect(
-      getDayCount(new Date(2020, 0, 1, 1, 20), new Date(2020, 0, 2, 23, 45))
+      getDayCount(new Date(2020, 0, 1, 1, 20), new Date(2020, 0, 2, 23, 45)),
     ).toBeCloseTo(2.93);
     expect(
-      getDayCount(new Date(2020, 0, 1, 11, 40), new Date(2020, 3, 10, 17, 30))
+      getDayCount(new Date(2020, 0, 1, 11, 40), new Date(2020, 3, 10, 17, 30)),
     ).toBeCloseTo(101.2, 1);
   });
   it("Same day is 1", () => {
     expect(getDayCount(new Date(2020, 0, 1), new Date(2020, 0, 1))).toBeCloseTo(
-      1
+      1,
     );
     expect(getDayCount(new Date(2012, 5, 4), new Date(2012, 5, 4))).toBeCloseTo(
-      1
+      1,
     );
   });
   it("Works with reversed day count", () => {
     expect(getDayCount(new Date(2020, 0, 2), new Date(2020, 0, 1))).toBeCloseTo(
-      2
+      2,
     );
     expect(
-      getDayCount(new Date(2020, 0, 10), new Date(2020, 0, 1))
+      getDayCount(new Date(2020, 0, 10), new Date(2020, 0, 1)),
     ).toBeCloseTo(10);
     expect(
-      getDayCount(new Date(2020, 0, 10), new Date(2012, 5, 4))
+      getDayCount(new Date(2020, 0, 10), new Date(2012, 5, 4)),
     ).toBeCloseTo(2777, 1);
   });
   it("reversed day count + decimal", () => {
     expect(
-      getDayCount(new Date(2020, 0, 2, 23, 45), new Date(2020, 0, 1, 1, 20))
+      getDayCount(new Date(2020, 0, 2, 23, 45), new Date(2020, 0, 1, 1, 20)),
     ).toBeCloseTo(2.93);
     expect(
-      getDayCount(new Date(2020, 3, 10, 17, 30), new Date(2020, 0, 1, 11, 40))
+      getDayCount(new Date(2020, 3, 10, 17, 30), new Date(2020, 0, 1, 11, 40)),
     ).toBeCloseTo(101.2, 1);
   });
 });
@@ -501,50 +501,50 @@ describe("getDayCount", () => {
 describe("datesAreEqual", () => {
   it("Dates are same", () => {
     expect(datesAreEqual(new Date(2020, 0, 1), new Date(2020, 0, 1))).toBe(
-      true
+      true,
     );
     expect(
-      datesAreEqual(new Date(2012, 5, 4), new Date(2012, 5, 4, 13, 4))
+      datesAreEqual(new Date(2012, 5, 4), new Date(2012, 5, 4, 13, 4)),
     ).toBe(true);
   });
   it("Dates are different", () => {
     expect(datesAreEqual(new Date(2020, 0, 1), new Date(2020, 0, 2))).toBe(
-      false
+      false,
     );
     expect(datesAreEqual(new Date(2012, 5, 4), new Date(2012, 5, 16))).toBe(
-      false
+      false,
     );
   });
   it("Months are different", () => {
     expect(datesAreEqual(new Date(2020, 0, 1), new Date(2020, 1, 1))).toBe(
-      false
+      false,
     );
     expect(datesAreEqual(new Date(2012, 5, 4), new Date(2012, 9, 4))).toBe(
-      false
+      false,
     );
   });
   it("Years are different", () => {
     expect(datesAreEqual(new Date(2020, 0, 1), new Date(2021, 0, 1))).toBe(
-      false
+      false,
     );
     expect(datesAreEqual(new Date(2012, 5, 4), new Date(1995, 5, 4))).toBe(
-      false
+      false,
     );
   });
   it("Full years are different", () => {
     expect(datesAreEqual(new Date(2020, 0, 1), new Date(1920, 0, 1))).toBe(
-      false
+      false,
     );
     expect(datesAreEqual(new Date(2012, 5, 4), new Date(2112, 5, 4))).toBe(
-      false
+      false,
     );
   });
   it("Everything is different", () => {
     expect(datesAreEqual(new Date(2020, 0, 1), new Date(2012, 5, 4))).toBe(
-      false
+      false,
     );
     expect(datesAreEqual(new Date(2022, 8, 12), new Date(2012, 2, 1))).toBe(
-      false
+      false,
     );
   });
 });

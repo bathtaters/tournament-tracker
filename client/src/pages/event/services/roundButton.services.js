@@ -1,10 +1,10 @@
-import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
-import { useNextRoundMutation, useClearRoundMutation } from "../event.fetch";
+import { useLockScreen, useOpenAlert } from "../../common/common.hooks";
+import { useClearRoundMutation, useNextRoundMutation } from "../event.fetch";
 
 import { deleteRoundAlert } from "../../../assets/alerts";
 import {
-  roundButtonText,
   roundButtonLockCaption,
+  roundButtonText,
   roundThresholdMsg,
 } from "../../../assets/constants";
 import { metadata } from "../../../core/services/validation.services";
@@ -79,7 +79,7 @@ export default function useRoundButton(event, disabled) {
   };
 }
 
-// Delete Round contoller
+// Delete Round controller
 export function useDeleteRound({ id, anyreported, roundactive } = {}) {
   const [prevRound] = useClearRoundMutation();
   const openAlert = useOpenAlert();
@@ -93,6 +93,6 @@ export function useDeleteRound({ id, anyreported, roundactive } = {}) {
         ? prevRound({ id, roundactive })
         : // Otherwise confirm deleting round data
           openAlert(deleteRoundAlert, 0).then(
-            (r) => r && prevRound({ id, roundactive })
+            (r) => r && prevRound({ id, roundactive }),
           );
 }

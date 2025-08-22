@@ -18,14 +18,14 @@ const logger = require("../utils/log.adapter");
  * @param {object} oppData - { eventid: { playerid: [ oppids, ... ], ... }, ... }
  * @param {boolean} [useMatchScore=true] - use matchScore (Within same event) vs percent (Comparing apples to oranges)
  * @param {boolean} [usePercentFloor=false] - use floor on percents, should be used only when determining pairings (See /config/constants {points.floor})
- * @returns - { ranking: [ playerids... ], playerid: { ...playerStats }, ... }
+ * @returns {object} - { ranking: [ playerids... ], playerid: { ...playerStats }, ... }
  */
 function stats(
   matchData,
   originalOrder,
   oppData,
   useMatchScore = true,
-  usePercentFloor = false
+  usePercentFloor = false,
 ) {
   let final = {};
 
@@ -45,7 +45,7 @@ function stats(
             ? // Combine entry
               combineStats(
                 current[player],
-                calcBase(playeridx, results, match, event)
+                calcBase(playeridx, results, match, event),
                 // New entry
               )
             : calcBase(playeridx, results, match, event);
@@ -56,7 +56,7 @@ function stats(
     // Append match/game rates
     Object.keys(current).forEach(
       (player) =>
-        (current[player] = calcRates(current[player], usePercentFloor))
+        (current[player] = calcRates(current[player], usePercentFloor)),
     );
 
     // Append opp match/game rates (& push to 'final')
@@ -65,7 +65,7 @@ function stats(
         ? // Combine entry
           combineFinal(
             final[player],
-            calcOpps(current[player], current, oppData[event][player])
+            calcOpps(current[player], current, oppData[event][player]),
             // New entry
           )
         : calcOpps(current[player], current, oppData[event][player]);
@@ -74,12 +74,12 @@ function stats(
 
   // Finalize records
   Object.keys(final).forEach(
-    (player) => (final[player] = finalize(final[player], usePercentFloor))
+    (player) => (final[player] = finalize(final[player], usePercentFloor)),
   );
 
   // Rank players
   final.ranking = (originalOrder || Object.keys(final)).sort(
-    rankSort(final, originalOrder, useMatchScore)
+    rankSort(final, originalOrder, useMatchScore),
   );
 
   return final;

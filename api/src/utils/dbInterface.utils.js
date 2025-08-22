@@ -37,14 +37,14 @@ exports.queryLabels = (objArray, keys) => {
     (_, idx) =>
       `(${[...Array(size)]
         .map((_, i) => "$" + (idx * size + i + 1))
-        .join(", ")})`
+        .join(", ")})`,
   );
 };
 
-// Get args from objArray based on keys (ie. objArray[0][keys[0]], etc)
+// Get args from objArray based on keys (i.e., objArray[0][keys[0]], etc)
 exports.queryValues = (objArray, keys) =>
   objArray.flatMap((colObj) =>
-    keys.filter((k) => k !== undefined).map((k) => colObj[k])
+    keys.filter((k) => k !== undefined).map((k) => colObj[k]),
   );
 
 // Run a quick SQL argument substitution using array rules only

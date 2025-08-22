@@ -1,5 +1,6 @@
 // Import info from package.json
 import pkg from "../../package.json";
+
 export const { version } = pkg;
 
 // -- User Messages -- \\
@@ -7,7 +8,7 @@ export const { version } = pkg;
 export const planMessage = {
   noPlan: "This plan is inactive right now.",
   notSignedIn: "Please sign in to vote.",
-  notVoter: "You are not a particpant in this plan.",
+  notVoter: "You are not a participant in this plan.",
 };
 
 // -- String Sets -- \\

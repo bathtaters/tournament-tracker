@@ -1,4 +1,4 @@
-// --- SHARED UTILITES FOR GENERATING MATCHES --- \\
+// --- SHARED UTILITIES FOR GENERATING MATCHES --- \\
 const {
   getCombinations,
   getUniqueCombinations,
@@ -11,7 +11,7 @@ const { shuffle } = require("../../utils/shared.utils");
  * Count item frequency in array
  * @param {Any} item - Item to count
  * @param {Any[]} array - Array of items
- * @returns {Number} Frequency of 'item' occurances in 'array'
+ * @returns {Number} Frequency of 'item' occurrences in 'array'
  */
 exports.count = (item, array) =>
   array ? array.filter((elem) => elem === item).length : 0;
@@ -48,7 +48,7 @@ exports.diff = (a, b) => (a > b ? a - b : b - a);
 /**
  * Return an array of the items in array A that are not in B
  * @param {Any[]} base - Base input array, items should not repeat
- * @param {Any[][]} array - Array to subtract from base, can be multi-dimensional
+ * @param {Any[][]} array - Array to subtract from base, can be multidimensional
  * @returns {Any[]} An array containing items in array A that are not in array B.
  */
 exports.remaining = (base, array) => {
@@ -73,7 +73,7 @@ exports.remaining = (base, array) => {
  * @returns {Any[][][]} Array of arrays containing each group as an array
  */
 exports.getGroups = function* (array, width) {
-  // Enforce width limits, avoid inifinte loops
+  // Enforce width limits, avoid infinite loops
   if (width < 1) width = 1;
   else if (width > array.length) width = array.length;
 
@@ -113,7 +113,7 @@ exports.getGroupsSimple = (array, width) => {
  * Create 2-D array, randomly grouping every 'elemSize' elements
  * @param {Any[]} array - Input array
  * @param {Number} groupSize - Size of innerArrays in result
- * @returns {Any[][]} 2-D result array
+ * @returns {Any[][] | Any[]} 2-D result array
  */
 exports.randomGroup = (array, groupSize) => {
   array = shuffle(array.slice());

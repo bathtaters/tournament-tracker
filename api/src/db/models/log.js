@@ -19,7 +19,7 @@ const simpleReq = ({ sessionID, session }) => ({
  * @param {TableName[]} [tables] - Only return entries for these tables
  * @param {boolean} [inclFailed] - If true include changes that did not succeed
  * @param {string} [tableid] - Only return entries with the provided tableId
- * @param {number} [limit] - Maximum number of entrie to return (0 to return all, Default: 100)
+ * @param {number} [limit] - Maximum number of entries to return (0 to return all, Default: 100)
  * @param {number} [offset] - Offset of first entry returned (Default: 0)
  * @returns {Promise<LogEntry[]>} - A list of matching log entries (Sorted from latest to oldest)
  */
@@ -28,14 +28,14 @@ const get = (
   tables,
   inclFailed,
   limit = DEFAULT_LIMIT,
-  offset = 0
+  offset = 0,
 ) =>
   db.getRows(
     "log",
     ...qry.logFilter(tables, timeRange, inclFailed),
     null,
     limit,
-    offset
+    offset,
   );
 
 /**
@@ -43,7 +43,7 @@ const get = (
  * @param {string} eventid - ID of Event to lookup entries for
  * @param {{ after?: Date, before?: Date }} [timeRange] - Time period to return entries within
  * @param {boolean} [inclFailed] - If true include changes that did not succeed
- * @param {number} [limit] - Maximum number of entrie to return (0 to return all, Default: 100)
+ * @param {number} [limit] - Maximum number of entries to return (0 to return all, Default: 100)
  * @param {number} [offset] - Offset of first entry returned (Default: 0)
  * @returns {Promise<LogEntry[]>} - A list of matching log entries (Sorted from latest to oldest)
  */
@@ -52,13 +52,13 @@ const getEvent = (
   timeRange,
   inclFailed = false,
   limit = DEFAULT_LIMIT,
-  offset = 0
+  offset = 0,
 ) => {
   let [sqlFilter, sqlArgs] = qry.logFilter(
     [TableName.EVENT, TableName.MATCH],
     timeRange,
     inclFailed,
-    eventid
+    eventid,
   );
   return db.getRows(
     "log",
@@ -66,7 +66,7 @@ const getEvent = (
     sqlArgs,
     null,
     limit,
-    offset
+    offset,
   );
 };
 
@@ -75,7 +75,7 @@ const getEvent = (
  * @param {string} playerid - ID of Player to lookup entries for
  * @param {{ after?: Date, before?: Date }} [timeRange] - Time period to return entries within
  * @param {boolean} [inclFailed] - If true include changes that did not succeed
- * @param {number} [limit] - Maximum number of entrie to return (0 to return all, Default: 100)
+ * @param {number} [limit] - Maximum number of entries to return (0 to return all, Default: 100)
  * @param {number} [offset] - Offset of first entry returned (Default: 0)
  * @returns {Promise<LogEntry[]>} - A list of matching log entries (Sorted from latest to oldest)
  */
@@ -84,7 +84,7 @@ const getPlayer = (
   timeRange,
   inclFailed = false,
   limit = DEFAULT_LIMIT,
-  offset = 0
+  offset = 0,
 ) =>
   db.getRows(
     "log",
@@ -92,11 +92,11 @@ const getPlayer = (
       [TableName.PLAYER, TableName.VOTER],
       timeRange,
       inclFailed,
-      [playerid]
+      [playerid],
     ),
     null,
     limit,
-    offset
+    offset,
   );
 
 /**
@@ -105,7 +105,7 @@ const getPlayer = (
  * @param {{ after?: Date, before?: Date }} [timeRange] - Time period to return entries within
  * @param {TableName[]} [tables] - Only return entries for these tables
  * @param {boolean} [inclFailed] - If true include changes that did not succeed
- * @param {number} [limit] - Maximum number of entrie to return (0 to return all, Default: 100)
+ * @param {number} [limit] - Maximum number of entries to return (0 to return all, Default: 100)
  * @param {number} [offset] - Offset of first entry returned (Default: 0)
  * @returns {Promise<LogEntry[]>} - A list of matching log entries (Sorted from latest to oldest)
  */
@@ -115,14 +115,14 @@ const getUser = (
   tables,
   inclFailed = false,
   limit = DEFAULT_LIMIT,
-  offset = 0
+  offset = 0,
 ) =>
   db.getRows(
     "log",
     ...qry.logFilter(tables, timeRange, inclFailed, null, [userid]),
     null,
     limit,
-    offset
+    offset,
   );
 
 /**
@@ -150,6 +150,7 @@ const getUserSessions = async ({ userid, sessionid } = {}) => {
  * Add one or more entries to the log
  * @param {LogEntry | LogEntry[]} entries - One entry or a list of entries to add
  * @param {Request} [req] - Request object to extract user and session IDs
+ * @param {string[]} [newlyDeletedUsers] - List of recently deleted user IDs
  * @returns {Promise<LogEntry[]>} - List of new log entries
  */
 const addEntries = (entries, req, newlyDeletedUsers) => {
@@ -176,8 +177,8 @@ const addEntries = (entries, req, newlyDeletedUsers) => {
 const rmvEntries = (ids) =>
   Promise.all(
     (Array.isArray(ids) ? ids : ids ? [ids] : []).map((id) =>
-      db.rmvRow("log", id)
-    )
+      db.rmvRow("log", id),
+    ),
   );
 
 // -- ENTRY OBJECTS -- \\
@@ -188,7 +189,7 @@ const addRows = async (
   dbtable,
   objArray,
   req,
-  { tableid, ...options } = {}
+  { tableid, ...options } = {},
 ) => {
   try {
     let res, entries;
@@ -210,7 +211,7 @@ const addRows = async (
           tableid: data.id ?? tableid,
           action: options.upsert ? LogAction.UPSERT : LogAction.CREATE,
         })),
-        req
+        req,
       );
     else
       await addEntries(
@@ -224,7 +225,7 @@ const addRows = async (
           action: options.upsert ? LogAction.UPSERT : LogAction.CREATE,
           error: "No return from insert operation.",
         })),
-        req
+        req,
       );
     return res;
   } catch (error) {
@@ -239,7 +240,7 @@ const addRows = async (
         action: options.upsert ? LogAction.UPSERT : LogAction.CREATE,
         error: error?.message || error?.toString() || "Unknown error",
       })),
-      req
+      req,
     );
     throw error;
   }
@@ -265,7 +266,7 @@ const updateRows = async (dbtable, rowId, objArray, req, options = {}) => {
             ? null
             : "No return from update operation. Most likely no rows were found.",
       })),
-      req
+      req,
     );
     return res;
   } catch (error) {
@@ -277,7 +278,7 @@ const updateRows = async (dbtable, rowId, objArray, req, options = {}) => {
         action: LogAction.UPDATE,
         error: error?.message || error?.toString() || "Unknown error",
       })),
-      req
+      req,
     );
     throw error;
   }
@@ -304,7 +305,7 @@ const rmvRows = async (dbtable, idOrArgs, sqlFilter, req, client) => {
           action: LogAction.DELETE,
         })),
         req,
-        entries.map(({ id }) => id)
+        entries.map(({ id }) => id),
       );
     else
       await addEntries(
@@ -315,7 +316,7 @@ const rmvRows = async (dbtable, idOrArgs, sqlFilter, req, client) => {
           error:
             "No return from delete operation. Most likely no rows were found.",
         },
-        req
+        req,
       );
     return res;
   } catch (error) {
@@ -326,7 +327,7 @@ const rmvRows = async (dbtable, idOrArgs, sqlFilter, req, client) => {
         action: LogAction.DELETE,
         error: error?.message || error?.toString() || "Unknown error",
       },
-      req
+      req,
     );
     throw error;
   }
@@ -349,22 +350,22 @@ const query = (text, args, logMap, req, splitArgs, client) =>
       if (res?.length)
         await addEntries(
           res.flatMap((data) => logMap(data)),
-          req
+          req,
         );
       else
         await addEntries(
           logMap(
             null,
-            "No result from DB operation. Most likely because no matches were found."
+            "No result from DB operation. Most likely because no matches were found.",
           ),
-          req
+          req,
         );
       return res;
     })
     .catch(async (error) => {
       await addEntries(
         logMap(null, error?.message || error?.toString() || "Unknown error"),
-        req
+        req,
       );
       throw error;
     });
@@ -373,8 +374,8 @@ const query = (text, args, logMap, req, splitArgs, client) =>
  * Simple logging for password attempts
  * @param {string} [userid] - User ID extracted from Request object (req.session.user)
  * @param {string} [sessionid] - Session ID extracted from Request object (req.sessionID)
- * @param {string} [error] - Error message of login attempt (Or null if login was successful)
- * @param {string} [name] - Name of user attempting to login
+ * @param {string} [error] - Error message from the login attempt (Or null if login was successful)
+ * @param {string} [name] - Name of user attempting to log in
  * @returns
  */
 const login = (userid, sessionid, error, name) =>

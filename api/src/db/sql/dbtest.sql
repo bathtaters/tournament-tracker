@@ -1,12 +1,12 @@
--- Select DB
+-- Select DB (Replace %DB% with the name of the database)
 USE %DB%;
 
 -- Erase all entries
 SET sql_safe_updates = FALSE;
-DELETE FROM settings *;
-DELETE FROM event *;
-DELETE FROM match *;
-DELETE FROM player *;
+DELETE FROM settings WHERE TRUE;
+DELETE FROM event WHERE TRUE;
+DELETE FROM match WHERE TRUE;
+DELETE FROM player WHERE TRUE;
 SET sql_safe_updates = TRUE;
 
 
@@ -43,7 +43,7 @@ INSERT INTO event (title, day, roundcount) VALUES
 INSERT INTO event (title, day, wincount, roundcount, playerspermatch, notes) VALUES
     ('CPY',  '2020-10-07', 1, 1, 4, 'Notes test');
 
--- Create Maches for Two-Headed AKH Event
+-- Create Matches for Two-Headed AKH Event
 INSERT INTO match (eventid, round, players, wins) VALUES
     (
         (SELECT id FROM event WHERE title = 'AKH'), 1,
@@ -74,7 +74,7 @@ INSERT INTO match (eventid, round, players, wins) VALUES
             WHERE isteam IS FALSE AND name = ANY('{"Cosme","Stack","Taylor","Henry"}')
         ), '{0,0,0,0}'
     ),(
--- Create Matches for noraml KLD event
+-- Create Matches for normal KLD event
         (SELECT id FROM event WHERE title = 'KLD'), 1,
         ARRAY(
             SELECT id FROM player@team_idx

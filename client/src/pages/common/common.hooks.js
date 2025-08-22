@@ -1,9 +1,9 @@
 import {
-  useState,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
-  useCallback,
+  useState,
 } from "react";
 import { useDispatch } from "react-redux";
 import { usePrefetch } from "./common.fetch";
@@ -11,11 +11,12 @@ import { useLockScreen } from "../../core/services/global.services";
 import { deepEquals, useThrottle } from "./services/basic.services";
 import { getLocalVar, setLocalVar } from "./services/fetch.services";
 import {
-  useOpenAlert,
-  useCloseAlert,
-  useAlertStatus,
   useAlertResult,
+  useAlertStatus,
+  useCloseAlert,
+  useOpenAlert,
 } from "./services/alert.services";
+
 export {
   useOpenAlert,
   useCloseAlert,
@@ -67,7 +68,7 @@ export function useLocalStorage(key, initial = null) {
         setLocalVar(key, value, dispatch);
       }
     },
-    [key, dispatch]
+    [key, dispatch],
   );
 
   return [state, updateValue, setState];
@@ -101,10 +102,10 @@ export const useSyncStateList = (propList) =>
  * Delay and throttle server updates while syncing to external value
  *
  * @param {any} value - External value to sync with.
- * @param {(val: any) => void} serverUpdate - Callback to update the server.
- * @param {Object} options
- * @param {(fn: Function) => Function} [options.throttle] - Throttle function wrapper.
- * @param {(a: any, b: any) => boolean} [options.isEqual] - Custom equality function.
+ * @param {(val: any) => void} updateServerCallback - Callback to update the server.
+ * @param {object} [options] - Options object.
+ * @param {(fn: Function) => Function} [options.throttleDelay] - Throttle function wrapper.
+ * @param {(a: any, b: any) => boolean} [options.equalsTest] - Custom equality function.
  *
  * @returns {[any, (val: any) => void]} - [localValue, setLocalValue]
  */
@@ -112,7 +113,7 @@ export const useSyncStateList = (propList) =>
 export function useServerValue(
   value,
   updateServerCallback,
-  { throttleDelay = 500, equalsTest } = {}
+  { throttleDelay = 500, equalsTest } = {},
 ) {
   // Init hooks
   const throttle = useThrottle(throttleDelay);
@@ -133,7 +134,7 @@ export function useServerValue(
       setLocal(newValue);
       throttle(() => updateServerCallback(newValue));
     },
-    [setLocal, throttle, updateServerCallback]
+    [setLocal, throttle, updateServerCallback],
   );
 
   // Return value & setter
@@ -142,7 +143,7 @@ export function useServerValue(
 export const useServerListValue = (
   listValue,
   updateServerCallback,
-  options = {}
+  options = {},
 ) =>
   useServerValue(listValue || [], updateServerCallback, {
     equalsTest: deepEquals,
@@ -152,7 +153,7 @@ export const useServerListValue = (
 // Scales height based on internal content (padding = vertical padding, everything is in pixels)
 export function useScaleToFitRef(
   depends = [],
-  { padding = 0, minHeight = 32 } = {}
+  { padding = 0, minHeight = 32 } = {},
 ) {
   const ref = useRef(null);
 
@@ -163,8 +164,8 @@ export function useScaleToFitRef(
         Math.max(ref.current.scrollHeight + padding, minHeight) + "px";
     },
     // eslint-disable-next-line
-    depends.concat(padding, minHeight)
-  ); // Re-render on depends change
+    depends.concat(padding, minHeight),
+  ); // Re-render on dependency change
 
   return ref;
 }

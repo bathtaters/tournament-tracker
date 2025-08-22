@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   getDefaultValues,
   getSetters,
-  submitTransform,
   resolveDotNotation,
+  submitTransform,
 } from "./inputForm.services";
 
 /**
@@ -28,19 +28,19 @@ export default function useFormController({
   // Generate static defaultValues & setters objects
   const defaultValues = useMemo(
     () => getDefaultValues(rows, baseData?.defaults),
-    [rows, baseData?.defaults]
+    [rows, baseData?.defaults],
   );
   const setters = useMemo(() => getSetters(rows), [rows]);
 
   const [isChanged, setChanged] = useState(false);
-  const [values, udpateValues] = useState(defaultValues);
+  const [values, updateValues] = useState(defaultValues);
 
   const updateValue = useMemo(
     () =>
       isChanged
         ? // Standard method
           (id, value) => {
-            udpateValues((vals) => ({
+            updateValues((vals) => ({
               ...vals,
               [id]: typeof value === "function" ? value(vals[id]) : value,
             }));
@@ -49,14 +49,14 @@ export default function useFormController({
           }
         : (id, value) => {
             setChanged(true);
-            udpateValues((vals) => ({
+            updateValues((vals) => ({
               ...vals,
               [id]: typeof value === "function" ? value(vals[id]) : value,
             }));
             onChange?.({ [id]: value });
             onEdit?.();
           },
-    [isChanged, onChange, onEdit]
+    [isChanged, onChange, onEdit],
   );
 
   const handleChange = useCallback(
@@ -66,14 +66,14 @@ export default function useFormController({
         typeof eventOrSetter === "function"
           ? eventOrSetter
           : eventOrSetter.target.type === "checkbox"
-          ? eventOrSetter.target.checked
-          : eventOrSetter.target.value
+            ? eventOrSetter.target.checked
+            : eventOrSetter.target.value,
       ),
-    [updateValue]
+    [updateValue],
   );
 
   const resetValues = useCallback(() => {
-    udpateValues({ ...defaultValues, ...data });
+    updateValues({ ...defaultValues, ...data });
     onChange?.({});
     setChanged(false);
   }, [defaultValues, data, onChange]);
@@ -85,7 +85,7 @@ export default function useFormController({
       onSubmit(newData);
       resetValues();
     },
-    [values, onSubmit, resetValues, setters]
+    [values, onSubmit, resetValues, setters],
   );
 
   useEffect(() => {

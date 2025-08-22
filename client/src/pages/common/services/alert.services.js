@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { openAlert, closeAlert } from "../../../core/store/alertSlice";
+import { closeAlert, openAlert } from "../../../core/store/alertSlice";
 
 // Filter for user input when opening new alert
 const optionFilter = ({
@@ -24,7 +24,7 @@ export function useOpenAlert() {
         .unwrap()
         .then((result) => (expected ? result === expected : result));
     },
-    [dispatch]
+    [dispatch],
   );
 }
 
@@ -67,7 +67,7 @@ export function getButtonProps(data, close, idx) {
   if (typeof data !== "object")
     throw new Error("Invalid alert button: " + JSON.stringify(data));
 
-  // If button data is object
+  // If button data is an object
   return {
     ...data, // all other values include as-is
 

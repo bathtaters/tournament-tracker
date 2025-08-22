@@ -65,10 +65,10 @@ export default function useEditableListController({
         idKey,
         nameKey,
         autofill,
-        // Get list of itemes that are not already selected
+        // Get list of items that are not already selected
         remaining: data
           ? Object.keys(data).filter(
-              (id) => !value?.includes(id) && (!filter || filter(data[id], id))
+              (id) => !value?.includes(id) && (!filter || filter(data[id], id)),
             )
           : [],
       };

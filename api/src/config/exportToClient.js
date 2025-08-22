@@ -1,4 +1,4 @@
-/** Copy JSON of validation/meta data from API to client */
+/** Copy JSON of validation/metadata from API to client */
 
 const fs = require("fs");
 const { join } = require("path");
@@ -11,7 +11,7 @@ const clientPath = join(
   "client",
   "src",
   "assets",
-  "validation.json"
+  "validation.json",
 );
 const data = JSON.stringify({ ...validation, meta });
 

@@ -16,7 +16,7 @@ export const clockPoll = (clockState, eventStatus = 2) =>
 
 /**
  * Return clock correctly formatted for API
- * @param {ClockData} clock - Clock data
+ * @param {{ clocklimit?: Interval, clockstart?: Date, clockmod?: Interval }} clock - Clock data
  * @returns {{ id: string, state: int, limit: Interval, remaining?: Interval, end?: Number }}
  */
 export function calcClock(clock) {
@@ -44,7 +44,7 @@ export function useTimer(endDate, remaining) {
   useEffect(() => {
     const interval = setInterval(
       () => setTimer(formatClock(endDate, remaining)),
-      clockFrequency.tick
+      clockFrequency.tick,
     );
     return () => clearInterval(interval);
   }, [endDate, remaining]);
@@ -109,7 +109,7 @@ export const isZero = (interval) =>
 const getState = (
   { clockmod },
   end = Number.POSITIVE_INFINITY,
-  remaining = null
+  remaining = null,
 ) =>
   end !== null
     ? end < Date.now()
@@ -144,7 +144,8 @@ const getEnd = ({ clockstart, clocklimit }) =>
 /**
  * Convert a date range into an interval
  * @param {Number} endDate - Date that timer ends (As a .getTime() number)
- * @returns {{hours?: int, minutes: int, seconds: int}} - Time until timer ends
+ * @param {Number} [startDate] - Date that timer ends (As a .getTime() number)
+ * @returns {{hours?: int, minutes?: int, seconds?: int}} - Time until timer ends
  */
 const getRange = (endDate, startDate = Date.now()) => {
   const time = (endDate - startDate) / 1000;
@@ -192,3 +193,12 @@ function toInterval(ms) {
     throw Error(`Clock is set too high: ${JSON.stringify(interval)}`);
   return interval;
 }
+
+/**
+ * @typedef {object} Interval
+ * @property {number} [hours] - The number of hours.
+ * @property {number} [minutes] - The number of minutes.
+ * @property {number} [seconds] - The number of seconds.
+ * @property {number} [milliseconds] - The number of milliseconds.
+ * @property {number} [days] - The number of days.
+ */
