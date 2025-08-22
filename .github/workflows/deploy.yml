@@ -13,18 +13,22 @@ on:
     inputs:
       # Defaults to DEV (For testing workflow)
       proc_name:
+        description: "Name of API process for PM2"
         required: false
         type: string
         default: "tournament-tracker-test"
       proc_port:
+        description: "API port for PM2"
         required: false
         type: number
         default: 3072
       remote_dir:
+        description: "Folder on remote host to deploy client to"
         required: false
         type: string
         default: "~/tt_test"
       db_name:
+        description: "Name of database used by API"
         required: false
         type: string
         default: "tt_test"
@@ -32,7 +36,7 @@ on:
 env:
   # Default to PROD (For push/pull workflow)
   PROC_NAME: ${{ inputs.proc_name || vars.PROC_NAME || 'tournament-tracker-backend' }}
-  PORC_PORT: ${{ inputs.proc_port || vars.PROC_PORT || 3070 }}
+  PROC_PORT: ${{ inputs.proc_port || vars.PROC_PORT || 3070 }}
   REMOTE_DIR: ${{ inputs.remote_dir || vars.REMOTE_DIR || '~/tournament-tracker' }}
   DB_NAME: ${{ inputs.db_name || vars.DB_NAME || 'tt_production' }}
   DB_USER: api
@@ -135,5 +139,5 @@ jobs:
         run: >
           ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}
           'source ~/.nvm/nvm.sh &&
-          PORT=${{ env.PORC_PORT }} npx --yes pm2 restart "${{ env.PROC_NAME }}" --update-env ||
-          PORT=${{ env.PORC_PORT }} npx --yes pm2 start ${{ env.REMOTE_DIR }}/${{ env.SERVER_PATH }} --name "${{ env.PROC_NAME }}"'
+          PORT=${{ env.PROC_PORT }} npx --yes pm2 restart "${{ env.PROC_NAME }}" --update-env ||
+          PORT=${{ env.PROC_PORT }} npx --yes pm2 start ${{ env.REMOTE_DIR }}/${{ env.SERVER_PATH }} --name "${{ env.PROC_NAME }}"'
