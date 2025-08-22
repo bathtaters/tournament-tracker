@@ -108,7 +108,7 @@ CREATE TABLE voter (
     id UUID PRIMARY KEY NOT NULL,
     days DATE[] NOT NULL DEFAULT '{}',
     events UUID[] NOT NULL DEFAULT '{}',
-    idx SMALLINT DEFAULT 0;
+    idx SMALLINT DEFAULT 0
 );
 
 CREATE TABLE log (
@@ -160,8 +160,8 @@ CREATE VIEW eventDetail (
     byes,
     drops
 ) AS SELECT
-    event.id, event.title, event.players, playercount, playerspermatch,
-    clocklimit, day, slot, roundactive, roundcount, wincount, notes, link,
+    event.id, MAX(event.title), MAX(event.players), MAX(playercount), MAX(playerspermatch),
+    MAX(clocklimit), MAX(day), MAX(slot), MAX(roundactive), MAX(roundcount), MAX(wincount), MAX(notes), MAX(link),
     BOOL_AND(reported),
     BOOL_OR(reported) FILTER(
         WHERE match.round = roundactive AND ARRAY_LENGTH(match.players, 1) != 1),
@@ -178,12 +178,12 @@ CREATE VIEW matchDetail (
     maxwins, totalwins,
     players, wins
 ) AS SELECT
-    match.id, eventid, round, reported,
-    draws, drops,
+    match.id, eventid, MAX(round), MAX(reported),
+    MAX(draws), MAX(drops),
     MAX(player.win), SUM(player.win),
-    players, wins
+    MAX(players), MAX(wins)
 FROM match, UNNEST(players,wins) player(id,win)
-GROUP BY match.id ORDER BY match.id;
+GROUP BY match.id, eventid ORDER BY match.id;
 
 
 -- INVERTED INDEX QUERIES --

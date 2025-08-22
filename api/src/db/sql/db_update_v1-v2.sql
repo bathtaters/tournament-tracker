@@ -62,8 +62,8 @@ CREATE VIEW eventDetail (
     byes,
     drops
 ) AS SELECT
-    event.id, event.title, event.players, playercount, playerspermatch,
-    clocklimit, day, slot, roundactive, roundcount, wincount, notes, link,
+    event.id, MAX(event.title), MAX(event.players), MAX(playercount), MAX(playerspermatch),
+    MAX(clocklimit), MAX(day), MAX(slot), MAX(roundactive), MAX(roundcount), MAX(wincount), MAX(notes), MAX(link),
     BOOL_AND(reported),
     BOOL_OR(reported) FILTER(
         WHERE match.round = roundactive AND ARRAY_LENGTH(match.players, 1) != 1),

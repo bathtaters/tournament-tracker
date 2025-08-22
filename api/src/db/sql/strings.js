@@ -60,7 +60,7 @@ exports.match = {
         FROM unnested a
         JOIN unnested b ON a.id = b.id
         WHERE a.player <> b.player
-    )
+    ) as p
     GROUP BY player1, player2;`,
 };
 
@@ -69,7 +69,7 @@ exports.voter = {
     `INSERT INTO voter (id, idx) VALUES ${ids
       .map((_, idx) => `($${idx * 2 + 1}::UUID, $${idx * 2 + 2})`)
       .join(
-        ", "
+        ", ",
       )} ON CONFLICT (id) DO UPDATE SET idx = EXCLUDED.idx RETURNING *;`,
   rmv: "DELETE FROM voter WHERE NOT(id = ANY($1)) RETURNING *;",
 };
@@ -84,7 +84,7 @@ exports.plan = {
 
 exports.log = {
   userSessions:
-    "SELECT userid, ARRAY_AGG(DISTINCT sessionid) AS sessionids FROM log GROUP BY userid WHERE NOT (action = 'login' AND error IS NOT NULL)",
+    "SELECT userid, ARRAY_AGG(DISTINCT sessionid) AS sessionids FROM log WHERE NOT (action = 'login' AND error IS NOT NULL) GROUP BY userid",
   nonNullFilter: "AND sessionid IS NOT NULL AND userid IS NOT NULL",
   sessionFilter: "AND sessionid = $1 AND userid IS NOT NULL",
   userFilter: "AND userid = $1 AND sessionid IS NOT NULL",
@@ -93,7 +93,7 @@ exports.log = {
     sqlFilter.replace(
       /tableid = [^$]+(\$\d+)[^\s]+/,
       (_, p) =>
-        `(tableid = ${p} OR tableid IN (SELECT id::STRING FROM match WHERE eventid = ${p}::UUID))`
+        `(tableid = ${p} OR tableid IN (SELECT id::STRING FROM match WHERE eventid = ${p}::UUID))`,
     ),
 };
 
@@ -104,7 +104,7 @@ function logFilter(
   inclFailed,
   tableids,
   userids,
-  timeSort = true
+  timeSort = true,
 ) {
   let sqlFilters = [],
     args = [];
