@@ -1,4 +1,5 @@
 import { customInterval } from "../utils/validate.utils";
+
 const interval = customInterval.sanitize.options;
 
 // Common values
@@ -24,7 +25,7 @@ const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000)
 // ---------- TYPES ---------- //
 export const types = {
   settings: {
-    setting: "string",
+    id: "string",
     title: "string",
     showrawjson: "boolean",
     autofillsize: "int",

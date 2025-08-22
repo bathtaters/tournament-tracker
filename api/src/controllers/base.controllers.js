@@ -36,10 +36,10 @@ async function getAll(_, res) {
 
 // Settings
 async function getSetting(req, res) {
-  const { setting } = matchedData(req);
-  const settingsData = await setting.get(setting);
-  if (!settingsData) throw new Error(setting + " setting not found.");
-  return res.sendAndLog(asType(settingsData));
+  const { id } = matchedData(req);
+  const raw = await setting.get(id);
+  if (!raw) throw new Error(`'${id}' setting not found.`);
+  return res.sendAndLog({ decoded: asType(raw), ...raw });
 }
 
 async function getSettings(req, res) {
@@ -88,7 +88,7 @@ const getSchedule = (planOnly) =>
 // RESET DB
 const resetDB = (full) => (_, res) =>
   resetDatabase(full, true).then((r) =>
-    res.sendAndLog({ reset: Boolean(r & 1), full: Boolean(r & 2) })
+    res.sendAndLog({ reset: Boolean(r & 1), full: Boolean(r & 2) }),
   );
 
 module.exports = {

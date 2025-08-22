@@ -9,7 +9,7 @@ const { testError } = require("../config/constants");
 
 // Test Api
 router.get("/meta", (_, res) =>
-  res.sendAndLog({ connected: true, name, version })
+  res.sendAndLog({ connected: true, name, version }),
 );
 router.get("/error", (_, res) => {
   throw testError;
@@ -20,7 +20,7 @@ router.get("/all", controller.getAll);
 
 // Settings
 router.get("/settings", controller.getSettings);
-router.get("/settings/:setting", validate.getSetting, controller.getSetting);
+router.get("/settings/:id", validate.getSetting, controller.getSetting);
 router.patch("/settings", validate.setSettings, controller.setSettings);
 
 // Schedule
