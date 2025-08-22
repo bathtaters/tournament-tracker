@@ -8,6 +8,9 @@
 # credentials
 dbServer.json
 
+# IDE config
+.idea
+
 # dev-only testing files
 /*/coverage
 /api/cockroach-data
