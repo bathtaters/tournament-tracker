@@ -18,6 +18,7 @@ dbServer.json
 # production
 /client/build
 /api/dist
+*.tsbuildinfo
 /deploy.sh
 
 # generated
