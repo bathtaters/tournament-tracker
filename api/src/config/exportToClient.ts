@@ -1,9 +1,9 @@
 /** Copy JSON of validation/metadata from API to client */
 
-const fs = require("fs");
-const { join } = require("path");
-const meta = require("../config/meta");
-const validation = require("../config/validation");
+import fs from "fs";
+import { join } from "path";
+import meta from "../config/meta";
+import * as validation from "../config/validation";
 
 const clientPath = join(
   meta.rootPath,

@@ -7,7 +7,7 @@
     "start": "export NODE_ENV=production; node ./dist/server.js",
     "dev": "export NODE_ENV=development; nodemon --watch src --ext ts,js,json src/server.ts",
     "build": "tsc -b src",
-    "sync": "ts-node ./src/config/exportToClient.js",
+    "sync": "ts-node src/config/exportToClient.ts",
     "devdb": "cockroach start-single-node --insecure --store=path=\"$PWD/cockroach-data\" --listen-addr=localhost:36257 --sql-addr=localhost:26257 --http-addr=localhost:9095",
     "test": "jest",
     "initdb": "./src/config/initDB.sh --host=localhost:26257 --user=root --database=defaultdb --insecure"
