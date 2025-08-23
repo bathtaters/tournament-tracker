@@ -1,7 +1,7 @@
 const { intervalKeys, intervalString } = require("./dbInterface.utils");
 
 // Decode validation types to [fullStr, typeStr, leaveWhiteSpace (*), isArray ([]|[?]), isOptional (?)]
-const typeRegex = /^([^[?*]+)(\*)?(\[\??\])?(\?)?$/;
+const typeRegex = /^([^[?*]+)(\*)?(\[\??])?(\?)?$/;
 exports.getTypeArray = (typeStr) => typeStr && typeStr.match(typeRegex);
 
 // Setup date-only parsing
@@ -51,7 +51,7 @@ exports.escapedLength = ({ options, errorMessage }) => ({
 
     let count = 0,
       isEsc = false,
-      reserve;
+      reserve = null;
     for (const c of value) {
       if (c === ESC_START) {
         if (reserve) count += reserve;

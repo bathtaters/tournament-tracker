@@ -71,12 +71,3 @@ export const editorButtonLayout = (eventid, clickDelete, clickCancel) =>
       ]
     : []
   ).concat({ label: "Cancel", onClick: clickCancel });
-
-export const suggestListLayout = (players, data) =>
-  players
-    .map((id) => ({ id, value: data[id].name }))
-    .concat({
-      value: "Add Player",
-      isStatic: true,
-      className: "italic text-normal",
-    });

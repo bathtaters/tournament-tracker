@@ -46,12 +46,7 @@ export function EntryTitleStyle({ status, children }) {
 }
 
 export function EntryLinkStyle({ to, status, children }) {
-  if (!to)
-    return (
-      <div to={to} className={baseEntryClass}>
-        {children}
-      </div>
-    );
+  if (!to) return <div className={baseEntryClass}>{children}</div>;
   return (
     <Link
       to={to}

@@ -11,7 +11,7 @@ exports.asType = ({ value, type }) => {
     case "date":
       return new Date(value);
     case "boolean":
-      return !value || value === "false" ? false : true;
+      return !!value && value !== "false";
     case "object":
     default:
       return value ? JSON.parse(value) : value;
@@ -30,10 +30,9 @@ const toType = (value, type) => {
     case "date":
       if (value.toISOString) return value.toISOString();
       else logger.warn("non-date passed as date", value);
-    case "object":
-    default:
-      return value && JSON.stringify(value);
+    // case "object": ... Do nothing ...
   }
+  return value && JSON.stringify(value);
 };
 
 const getType = (value, forceType) => {
@@ -49,5 +48,5 @@ exports.toObjArray = (settings) =>
 exports.fromObjArray = (settingsArr) =>
   (settingsArr || []).reduce(
     (settings, entry) => ({ ...settings, [entry.id]: exports.asType(entry) }),
-    {}
+    {},
   );

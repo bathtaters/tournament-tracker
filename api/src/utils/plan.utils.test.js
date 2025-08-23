@@ -18,7 +18,7 @@ expect(unrankedPenalty).toBe(-1); // <- Update if factor changes
 // Mock dependencies
 jest.mock("./shared.utils", () => ({
   toDateStr: jest.fn((date) => (date instanceof Date ? "DATE" : date)),
-  getDayCount: jest.fn((start, end) => 1),
+  getDayCount: jest.fn((_, __) => 1),
 }));
 
 jest.mock("../services/settings.services", () => ({

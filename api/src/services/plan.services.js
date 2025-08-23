@@ -199,7 +199,8 @@ async function generatePlan(events, voters, settings = {}) {
     voter.targetEvents = voter.participateRatio * eventCount;
   });
 
-  let adjustTotal = (lastTotal = null);
+  let adjustTotal = null,
+    lastTotal = null;
   const oneEvent = 1 / eventCount, // value of 1 event after weighting
     halfEvent = 1 / eventCount / 2; // value of 0.5 events after weighting
   do {
@@ -222,7 +223,9 @@ async function generatePlan(events, voters, settings = {}) {
             : null;
       if (isPos == null) continue; // Less than 1 event off
 
-      let swapSlot, swapVoter, swapValue;
+      let swapSlot = null,
+        swapVoter = null,
+        swapValue = null;
       // Check all voters for best swap
       for (const swapId in adjustVoters) {
         // Assign add/rmv voters

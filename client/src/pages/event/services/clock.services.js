@@ -103,14 +103,10 @@ export const isZero = (interval) =>
  * Get State of event clock
  * @param {{ clockstart?: Date, clockmod?: Interval }} clockData
  * @param {Number} [end]
- * @param {Interval} remaining
+ * @param {Interval} [remaining]
  * @returns {Number} - [0: stopped, 1: running, 2: paused, 3: ended]
  */
-const getState = (
-  { clockmod },
-  end = Number.POSITIVE_INFINITY,
-  remaining = null,
-) =>
+const getState = ({ clockmod }, end = Number.POSITIVE_INFINITY, remaining) =>
   end !== null
     ? end < Date.now()
       ? 3

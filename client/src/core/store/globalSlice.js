@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isFetching: true,
@@ -42,9 +42,9 @@ export const lockScreenUntilLoaded = createAsyncThunk(
         }
       });
     });
-  }
+  },
 );
 
-export const { setFetch, lockScreen, unlockScreen } = globalSlice.actions;
+export const { setFetch } = globalSlice.actions;
 
 export default globalSlice.reducer;

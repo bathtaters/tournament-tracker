@@ -1,5 +1,6 @@
 import { dayClass } from "../styles/ScheduleStyles";
 import { isTempId } from "../../common/services/basic.services";
+
 export { isTempId };
 
 // Key for Unscheduled events
@@ -14,10 +15,6 @@ export const getToday = () => toDate(new Date());
 // Convert Date String to Object
 export const toDateObj = (dt) =>
   dt === noDate ? null : new Date(dt + "T00:00");
-
-// Test if an object is a date
-export const isDate = (dt) =>
-  dt != null && typeof dt === "object" && typeof dt.getMonth === "function";
 
 // Build array of days from start/end dates
 export function getDays(start, end) {
@@ -66,6 +63,6 @@ export function serializeDates(obj) {
   else if (Array.isArray(obj)) return obj.map((val) => serializeDates(val));
   return Object.keys(obj).reduce(
     (coll, key) => ({ ...coll, key: serializeDates(obj[key]) }),
-    {}
+    {},
   );
 }

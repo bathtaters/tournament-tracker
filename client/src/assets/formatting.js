@@ -19,8 +19,6 @@ export const formatRecord = (record, braces = true) =>
   (record || ["", ""]).join(" - ") +
   (braces ? " ]" : "");
 
-export const formatNum = (num) => (num == null ? "-" : num);
-
 export const formatPercent = (decimal) =>
   decimal == null ? "- %" : Math.round(decimal * 1000) / 10 + "%";
 
@@ -37,13 +35,13 @@ export const formatCopyRound = (matchList, matches, players) =>
               // Wins
               (matches[matchId].reported
                 ? ` (${matches[matchId].wins?.[idx]})`
-                : "")
+                : ""),
           )
           .join(" vs. ") +
         // Draws
         (!matches[matchId]?.draws || !matches[matchId].reported
           ? ""
-          : ` (+${matches[matchId].draws} draw${matches[matchId].draws > 1 ? "s" : ""})`)
+          : ` (+${matches[matchId].draws} draw${matches[matchId].draws > 1 ? "s" : ""})`),
     )
     .join("\n");
 
@@ -51,7 +49,7 @@ export const formatCopySeats = (
   matchList,
   matches,
   players,
-  playerspermatch
+  playerspermatch,
 ) => {
   const playerList = [];
   for (let p = 0; p < playerspermatch; p++) {

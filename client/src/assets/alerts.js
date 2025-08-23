@@ -42,17 +42,6 @@ export const createItemAlert = (type, name) => ({
   buttons: [{ value: "Create", className: "btn-success" }, "Cancel"], // [0]=Y
 });
 
-export const unsavedPlayerAlert = (name) => ({
-  title: "Add Player?",
-  message: `Would you like to add ${name || defPlayer} before saving?`,
-  buttons: [
-    // [0]=Y+, [1]=Y-, [2]=N
-    { value: "Add", className: "btn-success" },
-    { value: "Drop", className: "btn-error" },
-    "Back",
-  ],
-});
-
 // --- Event Alerts --- \\
 
 export const clearReportAlert = (title) => ({
@@ -171,5 +160,5 @@ export const itemCreateError = (type, { error }, { name }) =>
   new Error(
     error?.data?.error
       ? error.data.error
-      : `${type} "${name}" was not able to be added.`
+      : `${type} "${name}" was not able to be added.`,
   );

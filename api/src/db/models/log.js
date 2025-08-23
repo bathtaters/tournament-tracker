@@ -18,7 +18,6 @@ const simpleReq = ({ sessionID, session }) => ({
  * @param {{ after?: Date, before?: Date }} [timeRange] - Time period to return entries within
  * @param {TableName[]} [tables] - Only return entries for these tables
  * @param {boolean} [inclFailed] - If true include changes that did not succeed
- * @param {string} [tableid] - Only return entries with the provided tableId
  * @param {number} [limit] - Maximum number of entries to return (0 to return all, Default: 100)
  * @param {number} [offset] - Offset of first entry returned (Default: 0)
  * @returns {Promise<LogEntry[]>} - A list of matching log entries (Sorted from latest to oldest)

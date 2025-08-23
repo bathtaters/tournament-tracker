@@ -95,8 +95,6 @@ export function useSyncState(extValue, isEqual) {
 
   return [intVal, setIntVal];
 }
-export const useSyncStateList = (propList) =>
-  useSyncState(propList || [], deepEquals);
 
 /**
  * Delay and throttle server updates while syncing to external value
@@ -104,7 +102,7 @@ export const useSyncStateList = (propList) =>
  * @param {any} value - External value to sync with.
  * @param {(val: any) => void} updateServerCallback - Callback to update the server.
  * @param {object} [options] - Options object.
- * @param {(fn: Function) => Function} [options.throttleDelay] - Throttle function wrapper.
+ * @param {number} [options.throttleDelay] - Delay (in ms) before updating the server.
  * @param {(a: any, b: any) => boolean} [options.equalsTest] - Custom equality function.
  *
  * @returns {[any, (val: any) => void]} - [localValue, setLocalValue]

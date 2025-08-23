@@ -46,7 +46,7 @@ describe("Plan Services", () => {
 
     // Mock settings services
     toObjArray.mockImplementation((obj) =>
-      Object.entries(obj).map(([id, value]) => ({ id, value }))
+      Object.entries(obj).map(([id, value]) => ({ id, value })),
     );
     asType.mockReturnValue(3); // planstatus = 3 (in progress)
 
@@ -62,13 +62,13 @@ describe("Plan Services", () => {
   describe("generatePlan", () => {
     it("should throw an error with insufficient data", async () => {
       await expect(generatePlan([], [], {})).rejects.toThrow(
-        "Insufficient data"
+        "Insufficient data",
       );
       await expect(generatePlan(null, [], {})).rejects.toThrow(
-        "Insufficient data"
+        "Insufficient data",
       );
       await expect(generatePlan([{ id: "event1" }], [], {})).rejects.toThrow(
-        "Insufficient data"
+        "Insufficient data",
       );
     });
 
@@ -82,7 +82,7 @@ describe("Plan Services", () => {
       };
 
       await expect(generatePlan(events, voters, settings)).rejects.toThrow(
-        "Invalid event player count"
+        "Invalid event player count",
       );
     });
 
@@ -98,7 +98,7 @@ describe("Plan Services", () => {
       };
 
       await expect(generatePlan(events, voters, settings)).rejects.toThrow(
-        "No events have been voted for"
+        "No events have been voted for",
       );
     });
 
@@ -143,7 +143,7 @@ describe("Plan Services", () => {
 
       // Verify that a slot 3 exists (i.e. planslots=3 was used over dayslots=2)
       expect(result).toEqual(
-        expect.arrayContaining([expect.objectContaining({ slot: 3 })])
+        expect.arrayContaining([expect.objectContaining({ slot: 3 })]),
       );
 
       // Verify that getDayCount was called
@@ -213,6 +213,7 @@ describe("Plan Services", () => {
               1 -
               Math.floor((eventDate - startDate) / (24 * 60 * 60 * 1000))) *
               settings.dayslots;
+          expect(voter.ignoreSlots).toBeInstanceOf(Array);
           expect(voter.ignoreSlots).not.toContain(slotIndex);
         }
       }
@@ -220,7 +221,7 @@ describe("Plan Services", () => {
       // Verify progress updates were called
       expect(batchSet).toHaveBeenCalled();
       expect(toObjArray).toHaveBeenCalledWith(
-        expect.objectContaining({ planprogress: expect.any(Number) })
+        expect.objectContaining({ planprogress: expect.any(Number) }),
       );
     });
 

@@ -15,7 +15,7 @@ const { randomInt } = require("crypto");
  * @param {Boolean} [options.delKey=false] - Truthy will delete entry['key'] after assigning it to result object['key']
  * @param {Boolean} [options.combo=false] - Truthy will combine matching keys as array, otherwise throws error
  * @param {String} [options.valKey] - If entered will use entry['valKey'] instead of entry in result object
- * @returns {convertArray:Object} function to convert input array into result object
+ * @returns {(convertArray: any) => any} function to convert input array into result object
  */
 exports.arrToObj =
   (key, { delKey = false, valKey = null, combo = false } = {}) =>
@@ -69,7 +69,7 @@ exports.shuffle = (array) => {
     randomIndex;
 
   // While there remain elements to shuffle...
-  while (currentIndex != 0) {
+  while (currentIndex !== 0) {
     // Pick a remaining element...
     randomIndex = randomInt(currentIndex);
     currentIndex--;
@@ -226,8 +226,7 @@ const isCloneable = (value) => {
     )
   )
     return true;
-  if (isDate(value)) return true;
-  return false;
+  return isDate(value);
 };
 
 /** Sanitize data to be passed through a thread (Removes all invalid data) */

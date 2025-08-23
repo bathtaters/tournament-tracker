@@ -12,6 +12,7 @@ ALTER TABLE player ADD COLUMN hide BOOL DEFAULT false;
 -----------------
 CREATE TYPE LOG_ACTION AS ENUM ('create', 'update', 'delete', 'login');
 
+-- noinspection Annotator
 CREATE TABLE log (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),

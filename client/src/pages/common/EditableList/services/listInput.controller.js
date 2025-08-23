@@ -11,7 +11,6 @@ export default function useListInputController({
   onFirstEdit,
   pushItem,
   create,
-  onSubmit,
 }) {
   // Setup state
   const [isHidden, setHide] = useState(true);
@@ -46,7 +45,7 @@ export default function useListInputController({
       isHidden,
       onSubmit: submitHandler,
       hideStaticWhenEmpty: create.hideOnEmpty,
-    }
+    },
   );
 
   return {

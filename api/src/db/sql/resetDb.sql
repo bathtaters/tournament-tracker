@@ -111,6 +111,7 @@ CREATE TABLE voter (
     idx SMALLINT DEFAULT 0
 );
 
+-- noinspection Annotator
 CREATE TABLE log (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),

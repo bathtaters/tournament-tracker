@@ -2,8 +2,8 @@ const db = require("./interface");
 const player = require("../models/player");
 const settings = require("../models/settings");
 const team = require("../models/team");
-const event = require("../db/controllers/event");
-const match = require("../db/controllers/match");
+const event = require("../models/event");
+const match = require("../models/match");
 const clock = require("../models/clock");
 
 const initTestFile = require("path").join(__dirname, "dbtest.sql");
@@ -23,15 +23,15 @@ async function dbCheck() {
     (a) =>
       console.log(
         "getPlayIds:",
-        a.map((p) => p.name)
-      ) || a.map((p) => p.id)
+        a.map((p) => p.name),
+      ) || a.map((p) => p.id),
   );
   const useEvent = await event
     .list()
-    .then((r) => r.find((d) => d.title == "KLD"));
+    .then((r) => r.find((d) => d.title === "KLD"));
   const altEvent = await event
     .list()
-    .then((r) => r.find((d) => d.title == "CPY"));
+    .then((r) => r.find((d) => d.title === "CPY"));
 
   /* TEST SETTINGS
     await settings.getAll().then(console.log);

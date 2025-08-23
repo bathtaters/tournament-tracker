@@ -72,7 +72,7 @@ const slotToEvent = ({ id, players }, index, slotsPerDay, startDate) => {
 /**
  * Map event ID to a cleared event
  * @param {string} id - Event ID
- * @returns {{ id: string, players: string[], slot: number, day?: string }} - Blank event update data
+ * @returns {{ id: string, players: string[], slot: number, day?: string | null }} - Blank event update data
  */
 const resetEvent = (id) => ({
   id,

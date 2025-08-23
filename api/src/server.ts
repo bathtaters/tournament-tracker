@@ -48,9 +48,9 @@ app.use(errorMiddleware);
 if (process.env.NODE_ENV === "development") {
   import("./config/exportToClient");
 }
-initServices();
-
-// Start server
-app.listen(port, () => {
-  logger.log(`${name} (v${version}) started. Listening on port ${port}.`);
+initServices().then(() => {
+  // Start server
+  app.listen(port, () => {
+    logger.log(`${name} (v${version}) started. Listening on port ${port}.`);
+  });
 });

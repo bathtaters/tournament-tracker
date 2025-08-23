@@ -9,7 +9,6 @@ const {
   finalize,
   rankSort,
 } = require("../utils/stats.utils");
-const logger = require("../utils/log.adapter");
 
 /**
  * Get Player Stats & Determine Rankings

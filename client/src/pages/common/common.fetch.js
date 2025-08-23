@@ -1,7 +1,7 @@
-import { fetchApi, getTags, tagTypes, ALL_ID } from "../../core/store/fetchApi";
+import { ALL_ID, fetchApi, getTags, tagTypes } from "../../core/store/fetchApi";
 import {
-  useFetchingStatus,
   useFetchingProvider,
+  useFetchingStatus,
   useForceRefetch,
 } from "../../core/services/global.services";
 import { getEvent, getSettings } from "./services/fetch.services";
@@ -36,7 +36,7 @@ export const commonApi = fetchApi.injectEndpoints({
         : undefined,
       providesTags: getTags(
         { Stats: (res, err, id) => id || "TOTAL" },
-        { limit: 1 }
+        { limit: 1 },
       ),
     }),
 
@@ -68,7 +68,7 @@ export const {
   useStatsQuery,
   usePrefetch,
 } = commonApi;
-export const useSessionState = commonApi.endpoints.session.useQueryState;
+export const useSessionState = fetchApi.endpoints.session.useQueryState;
 
 export const useAccessLevel = () => {
   const { data, isLoading, error } = useSessionState();
@@ -77,7 +77,7 @@ export const useAccessLevel = () => {
 
 export const useShowRaw = () => {
   const { data, isLoading, isError } =
-    commonApi.endpoints.settings.useQueryState();
+    fetchApi.endpoints.settings.useQueryState();
   const { access } = useAccessLevel();
   return !isLoading && !isError && access > 2 && data.showrawjson;
 };

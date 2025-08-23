@@ -244,11 +244,11 @@ describe("customMax", () => {
   });
   it("filters entries where getValue is NULL", () => {
     expect(customMax([4, 2, 9, 7], (v) => (v === 9 ? null : v))).toBe(7);
-    expect(customMax([4, 2, 9, 7], (v) => null)).toBeUndefined();
+    expect(customMax([4, 2, 9, 7], () => null)).toBeUndefined();
   });
   it("throws on non-number/null value", () => {
     expect.assertions(2);
-    expect(() => customMax([1, 2, 3], (v) => false)).toThrow();
+    expect(() => customMax([1, 2, 3], () => false)).toThrow();
     expect(() => customMax([1, 2, "string", 3], (v) => v)).toThrow();
   });
 });
@@ -285,11 +285,11 @@ describe("customMin", () => {
   });
   it("filters entries where getValue is NULL", () => {
     expect(customMin([4, 2, 9, 7], (v) => (v === 2 ? null : v))).toBe(4);
-    expect(customMin([4, 2, 9, 7], (v) => null)).toBeUndefined();
+    expect(customMin([4, 2, 9, 7], () => null)).toBeUndefined();
   });
   it("throws when getValue returns non-number", () => {
     expect.assertions(2);
-    expect(() => customMin([1, 2, 3], (v) => false)).toThrow();
+    expect(() => customMin([1, 2, 3], () => false)).toThrow();
     expect(() => customMin([1, 2, "string", 3], (v) => v)).toThrow();
   });
 });

@@ -189,6 +189,13 @@ function fastAlgorithm(stats, { playerspermatch, byes, oppData }) {
   const usedPlayers = new Set();
   const byePlayers = new Set(byes || []);
 
+  // Calculate base player scores
+  const playerScores = stats.ranking.reduce(
+    (scores, player) =>
+      Object.assign(scores, { [player]: getPlayerScore(stats[player]) }),
+    {},
+  );
+
   // Calculate minimum values
   const minPairings = getMinPairings(oppData);
 
@@ -264,7 +271,7 @@ function fastAlgorithm(stats, { playerspermatch, byes, oppData }) {
     });
     logger.error(
       "SWISS MONRAD Results:",
-      resultsLogObject(stats, playerScores, bestScore),
+      resultsLogObject(stats, playerScores, "null (Fast Algo)"),
     );
     logger.error("Algorithm A failed, falling back on no pairing.");
     return getGroupsSimple(players, playerspermatch);

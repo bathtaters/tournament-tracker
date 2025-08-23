@@ -56,10 +56,10 @@ describe("new round", () => {
   });
   it("no matches array if event is over", () => {
     expect(round({ ...eventData, roundactive: 4 })).not.toHaveProperty(
-      "matches"
+      "matches",
     );
     expect(round({ ...eventData, roundactive: 9 })).not.toHaveProperty(
-      "matches"
+      "matches",
     );
   });
   it("matches array is length of matchGen result", () => {
@@ -77,7 +77,7 @@ describe("new round", () => {
   it("each match has players, wins & reported props", () => {
     round(eventData, null, null, null, false).matches.forEach((match, i) => {
       expect(match).toHaveProperty("players", matchGenResult[i]);
-      expect(match).toHaveProperty("wins", i != 2 ? [0, 0] : [0]);
+      expect(match).toHaveProperty("wins", i !== 2 ? [0, 0] : [0]);
       expect(match).toHaveProperty("reported", false);
     });
   });
@@ -85,8 +85,8 @@ describe("new round", () => {
   // Auto-Report Byes
   it("auto-reports byes when true", () => {
     round(eventData, null, null, null, true).matches.forEach((match, i) => {
-      expect(match).toHaveProperty("wins", i != 2 ? [0, 0] : [2]);
-      expect(match).toHaveProperty("reported", i != 2 ? false : true);
+      expect(match).toHaveProperty("wins", i !== 2 ? [0, 0] : [2]);
+      expect(match).toHaveProperty("reported", i === 2);
     });
   });
 
@@ -96,7 +96,7 @@ describe("new round", () => {
     expect(matchGen).toHaveBeenCalledTimes(1);
     expect(matchGen).toHaveBeenCalledWith(
       { ranking: eventData.players },
-      { ...eventData, oppData: undefined }
+      { ...eventData, oppData: undefined },
     );
   });
   it("passes allMatchups to matchGen", () => {
@@ -104,7 +104,7 @@ describe("new round", () => {
     expect(matchGen).toHaveBeenCalledTimes(1);
     expect(matchGen).toHaveBeenCalledWith(
       { ranking: eventData.players },
-      { ...eventData, oppData: null, allMatchups: "AM" }
+      { ...eventData, oppData: null, allMatchups: "AM" },
     );
   });
   it("passes noStats to matchGen on first round", () => {
@@ -113,7 +113,7 @@ describe("new round", () => {
     expect(matchGen).toHaveBeenCalledTimes(1);
     expect(matchGen).toHaveBeenCalledWith(
       { ranking: eventData.players, noStats: true },
-      { ...eventData, oppData: undefined }
+      { ...eventData, oppData: undefined },
     );
   });
 
@@ -123,22 +123,22 @@ describe("new round", () => {
 
     expect(round({ ...eventData, players: null, round: 0 })).toHaveProperty(
       "matches",
-      []
+      [],
     );
     expect(matchGen).toHaveBeenNthCalledWith(
       1,
       { ranking: [] },
-      expect.anything()
+      expect.anything(),
     );
 
     expect(round({ ...eventData, players: null })).toHaveProperty(
       "matches",
-      []
+      [],
     );
     expect(matchGen).toHaveBeenNthCalledWith(
       2,
       { ranking: [] },
-      expect.anything()
+      expect.anything(),
     );
     expect(matchGen).toHaveBeenCalledTimes(2);
   });
@@ -154,7 +154,7 @@ describe("new round", () => {
           expect.stringMatching(/^[ace]$/),
         ],
       },
-      expect.anything()
+      expect.anything(),
     );
   });
 
@@ -172,7 +172,7 @@ describe("new round", () => {
       eventData.players,
       { solo: "opps" },
       true,
-      true
+      true,
     );
   });
 });

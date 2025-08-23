@@ -8,7 +8,7 @@ function Footer() {
   return (
     <FooterStyle>
       <div>
-        <p>{footerText(data.dbversion)}</p>
+        <p>{footerText(data.dbversion ?? "0.9.9")}</p>
       </div>
     </FooterStyle>
   );

@@ -24,7 +24,7 @@ async function getEventMatches(req, res) {
     .then(arrToObj("id", { delKey: 0 }));
   matchData &&
     Object.values(matchData).forEach(
-      (m) => (m.isDraw = m.wins.filter((w) => w == m.maxwins).length !== 1)
+      (m) => (m.isDraw = m.wins.filter((w) => w === m.maxwins).length !== 1),
     );
   return res.sendAndLog(matchData || {});
 }
@@ -54,7 +54,7 @@ async function unreportMatch(req, res) {
       wins: (matches.players || []).map(() => 0),
       reported: false,
     },
-    req
+    req,
   );
 
   return res.sendAndLog({ id, eventid: matches.eventid });

@@ -1,4 +1,5 @@
 const { matchedData } = require("express-validator");
+const logger = require("../utils/log.adapter");
 
 // Models
 const event = require("../db/models/event");
@@ -18,7 +19,7 @@ async function getAllStats(_, res) {
   const opps = await event.getOpponents(null, true).then(oppsByEvent);
 
   return withMissingEventIds(toStats(matches, players, opps, false)).then(
-    res.sendAndLog
+    res.sendAndLog,
   );
 }
 
@@ -33,7 +34,7 @@ async function getStats(req, res) {
   ]);
 
   return res.sendAndLog(
-    toStats({ [id]: matches }, players, { [id]: opps }, true)
+    toStats({ [id]: matches }, players, { [id]: opps }, true),
   );
 }
 
@@ -54,7 +55,7 @@ const getEventCredits = (id, matches, players, opps, credits = {}) => {
 
 const resetAllCredits = (includeFinished = false) =>
   includeFinished
-    ? async function resetAllCredits(req) {
+    ? async function resetAllCredits(req, res) {
         let credits = {};
         const players = await player.list();
 
@@ -100,7 +101,7 @@ const setCredits = (undo = false) =>
       await player.set(
         id,
         { credits: credits + (undo ? -eventCredits[id] : eventCredits[id]) },
-        req
+        req,
       );
     }
     return res.sendAndLog(eventCredits);
@@ -116,7 +117,7 @@ const oppsByEvent = (opps) =>
       logger.error(
         "Duplicate player opponent objects:",
         entry,
-        obj[entry.eventid][entry.playerid]
+        obj[entry.eventid][entry.playerid],
       );
 
     obj[entry.eventid][entry.playerid] = entry.oppids;

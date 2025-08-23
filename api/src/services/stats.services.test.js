@@ -118,7 +118,7 @@ describe("toStats", () => {
   });
   it("includes players w/o stats in ranking", () => {
     expect(
-      stats({ d1 }, ["p1", "p2", "p3", "p4", "p5", "p6"], oppos).ranking
+      stats({ d1 }, ["p1", "p2", "p3", "p4", "p5", "p6"], oppos).ranking,
     ).toEqual(["p1", "p2", "p3", "p4", "p5", "p6"]);
   });
 
@@ -139,7 +139,7 @@ describe("toStats", () => {
     expect(util.combineFinal).toHaveBeenCalledTimes(4);
   });
   it("passes correct args to combiners", () => {
-    const res = stats({ d1, d2 }, 0, oppos);
+    stats({ d1, d2 }, 0, oppos);
     expect(util.combineStats).toHaveBeenNthCalledWith(1, ["2a0"], ["2c0"]);
     expect(util.combineStats).toHaveBeenNthCalledWith(2, ["2a1"], ["2c1"]);
     expect(util.combineStats).toHaveBeenNthCalledWith(3, ["2b0"], ["2d0"]);
@@ -147,22 +147,22 @@ describe("toStats", () => {
     expect(util.combineFinal).toHaveBeenNthCalledWith(
       1,
       ["1a0"],
-      ["2a0", "2c0"]
+      ["2a0", "2c0"],
     );
     expect(util.combineFinal).toHaveBeenNthCalledWith(
       2,
       ["1a1"],
-      ["2a1", "2c1"]
+      ["2a1", "2c1"],
     );
     expect(util.combineFinal).toHaveBeenNthCalledWith(
       3,
       ["1b0"],
-      ["2b0", "2d0"]
+      ["2b0", "2d0"],
     );
     expect(util.combineFinal).toHaveBeenNthCalledWith(
       4,
       ["1b1"],
-      ["2b1", "2d1"]
+      ["2b1", "2d1"],
     );
   });
 
@@ -210,7 +210,7 @@ describe("toStats", () => {
     expect(util.calcOpps).toHaveBeenNthCalledWith(4, ["1b1"], res, "d1p4");
   });
   it("passes correct args to finalize", () => {
-    const res = stats({ d1 }, 0, oppos, true, "floor");
+    stats({ d1 }, 0, oppos, true, "floor");
     expect(util.finalize).toHaveBeenCalledTimes(4);
     expect(util.finalize).toHaveBeenNthCalledWith(1, ["1a0"], "floor");
     expect(util.finalize).toHaveBeenNthCalledWith(2, ["1a1"], "floor");

@@ -1,20 +1,12 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useModal } from "../../common/Modal";
 import { useLocalStorage, useOpenAlert } from "../../common/common.hooks";
 import { useAccessLevel, useSettingsQuery } from "../../common/common.fetch";
 import { useDeletePlayerMutation } from "../player.fetch";
 import {
-  deletePlayerAlert,
   cantDeletePlayerAlert,
+  deletePlayerAlert,
 } from "../../../assets/alerts";
-
-// Validate and add new player
-export const createPlayerController = (playerData, createPlayer) => {
-  if (!playerData.name) return;
-  // Check if player name exists
-  createPlayer(playerData);
-  return true;
-};
 
 // Click on player name handler
 const usePlayerClickController = (deleteMode, deletePlayer, openAlert) =>
@@ -32,10 +24,10 @@ const usePlayerClickController = (deleteMode, deletePlayer, openAlert) =>
 
       // Delete player
       openAlert(deletePlayerAlert(name), 0).then(
-        (r) => r && deletePlayer(playerid)
+        (r) => r && deletePlayer(playerid),
       );
     },
-    [deleteMode, deletePlayer, openAlert]
+    [deleteMode, deletePlayer, openAlert],
   );
 
 // Players base logic
@@ -60,7 +52,7 @@ export default function usePlayersController() {
   const handlePlayerClick = usePlayerClickController(
     deleteMode,
     deletePlayer,
-    openAlert
+    openAlert,
   );
 
   return {
