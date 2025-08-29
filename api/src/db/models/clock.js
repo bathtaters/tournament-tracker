@@ -2,6 +2,7 @@
 const db = require("../admin/interface");
 const log = require("./log");
 const sqlStrings = require("../sql/strings").clock;
+const { TableName, LogAction } = require("../../config/validation").enums;
 
 // Event Clock Operations //
 
@@ -17,17 +18,17 @@ const run = (eventid, req) =>
         ? {
             tableid: eventid,
             error: error || "Event not found or clock already running",
-            dbtable: log.TableName.EVENT,
-            action: log.LogAction.UPDATE,
+            dbtable: TableName.EVENT,
+            action: LogAction.UPDATE,
             data: { clockstart: "now() - clockmod", clockmod: null },
           }
         : data.map((entry) => ({
             tableid: entry.id || eventid,
-            dbtable: log.TableName.EVENT,
-            action: log.LogAction.UPDATE,
+            dbtable: TableName.EVENT,
+            action: LogAction.UPDATE,
             data: { clockstart: entry.clockstart, clockmod: entry.clockmod },
           })),
-    req
+    req,
   );
 
 const pause = (eventid, req) =>
@@ -39,17 +40,17 @@ const pause = (eventid, req) =>
         ? {
             tableid: eventid,
             error: error || "Event not found or clock is not running",
-            dbtable: log.TableName.EVENT,
-            action: log.LogAction.UPDATE,
+            dbtable: TableName.EVENT,
+            action: LogAction.UPDATE,
             data: { clockstart: null, clockmod: "now() - clockstart" },
           }
         : data.map((entry) => ({
             tableid: entry.id || eventid,
-            dbtable: log.TableName.EVENT,
-            action: log.LogAction.UPDATE,
+            dbtable: TableName.EVENT,
+            action: LogAction.UPDATE,
             data: { clockstart: entry.clockstart, clockmod: entry.clockmod },
           })),
-    req
+    req,
   );
 
 const reset = (eventid, req) =>
@@ -60,7 +61,7 @@ const reset = (eventid, req) =>
       clockstart: null,
       clockmod: null,
     },
-    req
+    req,
   );
 
 // Exports

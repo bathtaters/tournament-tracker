@@ -2,6 +2,7 @@
 const db = require("../admin/interface");
 const log = require("./log");
 const strings = require("../sql/strings").event;
+const { TableName, LogAction } = require("../../config/validation").enums;
 
 // Get event data
 async function get(id, detail = false, planOnly = false) {
@@ -18,7 +19,7 @@ const getSchedule = (planOnly) =>
   db.query(
     `${strings.schedule.prefix}${
       planOnly ? strings.schedule.planOnly : strings.schedule.useSettings
-    }${strings.schedule.suffix}`
+    }${strings.schedule.suffix}`,
   );
 
 const getOpponents = (eventid, completed = true) =>
@@ -55,7 +56,7 @@ const pushRound = (eventid, round, matchData, req) =>
       log.updateRows("event", eventid, { roundactive: round }, req, { client }),
       // Create matches
       matchData && log.addRows("match", matchData, req, { client }),
-    ])
+    ]),
   );
 
 const popRound = (eventid, round, req) =>
@@ -67,7 +68,7 @@ const popRound = (eventid, round, req) =>
       log.updateRows("event", eventid, { roundactive: round - 1 }, req, {
         client,
       }),
-    ])
+    ]),
   );
 
 const setPlan = (ids, req) =>
@@ -80,21 +81,21 @@ const setPlan = (ids, req) =>
         (data, error) =>
           error
             ? {
-                dbtable: log.TableName.EVENT,
-                action: log.LogAction.UPDATE,
+                dbtable: TableName.EVENT,
+                action: LogAction.UPDATE,
                 tableid: `NOT IN (${ids.join(",")})`,
                 data: { plan: 0 },
                 error,
               }
             : {
-                dbtable: log.TableName.EVENT,
-                action: log.LogAction.UPDATE,
+                dbtable: TableName.EVENT,
+                action: LogAction.UPDATE,
                 tableid: data.id,
                 data,
               },
         req,
         false,
-        client
+        client,
       ),
       // Set new plan order
       !ids.length
@@ -104,9 +105,9 @@ const setPlan = (ids, req) =>
             null,
             ids.map((id, idx) => ({ id, plan: idx + 1 })),
             req,
-            { client, types: { plan: "SMALLINT" } }
+            { client, types: { plan: "SMALLINT" } },
           ),
-    ])
+    ]),
   );
 
 module.exports = {

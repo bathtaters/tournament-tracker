@@ -1,6 +1,7 @@
 /* *** PLAN Object *** */
 const log = require("./log");
 const sql = require("../sql/strings").plan;
+const { TableName, LogAction } = require("../../config/validation").enums;
 
 // Set multiple events to given dates [{ id, ...data }]
 const multiset = (plan, req) =>
@@ -24,32 +25,32 @@ const reset = (req) =>
     null,
     (_, error) => [
       {
-        dbtable: log.TableName.VOTER,
-        action: log.LogAction.DELETE,
+        dbtable: TableName.VOTER,
+        action: LogAction.DELETE,
         tableid: "*",
         error,
       },
       {
-        dbtable: log.TableName.EVENT,
-        action: log.LogAction.UPDATE,
+        dbtable: TableName.EVENT,
+        action: LogAction.UPDATE,
         tableid: "*",
         data: { plan: false },
         error,
       },
       {
-        dbtable: log.TableName.SETTINGS,
-        action: log.LogAction.DELETE,
+        dbtable: TableName.SETTINGS,
+        action: LogAction.DELETE,
         tableid: "plandates",
         error,
       },
       {
-        dbtable: log.TableName.SETTINGS,
-        action: log.LogAction.DELETE,
+        dbtable: TableName.SETTINGS,
+        action: LogAction.DELETE,
         tableid: "planslots",
         error,
       },
     ],
-    req
+    req,
   );
 
 module.exports = { multiset, update, reset };

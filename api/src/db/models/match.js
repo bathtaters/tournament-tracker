@@ -3,6 +3,7 @@ const db = require("../admin/interface");
 const log = require("./log");
 const strings = require("../sql/strings").match;
 const { filtering } = require("../../utils/shared.utils");
+const { TableName, LogAction } = require("../../config/validation").enums;
 
 // Match Table Operations //
 
@@ -14,9 +15,9 @@ const getMulti = (matchIds, detail = false, fields = null) =>
   db.operation((client) =>
     Promise.all(
       matchIds.map((id) =>
-        db.getRow("match" + (detail ? "Detail" : ""), id, fields, { client })
-      )
-    )
+        db.getRow("match" + (detail ? "Detail" : ""), id, fields, { client }),
+      ),
+    ),
   );
 
 // Get a list of player IDs w/ their match frequency (vars: id, opp, count)
@@ -35,7 +36,7 @@ const getAll = (completed = true) =>
     "matchDetail",
     completed && strings.complete,
     null,
-    completed && "matchDetail.*"
+    completed && "matchDetail.*",
   );
 
 // Drop/Undrop player from match
@@ -47,19 +48,19 @@ const dropPlayer = (id, player, drop, req) =>
       (data, error) =>
         error
           ? {
-              dbtable: log.TableName.MATCH,
-              action: log.LogAction.UPDATE,
+              dbtable: TableName.MATCH,
+              action: LogAction.UPDATE,
               tableid: id,
               data: { [`drop.${drop ? "push" : "pop"}`]: player },
               error,
             }
           : {
-              dbtable: log.TableName.MATCH,
-              action: log.LogAction.UPDATE,
+              dbtable: TableName.MATCH,
+              action: LogAction.UPDATE,
               tableid: data.id,
               data: { drops: data.drops },
             },
-      req
+      req,
     )
     .then((r) => r?.[0]);
 
@@ -77,16 +78,16 @@ const updateMulti = (dataArray, req) =>
           : log
               .addEntries(
                 {
-                  dbtable: log.TableName.MATCH,
-                  action: log.LogAction.UPDATE,
+                  dbtable: TableName.MATCH,
+                  action: LogAction.UPDATE,
                   data,
                   error: "No ID provided",
                 },
-                req
+                req,
               )
-              .then(() => ({ ...data, error: "No ID provided" }))
-      )
-    )
+              .then(() => ({ ...data, error: "No ID provided" })),
+      ),
+    ),
   );
 
 // Update match.wins only

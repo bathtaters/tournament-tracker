@@ -224,3 +224,24 @@ export const limits = {
     events: { min: 0, max: 100 },
   },
 } as const;
+
+export const enums = {
+  /** @enum {string} */
+  TableName: {
+    EVENT: "event",
+    MATCH: "match",
+    PLAYER: "player",
+    VOTER: "voter",
+    SETTINGS: "settings",
+    LOG: "log",
+  },
+
+  /** @enum {string} */
+  LogAction: {
+    CREATE: "create",
+    UPDATE: "update",
+    UPSERT: "upsert",
+    DELETE: "delete",
+    LOGIN: "login",
+  },
+} as const;

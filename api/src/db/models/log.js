@@ -3,6 +3,7 @@ const { sqlSub } = require("../../utils/dbInterface.utils");
 const { arrToObj } = require("../../utils/shared.utils");
 const db = require("../admin/interface");
 const qry = require("../sql/strings").log;
+const { TableName, LogAction } = require("../../config/validation").enums;
 
 // Maximum number of LOG entries to return at a time if not specified
 const DEFAULT_LIMIT = 100;
@@ -390,25 +391,6 @@ const login = (userid, sessionid, error, name) =>
 
 // -- TYPES -- //
 
-/** @enum {string} */
-const LogAction = {
-  CREATE: "create",
-  UPDATE: "update",
-  UPSERT: "upsert",
-  DELETE: "delete",
-  LOGIN: "login",
-};
-
-/** @enum {string} */
-const TableName = {
-  EVENT: "event",
-  MATCH: "match",
-  PLAYER: "player",
-  VOTER: "voter",
-  SETTINGS: "settings",
-  LOG: "log",
-};
-
 /**
  * @typedef {Object} LogEntry
  * @property {string} id - The unique identifier for the log entry.
@@ -436,6 +418,4 @@ module.exports = {
   simpleReq,
   addEntries,
   rmvEntries,
-  LogAction,
-  TableName,
 };
