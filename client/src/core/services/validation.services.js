@@ -1,4 +1,4 @@
-import valid from "../../assets/validation.json";
+import * as valid from "../../assets/validation";
 
 export const metadata = valid.meta;
 

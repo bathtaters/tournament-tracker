@@ -22,7 +22,7 @@ dbServer.json
 /deploy.sh
 
 # generated
-/client/src/assets/validation.json
+/client/src/assets/validation.ts
 /client/src/index.css
 
 # misc

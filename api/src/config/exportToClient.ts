@@ -11,9 +11,15 @@ const clientPath = join(
   "client",
   "src",
   "assets",
-  "validation.json",
+  "validation.ts",
 );
-const data = JSON.stringify({ ...validation, meta });
+const data = Object.entries({ ...validation, meta })
+  .map(
+    ([key, value]) =>
+      `export const ${key} = ${JSON.stringify(value)} as const;`,
+  )
+  .join("\n");
 
 fs.writeFileSync(clientPath, data);
+
 console.log("Validate config copied to client --", clientPath);
