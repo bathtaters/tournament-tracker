@@ -26,15 +26,15 @@ INSERT INTO player (name) VALUES
     ('Ian'),  ('Foff'),  ('Stack'), ('Robert');
 
 -- Setup Teams
--- INSERT INTO player (name, isteam, members) VALUES
---     ('NI', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
---         isteam IS FALSE AND name = ANY('{"Nick","Ian"}'))),
---     ('MF', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
---         isteam IS FALSE AND name = ANY('{"Matt","Foff"}'))),
---     ('CS', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
---         isteam IS FALSE AND name = ANY('{"Cosme","Stack"}'))),
---     ('TH', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
---         isteam IS FALSE AND name = ANY('{"Taylor","Henry"}')));
+INSERT INTO team (name, players) VALUES
+    ('NI', ARRAY(SELECT id FROM player WHERE
+        name = ANY('{"Nick","Ian"}'))),
+    ('MF', ARRAY(SELECT id FROM player WHERE
+        name = ANY('{"Matt","Foff"}'))),
+    ('CS', ARRAY(SELECT id FROM player WHERE
+        name = ANY('{"Cosme","Stack"}'))),
+    ('TH', ARRAY(SELECT id FROM player WHERE
+        name = ANY('{"Taylor","Henry"}')));
 
 -- Setup Events
 INSERT INTO event (title, day, roundcount) VALUES
@@ -48,14 +48,14 @@ INSERT INTO match (eventid, round, players, wins) VALUES
     (
         (SELECT id FROM event WHERE title = 'AKH'), 1,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS TRUE AND name = ANY('{"NI","MF"}')
+            SELECT id FROM team
+            WHERE name = ANY('{"NI","MF"}')
         ), '{0,0}'
     ),(
         (SELECT id FROM event WHERE title = 'AKH'), 1,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS TRUE AND name = ANY('{"CS","TH"}')
+            SELECT id FROM team
+            WHERE name = ANY('{"CS","TH"}')
         ), '{0,0}'
     );
 
@@ -65,101 +65,101 @@ INSERT INTO match (eventid, round, players, wins) VALUES
         (SELECT id FROM event WHERE title = 'CPY'), 1,
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Nick","Ian","Matt","Foff"}')
+            WHERE name = ANY('{"Nick","Ian","Matt","Foff"}')
         ), '{0,0,0,0}'
     ),(
         (SELECT id FROM event WHERE title = 'CPY'), 1,
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Cosme","Stack","Taylor","Henry"}')
+            WHERE name = ANY('{"Cosme","Stack","Taylor","Henry"}')
         ), '{0,0,0,0}'
     ),(
 -- Create Matches for normal KLD event
         (SELECT id FROM event WHERE title = 'KLD'), 1,
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Nick","Ian"}')
+            WHERE name = ANY('{"Nick","Ian"}')
         ), '{0,0}'
     ),(
         (SELECT id FROM event WHERE title = 'KLD'), 1,
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Matt","Foff"}')
+            WHERE name = ANY('{"Matt","Foff"}')
         ), '{0,0}'
     ),(
         (SELECT id FROM event WHERE title = 'KLD'), 1,
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Cosme","Stack"}')
+            WHERE name = ANY('{"Cosme","Stack"}')
         ), '{0,0}'
     ),(
         (SELECT id FROM event WHERE title = 'KLD'), 1,
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Taylor","Henry"}')
+            WHERE name = ANY('{"Taylor","Henry"}')
         ), '{0,0}'
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 2,
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Nick","Henry"}')
+            WHERE name = ANY('{"Nick","Henry"}')
         ), '{0,0}'
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 2, 
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Matt","Ian"}')
+            WHERE name = ANY('{"Matt","Ian"}')
         ), '{0,0}'
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 2,
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Cosme","Foff"}')
+            WHERE name = ANY('{"Cosme","Foff"}')
         ), '{0,0}'
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 2,
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Taylor","Stack"}')
+            WHERE name = ANY('{"Taylor","Stack"}')
         ), '{0,0}'
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 3, 
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Taylor","Ian"}')
+            WHERE name = ANY('{"Taylor","Ian"}')
         ), '{0,0}' 
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 3, 
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Nick","Foff"}')
+            WHERE name = ANY('{"Nick","Foff"}')
         ), '{0,0}' 
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 3, 
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Matt","Stack"}')
+            WHERE name = ANY('{"Matt","Stack"}')
         ), '{0,0}' 
     );
 INSERT INTO match (eventid, round, players, wins) VALUES
     ((SELECT id FROM event WHERE title = 'KLD'), 3, 
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Cosme","Henry"}')
+            WHERE name = ANY('{"Cosme","Henry"}')
         ), '{0,0}' 
     );
 INSERT INTO match (eventid, round, players, wins) VALUES
     ((SELECT id FROM event WHERE title = 'KLD'), 4, 
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = 'Nick'
+            WHERE name = 'Nick'
         ), '{0}' 
     );
 INSERT INTO match (eventid, round, players, wins) VALUES
     ((SELECT id FROM event WHERE title = 'AKH'), 4, 
         ARRAY(
             SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = 'Ian'
+            WHERE name = 'Ian'
         ), '{0}' 
     );
 

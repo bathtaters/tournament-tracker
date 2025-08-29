@@ -16,7 +16,6 @@ type StatsProps = {
   onPlayerClick?: (id: string) => void;
   className?: string;
   highlightClass?: string;
-  hideTeams?: boolean;
   hideStats?: boolean;
   hideHidden?: boolean;
   showCredits?: boolean;
@@ -27,7 +26,6 @@ export default function Stats({
   onPlayerClick,
   className = "table-zebra",
   highlightClass = "",
-  hideTeams,
   hideStats,
   hideHidden,
   showCredits,
@@ -58,7 +56,6 @@ export default function Stats({
     stats?.ranking,
     players,
     !eventid,
-    hideTeams,
     hideHidden,
   );
   const enableCredits =

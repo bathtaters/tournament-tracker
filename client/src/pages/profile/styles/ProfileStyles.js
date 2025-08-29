@@ -3,12 +3,10 @@ import { PageTitleStyle } from "../../common/styles/CommonStyles";
 
 // MAIN STYLES \\
 
-export function WrapperStyle({ isTeam, children }) {
+export function WrapperStyle({ title, children }) {
   return (
     <div>
-      <PageTitleStyle className="mb-3 sm:mb-6">
-        {isTeam ? "Team" : "User"} Profile
-      </PageTitleStyle>
+      <PageTitleStyle className="mb-3 sm:mb-6">{title}</PageTitleStyle>
       {children}
     </div>
   );

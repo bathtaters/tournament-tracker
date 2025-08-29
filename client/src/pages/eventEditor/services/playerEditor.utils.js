@@ -1,13 +1,7 @@
-import { eventEditor } from "../../../assets/config";
-
 // Check if player already exists in list
 export const playerExists = (player, allPlayers) => {
   const lower = player.toLowerCase();
-  return Object.values(allPlayers).some(
-    (p) =>
-      (eventEditor.checkTeamsForDupe || !p.isteam) &&
-      p.name.toLowerCase() === lower,
-  );
+  return Object.values(allPlayers).some((p) => p.name.toLowerCase() === lower);
 };
 
 // Randomizes an array, optionally trimming it to a specific size

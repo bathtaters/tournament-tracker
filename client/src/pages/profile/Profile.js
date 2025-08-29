@@ -8,12 +8,12 @@ import RawData from "../common/RawData";
 import Loading from "../common/Loading";
 
 import {
-  WrapperStyle,
-  ProfileStyle,
-  PlayerDataStyle,
   PicColumnStyle,
+  PlayerDataStyle,
+  ProfileStyle,
+  WrapperStyle,
 } from "./styles/ProfileStyles";
-import profileLayout, { WRITE, getProfileACL } from "./profile.layout";
+import profileLayout, { getProfileACL, WRITE } from "./profile.layout";
 
 import { usePlayerQuery } from "./profile.fetch";
 import { useSessionState, useSettingsQuery } from "../common/common.fetch";
@@ -48,7 +48,7 @@ function Profile() {
     );
 
   return (
-    <WrapperStyle isTeam={playerData.isteam}>
+    <WrapperStyle title="User Profile">
       <ProfileStyle>
         <PicColumnStyle>
           <ProfilePic />
@@ -57,7 +57,7 @@ function Profile() {
         </PicColumnStyle>
 
         <PlayerDataStyle>
-          {profileLayout(enableCredits, playerData.isteam).map((row) => (
+          {profileLayout(enableCredits).map((row) => (
             <PlayerDataRow
               key={row.id}
               rowData={row}

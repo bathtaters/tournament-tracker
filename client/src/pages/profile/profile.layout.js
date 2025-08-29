@@ -1,5 +1,6 @@
 import { playerAccess } from "../../assets/constants";
 import { getBaseData } from "../../core/services/validation.services";
+
 const limits = getBaseData("player").limits;
 
 // Constants
@@ -41,19 +42,9 @@ const playerOnlyRows = [
   { label: "Session", id: "session" },
 ];
 
-const teamOnlyRows = [
-  {
-    label: "Members",
-    id: "members",
-    disabled: true,
-    setValueAs: (r, p) =>
-      p ? r.map((m) => (p[m] ? p[m].name : "?")).join(" & ") : "",
-  },
-];
-
-export default function getProfileLayout(showCredits, isTeam) {
+export default function getProfileLayout(showCredits) {
   const base = showCredits ? [...commonRows, creditRow] : commonRows;
-  return base.concat(isTeam ? teamOnlyRows : playerOnlyRows);
+  return base.concat(playerOnlyRows);
 }
 
 // Layout based on access [ 0: guest, 1: player, 2: judge, 3: gonti ]
