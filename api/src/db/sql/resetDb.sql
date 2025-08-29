@@ -17,9 +17,9 @@ USE %DB%;
 
 CREATE TYPE LOG_ACTION AS ENUM ('create', 'update', 'upsert', 'delete', 'login');
 
-CREATE TYPE EVENT_FORMAT AS ENUM ('swiss', 'robin', 'eliminate');
+CREATE TYPE EVENT_FORMAT AS ENUM ('MONRAD', 'DUTCH', 'ROBIN', 'ELIM');
 
-CREATE TYPE TEAM_TYPE AS ENUM ('solo', 'unified', 'distributed');
+CREATE TYPE TEAM_TYPE AS ENUM ('UNIFIED', 'DISTRIB');
 
 
 -- BASE TABLES --
@@ -61,8 +61,8 @@ CREATE TABLE event (
     teamsize SMALLINT NOT NULL DEFAULT 1,
 
     -- Settings
-    format EVENT_FORMAT DEFAULT 'swiss',
-    team TEAM_TYPE DEFAULT 'solo',
+    format EVENT_FORMAT NOT NULL DEFAULT 'MONRAD',
+    team TEAM_TYPE NULL,
     players UUID[] NOT NULL DEFAULT '{}',
     roundcount SMALLINT NOT NULL DEFAULT 3,
     wincount SMALLINT NOT NULL DEFAULT 2,

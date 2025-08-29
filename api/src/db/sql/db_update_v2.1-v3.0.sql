@@ -20,13 +20,13 @@ CREATE TABLE team
 -- Add new FORMATS to EVENTS table --
 -------------------------------------
 
-CREATE TYPE EVENT_FORMAT AS ENUM ('swiss', 'robin', 'eliminate');
+CREATE TYPE EVENT_FORMAT AS ENUM ('MONRAD', 'DUTCH', 'ROBIN', 'ELIM');
 ALTER TABLE "event"
-    ADD COLUMN format EVENT_FORMAT DEFAULT 'swiss';
+    ADD COLUMN format EVENT_FORMAT NOT NULL DEFAULT 'MONRAD';
 
-CREATE TYPE TEAM_TYPE AS ENUM ('solo', 'unified', 'distributed');
+CREATE TYPE TEAM_TYPE AS ENUM ('UNIFIED', 'DISTRIB');
 ALTER TABLE "event"
-    ADD COLUMN team TEAM_TYPE DEFAULT 'solo';
+    ADD COLUMN team TEAM_TYPE NULL;
 
 ALTER TABLE "event"
     ADD COLUMN teamsize SMALLINT NOT NULL DEFAULT 1;
