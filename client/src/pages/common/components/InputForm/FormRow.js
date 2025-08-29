@@ -1,6 +1,6 @@
 import React from "react";
 import InputElement from "./InputElement";
-import { RowWrapper, Spacer } from "./OtherElements";
+import { GroupWrapper, Spacer } from "./OtherElements";
 
 import { getRowKey } from "../../services/InputForm/inputForm.services";
 
@@ -13,7 +13,7 @@ function FormRow({
   isFragment,
   onChange,
   custom,
-  depth = 0,
+  isRow = false,
   keySuff = ":0",
 }) {
   // React element (or no data) => itself
@@ -22,22 +22,24 @@ function FormRow({
   // Array => Row of elements (recursive)
   if (Array.isArray(row))
     return (
-      <RowWrapper isFragment={isFragment} depth={depth}>
+      <GroupWrapper isFragment={isFragment} isRow={isRow}>
         {row.map((r, i) => (
           <FormRow
             row={r}
-            depth={depth + 1}
+            isRow={!isRow}
             keySuff={keySuff + ":" + i}
             key={getRowKey(r, i, keySuff)}
             {...{ data, setters, baseData, isFragment, onChange, custom }}
           />
         ))}
-      </RowWrapper>
+      </GroupWrapper>
     );
 
   // Custom => InputForm.children (should only appear once)
   if (row === "custom")
-    return custom ? <RowWrapper isFragment={true}>{custom}</RowWrapper> : null;
+    return custom ? (
+      <GroupWrapper isFragment={true}>{custom}</GroupWrapper>
+    ) : null;
 
   // String => row.type = row (ie row.type = "spacer")
   if (typeof row === "string") row = { type: row };

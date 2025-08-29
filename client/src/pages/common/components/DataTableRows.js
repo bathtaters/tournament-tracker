@@ -1,12 +1,9 @@
 import React from "react";
-import { HeaderStyle, CellStyle, headerBase } from "../styles/DataTableStyles";
+import { CellStyle, headerBase, HeaderStyle } from "../styles/DataTableStyles";
 import { useLinkId } from "../services/idUrl.services";
-import { getCellValue, cellKey } from "../services/dataTable.services";
+import { cellKey, getCellValue } from "../services/dataTable.services";
 
-export const HeaderRow = React.memo(function HeaderRow({
-  colLayout,
-  className,
-}) {
+export const HeaderRow = function HeaderRow({ colLayout, className }) {
   return (
     <thead>
       <tr>
@@ -14,14 +11,14 @@ export const HeaderRow = React.memo(function HeaderRow({
           <HeaderStyle
             label={label}
             span={span}
-            className={`${className || ""} ${hdrClass ?? headerBase}`}
+            className={`${className} ${hdrClass ?? headerBase}`}
             key={label || "_none"}
           />
         ))}
       </tr>
     </thead>
   );
-});
+};
 
 export function TableRow({
   id,

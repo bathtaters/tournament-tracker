@@ -73,7 +73,7 @@ export default function useFormController({
   );
 
   const resetValues = useCallback(() => {
-    updateValues({ ...defaultValues, ...data });
+    updateValues(data ? { ...defaultValues, ...data } : defaultValues);
     onChange?.({});
     setChanged(false);
   }, [defaultValues, data, onChange]);

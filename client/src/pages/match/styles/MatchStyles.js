@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export function MatchStyle({ children, showRaw }) {
+export function MatchStyle({ children, showRaw = false }) {
   const height = showRaw ? "h-64" : "h-32";
   return (
     <div

@@ -1,11 +1,3 @@
-// Count the total number of columns
-export const colCount = (layout) =>
-  layout.reduce(
-    (sum, col) =>
-      sum + (!col.span || typeof col.span !== "number" ? 1 : col.span),
-    0
-  );
-
 // Get cell key from row & col IDs
 export const cellKey = (rowId, colId) =>
   `${rowId || "_NA_"}_${colId || "_NONE_"}`;

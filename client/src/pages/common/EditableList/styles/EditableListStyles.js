@@ -1,6 +1,6 @@
 export const titleStyle = "label font-light mb-2";
 
-export function EditableListStyle({ type, count, children }) {
+export function EditableListStyle({ type, count = null, children }) {
   return (
     <div className="m-4 w-full">
       <div
@@ -34,10 +34,10 @@ export function SuggestTextSpacer() {
 export const suggestListLayout = (
   list,
   data,
-  nameKey,
-  { mutation, label } = {}
+  displayKey,
+  { mutation, label } = {},
 ) => {
-  const suggestList = list.map((id) => ({ id, value: data[id][nameKey] }));
+  const suggestList = list.map((id) => ({ id, value: data[id][displayKey] }));
   return !mutation || !label
     ? suggestList
     : suggestList.concat({

@@ -1,0 +1,100 @@
+import DataTable from "pages/common/DataTable";
+import RawData from "pages/common/RawData";
+import Loading from "pages/common/Loading";
+import {
+  useAccessLevel,
+  usePlayerQuery,
+  useSettingsQuery,
+  useStatsQuery,
+} from "pages/common/common.fetch";
+import statsLayout from "./stats.layout";
+import { getPlayerList } from "./services/stats.services";
+import { apiPollMs } from "assets/config";
+
+type StatsProps = {
+  eventid?: string;
+  onPlayerClick?: (id: string) => void;
+  className?: string;
+  highlightClass?: string;
+  hideTeams?: boolean;
+  hideStats?: boolean;
+  hideHidden?: boolean;
+  showCredits?: boolean;
+};
+
+export default function Stats({
+  eventid,
+  onPlayerClick,
+  className = "table-zebra",
+  highlightClass = "",
+  hideTeams,
+  hideStats,
+  hideHidden,
+  showCredits,
+}: StatsProps) {
+  // Global state
+  const { access } = useAccessLevel();
+  const {
+    data: stats,
+    isLoading,
+    error,
+  } = useStatsQuery(eventid, {
+    skip: access < 3 && hideStats,
+    pollingInterval: apiPollMs,
+  });
+  const {
+    data: players,
+    isLoading: playLoad,
+    error: playErr,
+  } = usePlayerQuery(undefined, { pollingInterval: apiPollMs });
+  const {
+    data: settings,
+    isLoading: sLoad,
+    error: sErr,
+    // @ts-ignore -- RTK imports have incorrect arg count
+  } = useSettingsQuery();
+
+  const playerList = getPlayerList(
+    stats?.ranking,
+    players,
+    !eventid,
+    hideTeams,
+    hideHidden,
+  );
+  const enableCredits =
+    sLoad || sErr ? showCredits : showCredits && settings.showcredits;
+
+  // Loading/Error catcher
+  if (isLoading || playLoad || sLoad || error || playErr || sErr)
+    return (
+      <DataTable
+        colLayout={statsLayout(true, enableCredits)}
+        className={className}
+      >
+        <Loading
+          loading={isLoading || playLoad || sLoad}
+          error={error || playErr || sErr}
+        />
+      </DataTable>
+    );
+
+  // Render
+  return (
+    <div className="w-full overflow-auto">
+      <DataTable
+        colLayout={statsLayout(hideStats, enableCredits)}
+        rowIds={playerList}
+        extra={{ stats, players }}
+        rowLink="profile/"
+        rowClass={highlightClass}
+        className={className}
+        hdrClass="text-center mb-2"
+        onRowClick={onPlayerClick}
+      >
+        No players exist
+      </DataTable>
+
+      <RawData className="text-sm" data={stats} />
+    </div>
+  );
+}

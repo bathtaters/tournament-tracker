@@ -2,8 +2,8 @@ import NumberPicker from "./NumberPicker";
 import RangeSelector from "./RangeSelector";
 import TimePicker from "./TimePicker";
 import {
-  RowStyle,
   elementDefaults,
+  RowStyle,
   typeDefaults,
 } from "../../styles/InputFormStyles";
 
@@ -11,9 +11,9 @@ export const defaultInputType = "text"; // Default <input> "type" attribute
 
 // FormRow
 
-export function RowWrapper({ isFragment = false, depth, children }) {
+export function GroupWrapper({ isFragment = false, isRow, children }) {
   if (isFragment) return <>{children}</>;
-  return <RowStyle isRow={Boolean(depth % 2)}>{children}</RowStyle>;
+  return <RowStyle isRow={isRow}>{children}</RowStyle>;
 }
 
 export function Spacer({ className }) {

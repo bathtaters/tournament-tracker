@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
-  useMatchQuery,
-  usePlayerQuery,
   refetchStats,
   useClockQuery,
+  useMatchQuery,
+  usePlayerQuery,
 } from "../event.fetch";
 import { useAccessLevel } from "../../common/common.fetch";
 import { clockPoll, isZero } from "./clock.services";
@@ -13,8 +13,8 @@ import { apiPollMs } from "../../../assets/config";
 
 // Round Editor controller
 export function useRoundEditor(
-  { id, roundactive, matches, playerspermatch },
-  round
+  { id, roundactive, matches = [], playerspermatch },
+  round,
 ) {
   // Setup
   const dispatch = useDispatch();
@@ -30,7 +30,7 @@ export function useRoundEditor(
       ? null
       : () =>
           navigator.clipboard.writeText(
-            formatCopyRound(matches[round], matchData, playerData)
+            formatCopyRound(matches[round], matchData, playerData),
           );
   const handleCopySeats =
     !playerData || !matchData || round || roundactive !== 1
@@ -41,8 +41,8 @@ export function useRoundEditor(
               matches[round],
               matchData,
               playerData,
-              playerspermatch
-            )
+              playerspermatch,
+            ),
           );
 
   // Refetch Stats
@@ -64,7 +64,7 @@ export function useEventClock(
   id,
   status = 0,
   eventClock = null,
-  defaultPoll = 0
+  defaultPoll = 0,
 ) {
   const [pollingInterval, setPoll] = useState(defaultPoll);
   const { data, error, isLoading } = useClockQuery(id, {

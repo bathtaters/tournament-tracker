@@ -8,12 +8,12 @@ function PlayerEditor({
   onChange,
   isStarted,
   onFirstChange,
-  fillAll,
+  fillAll = false,
 }) {
   const { query, autofill, create } = usePlayerEditorController(
     type,
     onChange,
-    fillAll
+    fillAll,
   );
 
   return (

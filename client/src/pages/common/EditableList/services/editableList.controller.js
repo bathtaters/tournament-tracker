@@ -8,7 +8,7 @@ export default function useEditableListController({
   onChange,
   query,
   idKey,
-  nameKey,
+  displayKey,
   filter,
   autofill,
   isLocked,
@@ -26,7 +26,7 @@ export default function useEditableListController({
     if (!value) value = [];
 
     if (value.includes(id)) {
-      await openAlert(duplicateItemAlert(type, data[id]?.[nameKey]));
+      await openAlert(duplicateItemAlert(type, data[id]?.[displayKey]));
       return false;
     }
 
@@ -63,7 +63,7 @@ export default function useEditableListController({
         pushItem,
         onFirstEdit,
         idKey,
-        nameKey,
+        displayKey,
         autofill,
         // Get list of items that are not already selected
         remaining: data
