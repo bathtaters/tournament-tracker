@@ -244,4 +244,18 @@ export const enums = {
     DELETE: "delete",
     LOGIN: "login",
   },
+
+  /** @enum {string} */
+  EventFormat: {
+    MONRAD: "Swiss/Monrad",
+    DUTCH: "Swiss/Dutch",
+    ROBIN: "Round-robin",
+    ELIM: "Elimination",
+  },
+
+  /** @enum {string} */
+  TeamType: {
+    UNIFIED: "Team vs Team",
+    DISTRIB: "Player vs Player",
+  },
 } as const;
