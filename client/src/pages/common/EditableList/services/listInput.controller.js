@@ -6,7 +6,7 @@ import { debugLogging } from "../../../../assets/config";
 export default function useListInputController({
   data,
   idKey,
-  nameKey,
+  displayKey,
   remaining,
   onFirstEdit,
   pushItem,
@@ -40,7 +40,7 @@ export default function useListInputController({
 
   // SuggestText controller
   const { backend, submit } = useSuggestText(
-    suggestListLayout(remaining, data, nameKey, create),
+    suggestListLayout(remaining, data, displayKey, create),
     {
       isHidden,
       onSubmit: submitHandler,

@@ -50,7 +50,7 @@ export default function useEventList(value, onChange) {
       onChange,
       query,
       filter,
-      nameKey: "title",
+      displayKey: "title",
 
       onClick: (id) => () => {
         setEditId(id);
@@ -61,7 +61,7 @@ export default function useEventList(value, onChange) {
         label: `Fill ${query.data ? Object.values(query.data).filter(filter).length : "All"}`,
         onClick: () => {
           onChange(
-            Object.keys(query.data).filter((id) => filter(query.data[id]))
+            Object.keys(query.data).filter((id) => filter(query.data[id])),
           );
         },
       },
