@@ -22,6 +22,42 @@ const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000)
   .toISOString()
   .slice(0, 10);
 
+// ---------- ENUMS ---------- //
+export const enums = {
+  /** @enum {string} */
+  TableName: {
+    EVENT: "event",
+    MATCH: "match",
+    PLAYER: "player",
+    VOTER: "voter",
+    SETTINGS: "settings",
+    LOG: "log",
+  },
+
+  /** @enum {string} */
+  LogAction: {
+    CREATE: "create",
+    UPDATE: "update",
+    UPSERT: "upsert",
+    DELETE: "delete",
+    LOGIN: "login",
+  },
+
+  /** @enum {string} */
+  EventFormat: {
+    MONRAD: "Swiss/Monrad",
+    DUTCH: "Swiss/Dutch",
+    ROBIN: "Round-robin",
+    ELIM: "Elimination",
+  },
+
+  /** @enum {string} */
+  TeamType: {
+    UNIFIED: "Team vs Team",
+    DISTRIB: "Player vs Player",
+  },
+} as const;
+
 // ---------- TYPES ---------- //
 export const types = {
   settings: {
@@ -48,8 +84,6 @@ export const types = {
     credits: "float",
     access: "int",
     session: "string?",
-    isteam: "boolean",
-    members: "uuid[]?",
     hide: "boolean",
   },
   event: {
@@ -59,7 +93,7 @@ export const types = {
     slot: "int",
     plan: "int",
     format: "string",
-    team: "string",
+    team: "string?",
     players: "uuid[]",
     playercount: "int",
     teamsize: "int",
@@ -137,8 +171,8 @@ export const defaults = {
     day: null,
     slot: 0,
     plan: 0,
-    format: "swiss",
-    team: "solo",
+    format: "MONRAD",
+    team: null,
     players: [],
     playercount: 8,
     teamsize: 1,
@@ -222,40 +256,5 @@ export const limits = {
   plan: {
     voters: { min: 0, max: 100 },
     events: { min: 0, max: 100 },
-  },
-} as const;
-
-export const enums = {
-  /** @enum {string} */
-  TableName: {
-    EVENT: "event",
-    MATCH: "match",
-    PLAYER: "player",
-    VOTER: "voter",
-    SETTINGS: "settings",
-    LOG: "log",
-  },
-
-  /** @enum {string} */
-  LogAction: {
-    CREATE: "create",
-    UPDATE: "update",
-    UPSERT: "upsert",
-    DELETE: "delete",
-    LOGIN: "login",
-  },
-
-  /** @enum {string} */
-  EventFormat: {
-    MONRAD: "Swiss/Monrad",
-    DUTCH: "Swiss/Dutch",
-    ROBIN: "Round-robin",
-    ELIM: "Elimination",
-  },
-
-  /** @enum {string} */
-  TeamType: {
-    UNIFIED: "Team vs Team",
-    DISTRIB: "Player vs Player",
   },
 } as const;
