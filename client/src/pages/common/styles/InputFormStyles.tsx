@@ -1,6 +1,6 @@
+import type { FormEventHandler, MouseEventHandler, ReactNode } from "react";
+import type { FormInput, InputPropsReturn } from "../types/InputForm";
 import LockIcon from "pages/common/icons/LockIcon";
-import { FormEventHandler, MouseEventHandler, ReactNode } from "react";
-import { FormInput, InputAttributes } from "../types/InputForm";
 
 // Input Element
 export const elementDefaults = {
@@ -10,7 +10,9 @@ export const elementDefaults = {
   inputClass: "",
   buttonClass: "btn-primary mx-1 sm:mx-4",
 };
-export const typeDefaults: { [type in FormInput<any>["type"]]?: string } = {
+export const typeDefaults: Partial<
+  Record<FormInput<any>["type"] & string, string>
+> = {
   text: "input bg-base-200 invalid:input-warning",
   url: "input bg-base-200 invalid:input-warning",
   date: "input bg-base-200 invalid:input-warning",
@@ -48,11 +50,28 @@ export function RowStyle({
   );
 }
 
+export function GroupWrapper({
+  isFragment = false,
+  isRow = false,
+  children,
+}: {
+  isFragment?: boolean;
+  isRow?: boolean;
+  children?: ReactNode;
+}) {
+  if (isFragment) return <>{children}</>;
+  return <RowStyle isRow={isRow}>{children}</RowStyle>;
+}
+
+export function Spacer({ className }: { className?: string }) {
+  return <div className={className} />;
+}
+
 type ElementStyleProps = {
   label?: string;
   isFragment?: boolean;
   isFloating?: boolean;
-  inputProps?: Partial<InputAttributes>;
+  inputProps?: InputPropsReturn<Record<"string", any>>;
   className?: string;
   labelClass?: string;
   children?: ReactNode;

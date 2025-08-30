@@ -6,24 +6,31 @@ import type {
   ReactNode,
 } from "react";
 
-export type FormInput<Data extends Record<string, any>> = {
+export type Setter<
+  Data extends Record<string, any>,
+  T extends Data[keyof Data] = Data[keyof Data],
+> = (value: T, data: Data) => ReactNode;
+
+export type HandleChange<Data extends Record<string, any>> = (
+  update: Partial<Data> | ((current: Data) => Data),
+) => void;
+
+export type FormInput<
+  Data extends Record<string, any>,
+  T extends Data[keyof Data] = Data[keyof Data],
+> = {
   id: string;
   label?: string;
-  type: HTMLInputTypeAttribute | "custom" | "spacer";
-  data?: Data;
+  type?: HTMLInputTypeAttribute | "custom" | "spacer" | Record<string, string>;
   defaultValue?: ReactNode;
-  setValueAs?: (value: Data[keyof Data], data?: Data) => ReactNode;
+  setValueAs?: Setter<Data, T>;
   limits?: Limit | TimeLimit;
   min?: number | ((data: Data) => number);
   max?: number | ((data: Data) => number);
-  onChange?: (
-    id: str,
-    value: Data[keyof Data] | (<T extends Data[keyof Data]>(current: T) => T),
-  ) => any;
-  onBlur?: (value: any, data: Data) => any;
   disabled?: boolean | ((data: Data) => boolean);
-  required?: boolean;
+  hidden?: boolean | ((data: Data) => boolean);
   isFragment?: boolean;
+  required?: boolean;
   className?: string;
   labelClass?: string;
   inputClass?: string;
@@ -43,13 +50,17 @@ export type BaseData<Data extends Record<string, any>> = {
   limits?: { [key in keyof Data]?: Limit | TimeLimit };
 };
 
-export type FormLayout<Data extends Record<string, any>> = Array<
+export type Setters<Data> = {
+  [ID in keyof Data]?: Setter<Data, Data[ID]>;
+};
+
+export type FormLayout<Data extends Record<string, any>> =
   | FormInput<Data>
-  | FormInput<Data>["type"]
+  | "custom"
+  | "spacer"
   | ReactElement
   | null
-  | FormLayout<Data>
->;
+  | FormLayout<Data>[];
 
 // Backend types
 
@@ -58,9 +69,27 @@ export type Interval = { [key in TimePlace]?: number };
 export type Limit = { min?: number; max?: number };
 export type TimeLimit = { [key in TimePlace]?: Limit };
 
-export type InputAttributes = InputHTMLAttributes<HTMLInputElement>;
+export type InputAttributes<Data> = InputHTMLAttributes<HTMLInputElement> & {
+  options?: Record<string, string>;
+  handleChange?: HandleChange<Data>;
+};
 
-export type InputOptions = Omit<Attributes, "onChange" | "onBlur"> &
-  Pick<FormInput<any>, "onChange" | "onBlur" | "limits"> & {
+export type InputOptions<Data> = Omit<
+  InputAttributes<Data>,
+  "type" | "onChange" | "onBlur"
+> &
+  Pick<FormInput<Data>, "type" | "limits"> & {
+    handleChange?: HandleChange<Data>;
+    setter?: Setter<Data>;
     valueAsNumber?: boolean;
   };
+
+export type InputPropsReturn<Data> =
+  | InputAttributes<Data>
+  | (InputAttributes<Data> & Record<TimePlace, InputAttributes<Data>>);
+
+export type FormElementProps<Data> = {
+  inputProps: InputPropsReturn<Data>;
+  className?: string;
+  wrapperClass?: string;
+};

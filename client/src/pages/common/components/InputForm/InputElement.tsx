@@ -1,9 +1,16 @@
-import type { FormInput } from "../../types/InputForm";
+import type { FormInput, HandleChange, Setter } from "../../types/InputForm";
 import { ElementInput } from "./OtherElements";
 import { ElementStyle, LockStyle } from "../../styles/InputFormStyles";
 import getInputProps from "../../services/InputForm/inputElement.controller";
 
-export default function InputElement<Data>({
+type InputElementProps<T> = FormInput<T> & {
+  data: T;
+  handleChange?: HandleChange<T>;
+  setter?: Setter<T>;
+  isFragment?: boolean;
+};
+
+export default function InputElement<Data extends Record<string, any>>({
   label,
   isFragment,
   className,
@@ -11,7 +18,7 @@ export default function InputElement<Data>({
   inputClass,
   inputWrapperClass,
   ...props
-}: FormInput<Data>) {
+}: InputElementProps<Data>) {
   // Get element props
   const inputProps = getInputProps(props, label);
 
@@ -24,9 +31,9 @@ export default function InputElement<Data>({
       labelClass={labelClass}
     >
       <ElementInput
+        inputProps={inputProps}
         className={inputClass}
         wrapperClass={inputWrapperClass}
-        inputProps={inputProps}
       />
       {inputProps.disabled && <LockStyle />}
     </ElementStyle>

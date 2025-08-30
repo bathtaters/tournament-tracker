@@ -1,12 +1,14 @@
 import type { ReactNode } from "react";
-import type { BaseData, FormButton, FormLayout } from "./types/InputForm";
+import type { FormButton } from "./types/InputForm";
 import FormRow from "./components/InputForm/FormRow";
 import {
   ButtonContainer,
   ButtonElement,
   FormContainer,
 } from "./styles/InputFormStyles";
-import useFormController from "./services/InputForm/inputForm.controller";
+import useFormController, {
+  UseFormProps,
+} from "./services/InputForm/inputForm.controller";
 
 /**
  * Controller for InputForm component.
@@ -24,20 +26,13 @@ import useFormController from "./services/InputForm/inputForm.controller";
  * @param [onEdit] - `() => void` - Function run the first time a form is edited
  * @param [onChange] - `({ ...changedData }) => void` - Function run every time any value in the form changes
  */
-type InputFormProps<T extends Record<string, any>> = {
-  rows?: FormLayout<T>;
+type InputFormProps<T extends Record<string, any>> = UseFormProps<T> & {
   buttons?: FormButton[];
   children?: ReactNode;
-  data?: T;
-  baseData?: BaseData<T>;
-  isLoaded?: boolean;
   className?: string;
   submitLabel?: string;
   rowFirst?: boolean;
   isGrid?: boolean;
-  onSubmit: (data: T) => void;
-  onEdit?: () => void;
-  onChange?: (update: Partial<T>) => void;
 };
 
 export default function InputForm<Data extends Record<string, any>>({
@@ -77,9 +72,9 @@ export default function InputForm<Data extends Record<string, any>>({
           row={rows}
           data={values}
           setters={setters}
-          baseData={baseData}
+          limits={baseData?.limits}
           isFragment={isGrid}
-          onChange={handleChange}
+          handleChange={handleChange}
           custom={children}
           isRow={rowFirst}
         />

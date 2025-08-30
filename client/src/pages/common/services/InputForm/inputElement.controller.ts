@@ -1,11 +1,22 @@
 import type {
   FormInput,
+  HandleChange,
   InputAttributes,
   InputOptions,
-  Interval,
+  InputPropsReturn,
+  Setter,
   TimePlace,
 } from "../../types/InputForm";
 import { defaultInputType } from "../../components/InputForm/OtherElements";
+
+type InputGetterProps<T> = Omit<
+  FormInput<T>,
+  "label" | "className" | "labelClass" | "inputClass" | "inputWrapperClass"
+> & {
+  data: T;
+  handleChange?: HandleChange<T>;
+  setter?: Setter<T>;
+};
 
 export default function getInputProps<Data>(
   {
@@ -15,26 +26,26 @@ export default function getInputProps<Data>(
     limits,
     min,
     max,
-    onChange,
-    onBlur,
+    handleChange,
+    setter,
     disabled,
     required,
-  }: Partial<FormInput<Data>>,
+  }: InputGetterProps<Data>,
   label = "",
-) {
+): InputPropsReturn<Data> {
   const id = inputId || label.replace(/\W/g, "");
   const valueAsNumber = type === "number" || type === "time";
 
   // Build register options
-  const options: InputOptions = {
+  const options: InputOptions<Data> = {
     id,
     valueAsNumber,
-    onChange,
-    onBlur,
+    handleChange,
+    setter,
     required,
     limits,
     value: data?.[id],
-    type: type || defaultInputType,
+    type: type ?? defaultInputType,
     disabled: typeof disabled === "function" ? disabled(data) : disabled,
     pattern: valueAsNumber ? "/^\\d*$/" : undefined,
     ...getLimit("min", limits, valueAsNumber, min, data),
@@ -46,9 +57,9 @@ export default function getInputProps<Data>(
 
   return {
     ...baseProps(options, data),
-    hours: timeOptions("hours", options),
-    minutes: timeOptions("minutes", options),
-    seconds: timeOptions("seconds", options),
+    hours: timeOptions<Data>("hours", options),
+    minutes: timeOptions<Data>("minutes", options),
+    seconds: timeOptions<Data>("seconds", options),
   };
 }
 
@@ -61,15 +72,15 @@ const baseProps = <Data>(
     value,
     disabled,
     required,
-    onChange,
-    onBlur,
+    handleChange,
+    setter,
     min,
     max,
     minLength,
     maxLength,
-  }: InputOptions,
+  }: InputOptions<Data>,
   data: Data,
-): InputAttributes =>
+): InputAttributes<Data> =>
   type === "checkbox"
     ? {
         id,
@@ -78,48 +89,69 @@ const baseProps = <Data>(
         required,
         name: id,
         checked: Boolean(value),
-        onChange: (ev) => onChange?.(id, ev.target.checked),
+        onChange: (ev) =>
+          handleChange?.({ [id]: ev.target.checked } as Partial<Data>),
         onBlur:
-          typeof onBlur !== "function"
+          typeof setter !== "function"
             ? undefined
             : (ev) => {
-                const newValue = onBlur(ev.target.checked, data);
-                onChange?.(id, newValue);
+                const newValue = setter(ev.target.checked as any, data);
+                handleChange?.({ [id]: newValue } as Partial<Data>);
               },
       }
-    : {
-        id,
-        type,
-        value,
-        disabled,
-        required,
-        min,
-        max,
-        minLength,
-        maxLength,
-        name: id,
-        onChange: (ev) => onChange?.(id, ev.target.value),
-        onBlur:
-          typeof onBlur !== "function"
-            ? undefined
-            : (ev) => {
-                const newValue = onBlur(ev.target.value, data);
-                onChange?.(id, newValue);
-              },
-      };
+    : typeof type === "object"
+      ? {
+          id,
+          value,
+          disabled,
+          required,
+          options: type,
+          name: id,
+          onChange: (ev) =>
+            handleChange?.({ [id]: ev.target.value } as Partial<Data>),
+          onBlur:
+            typeof setter !== "function"
+              ? undefined
+              : (ev) => {
+                  const newValue = setter(ev.target.value as any, data);
+                  handleChange?.({ [id]: newValue } as Partial<Data>);
+                },
+        }
+      : {
+          id,
+          type,
+          value,
+          disabled,
+          required,
+          min,
+          max,
+          minLength,
+          maxLength,
+          handleChange,
+          name: id,
+          onChange: (ev) =>
+            handleChange?.({ [id]: ev.target.value } as Partial<Data>),
+          onBlur:
+            typeof setter !== "function"
+              ? undefined
+              : (ev) => {
+                  const newValue = setter(ev.target.value as any, data);
+                  handleChange?.({ [id]: newValue } as Partial<Data>);
+                },
+        };
 
-const timeOptions = (
+const timeOptions = <Data>(
   place: TimePlace,
   {
     id,
     value,
-    onChange,
+    handleChange,
     limits,
     valueAsNumber,
-    onBlur,
+    setter,
     ...props
-  }: InputOptions,
-): InputAttributes => ({
+  }: InputOptions<Data>,
+): InputAttributes<Data> => ({
   ...props,
   ...getLimit("min", limits?.[place], valueAsNumber),
   ...getLimit("max", limits?.[place], valueAsNumber),
@@ -127,16 +159,19 @@ const timeOptions = (
   value: value?.[place],
   type: "number",
   onChange: (ev) => {
-    onChange(id, (time: Interval) => ({
-      ...time,
-      [place]: +(ev.target.value || 0),
+    handleChange?.((data) => ({
+      ...data,
+      [id]: {
+        ...(data[id] ?? {}),
+        [place]: +(ev.target.value || 0),
+      },
     }));
   },
 });
 
 const getLimit = <Data>(
   key: "min" | "max",
-  limits?: InputOptions["limits"],
+  limits?: InputOptions<Data>["limits"],
   isNumber = false,
   override?: number | ((data: Data) => number),
   data?: Data,
