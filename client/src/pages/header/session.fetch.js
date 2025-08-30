@@ -1,4 +1,4 @@
-import { fetchApi } from "../common/common.fetch";
+import { fetchApi } from "../../common/General/common.fetch";
 import { sessionLogin, sessionLogout } from "./services/session.services";
 import { debugLogging } from "../../assets/config";
 

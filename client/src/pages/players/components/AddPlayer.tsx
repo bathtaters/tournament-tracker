@@ -1,4 +1,4 @@
-import InputForm from "pages/common/InputForm";
+import InputForm from "common/InputForm/InputForm";
 import { ModalTitleStyle } from "../styles/PlayerStyles";
 import useCreatePlayer from "../services/addPlayer.services";
 import { buttons, layout } from "../addPlayer.layout";

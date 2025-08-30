@@ -1,5 +1,5 @@
-import type { Column } from "pages/common/types/DataTable";
 import type { EventData, Match } from "types/models";
+import type { Column } from "common/DataTable/DataTable.d";
 import { dayClasses } from "pages/schedule/services/date.utils";
 import { statusInfo } from "assets/constants";
 import { formatMatchStatus, formatRecord } from "assets/formatting";

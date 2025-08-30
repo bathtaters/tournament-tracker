@@ -1,6 +1,6 @@
 import type { EventData } from "types/models";
-import { Modal, useModal } from "pages/common/Modal";
-import Loading from "pages/common/Loading";
+import { Modal, useModal } from "common/Modal/Modal";
+import Loading from "common/Loading/Loading";
 import Stats from "pages/stats/Stats";
 import StatsRow from "./subcomponents/StatsRow";
 import {

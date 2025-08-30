@@ -1,5 +1,5 @@
 import { getCachedArgs } from "../../../core/services/global.services";
-import { fetchApi } from "../../common/common.fetch";
+import { fetchApi } from "../../../common/General/common.fetch";
 import { noDate } from "../../schedule/services/date.utils";
 
 const newVoter = (id, idx = 0) => ({ id, idx, dates: [], games: [] });

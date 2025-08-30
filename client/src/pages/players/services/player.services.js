@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { useModal } from "../../common/Modal";
-import { useLocalStorage, useOpenAlert } from "../../common/common.hooks";
-import { useAccessLevel, useSettingsQuery } from "../../common/common.fetch";
+import { useModal } from "../../../common/Modal/Modal";
+import { useLocalStorage, useOpenAlert } from "../../../common/General/common.hooks";
+import { useAccessLevel, useSettingsQuery } from "../../../common/General/common.fetch";
 import { useDeletePlayerMutation } from "../player.fetch";
 import {
   cantDeletePlayerAlert,

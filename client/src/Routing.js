@@ -1,8 +1,8 @@
 import { Suspense, lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import Loading from "./pages/common/Loading";
-import { usePrefetchBase } from "./pages/common/common.hooks";
+import Loading from "./common/Loading/Loading";
+import { usePrefetchBase } from "./common/General/common.hooks";
 
 // Lazy load each main route
 const Schedule = lazy(() => import("./pages/schedule/Schedule"));

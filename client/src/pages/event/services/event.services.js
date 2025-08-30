@@ -6,7 +6,7 @@ import {
   useMatchQuery,
   usePlayerQuery,
 } from "../event.fetch";
-import { useAccessLevel } from "../../common/common.fetch";
+import { useAccessLevel } from "../../../common/General/common.fetch";
 import { clockPoll, isZero } from "./clock.services";
 import { formatCopyRound, formatCopySeats } from "../../../assets/formatting";
 import { apiPollMs } from "../../../assets/config";

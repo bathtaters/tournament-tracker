@@ -3,7 +3,7 @@ import {
   TitleStyle,
   HeaderButton,
 } from "../styles/ScheduleStyles";
-import { useAccessLevel } from "../../common/common.fetch";
+import { useAccessLevel } from "../../../common/General/common.fetch";
 
 function ScheduleHeader({ isEditing, setEdit, openModal }) {
   const { access } = useAccessLevel();

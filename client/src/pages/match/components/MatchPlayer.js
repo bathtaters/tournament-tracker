@@ -1,6 +1,6 @@
 import React from "react";
 
-import DragBlock from "../../common/DragBlock";
+import DragBlock from "../../../common/DragBlock/DragBlock";
 import {
   NameStyle,
   PlayerInfoStyle,
@@ -11,7 +11,7 @@ import {
 import { DropButton } from "../styles/ButtonStyles";
 import { dataType } from "../services/swap.services";
 
-import { useLinkId } from "../../common/services/idUrl.services";
+import { useLinkId } from "../../../common/General/services/idUrl.services";
 import { formatRecord } from "../../../assets/formatting";
 
 function MatchPlayer({

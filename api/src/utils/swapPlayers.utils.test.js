@@ -1,7 +1,7 @@
 const swapUtils = require("./swapPlayers.utils");
 const { getOtherIdx, updateFilter, swapArrays, moveArrays } = swapUtils;
 
-// These are also NOT mocked for swapPlayers.services tests
+// These are also NOT mocked for swapPlayers.General tests
 
 describe("swapPlayer Utilities", () => {
   describe("getOtherIdx", () => {

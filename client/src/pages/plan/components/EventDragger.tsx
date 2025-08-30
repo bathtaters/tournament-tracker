@@ -1,6 +1,6 @@
 import type { MouseEvent } from "react";
 import type { EventData } from "types/models";
-import DragBlock from "pages/common/DragBlock";
+import DragBlock from "common/DragBlock/DragBlock";
 import {
   DragBlockWrapper,
   dragEventStyle,

@@ -1,5 +1,5 @@
 import type { Player } from "types/models";
-import type { FormLayout } from "pages/common/types/InputForm";
+import type { FormLayout } from "common/InputForm/InputForm.d";
 import { reportStyles } from "./styles/ReportStyles";
 import { getBaseData } from "core/services/validation.services";
 

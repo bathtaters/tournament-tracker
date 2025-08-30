@@ -2,7 +2,7 @@ import React from "react";
 import {
   PageTitleStyle,
   ModalTitleStyle,
-} from "../../common/styles/CommonStyles";
+} from "../../../common/General/styles/CommonStyles";
 
 // Player
 export const TitleStyle = ({ children }) =>

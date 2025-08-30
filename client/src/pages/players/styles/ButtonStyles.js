@@ -1,5 +1,5 @@
 import React from "react";
-import EyeIcon from "../../common/icons/EyeIcon";
+import EyeIcon from "../../../common/icons/EyeIcon";
 
 function ButtonBase({ onClick, value, disabled }) {
   return (

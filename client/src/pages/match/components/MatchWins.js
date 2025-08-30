@@ -1,6 +1,6 @@
 import React from "react";
 
-import Counter from "../../common/Counter";
+import Counter from "../../../common/Counter/Counter";
 import { ByeStyle, winClass, WinsSeparator } from "../styles/CounterStyles";
 import { ClearReportButton, ReportButton } from "../styles/ButtonStyles";
 import { IncompleteStyle } from "../styles/ReportStyles";

@@ -4,8 +4,8 @@ import ProfilePic from "./components/ProfilePic";
 import ResetLink from "./components/ResetLink";
 import PlayerDataRow from "./components/PlayerDataRow";
 import PlayerEvents from "../playerEvents/PlayerEvents";
-import RawData from "../common/RawData";
-import Loading from "../common/Loading";
+import RawData from "../../common/RawData/RawData";
+import Loading from "../../common/Loading/Loading";
 
 import {
   PicColumnStyle,
@@ -16,8 +16,8 @@ import {
 import profileLayout, { getProfileACL, WRITE } from "./profile.layout";
 
 import { usePlayerQuery } from "./profile.fetch";
-import { useSessionState, useSettingsQuery } from "../common/common.fetch";
-import { useParamIds } from "../common/services/idUrl.services";
+import { useSessionState, useSettingsQuery } from "../../common/General/common.fetch";
+import { useParamIds } from "../../common/General/services/idUrl.services";
 import { apiPollMs } from "../../assets/config";
 
 function Profile() {

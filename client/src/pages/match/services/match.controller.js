@@ -1,5 +1,5 @@
-import { useModal } from "../../common/Modal";
-import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
+import { useModal } from "../../../common/Modal/Modal";
+import { useOpenAlert, useLockScreen } from "../../../common/General/common.hooks";
 import {
   useMatchQuery,
   useReportMutation,
@@ -9,7 +9,7 @@ import {
   useStatsQuery,
   usePlayerQuery,
 } from "../match.fetch";
-import { useSessionState, useShowRaw } from "../../common/common.fetch";
+import { useSessionState, useShowRaw } from "../../../common/General/common.fetch";
 
 import { getMatchTitle } from "./match.services";
 import { swapController, canSwap } from "./swap.services";

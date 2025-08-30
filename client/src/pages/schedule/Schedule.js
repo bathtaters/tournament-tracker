@@ -3,7 +3,7 @@ import ScheduleHeader from "./components/ScheduleHeader";
 import DaysContainer from "./components/DaysContainer";
 import EditEvent from "../eventEditor/EditEvent";
 import Settings from "../settings/Settings";
-import { Modal, useModal } from "../common/Modal";
+import { Modal, useModal } from "../../common/Modal/Modal";
 
 function Schedule() {
   // Local state

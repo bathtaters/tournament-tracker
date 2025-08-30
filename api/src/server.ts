@@ -44,7 +44,7 @@ app.use(() => {
 });
 app.use(errorMiddleware);
 
-// Initialize services
+// Initialize General
 if (process.env.NODE_ENV === "development") {
   import("./config/exportToClient");
 }

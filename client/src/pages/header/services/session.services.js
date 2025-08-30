@@ -1,4 +1,4 @@
-import { fetchApi } from "../../common/common.fetch";
+import { fetchApi } from "../../../common/General/common.fetch";
 
 export function sessionLogin({ name }, { dispatch, queryFulfilled }) {
   const update = dispatch(

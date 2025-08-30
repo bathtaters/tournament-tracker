@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
-import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
+import { useOpenAlert, useLockScreen } from "../../../common/General/common.hooks";
 import { useResetDbMutation } from "../settings.fetch";
 import { doReset } from "./settingsFetch.services";
 import {
   getLocalSettings,
   setLocalVar,
-} from "../../common/services/fetch.services";
-import { getChanged } from "../../common/services/basic.services";
+} from "../../../common/General/services/fetch.services";
+import { getChanged } from "../../../common/General/services/basic.services";
 
 import { resetDbAlert, resetDbAlertConfirm } from "../../../assets/alerts";
 import { resetDataLockCaption } from "../../../assets/constants";

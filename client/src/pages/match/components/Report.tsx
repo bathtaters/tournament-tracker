@@ -1,8 +1,8 @@
 import type { Match } from "types/models";
 import type { ReportData } from "../report.layout";
 import { useCallback } from "react";
-import InputForm from "pages/common/InputForm";
-import { FormLayout } from "pages/common/types/InputForm";
+import InputForm from "common/InputForm/InputForm";
+import { FormLayout } from "common/InputForm/InputForm.d";
 import {
   ReportStyle,
   reportStyles,

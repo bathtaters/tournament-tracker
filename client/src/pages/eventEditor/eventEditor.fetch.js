@@ -4,7 +4,7 @@ import {
   useEventQuery,
   usePlayerQuery,
   useSettingsQuery,
-} from "../common/common.fetch";
+} from "../../common/General/common.fetch";
 import { deleteUpdate, eventSet } from "./services/eventEditorFetch.services";
 import { useCreatePlayerMutation } from "../players/player.fetch";
 import { debugLogging } from "../../assets/config";

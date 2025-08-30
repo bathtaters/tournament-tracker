@@ -1,5 +1,5 @@
 import React from "react";
-import { ModalTitleStyle } from "../../common/styles/CommonStyles";
+import { ModalTitleStyle } from "../../../common/General/styles/CommonStyles";
 export { ModalTitleStyle };
 
 export const statsStyle = {

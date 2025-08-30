@@ -9,7 +9,7 @@ import {
   DetailStyle,
 } from "../styles/DashboardStyles";
 
-import { useAccessLevel } from "../../common/common.fetch";
+import { useAccessLevel } from "../../../common/General/common.fetch";
 
 function EventDashboard({ data, openStats }) {
   const { access } = useAccessLevel();

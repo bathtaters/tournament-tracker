@@ -4,7 +4,7 @@ import {
   usePlayerQuery,
   useEventQuery,
   useSettingsQuery,
-} from "../common/common.fetch";
+} from "../../common/General/common.fetch";
 import {
   voterUpdate,
   updateVoters,

@@ -1,5 +1,5 @@
-import LoadingSpinner from "../../common/components/LoadingSpinner";
-import { useScaleToFitRef } from "../../common/common.hooks";
+import LoadingSpinner from "../../../common/Loading/LoadingSpinner";
+import { useScaleToFitRef } from "../../../common/General/common.hooks";
 
 // Wrapper
 export function NotesWrapperStyle({ divRef, children }) {

@@ -1,5 +1,5 @@
 import FooterStyle from "./FooterStyle";
-import { useSettingsQuery } from "../common/common.fetch";
+import { useSettingsQuery } from "../../common/General/common.fetch";
 import { footerText } from "../../assets/constants";
 
 function Footer() {

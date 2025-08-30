@@ -1,6 +1,6 @@
-import DataTable from "pages/common/DataTable";
-import Loading from "pages/common/Loading";
-import RawData from "pages/common/RawData";
+import DataTable from "common/DataTable/DataTable";
+import Loading from "common/Loading/Loading";
+import RawData from "common/RawData/RawData";
 import {
   HeaderStyle,
   tableHdrStyle,

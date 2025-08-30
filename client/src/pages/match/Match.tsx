@@ -1,7 +1,7 @@
-import { Modal } from "pages/common/Modal";
-import Counter from "pages/common/Counter";
-import RawData from "pages/common/RawData";
-import Loading from "pages/common/Loading";
+import { Modal } from "common/Modal/Modal";
+import Counter from "common/Counter/Counter";
+import RawData from "common/RawData/RawData";
+import Loading from "common/Loading/Loading";
 
 import MatchPlayer from "./components/MatchPlayer";
 import MatchWins from "./components/MatchWins";

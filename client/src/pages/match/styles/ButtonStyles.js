@@ -1,5 +1,5 @@
 import React from "react";
-import CancelIcon from "../../common/icons/Cancelcon";
+import CancelIcon from "../../../common/icons/Cancelcon";
 
 export function ReportButton({ disabled, onClick }) {
   return (

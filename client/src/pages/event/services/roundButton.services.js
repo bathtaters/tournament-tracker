@@ -1,4 +1,4 @@
-import { useLockScreen, useOpenAlert } from "../../common/common.hooks";
+import { useLockScreen, useOpenAlert } from "../../../common/General/common.hooks";
 import { useClearRoundMutation, useNextRoundMutation } from "../event.fetch";
 
 import { deleteRoundAlert } from "../../../assets/alerts";

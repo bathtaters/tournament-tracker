@@ -2,8 +2,8 @@ import {
   fetchApi,
   useEventQuery,
   useSettingsQuery,
-} from "../common/common.fetch";
-import { usePrefetchEvent } from "../common/common.hooks";
+} from "../../common/General/common.fetch";
+import { usePrefetchEvent } from "../../common/General/common.hooks";
 import { scheduleAdapter } from "./services/scheduleFetch.services";
 import { useSetEventMutation } from "../eventEditor/eventEditor.fetch";
 

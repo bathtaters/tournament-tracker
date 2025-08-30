@@ -5,7 +5,7 @@ import {
   useSettingsQuery,
   useForceRefetch,
   useFetchingProvider,
-} from "../common/common.fetch";
+} from "../../common/General/common.fetch";
 import { debugLogging } from "../../assets/config";
 
 export const headerApi = fetchApi.injectEndpoints({

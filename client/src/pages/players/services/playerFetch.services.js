@@ -1,5 +1,5 @@
-import { fetchApi } from "../../common/common.fetch";
-import { nextTempId } from "../../common/services/basic.services";
+import { fetchApi } from "../../../common/General/common.fetch";
+import { nextTempId } from "../../../common/General/services/basic.services";
 
 export function playerUpdate({ id, ...body }, { dispatch, queryFulfilled }) {
   const updateAll = dispatch(

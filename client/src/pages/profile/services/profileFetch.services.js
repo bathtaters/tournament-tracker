@@ -1,5 +1,5 @@
-import { fetchApi } from "../../common/common.fetch";
-import { idToUrl } from "../../common/services/idUrl.services";
+import { fetchApi } from "../../../common/General/common.fetch";
+import { idToUrl } from "../../../common/General/services/idUrl.services";
 
 export { playerUpdate } from "../../players/services/playerFetch.services";
 

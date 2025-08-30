@@ -1,6 +1,6 @@
-import { fetchApi } from "../../common/common.fetch";
+import { fetchApi } from "../../../common/General/common.fetch";
 import { updateSchedule } from "../../schedule/services/scheduleFetch.services";
-import { nextTempId } from "../../common/services/basic.services";
+import { nextTempId } from "../../../common/General/services/basic.services";
 
 // Update cache for new event
 function createUpdate(body, { dispatch, getState, queryFulfilled }) {

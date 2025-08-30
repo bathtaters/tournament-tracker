@@ -5,9 +5,9 @@ import PlanVote from "./PlanVote";
 import PlanLoading from "./PlanLoading";
 import PlanFinish from "./PlanFinish";
 import { PlanMessageStyle } from "./styles/PlanStyles";
-import Loading from "../common/Loading";
+import Loading from "../../common/Loading/Loading";
 import { useSettingsQuery } from "./voter.fetch";
-import { useAccessLevel } from "../common/common.fetch";
+import { useAccessLevel } from "../../common/General/common.fetch";
 import { planMessage } from "../../assets/constants";
 
 function Plan() {

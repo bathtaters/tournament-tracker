@@ -1,5 +1,5 @@
-import { defaultSettings } from "../common/services/fetch.services";
-import { FormButton, FormLayout } from "../common/types/InputForm";
+import { defaultSettings } from "../../common/General/services/fetch.services";
+import { FormButton, FormLayout } from "../../common/InputForm/InputForm.d";
 
 // Settings layout object for InputForm
 export const layout: FormLayout<Record<string, any>> = [
@@ -32,7 +32,7 @@ export const layout: FormLayout<Record<string, any>> = [
     { label: "Show Plan Menu", id: "planmenu", type: "checkbox" },
     { label: "Show Plan Events", id: "planschedule", type: "checkbox" },
     {
-      label: "Show Raw Data",
+      label: "Show RawData",
       id: "showrawjson",
       type: "checkbox",
       inputClass: "toggle-accent",

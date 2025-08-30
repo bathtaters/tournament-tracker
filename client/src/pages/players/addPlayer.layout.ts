@@ -1,6 +1,6 @@
 import type { Player } from "types/models";
+import type { FormButton, FormLayout } from "common/InputForm/InputForm.d";
 import { getDefault } from "core/services/validation.services";
-import { FormButton, FormLayout } from "pages/common/types/InputForm";
 
 // Add Player window
 export const layout: FormLayout<Player> = [

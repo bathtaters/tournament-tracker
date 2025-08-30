@@ -44,7 +44,7 @@ describe("Plan Services", () => {
       return Math.ceil((end - start) / (24 * 60 * 60 * 1000)) + 1;
     });
 
-    // Mock settings services
+    // Mock settings General
     toObjArray.mockImplementation((obj) =>
       Object.entries(obj).map(([id, value]) => ({ id, value })),
     );

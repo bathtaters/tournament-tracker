@@ -6,7 +6,7 @@ import { GeneralSectionStyle } from "../styles/PlanTabVoteStyles";
 import EventDragger from "./EventDragger";
 import { useRankState } from "../services/planVote.services";
 import { getPlanned } from "../services/plan.utils";
-import { useServerListValue } from "../../common/common.hooks";
+import { useServerListValue } from "../../../common/General/common.hooks";
 import { plan as config } from "../../../assets/config";
 
 function PlanTabVote({ voter, events, settings }) {

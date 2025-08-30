@@ -1,7 +1,7 @@
 import React from "react";
-import EditIcon from "../../common/icons/EditIcon";
-import CopyIcon from "../../common/icons/CopyIcon";
-import SeatIcon from "../../common/icons/SeatIcon";
+import EditIcon from "../../../common/icons/EditIcon";
+import CopyIcon from "../../../common/icons/CopyIcon";
+import SeatIcon from "../../../common/icons/SeatIcon";
 
 export function RoundButton({ value, onClick }) {
   return (

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSyncState, useOnClickOutsideRef } from "../../common/common.hooks";
+import { useSyncState, useOnClickOutsideRef } from "../../../common/General/common.hooks";
 
 export default function useTextEditor(
   serverText,

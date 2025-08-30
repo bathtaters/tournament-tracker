@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { statusInfo } from "../../../assets/constants";
-import EditIcon from "../../common/icons/EditIcon";
+import EditIcon from "../../../common/icons/EditIcon";
 
 // DAY.JS STYLES \\
 

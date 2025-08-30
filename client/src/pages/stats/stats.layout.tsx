@@ -1,5 +1,5 @@
 import type { Player, Stats } from "types/models";
-import type { CellStyle, Column } from "pages/common/types/DataTable";
+import type { CellStyle, Column } from "common/DataTable/DataTable.d";
 import { formatPercent } from "assets/formatting";
 import { BasicPlayerNameStyle, FullPlayerNameStyle } from "./StatsStyle";
 

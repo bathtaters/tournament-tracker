@@ -1,5 +1,5 @@
 import React from "react";
-import { PageTitleStyle } from "../../common/styles/CommonStyles";
+import { PageTitleStyle } from "../../../common/General/styles/CommonStyles";
 
 // MAIN STYLES \\
 

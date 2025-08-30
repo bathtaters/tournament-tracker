@@ -1,6 +1,6 @@
 import type { EventData } from "types/models";
 import { useMemo } from "react";
-import DragBlock from "pages/common/DragBlock";
+import DragBlock from "common/DragBlock/DragBlock";
 import DayEntry from "./DayEntry";
 import {
   DaySubtitleStyle,

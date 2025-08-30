@@ -1,4 +1,4 @@
-import { fetchApi } from "../../common/common.fetch";
+import { fetchApi } from "../../../common/General/common.fetch";
 import { fakeRound } from "./event.services";
 
 export function nextRoundUpdate(id, { dispatch, queryFulfilled }) {

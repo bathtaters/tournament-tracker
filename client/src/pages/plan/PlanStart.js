@@ -1,7 +1,7 @@
 import DatePicker from "react-tailwindcss-datepicker";
 import PlayerEditor from "../eventEditor/components/PlayerEditor";
 import EventList from "./components/EventList";
-import RangeSelector from "../common/components/InputForm/RangeSelector";
+import RangeSelector from "../../common/InputForm/components/RangeSelector";
 import {
   PlanWrapperStyle,
   PlanTitleStyle,
@@ -10,10 +10,10 @@ import {
   PlanFooterStyle,
   PlanButton,
 } from "./styles/PlanStyles";
-import RawData from "../common/RawData";
+import RawData from "../../common/RawData/RawData";
 import usePlanStartController from "./services/planStart.controller";
 import { dateArrToPicker } from "./services/plan.utils";
-import { useAccessLevel } from "../common/common.fetch";
+import { useAccessLevel } from "../../common/General/common.fetch";
 import { toDateObj } from "../schedule/services/date.utils";
 import { planTitle } from "../../assets/constants";
 

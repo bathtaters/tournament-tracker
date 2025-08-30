@@ -1,12 +1,12 @@
-import DataTable from "pages/common/DataTable";
-import RawData from "pages/common/RawData";
-import Loading from "pages/common/Loading";
+import DataTable from "common/DataTable/DataTable";
+import RawData from "common/RawData/RawData";
+import Loading from "common/Loading/Loading";
 import {
   useAccessLevel,
   usePlayerQuery,
   useSettingsQuery,
   useStatsQuery,
-} from "pages/common/common.fetch";
+} from "common/General/common.fetch";
 import statsLayout from "./stats.layout";
 import { getPlayerList } from "./services/stats.services";
 import { apiPollMs } from "assets/config";

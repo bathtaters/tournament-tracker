@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import { statsStyle } from "../../styles/StatsStyles";
 import { formatRecord } from "../../../../assets/formatting";
-import { useLinkId } from "../../../common/services/idUrl.services";
+import { useLinkId } from "../../../../common/General/services/idUrl.services";
 
 function StatsRow({ rowNum, id, name, isDrop, record }) {
   // Row Number

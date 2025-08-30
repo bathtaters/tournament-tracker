@@ -1,4 +1,4 @@
-import { fetchApi } from "../../common/common.fetch";
+import { fetchApi } from "../../../common/General/common.fetch";
 import { swapPlayerArrays, moveDrops } from "./swap.services";
 
 export function reportUpdate(

@@ -1,5 +1,5 @@
-import { Modal } from "../../common/Modal";
-import EditableList from "../../common/EditableList/EditableList";
+import { Modal } from "../../../common/Modal/Modal";
+import EditableList from "../../../common/EditableList/EditableList";
 import EditEvent from "../../eventEditor/EditEvent";
 import useEventList from "../services/eventList.controller";
 

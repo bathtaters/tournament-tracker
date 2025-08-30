@@ -1,5 +1,5 @@
 import React from "react";
-import EditableList from "../../common/EditableList/EditableList";
+import EditableList from "../../../common/EditableList/EditableList";
 import usePlayerEditorController from "../services/playerEditor.controller";
 
 function PlayerEditor({

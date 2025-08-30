@@ -6,16 +6,16 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import Header from "./pages/header/Header";
 import Footer from "./pages/footer/Footer";
 import Routing from "./Routing";
-import Loading from "./pages/common/Loading";
-import Alert from "./pages/common/Alert";
-import LockScreen from "./pages/common/LockScreen";
-import ErrorBoundary from "./pages/common/ErrorBoundary";
+import Loading from "./common/Loading/Loading";
+import Alert from "./common/Alert/Alert";
+import LockScreen from "./common/LockScreen/LockScreen";
+import ErrorBoundary from "./common/ErrorBoundary/ErrorBoundary";
 import {
   AppWrapperStyle,
   PageWrapperStyle,
-} from "./pages/common/styles/CommonStyles";
+} from "./common/General/styles/CommonStyles";
 
-import { useSettingsQuery } from "./pages/common/common.fetch";
+import { useSettingsQuery } from "./common/General/common.fetch";
 
 function App() {
   const { data, isLoading, error } = useSettingsQuery();

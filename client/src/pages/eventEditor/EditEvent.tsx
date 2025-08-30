@@ -1,7 +1,7 @@
 import PlayerEditor from "./components/PlayerEditor";
-import InputForm from "pages/common/InputForm";
-import RawData from "pages/common/RawData";
-import Loading from "pages/common/Loading";
+import InputForm from "common/InputForm/InputForm";
+import RawData from "common/RawData/RawData";
+import Loading from "common/Loading/Loading";
 import { StatusStyle, TitleStyle } from "./styles/EventEditorStyles";
 import useEditEventController from "./services/editEvent.controller";
 import { editorLayout } from "./eventEditor.layout";

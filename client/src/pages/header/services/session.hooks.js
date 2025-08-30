@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useSessionQuery, useSettingsQuery } from "../../common/common.fetch";
+import { useSessionQuery, useSettingsQuery } from "../../../common/General/common.fetch";
 import { useLoginMutation, useLogoutMutation } from "../session.fetch";
-import { hashText } from "../../common/services/basic.services";
-import { useOpenAlert } from "../../common/common.hooks";
+import { hashText } from "../../../common/General/services/basic.services";
+import { useOpenAlert } from "../../../common/General/common.hooks";
 import { hasherAlert } from "../../../assets/alerts";
 import { apiPollMs } from "../../../assets/config";
 

@@ -6,9 +6,9 @@ import {
   useCreatePlayerMutation,
   useUpdatePlayerMutation,
 } from "../../profile/profile.fetch";
-import { useParamIds } from "../../common/services/idUrl.services";
-import { hashText } from "../../common/services/basic.services";
-import { useOpenAlert } from "../../common/common.hooks";
+import { useParamIds } from "../../../common/General/services/idUrl.services";
+import { hashText } from "../../../common/General/services/basic.services";
+import { useOpenAlert } from "../../../common/General/common.hooks";
 import { hasherAlert } from "../../../assets/alerts";
 
 import { getBaseData } from "../../../core/services/validation.services";

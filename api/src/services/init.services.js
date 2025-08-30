@@ -15,7 +15,7 @@ async function initServices() {
   // Ensure that DB has been loaded
   const connect = await import("../db/admin/connect");
   await connect.openConnection();
-  logger.log("Background services started.");
+  logger.log("Background General started.");
 }
 
 module.exports = initServices;

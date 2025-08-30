@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { fetchApi } from "../../common/common.fetch";
+import { fetchApi } from "../../../common/General/common.fetch";
 import {
   useSettingsQuery,
   usePlanStatusQuery,
@@ -8,7 +8,7 @@ import {
   useUpdateVoterMutation,
   useVoterQuery,
 } from "../voter.fetch";
-import { useEventQuery, useSessionState } from "../../common/common.fetch";
+import { useEventQuery, useSessionState } from "../../../common/General/common.fetch";
 import { plan as config } from "../../../assets/config";
 
 export function usePollStatus(currentStatus, pollStatus) {

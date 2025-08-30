@@ -4,7 +4,7 @@ import {
   useSettingsQuery,
   useCreatePlayerMutation,
 } from "../eventEditor.fetch";
-import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
+import { useOpenAlert, useLockScreen } from "../../../common/General/common.hooks";
 import { createLockCaption } from "../../../assets/constants";
 import {
   createItemAlert,

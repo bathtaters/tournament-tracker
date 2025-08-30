@@ -1,4 +1,4 @@
-import { fetchApi, getTags } from "../common/common.fetch";
+import { fetchApi, getTags } from "../../common/General/common.fetch";
 import { playerUpdate, resetUpdate } from "./services/profileFetch.services";
 import { debugLogging } from "../../assets/config";
 
@@ -50,7 +50,7 @@ export {
   usePlayerQuery,
   useEventQuery,
   useSettingsQuery,
-} from "../common/common.fetch";
+} from "../../common/General/common.fetch";
 export const {
   useSetupUserQuery,
   useUpdatePlayerMutation,

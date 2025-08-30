@@ -1,9 +1,9 @@
-import ReloadIcon from "pages/common/icons/ReloadIcon";
+import ReloadIcon from "common/icons/ReloadIcon";
 import { reloadingClass } from "../styles/HeaderStyles";
 import {
   useFetchingProvider,
   useForceRefetch,
-} from "pages/common/common.fetch";
+} from "common/General/common.fetch";
 
 type ReloadButtonProps = {
   force?: boolean;

@@ -1,6 +1,6 @@
 import type { MouseEventHandler } from "react";
 import type { EventData } from "types/models";
-import OverlayContainer from "pages/common/components/OverlayContainer";
+import OverlayContainer from "common/LockScreen/OverlayContainer";
 import Match from "pages/match/Match";
 import EditRound from "./subcomponents/EditRound";
 import { EditRoundStyle, RoundStyle } from "../styles/RoundStyles";

@@ -1,5 +1,5 @@
 import React from "react";
-import { ModalTitleStyle as TitleStyle } from "../../common/styles/CommonStyles";
+import { ModalTitleStyle as TitleStyle } from "../../../common/General/styles/CommonStyles";
 
 export { TitleStyle };
 

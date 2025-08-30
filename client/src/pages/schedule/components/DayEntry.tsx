@@ -1,5 +1,5 @@
 import type { EventData } from "../../../types/models";
-import DragBlock from "../../common/DragBlock";
+import DragBlock from "../../../common/DragBlock/DragBlock";
 import {
   CollapseContainer,
   dragAndDropClass,
@@ -15,8 +15,8 @@ import {
 import { usePrefetchEvent } from "../schedule.fetch";
 import { isTempId } from "../services/date.utils";
 import { canDrop, dataType } from "../services/day.services";
-import { useLinkId } from "../../common/services/idUrl.services";
-import { usePlayerQuery } from "../../common/common.fetch";
+import { useLinkId } from "../../../common/General/services/idUrl.services";
+import { usePlayerQuery } from "../../../common/General/common.fetch";
 
 type DayEntryProps = {
   day: string;

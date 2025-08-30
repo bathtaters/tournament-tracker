@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import logo from "assets/images/logo2024.png";
-import { defaultSettings } from "pages/common/services/fetch.services";
+import { defaultSettings } from "common/General/services/fetch.services";
 
 type LogoProps = {
   title?: string;

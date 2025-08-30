@@ -1,13 +1,13 @@
 import Day from "./Day";
-import Loading from "../../common/Loading";
-import RawData from "../../common/RawData";
+import Loading from "../../../common/Loading/Loading";
+import RawData from "../../../common/RawData/RawData";
 import { DaysContainerStyle } from "../styles/ScheduleStyles";
 import {
   useScheduleQuery,
   useSettingsQuery,
   useEventQuery,
 } from "../schedule.fetch";
-import { useAccessLevel } from "../../common/common.fetch";
+import { useAccessLevel } from "../../../common/General/common.fetch";
 
 function DaysContainer({
   isEditing,

@@ -1,5 +1,5 @@
 import { dayClass } from "../styles/ScheduleStyles";
-import { isTempId } from "../../common/services/basic.services";
+import { isTempId } from "../../../common/General/services/basic.services";
 
 export { isTempId };
 

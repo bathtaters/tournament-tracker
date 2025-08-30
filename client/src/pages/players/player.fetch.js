@@ -3,7 +3,7 @@ import {
   getTags,
   usePlayerQuery,
   useSettingsQuery,
-} from "../common/common.fetch";
+} from "../../common/General/common.fetch";
 import {
   playerUpdate,
   createUpdate,

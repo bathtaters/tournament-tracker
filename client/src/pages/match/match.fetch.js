@@ -4,7 +4,7 @@ import {
   usePlayerQuery,
   useSettingsQuery,
   useStatsQuery,
-} from "../common/common.fetch";
+} from "../../common/General/common.fetch";
 import { debugLogging } from "../../assets/config";
 
 import {

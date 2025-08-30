@@ -15,7 +15,7 @@ import {
   useOpenAlert,
   useServerListValue,
   useServerValue,
-} from "../../common/common.hooks";
+} from "../../../common/General/common.hooks";
 import { plan as config } from "../../../assets/config";
 import { resetPlanAlert } from "../../../assets/alerts";
 

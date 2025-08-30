@@ -1,4 +1,4 @@
-import EyeIcon from "../common/icons/EyeIcon";
+import EyeIcon from "../../common/icons/EyeIcon";
 
 export const BasicPlayerNameStyle = ({ player }) =>
   player?.name && (

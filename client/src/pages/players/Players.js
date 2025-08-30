@@ -1,6 +1,6 @@
 import AddPlayer from "./components/AddPlayer";
 import Stats from "../stats/Stats";
-import { Modal } from "../common/Modal";
+import { Modal } from "../../common/Modal/Modal";
 import {
   FooterStyle,
   statsClass,

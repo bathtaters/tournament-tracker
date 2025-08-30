@@ -9,8 +9,8 @@ import {
 import { editorButtonLayout } from "../eventEditor.layout";
 import { deleteEventAlert } from "../../../assets/alerts";
 import { editEventLockCaptions } from "../../../assets/constants";
-import { getChanged } from "../../common/services/basic.services";
-import { useLockScreen, useOpenAlert } from "../../common/common.hooks";
+import { getChanged } from "../../../common/General/services/basic.services";
+import { useLockScreen, useOpenAlert } from "../../../common/General/common.hooks";
 
 export default function useEditEventController(
   eventid,

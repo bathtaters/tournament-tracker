@@ -1,5 +1,5 @@
 import { usePlayerQuery, useCreatePlayerMutation } from "../player.fetch";
-import { useOpenAlert } from "../../common/common.hooks";
+import { useOpenAlert } from "../../../common/General/common.hooks";
 import {
   duplicateNameAlert,
   emptyNameAlert,

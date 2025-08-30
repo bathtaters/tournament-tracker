@@ -5,7 +5,7 @@ import {
   usePlayerQuery,
   useSettingsQuery,
   useStatsQuery,
-} from "../common/common.fetch";
+} from "../../common/General/common.fetch";
 import { useMatchQuery } from "../match/match.fetch";
 import { useSetEventMutation } from "../eventEditor/eventEditor.fetch";
 import {

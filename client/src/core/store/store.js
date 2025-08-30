@@ -5,7 +5,7 @@ import { fetchApi } from "./fetchApi";
 import errorMiddleware from "../services/error.services";
 
 // Load in basic queries to allow prefetching w/ lazy loading
-import {} from "../../pages/common/common.fetch";
+import {} from "../../common/General/common.fetch";
 import {} from "../../pages/schedule/schedule.fetch";
 import {} from "../../pages/match/match.fetch";
 

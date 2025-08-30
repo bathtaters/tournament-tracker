@@ -1,4 +1,4 @@
-import { Modal, useModal } from "pages/common/Modal";
+import { Modal, useModal } from "common/Modal/Modal";
 import Settings from "pages/settings/Settings";
 import MainMenu from "./components/MainMenu";
 import LoginMenu from "./components/LoginMenu";

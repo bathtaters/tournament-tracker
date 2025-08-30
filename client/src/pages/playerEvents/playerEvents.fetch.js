@@ -1,5 +1,5 @@
-import { fetchApi, useEventQuery, getTags } from "../common/common.fetch";
-import { usePrefetchEvent } from "../common/common.hooks";
+import { fetchApi, useEventQuery, getTags } from "../../common/General/common.fetch";
+import { usePrefetchEvent } from "../../common/General/common.hooks";
 import { getMatchData } from "./services/playerEventFetch.services";
 import { debugLogging } from "../../assets/config";
 

@@ -4,7 +4,7 @@ import { RoundButton } from "../styles/ButtonStyles";
 import { EventLinkStyle } from "../styles/DashboardStyles";
 import { NotesStyle, NotesWrapperStyle } from "../styles/NoteEditorStyles";
 
-import { useAccessLevel } from "../../common/common.fetch";
+import { useAccessLevel } from "../../../common/General/common.fetch";
 import useRoundButton from "../services/roundButton.services";
 import { WarningTextStyle } from "../styles/RoundStyles";
 

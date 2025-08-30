@@ -1,12 +1,12 @@
 import ResetButtons from "./components/ResetButtons";
-import InputForm from "../common/InputForm";
-import RawData from "../common/RawData";
-import Loading from "../common/Loading";
+import InputForm from "../../common/InputForm/InputForm";
+import RawData from "../../common/RawData/RawData";
+import Loading from "../../common/Loading/Loading";
 
 import { TitleStyle } from "./styles/SettingsStyles";
 import { buttons, layout } from "./settings.layout";
 import useSettingsController from "./services/settings.controller";
-import { useAccessLevel } from "../common/common.fetch";
+import { useAccessLevel } from "../../common/General/common.fetch";
 
 import { getBaseData } from "../../core/services/validation.services";
 
