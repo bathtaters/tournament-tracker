@@ -1,6 +1,7 @@
 import type { MouseEventHandler } from "react";
 import type { EventData } from "types/models";
-import type { FormButton, FormLayout } from "pages/common/types/InputForm";
+import type { FormButton, FormLayout } from "common/InputForm/InputForm.d";
+import { enums } from "../../assets/validation";
 import { getDefault } from "core/services/validation.services";
 
 // Settings Window Layout/Validation
@@ -17,6 +18,19 @@ export const editorLayout = (hidePlayers: boolean): FormLayout<EventData> => [
           type: "number",
           disabled: lockAt(2),
         },
+        {
+          label: "Team Event?",
+          id: "isteam",
+          type: "checkbox",
+          disabled: lockAt(2),
+        },
+        {
+          label: "Team Size",
+          id: "teamsize",
+          type: "number",
+          disabled: lockAt(2),
+          hidden: ({ isteam }) => !isteam,
+        },
       ]
     : "custom",
   [
@@ -31,11 +45,34 @@ export const editorLayout = (hidePlayers: boolean): FormLayout<EventData> => [
         title.trim() || getDefault("event", "title"),
     },
     {
+      label: "Event Format",
+      id: "format",
+      type: enums.EventFormat,
+      defaultValue: "MONRAD",
+      disabled: lockAt(2),
+    },
+    {
       label: "Total Rounds",
       id: "roundcount",
       type: "number",
       disabled: lockAt(3),
       min: (data) => data?.roundactive,
+      hidden: ({ format }) => format === "ELIM",
+    },
+    {
+      label: "Losses Needed for Elimination",
+      id: "roundcount",
+      type: "number",
+      disabled: lockAt(2),
+      min: (data) => 1,
+      hidden: ({ format }) => format !== "ELIM",
+    },
+    {
+      label: "Team Pairing",
+      id: "team",
+      type: { "": "No Teams", ...enums.TeamType },
+      defaultValue: "",
+      disabled: lockAt(2),
     },
     {
       label: "Wins Needed",
