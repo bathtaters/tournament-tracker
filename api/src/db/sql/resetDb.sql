@@ -154,15 +154,17 @@ GRANT SELECT ON TABLE * TO db_read;
 -- COMBO VIEWS --
 
 CREATE VIEW eventDetail (
-    id, title, players, playercount, playerspermatch,
-    clocklimit, day, slot, roundactive, roundcount, wincount, notes, link,
+    id, title, players, format, team, teamsize,
+    playercount, playerspermatch, clocklimit, day, slot,
+    roundactive, roundcount, wincount, notes, link,
     allreported,
     anyreported,
     byes,
     drops
 ) AS SELECT
-    event.id, MAX(event.title), MAX(event.players), MAX(playercount), MAX(playerspermatch),
-    MAX(clocklimit), MAX(day), MAX(slot), MAX(roundactive), MAX(roundcount), MAX(wincount), MAX(notes), MAX(link),
+    event.id, MAX(event.title), event.players, MAX(format), MAX(team), MAX(teamsize),
+    MAX(playercount), MAX(playerspermatch), MAX(clocklimit), MAX(day), MAX(slot),
+    MAX(roundactive), MAX(roundcount), MAX(wincount), MAX(notes), MAX(link),
     BOOL_AND(reported),
     BOOL_OR(reported) FILTER(
         WHERE match.round = roundactive AND ARRAY_LENGTH(match.players, 1) != 1),
@@ -170,7 +172,7 @@ CREATE VIEW eventDetail (
     JSON_AGG(drops)
 FROM event
 LEFT JOIN match ON event.id = match.eventid
-GROUP BY event.id;
+GROUP BY event.id, event.players;
 
 
 CREATE VIEW matchDetail (

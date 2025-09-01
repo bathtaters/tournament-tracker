@@ -45,6 +45,48 @@ ALTER TABLE "player"
     DROP COLUMN IF EXISTS members;
 
 
+-- Add format/team to eventDetail --
+------------------------------------
+
+DROP VIEW eventDetail;
+
+CREATE VIEW eventDetail
+            (
+             id, title, players, format, team, teamsize,
+             playercount, playerspermatch, clocklimit, day, slot,
+             roundactive, roundcount, wincount, notes, link,
+             allreported,
+             anyreported,
+             byes,
+             drops
+                )
+AS
+SELECT event.id,
+       MAX(event.title),
+       event.players,
+       MAX(format),
+       MAX(team),
+       MAX(teamsize),
+       MAX(playercount),
+       MAX(playerspermatch),
+       MAX(clocklimit),
+       MAX(day),
+       MAX(slot),
+       MAX(roundactive),
+       MAX(roundcount),
+       MAX(wincount),
+       MAX(notes),
+       MAX(link),
+       BOOL_AND(reported),
+       BOOL_OR(reported) FILTER (
+           WHERE match.round = roundactive AND ARRAY_LENGTH(match.players, 1) != 1),
+       ARRAY_AGG(match.players[1]) FILTER (WHERE ARRAY_LENGTH(match.players, 1) = 1),
+       JSON_AGG(drops)
+FROM event
+         LEFT JOIN match ON event.id = match.eventid
+GROUP BY event.id, event.players;
+
+
 -- Update DB version Number --
 ------------------------------
 UPSERT
