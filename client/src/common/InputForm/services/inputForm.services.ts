@@ -1,4 +1,9 @@
-import type { FormInput, FormLayout, Setters } from "../InputForm.d";
+import type {
+  FormInput,
+  FormLayout,
+  InputAttributes,
+  Setters,
+} from "../InputForm.d";
 import { isValidElement } from "react";
 
 /** Convert any value to Number, returns NULL if not possible.  */
@@ -9,6 +14,17 @@ export const toNum = (value: any): number | null => {
   }
   return Number.isNaN(value) ? null : Number(value);
 };
+
+/** Split out non HTML values from InputAttributes */
+export const splitAttributes = <Data extends Record<string, any>>({
+  placeholder,
+  options,
+  handleChange,
+  ...attributes
+}: InputAttributes<Data>) =>
+  attributes.type === "select"
+    ? { attributes, placeholder, handleChange, options }
+    : { attributes: { placeholder, ...attributes }, handleChange };
 
 /** Collect all default values */
 export const getDefaultValues = <T>(

@@ -21,6 +21,8 @@ export type FormInput<
 > = {
   id: string;
   label?: string;
+  /** Providing an object of { value: label } will generate a dropdown.
+   *  'custom' will be replaced with the InputForm child element. */
   type?: HTMLInputTypeAttribute | "custom" | "spacer" | Record<string, string>;
   defaultValue?: ReactNode;
   setValueAs?: Setter<Data, T>;
@@ -34,13 +36,14 @@ export type FormInput<
   className?: string;
   labelClass?: string;
   inputClass?: string;
+  /** This class is also applied to each 'option' element in a dropdown  */
   inputWrapperClass?: string;
 };
 
 export type FormButton = {
   key?: string;
   label: string;
-  onClick?: MouseEventHandler<HTMLInputElement>;
+  onClick?: MouseEventHandler<HTMLInputElement | HTMLButtonElement>;
   className?: string;
   isSubmit?: boolean;
 };
@@ -69,7 +72,9 @@ export type Interval = { [key in TimePlace]?: number };
 export type Limit = { min?: number; max?: number };
 export type TimeLimit = { [key in TimePlace]?: Limit };
 
-export type InputAttributes<Data> = InputHTMLAttributes<HTMLInputElement> & {
+export type InputAttributes<Data> = InputHTMLAttributes<
+  HTMLInputElement | HTMLSelectElement
+> & {
   options?: Record<string, string>;
   handleChange?: HandleChange<Data>;
 };

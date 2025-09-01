@@ -17,6 +17,7 @@ export const typeDefaults: Partial<
   url: "input bg-base-200 invalid:input-warning",
   date: "input bg-base-200 invalid:input-warning",
   checkbox: "toggle",
+  select: "select bg-base-200 invalid:input-warning",
   time: "input bg-base-200 min-w-12 pl-2 py-1 invalid:input-warning",
   number:
     "input bg-base-200 invalid:input-warning p-1 text-center hide-arrows w-12 sm:w-16 h-8 sm:h-12",
@@ -149,7 +150,7 @@ export function ButtonContainer({ children }: { children?: ReactNode }) {
 
 type ButtonProps = {
   label?: string;
-  onClick?: MouseEventHandler<HTMLInputElement>;
+  onClick?: MouseEventHandler<HTMLInputElement | HTMLButtonElement>;
   className?: string;
   isSubmit?: boolean;
 };

@@ -1,3 +1,4 @@
+import type { ChangeEvent } from "react";
 import type {
   FormInput,
   HandleChange,
@@ -93,18 +94,21 @@ const baseProps = <Data>(
         name: id,
         checked: Boolean(value),
         onChange: (ev) =>
-          handleChange?.({ [id]: ev.target.checked } as Partial<Data>),
+          handleChange?.({
+            [id]: (ev as ChangeEvent<HTMLInputElement>).target.checked,
+          } as Partial<Data>),
         onBlur:
           typeof setter !== "function"
             ? undefined
             : (ev) => {
-                const newValue = setter(ev.target.checked as any, data);
+                const newValue = setter((ev as any).target.checked, data);
                 handleChange?.({ [id]: newValue } as Partial<Data>);
               },
       }
     : typeof type === "object"
       ? {
           id,
+          type: "select",
           value,
           disabled,
           required,
