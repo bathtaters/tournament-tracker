@@ -43,3 +43,10 @@ ALTER TABLE "player"
     DROP COLUMN IF EXISTS isteam;
 ALTER TABLE "player"
     DROP COLUMN IF EXISTS members;
+
+
+-- Update DB version Number --
+------------------------------
+UPSERT
+INTO settings (id, value)
+VALUES ('dbversion', '3.0.0');
