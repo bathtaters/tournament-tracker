@@ -29,12 +29,15 @@ export default function getInputProps<Data>(
     handleChange,
     setter,
     disabled,
+    hidden,
     required,
   }: InputGetterProps<Data>,
   label = "",
-): InputPropsReturn<Data> {
+): InputPropsReturn<Data> | null {
   const id = inputId || label.replace(/\W/g, "");
   const valueAsNumber = type === "number" || type === "time";
+
+  if (typeof hidden === "function" ? hidden(data) : hidden) return null;
 
   // Build register options
   const options: InputOptions<Data> = {

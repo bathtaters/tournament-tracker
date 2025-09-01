@@ -21,6 +21,7 @@ export default function InputElement<Data extends Record<string, any>>({
 }: InputElementProps<Data>) {
   // Get element props
   const inputProps = getInputProps(props, label);
+  if (!inputProps) return null;
 
   return (
     <ElementStyle
