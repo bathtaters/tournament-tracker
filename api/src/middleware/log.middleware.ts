@@ -36,10 +36,3 @@ function bypassLogging(_: Request, res: Response, next: NextFunction) {
 export default morganLog?.toLowerCase() === "debug"
   ? setupLogging
   : [bypassLogging, morgan(morganLog || "combined")];
-
-// Add sendAndLog to Response type
-declare module "express-serve-static-core" {
-  interface Response {
-    sendAndLog: Response["send"];
-  }
-}

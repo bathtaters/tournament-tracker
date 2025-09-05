@@ -24,6 +24,7 @@
     "noUnusedParameters": false,
     "baseUrl": "."
   },
+  "include": ["./**/*", "types/index.d.ts"],
   "exclude": [
     "node_modules",
     "**/*.test.js",
