@@ -34,7 +34,7 @@ export const event = {
 
 export const player = {
   eventFilter:
-    "SELECT id FROM event WHERE $1::UUID = ANY(players) ORDER BY day ASC;",
+    "SELECT id FROM event WHERE $1::UUID = ANY(players) ORDER BY day;",
   hasAdminFilter: "WHERE access > 2 LIMIT 2",
   isLastAdmin: `
     SELECT (SELECT COUNT(*) FROM player WHERE access > 2 AND id  = $1 LIMIT 1) > 0
@@ -80,8 +80,8 @@ export const voter = {
 
 export const plan = {
   reset: [
-    "DELETE FROM voter;",
-    "UPDATE event SET plan = 0;",
+    "DELETE FROM voter WHERE TRUE;",
+    "UPDATE event SET plan = 0 WHERE TRUE;",
     "DELETE FROM settings WHERE id = 'plandates' OR id = 'planslots';",
   ],
 };
