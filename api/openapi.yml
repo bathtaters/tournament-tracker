@@ -23,6 +23,8 @@ tags:
     description: Endpoints for managing matches within an event.
   - name: Player
     description: Player management endpoints.
+  - name: Team
+    description: Team management and organization endpoints.
 paths:
   /meta:
     get:
@@ -989,3 +991,112 @@ paths:
                 properties:
                   session:
                     type: string
+  /team/all:
+    get:
+      tags:
+        - Team
+      summary: Get All Teams
+      description: Retrieves data for all teams, indexed by ID.
+      responses:
+        '200':
+          description: All team data.
+          content:
+            application/json:
+              schema:
+                type: object
+  /team/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Team
+      summary: Get Team Data
+      description: Retrieves data for a specific team.
+      responses:
+        '200':
+          description: Team data.
+          content:
+            application/json:
+              schema:
+                type: object
+    patch:
+      tags:
+        - Team
+      summary: Update Team Data
+      description: Updates data for a specific team.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Confirmation of update.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+    delete:
+      tags:
+        - Team
+      summary: Delete Team
+      description: Deletes a team from the database.
+      responses:
+        '200':
+          description: Confirmation of deletion.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+  /team:
+    post:
+      tags:
+        - Team
+      summary: Create New Team
+      description: Creates a new team with the provided data.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: ID of the newly created team.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+  /team/event/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Team
+      summary: Get Event Teams
+      description: Retrieves all teams participating in a specific event.
+      responses:
+        '200':
+          description: List of teams in the event.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object

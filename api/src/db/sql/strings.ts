@@ -1,6 +1,6 @@
 // SQL Constants
 
-exports.clock = {
+export const clock = {
   start:
     "UPDATE event SET clockstart = now() - COALESCE(clockmod, '0 seconds'), clockmod = NULL " +
     "WHERE id = $1 AND clockstart IS NULL RETURNING *;",
@@ -10,7 +10,7 @@ exports.clock = {
     "WHERE id = $1 AND clockmod IS NULL AND clockstart IS NOT NULL RETURNING *;",
 };
 
-exports.event = {
+export const event = {
   byEventId: "WHERE eventid = $1",
   maxSlot: [
     "SELECT slot FROM event@date_idx WHERE ",
@@ -32,7 +32,7 @@ exports.event = {
   },
 };
 
-exports.player = {
+export const player = {
   eventFilter:
     "SELECT id FROM event WHERE $1::UUID = ANY(players) ORDER BY day ASC;",
   hasAdminFilter: "WHERE access > 2 LIMIT 2",
@@ -42,12 +42,17 @@ exports.player = {
     AS result;`,
 };
 
-exports.match = {
+export const team = {
+  eventFilter:
+    "t WHERE t.id = ANY(SELECT unnest(e.players) FROM event e WHERE e.id = $1)",
+};
+
+export const match = {
   list: "SELECT round, array_agg(id) matches FROM match WHERE eventid = $1 GROUP BY round;",
   drop: "UPDATE match SET drops = ARRAY_APPEND(drops, $2) WHERE id = $1 RETURNING *;",
   undrop:
     "UPDATE match SET drops = ARRAY_REMOVE(drops, $2) WHERE id = $1 RETURNING *;",
-  complete: exports.event.complete,
+  complete: event.complete,
   allCounts: `
     WITH unnested AS (SELECT id, unnest(players) AS player FROM match WHERE eventid <> $1)
     SELECT
@@ -63,7 +68,7 @@ exports.match = {
     GROUP BY player1, player2;`,
 };
 
-exports.voter = {
+export const voter = {
   upsert: (ids) =>
     `INSERT INTO voter (id, idx) VALUES ${ids
       .map((_, idx) => `($${idx * 2 + 1}::UUID, $${idx * 2 + 2})`)
@@ -73,7 +78,7 @@ exports.voter = {
   rmv: "DELETE FROM voter WHERE NOT(id = ANY($1)) RETURNING *;",
 };
 
-exports.plan = {
+export const plan = {
   reset: [
     "DELETE FROM voter;",
     "UPDATE event SET plan = 0;",
@@ -81,7 +86,7 @@ exports.plan = {
   ],
 };
 
-exports.log = {
+export const log = {
   userSessions:
     "SELECT userid, ARRAY_AGG(DISTINCT sessionid) AS sessionids FROM log WHERE NOT (action = 'login' AND error IS NOT NULL) GROUP BY userid",
   nonNullFilter: "AND sessionid IS NOT NULL AND userid IS NOT NULL",

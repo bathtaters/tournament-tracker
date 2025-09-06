@@ -118,6 +118,19 @@ _Represented below by api/v[n]_
 
 ---
 
+### _Team_ - [Domain]/api/v[n]/team/...
+
+| URL         | Method | Body              | Return                        | Description                              |
+|-------------|--------|-------------------|-------------------------------|------------------------------------------|
+| /all        | GET    |                   | { teamId: { players, name } } | All team data by teamID                  |
+| /[id]       | GET    |                   | { players, name }             | PlayerIDs & (optional) name for a team   |
+| /event/[id] | GET    |                   | { teamId: { players, name } } | All team data (by teamID) for an EventID |
+| /           | POST   | { players, name } | { id, players, name }         | Add a new team                           |
+| /[id]       | PATCH  | { newData }       | { id, newData }               | Update a team's data                     |
+| /[id]       | DELETE |                   | { success }                   | Remove a team                            |
+
+---
+
 ## Database
 
 See [DB creation script](/api/src/db/sql/resetDb.sql) for the database layout.
@@ -130,3 +143,15 @@ See [DB creation script](/api/src/db/sql/resetDb.sql) for the database layout.
 - To update from v1 to v2
     - Run [v2 update script](/api/src/db/sql/db_update_v1-v2.sql) on any v1 databases.
     - Add `"sessionSecret": "[random string]"` to [/api/src/config/dbServer.json](/api/src/config/dbServer.json)
+- To update from v2 to v2.1
+    - This upgrade will break all passwords, To prepare, do one of the following:
+        1) Sign in as a Gonti user before deployment so your session is remembered,
+           then you can reset your password to not lose access after updating the DB.
+        2) Use the below SQL command directly on the DB to remove any Gontis (player.access = 3),
+           then use `http://{domain}/setup` to create a new Gonti user after updating the DB.
+            ```sql
+            UPDATE player SET "access" = 2 WHERE "access" = 3;
+            ```
+    - Run [v2.1 update script](/api/src/db/sql/db_update_v2.0-v2.1.sql) on any v2 databases.
+- To update from v2.1 to v3
+    - Run [v3 update script](/api/src/db/sql/db_update_v2.1-v3.0.sql) on any v2.1 databases.
