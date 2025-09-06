@@ -23,7 +23,7 @@ const getCount = (table, sqlFilter, args, client) =>
   (client || direct)
     .query(
       `SELECT COUNT(*) AS count FROM ${table} ${sqlFilter || ""};`,
-      args || []
+      args || [],
     )
     .then(getFirst())
     .then(getReturn)
@@ -38,7 +38,7 @@ const getRows = (table, sqlFilter, args, cols, limit, offset, client) =>
       } FROM ${table} ${sqlFilter || ""}${
         limit ? ` LIMIT ${limit} OFFSET ${offset || 0}` : ""
       };`,
-      args || []
+      args || [],
     )
     .then(getSolo())
     .then(getReturn);
@@ -47,7 +47,7 @@ const getRow = (
   table,
   rowId,
   cols,
-  { idCol = "id", getOne = true, client, looseMatch } = {}
+  { idCol = "id", getOne = true, client, looseMatch } = {},
 ) =>
   // strTest(table) || strTest(cols);
   module.exports
@@ -59,7 +59,7 @@ const getRow = (
       cols,
       rowId && getOne ? 1 : 0,
       0,
-      client
+      client,
     )
     .then(getFirst(getOne && !!rowId));
 
@@ -67,7 +67,7 @@ const getRow = (
 const addRows = async (
   table,
   objArray,
-  { client, upsert, returning = "*" } = {}
+  { client, upsert, returning = "*" } = {},
 ) => {
   // strTest(table);
   if (!objArray) throw new Error("Missing rows to add to " + table + " table.");
@@ -80,9 +80,9 @@ const addRows = async (
       `${upsert ? "UP" : "IN"}SERT INTO ${table} ${
         keys.length ? "(" + keys.join(",") + ")" : "DEFAULT"
       } VALUES ${queryLabels(objArray, keys).join(
-        ", "
+        ", ",
       )}${returning ? ` RETURNING ${returning}` : ""};`,
-      queryValues(objArray, keys)
+      queryValues(objArray, keys),
     )
     .then(getSolo())
     .then(getReturn);
@@ -99,7 +99,7 @@ const rmvRows = (table, args, sqlFilter, client = null, returning = "*") =>
   (client || direct)
     .query(
       `DELETE FROM ${table} ${sqlFilter || ""}${returning ? ` RETURNING ${returning}` : ""};`,
-      args || []
+      args || [],
     )
     .then(getSolo())
     .then(getReturn);
@@ -114,14 +114,14 @@ const updateRow = async (
   table,
   rowId,
   updateObj,
-  { client, idCol, looseMatch, returnArray, returning = "*" } = {}
+  { client, idCol, looseMatch, returnArray, returning = "*" } = {},
 ) => {
   // strTest(table);
   const keys = Object.keys(updateObj || {});
 
   if (!keys.length)
     throw new Error(
-      "No properties provided to update " + table + "[" + rowId + "]"
+      "No properties provided to update " + table + "[" + rowId + "]",
     );
   strTest(keys);
 
@@ -137,7 +137,7 @@ const updateRow = async (
 
       rowId == null
         ? Object.values(updateObj || {})
-        : [...Object.values(updateObj || {}), rowId]
+        : [...Object.values(updateObj || {}), rowId],
     )
     .then(getSolo())
     .then(getReturn)
@@ -148,7 +148,7 @@ const updateRow = async (
             ...(updateObj || {}),
             ...(data || { error: "Missing return value." }),
           }))
-        : [{ error: "Missing return value." }]
+        : [{ error: "Missing return value." }],
     )
     .then(getFirst(!returnArray));
 };
@@ -156,7 +156,7 @@ const updateRow = async (
 const updateRows = async (
   table,
   updateObjArray,
-  { client = direct, idCol = "id", types = {}, returning = "*" } = {}
+  { client = direct, idCol = "id", types = {}, returning = "*" } = {},
 ) => {
   if (!("id" in types)) types.id = "UUID";
   updateObjArray =
@@ -183,13 +183,13 @@ const updateRows = async (
         .join(", ")} FROM (VALUES ${updateObjArray
         .map(
           (_, i) =>
-            `(${keys.map((key, j) => `$${i * keys.length + j + 1}${types[key] ? `::${types[key]}` : ""}`).join(", ")})`
+            `(${keys.map((key, j) => `$${i * keys.length + j + 1}${types[key] ? `::${types[key]}` : ""}`).join(", ")})`,
         )
         .join(", ")}) AS ${upd}(${keys.join(
-        ", "
+        ", ",
       )}) WHERE ${table}.${idCol} = ${upd}.${idCol}${returning ? ` RETURNING ${returning}` : ""};`,
 
-      updateObjArray.flatMap((item) => keys.map((key) => item[key]))
+      updateObjArray.flatMap((item) => keys.map((key) => item[key])),
     )
     .then(getSolo())
     .then(getReturn)
@@ -199,7 +199,7 @@ const updateRows = async (
         r.map((data) => ({
           ...updateObjArray.find((item) => item[idCol] === data[idCol]),
           ...data,
-        }))
+        })),
     );
 };
 
