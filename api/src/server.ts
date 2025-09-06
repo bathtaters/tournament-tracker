@@ -1,3 +1,5 @@
+/// <reference types="./types" />
+
 import express from "express";
 import logger from "./utils/log.adapter";
 import { missingError } from "./config/constants";
