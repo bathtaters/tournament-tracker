@@ -149,7 +149,7 @@ const getUserSessions = async ({ userid, sessionid } = {}) => {
 /**
  * Add one or more entries to the log
  * @param {LogEntry | LogEntry[]} entries - One entry or a list of entries to add
- * @param {Request} [req] - Request object to extract user and session IDs
+ * @param {import('express').Request} [req] - Request object to extract user and session IDs
  * @param {string[]} [newlyDeletedUsers] - List of recently deleted user IDs
  * @returns {Promise<LogEntry[]>} - List of new log entries
  */
@@ -337,10 +337,10 @@ const rmvRows = async (dbtable, idOrArgs, sqlFilter, req, client) => {
  * Same as db.query, also creates a log entry
  * @param {string} text - SQL text (w/ $ placeholders).
  * @param {any[]} args - Arguments to substitute for placeholders in text.
- * @param {(data: any, error?: string) => LogEntry} logMap - Convert result data or an error to a LogEntry
- * @param {Request} [req] - Request object to extract user and session IDs
- * @param {boolean} splitArgs - If true, split 'text' & 'args' into multiple statements.
- * @param {Object} client - DB Client Connection to use instead of default.
+ * @param {(data: any, error?: string) => CreateLogEntry | CreateLogEntry[]} logMap - Convert result data or an error to a LogEntry
+ * @param {import('express').Request} [req] - Request object to extract user and session IDs
+ * @param {boolean} [splitArgs] - If true, split 'text' & 'args' into multiple statements.
+ * @param {Object} [client] - DB Client Connection to use instead of default.
  * @returns - Result of query
  */
 const query = (text, args, logMap, req, splitArgs, client) =>
@@ -394,14 +394,25 @@ const login = (userid, sessionid, error, name) =>
 /**
  * @typedef {Object} LogEntry
  * @property {string} id - The unique identifier for the log entry.
- * @property {TableName} dbtable - The name of the table that was changed.
+ * @property {TableName[keyof typeof TableName]} dbtable - The name of the table that was changed.
  * @property {string} tableid - The identifier of the row that was changed.
- * @property {LogAction} action - The type of change (e.g., 'update').
+ * @property {LogAction[keyof typeof LogAction]} action - The type of change (e.g., 'update').
  * @property {Object} [data] - The data that was created/updated.
  * @property {string} userid - The ID of the user who made the change.
  * @property {string} sessionid - The ID of the user who made the change.
  * @property {string} [error] - Error message if the update failed, otherwise null.
  * @property {Date} ts - The timestamp of the update.
+ */
+
+/**
+ * @typedef {Object} CreateLogEntry
+ * @property {TableName[keyof typeof TableName]} dbtable - The name of the table that was changed.
+ * @property {string} tableid - The identifier of the row that was changed.
+ * @property {LogAction[keyof typeof LogAction]} action - The type of change (e.g., 'update').
+ * @property {Object} [data] - The data that was created/updated.
+ * @property {string} [userid] - The ID of the user who made the change.
+ * @property {string} [sessionid] - The ID of the user who made the change.
+ * @property {string} [error] - Error message if the update failed, otherwise null.
  */
 
 module.exports = {
