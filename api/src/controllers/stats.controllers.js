@@ -56,16 +56,6 @@ const getEventCredits = (id, matches, players, opps, credits = {}) => {
 const resetAllCredits = (includeFinished = false) =>
   includeFinished
     ? async function resetAllCredits(req, res) {
-        let credits = {};
-        const players = await player.list();
-
-        for (const id of players) {
-          credits[id] = 0;
-          await player.set(id, { credits: 0 }, req);
-        }
-        return res.sendAndLog(credits);
-      }
-    : async function resetAllCredits(req, res) {
         const matches = await match.getAll(true).then(matchesByEvent);
         const players = await player.list();
         const opps = await event.getOpponents(null, true).then(oppsByEvent);
@@ -78,6 +68,16 @@ const resetAllCredits = (includeFinished = false) =>
 
         for (const id in credits) {
           await player.set(id, { credits: credits[id] }, req);
+        }
+        return res.sendAndLog(credits);
+      }
+    : async function resetAllCredits(req, res) {
+        let credits = {};
+        const players = await player.list();
+
+        for (const id of players) {
+          credits[id] = 0;
+          await player.set(id, { credits: 0 }, req);
         }
         return res.sendAndLog(credits);
       };
