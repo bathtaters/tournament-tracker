@@ -1,19 +1,28 @@
 /* *** EVENT CLOCK Sub-Object *** */
-const db = require("../admin/interface");
-const log = require("./log");
-const sqlStrings = require("../sql/strings").clock;
-const { TableName, LogAction } = require("../../config/validation").enums;
+import type { Request } from "express";
+import type { Event } from "../../types/models";
+import db from "../admin/interface";
+import log from "./log";
+import { clock as sqlStrings } from "../sql/strings";
+import { enums } from "../../config/validation";
+
+const { TableName, LogAction } = enums;
 
 // Event Clock Operations //
 
-const get = (eventid) =>
+export const get = (
+  eventid: Event,
+): Promise<Pick<Event, "id" | "clocklimit" | "clockstart" | "clockmod">> =>
   db.getRow("event", eventid, ["id", "clocklimit", "clockstart", "clockmod"]);
 
-const run = (eventid, req) =>
+export const run = (
+  eventid: Event["id"],
+  req: Request,
+): Promise<Event[] | Event> =>
   log.query(
     sqlStrings.start,
     [eventid],
-    (data, error) =>
+    (data: Event[], error) =>
       error || !data?.length
         ? {
             tableid: eventid,
@@ -31,7 +40,10 @@ const run = (eventid, req) =>
     req,
   );
 
-const pause = (eventid, req) =>
+export const pause = (
+  eventid: Event["id"],
+  req: Request,
+): Promise<Event[] | Event> =>
   log.query(
     sqlStrings.pause,
     [eventid],
@@ -53,7 +65,10 @@ const pause = (eventid, req) =>
     req,
   );
 
-const reset = (eventid, req) =>
+export const reset = (
+  eventid: Event["id"],
+  req: Request,
+): Promise<Event[] | Event> =>
   log.updateRows(
     "event",
     eventid,
@@ -63,6 +78,3 @@ const reset = (eventid, req) =>
     },
     req,
   );
-
-// Exports
-module.exports = { get, run, pause, reset };

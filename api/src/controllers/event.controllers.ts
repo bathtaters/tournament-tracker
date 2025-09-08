@@ -1,18 +1,17 @@
-const { matchedData } = require("express-validator");
+import type { Request, Response } from "express";
+import type { Event } from "types/models";
+import { matchedData } from "express-validator";
+import { arrToObj } from "../utils/shared.utils";
+import { defaults } from "../config/validation";
 
-// Models
-const event = require("../db/models/event");
-const clock = require("../db/models/clock");
-const match = require("../db/models/match");
-const defs = require("../config/validation").defaults.event;
-
-// Services/Utils
-const { arrToObj } = require("../utils/shared.utils");
+import * as event from "../db/models/event";
+import * as clock from "../db/models/clock";
+import * as match from "../db/models/match";
 
 /* GET event database. */
 
 // Specific event
-async function getEvent(req, res) {
+export async function getEvent(req: Request, res: Response) {
   const { id } = matchedData(req);
   const eventData = await event.get(id, true);
   if (!eventData || eventData.length === 0) return res.sendStatus(204);
@@ -23,7 +22,7 @@ async function getEvent(req, res) {
 }
 
 // Get clock data only
-async function getClock(req, res) {
+export async function getClock(req: Request, res: Response) {
   const { id } = matchedData(req);
   if (!id) throw new Error("Missing event ID.");
 
@@ -35,32 +34,32 @@ async function getClock(req, res) {
 }
 
 // All events
-const getAllEvents = (_, res) =>
+export const getAllEvents = (_: any, res: Response) =>
   event
     .get()
-    .then(arrToObj("id", { delKey: 0 }))
+    .then(arrToObj("id", { delKey: false }))
     .then(res.sendAndLog);
 
 /* SET event database. */
 
 // Create/Remove event
-async function createEvent(req, res) {
+export async function createEvent(req: Request, res: Response) {
   const slot = await event.getLastSlot(null).then((s) => s + 1);
 
-  let body = matchedData(req);
+  let body: Partial<Event> = matchedData(req);
   if (body.players) body.playercount = body.players.length;
 
-  const eventData = { ...defs, ...body, slot };
+  const eventData = { ...defaults.event, ...body, slot } as Event;
   return event.add(eventData, req).then(res.sendAndLog);
 }
-async function removeEvent(req, res) {
+export async function removeEvent(req: Request, res: Response) {
   return event.rmv(matchedData(req).id, req).then(res.sendAndLog);
 }
 
 // Manually set event data (Guess day-slot if missing when updating day)
-async function updateEvent(req, res) {
-  let { id, ...body } = matchedData(req);
-  if (!("day" in body) && req.body.day === null) body.day = null;
+export async function updateEvent(req: Request, res: Response) {
+  let { id, ...body } = matchedData(req) as Partial<Event> & Pick<Event, "id">;
+  if (!("day" in body) && req.body.day === null) body.day = null; // Fix validation
 
   if (body.players) body.playercount = body.players.length;
   if ("day" in body && !("slot" in body))
@@ -69,17 +68,17 @@ async function updateEvent(req, res) {
   return event.set(id, body, req).then(res.sendAndLog);
 }
 
-// Enable plan for all eventIds, disable plan for all missing eventIds
-function setPlan(req, res) {
+// Enable 'plan' for all eventIds, disable 'plan' for all missing eventIds
+export function setPlan(req: Request, res: Response) {
   const { events } = matchedData(req);
   return event.setPlan(events, req).then(res.sendAndLog);
 }
 
 // Clock operations -- run/pause/reset
-const clockOp = (action) => {
+export const clockOp = (action: ClockAction) => {
   switch (action) {
     case "run":
-      return (req, res) => {
+      return (req: Request, res: Response) => {
         const { id } = matchedData(req);
         if (!id) throw new Error("Missing event ID.");
         return clock
@@ -88,13 +87,13 @@ const clockOp = (action) => {
           .catch(catchClockError("run"));
       };
     case "reset":
-      return (req, res) => {
+      return (req: Request, res: Response) => {
         const { id } = matchedData(req);
         if (!id) throw new Error("Missing event ID.");
         return clock.reset(id, req).then(res.sendAndLog);
       };
     case "pause":
-      return (req, res) => {
+      return (req: Request, res: Response) => {
         const { id } = matchedData(req);
         if (!id) throw new Error("Missing event ID.");
         return clock
@@ -107,27 +106,16 @@ const clockOp = (action) => {
   }
 };
 
-module.exports = {
-  getEvent,
-  getAllEvents,
-  getClock,
-  setPlan,
-  createEvent,
-  removeEvent,
-  updateEvent,
-  clockOp,
-};
-
 // GetEvent HELPER - index rounds
-const sortMatchResult = (result) =>
+const sortMatchResult = (result: { round: number; matches: string[] }[]) =>
   result &&
   result.reduce((matchArr, row) => {
     matchArr[row.round - 1] = row.matches;
     return matchArr;
-  }, []);
+  }, [] as string[][]);
 
 // Clock catcher
-const catchClockError = (action) => (err) => {
+const catchClockError = (action: ClockAction) => (err: any) => {
   if (err.message === "Event not found") {
     if (action === "run")
       throw new Error("Clock is already running or event not found");
@@ -136,3 +124,5 @@ const catchClockError = (action) => (err) => {
   }
   throw err;
 };
+
+type ClockAction = "run" | "reset" | "pause";

@@ -29,7 +29,7 @@ export type Player = {
 export type Event = {
   id: string; // uuid
   title: string;
-  day?: Date;
+  day?: Date | null;
   slot: number;
   plan: number;
   format: string;
@@ -46,6 +46,29 @@ export type Event = {
   clocklimit: string; // interval
   clockstart?: Date;
   clockmod?: string; // interval
+};
+
+export type EventDetail = {
+  id: string; // uuid
+  title: string;
+  day?: Date;
+  slot: number;
+  format: string;
+  team?: string;
+  players: string[]; // uuid[]
+  playercount: number;
+  teamsize: number;
+  roundactive: number;
+  roundcount: number;
+  wincount: number;
+  playerspermatch: number;
+  notes: string;
+  link: string;
+  allreported: boolean;
+  anyreported: boolean;
+  byes: string[]; // uuid[]
+  drops: string[]; // uuid[] (Returned from DB as uuid[][])
+  clocklimit: string; // interval
 };
 
 export type Match = {
@@ -85,4 +108,15 @@ export type Swap = {
 export type Plan = {
   voters: string[]; // uuid[]
   events: string[]; // uuid[]
+};
+
+export type EventDay = {
+  day: string;
+  eventslots: Record<string, number>;
+};
+
+export type EventOpps = {
+  playerid: string; // uuid
+  eventid: string; // uuid
+  oppids: string[]; // uuid[]
 };

@@ -1,9 +1,10 @@
-// Init
-const router = require("express").Router();
-const validate = require("../validators/event.validators");
-const controller = require("../controllers/event.controllers");
-const stats = require("../controllers/stats.controllers");
-const action = require("../controllers/action.controllers");
+import { Router } from "express";
+import validate from "../validators/event.validators";
+import * as controller from "../controllers/event.controllers";
+import stats from "../controllers/stats.controllers";
+import action from "../controllers/action.controllers";
+
+const router = Router();
 
 // *** Event API commands *** \\
 
@@ -36,4 +37,4 @@ router.post("/:id/clock/pause", validate.eventid, controller.clockOp("pause"));
 router.post("/:id/round/:roundactive", validate.rounds, action.nextRound);
 router.delete("/:id/round/:roundactive", validate.rounds, action.prevRound);
 
-module.exports = router;
+export default router;
