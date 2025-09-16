@@ -1,15 +1,25 @@
-const logger = require("../../utils/log.adapter");
-const {
+import type {
+  EventOpps,
+  GenerateData,
+  MatchupData,
+  OppData,
+  Stats,
+  StatsEntry,
+  StatsReturn,
+} from "types/generators";
+import type { Event, Match, Player } from "types/models";
+import logger from "../../utils/log.adapter";
+import {
   avg,
-  diff,
   count,
+  diff,
   getGroups,
   getGroupsSimple,
   randomGroup,
-} = require("./matchGen.utils");
-const { getCombinations } = require("../../utils/combination.utils");
-const { shuffle } = require("../../utils/shared.utils");
-const { pairingThreshold } = require("../../config/meta");
+} from "./matchGen.utils";
+import { getCombinations } from "../../utils/combination.utils";
+import { shuffle } from "../../utils/shared.utils";
+import { pairingThreshold } from "../../config/meta";
 
 // --- SPECIFIC SETTINGS --- \\
 
@@ -23,15 +33,19 @@ const weight = {
   matchups: 0.001,
 };
 
-// Tie-breaker: Check number of times players played each other in all other events combined.
-const getMatchupCount = (allMatchups, playerA, playerB) =>
+/** Tie-breaker: Check number of times players played each other in all other events combined. */
+const getMatchupCount = (
+  allMatchups: MatchupData[],
+  playerA: Player["id"],
+  playerB: Player["id"],
+) =>
   Number(
     allMatchups.find(({ id, opp }) => playerA === id && playerB === opp)
       ?.count || 0,
   );
 
-// Calculate single player's base score
-const getPlayerScore = (stats) =>
+/** Calculate single player's base score */
+const getPlayerScore = (stats: StatsEntry) =>
   !stats
     ? 0
     : Object.keys(weight).reduce(
@@ -41,39 +55,58 @@ const getPlayerScore = (stats) =>
         0,
       );
 
-// Calculate score of 2 players (base + rematch penalties)
+/** Calculate score of 2 players (base + rematch penalties) */
 const getComboScore =
-  (scores, opps, allMatchups) =>
+  (
+    scores: { [id: Player["id"]]: number },
+    opps: OppData,
+    allMatchups: MatchupData[],
+  ) =>
   ([playerA, playerB]) =>
     diff(scores[playerA], scores[playerB]) +
     (count(playerB, opps?.[playerA]) + count(playerA, opps?.[playerB])) *
       weight.penalty +
     getMatchupCount(allMatchups, playerA, playerB) * weight.matchups;
 
-// Calculate score for single player match (base + bye penalties)
-const getSoloScore = (player, score, byes) =>
-  score + count(player, byes) * weight.penalty * 2;
+/** Calculate score for single player match (base + bye penalties) */
+const getSoloScore = (
+  player: Player["id"],
+  score: number,
+  byes: Player["id"][],
+) => score + count(player, byes) * weight.penalty * 2;
 
-// Helper function to check if a player can be paired (Algorithm B)
-const canBePaired = (player, opponents = [], playerOpps = [], minCount = 0) =>
+/** Helper function to check if a player can be paired (Algorithm B) */
+const canBePaired = (
+  player: Player["id"],
+  opponents: Player["id"][] = [],
+  playerOpps: Player["id"][] = [],
+  minCount = 0,
+) =>
   opponents.every(
     (opp) =>
       opp !== player && playerOpps.filter((o) => o === opp).length === minCount,
   );
 
-// Get minimum pairings, keyed by player
-const getMinPairings = (oppData) =>
-  Object.keys(oppData).reduce((acc, player) => {
-    acc[player] = Math.min(
-      ...Object.keys(oppData).map(
-        (opp) => oppData[player].filter((id) => id === opp).length,
-      ),
-    );
-    return acc;
-  }, {});
+/** Get minimum pairings, keyed by player */
+const getMinPairings = (oppData: OppData) =>
+  Object.keys(oppData).reduce(
+    (acc, player) => {
+      acc[player] = Math.min(
+        ...Object.keys(oppData).map(
+          (opp) => oppData[player].filter((id) => id === opp).length,
+        ),
+      );
+      return acc;
+    },
+    {} as Record<EventOpps["playerid"], number>,
+  );
 
-// Get opponent with the least amount of previous matchups
-const getMinMatchups = (match, opps, allMatchups) => {
+/** Get opponent with the least amount of previous matchups */
+const getMinMatchups = (
+  match: Player["id"][],
+  opps: Player["id"][] | Set<Player["id"]>,
+  allMatchups: MatchupData[],
+) => {
   let minVal = Infinity,
     minOpp;
   for (const opp of opps) {
@@ -91,10 +124,10 @@ const getMinMatchups = (match, opps, allMatchups) => {
 
 // --- MAIN --- \\
 
-function generateMatchups(
-  stats,
-  { playerspermatch, byes, oppData, allMatchups },
-) {
+export default function generateMatchups(
+  stats: StatsReturn,
+  { playerspermatch, byes, oppData, allMatchups }: GenerateData,
+): Match["players"][] {
   // Randomize matches for initial pairing
   if (stats.noStats)
     return noStatsAlgorithm(stats.ranking, playerspermatch, allMatchups);
@@ -111,7 +144,10 @@ function generateMatchups(
   return slowAlgorithm(stats, { playerspermatch, byes, oppData, allMatchups });
 }
 
-function slowAlgorithm(stats, { playerspermatch, byes, oppData, allMatchups }) {
+function slowAlgorithm(
+  stats: Stats,
+  { playerspermatch, byes, oppData, allMatchups }: GenerateData,
+): Match["players"][] {
   // Calculate base player scores
   const playerScores = stats.ranking.reduce(
     (scores, player) =>
@@ -158,7 +194,11 @@ function slowAlgorithm(stats, { playerspermatch, byes, oppData, allMatchups }) {
   return bestMatch;
 }
 
-function noStatsAlgorithm(players, playerspermatch, allMatchups) {
+function noStatsAlgorithm(
+  players: Player["id"][],
+  playerspermatch: Event["playerspermatch"],
+  allMatchups: MatchupData[],
+): Match["players"][] {
   // If no data provided, do a completely random pairing
   if (!allMatchups?.length) return randomGroup(players, playerspermatch);
 
@@ -166,7 +206,7 @@ function noStatsAlgorithm(players, playerspermatch, allMatchups) {
 
   // Pair players based on historical match data
   const remaining = new Set(players);
-  const matches = [];
+  const matches: Match["players"][] = [];
   while (remaining.size) {
     // Start match with next player
     const match = [remaining.values().next().value];
@@ -183,17 +223,22 @@ function noStatsAlgorithm(players, playerspermatch, allMatchups) {
   return matches;
 }
 
-function fastAlgorithm(stats, { playerspermatch, byes, oppData }) {
+function fastAlgorithm(
+  stats: Stats,
+  { playerspermatch, byes, oppData }: GenerateData,
+): Match["players"][] {
   const players = stats.ranking.slice();
-  const matches = [];
+  const matches: Match["players"][] = [];
   const usedPlayers = new Set();
   const byePlayers = new Set(byes || []);
 
   // Calculate base player scores
   const playerScores = stats.ranking.reduce(
-    (scores, player) =>
-      Object.assign(scores, { [player]: getPlayerScore(stats[player]) }),
-    {},
+    (scores, player) => ({
+      ...scores,
+      [player]: getPlayerScore(stats[player]),
+    }),
+    {} as Record<Player["id"], number>,
   );
 
   // Calculate minimum values
@@ -279,8 +324,6 @@ function fastAlgorithm(stats, { playerspermatch, byes, oppData }) {
 
   return matches;
 }
-
-module.exports = generateMatchups;
 
 // ----- Logging ------ \\
 

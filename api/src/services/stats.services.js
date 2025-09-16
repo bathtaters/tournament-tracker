@@ -12,12 +12,12 @@ const {
 
 /**
  * Get Player Stats & Determine Rankings
- * @param {object} matchData - { eventid: [{ reported, players, wins, draws, maxwins, totalwins }, ...], ... }
+ * @param {{ [eventid: string]: import("types/models").MatchDetail[] }} matchData - { eventid: [{ reported, players, wins, draws, maxwins, totalwins }, ...], ... }
  * @param {string[]} originalOrder - [ playerids, ... ]
- * @param {object} oppData - { eventid: { playerid: [ oppids, ... ], ... }, ... }
+ * @param {{ [eventid: string]: { [playerid: string]: string[] } }} oppData - { eventid: { playerid: [ oppids, ... ], ... }, ... }
  * @param {boolean} [useMatchScore=true] - use matchScore (Within same event) vs percent (Comparing apples to oranges)
  * @param {boolean} [usePercentFloor=false] - use floor on percents, should be used only when determining pairings (See /config/constants {points.floor})
- * @returns {object} - { ranking: [ playerids... ], playerid: { ...playerStats }, ... }
+ * @returns {import("types/models").Stats} - { ranking: [ playerids... ], playerid: { ...playerStats }, ... }
  */
 function stats(
   matchData,

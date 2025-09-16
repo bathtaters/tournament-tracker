@@ -1,11 +1,24 @@
-// Services
-const matchGen = require("./matchGenerators/swissMonrad");
-const toStats = require("./stats.services");
+import type { EventDetail, Match, MatchDetail } from "types/models";
+import type { MatchupData, OppData } from "types/generators";
+import matchGen from "./matchGenerators/swissMonrad";
+import toStats from "./stats.services";
 
-// Builds data object representing a round
-function round(eventData, matchData, oppData, allMatchups, autoReportByes) {
+type RoundServiceReturn = {
+  eventid: Match["eventid"];
+  round: Match["round"];
+  matches?: Partial<Match>[];
+};
+
+/** Builds a new round, based on supplied data. */
+export default function roundService(
+  eventData: EventDetail,
+  matchData: MatchDetail[],
+  oppData: OppData,
+  allMatchups: MatchupData[],
+  autoReportByes = false,
+): RoundServiceReturn {
   // Increment round number & create return object
-  const matchBase = {
+  const matchBase: RoundServiceReturn = {
     round: Math.min(eventData.roundactive, eventData.roundcount) + 1,
     eventid: eventData.id,
   };
@@ -24,11 +37,15 @@ function round(eventData, matchData, oppData, allMatchups, autoReportByes) {
       )
     : { ranking: eventData.players, noStats: true };
   if (!stats.ranking) stats.ranking = [];
-  if (eventData.drops)
+  if (eventData.drops?.length)
     stats.ranking = stats.ranking.filter((p) => !eventData.drops.includes(p));
 
   // Generate match table (Can add more algorithms later)
-  const matchTable = matchGen(stats, { ...eventData, oppData, allMatchups });
+  const matchTable = matchGen(stats, {
+    ...eventData,
+    oppData,
+    allMatchups,
+  });
 
   // Format for DB write (auto-reporting byes)
   const byeWins = autoReportByes ? eventData.wincount : 0;
@@ -43,5 +60,3 @@ function round(eventData, matchData, oppData, allMatchups, autoReportByes) {
     })),
   };
 }
-
-module.exports = round;

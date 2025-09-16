@@ -320,7 +320,7 @@ const cancelPlan = async () => {
 
 async function updateProg(prog, total) {
   await setSetting(toObjArray({ planprogress: (100 * prog) / total }), null);
-  const status = await getSetting("planstatus").then(asType);
+  const status = await getSetting(["planstatus"]).then((r) => asType(r[0]));
   if (status !== 3)
     return cancelPlan().then(() => {
       if (prog < total) logger.log("Plan generation cancelled early.");

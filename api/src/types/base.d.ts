@@ -6,6 +6,8 @@ export type EventFormat =
   (typeof enums.EventFormat)[keyof typeof enums.EventFormat];
 export type TeamType = (typeof enums.TeamType)[keyof typeof enums.TeamType];
 
+export type ClockState = "run" | "reset" | "pause";
+
 export type SettingsType =
   | "string"
   | "bigint"

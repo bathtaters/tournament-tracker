@@ -1,5 +1,5 @@
 /** Calculate count of all possible combinations of array items in slotCount slots */
-const combinationCount = (arrayLen, slotCount) =>
+export const combinationCount = (arrayLen: number, slotCount: number) =>
   slotCount &&
   Math.round(fact(arrayLen) / (fact(slotCount) * fact(arrayLen - slotCount)));
 
@@ -9,7 +9,7 @@ const combinationCount = (arrayLen, slotCount) =>
  * @param {number[][]} matches - Array containing matching indexes for each index
  * @returns {boolean} - True if all indexes are matches
  */
-const isUnique = (indexes, matches) => {
+const isUnique = (indexes: number[], matches: number[][]): boolean => {
   for (let a = 0; a < indexes.length; a++) {
     for (let b = a + 1; b < indexes.length; b++) {
       if (!matches[indexes[a]].includes(indexes[b])) return false;
@@ -23,7 +23,7 @@ const isUnique = (indexes, matches) => {
  * @param {any[][]} array - 2D Array to check for matching inner elements
  * @returns {number[][]} - input array indexes that for which the index they are placed at should match
  */
-const generateMatches = (array) =>
+const generateMatches = (array: any[][]): number[][] =>
   array.map((base) =>
     array
       .map((_, i) => i)
@@ -32,8 +32,13 @@ const generateMatches = (array) =>
 
 /** Get the Nth combination of array items in slotCount slots
  *   No empties, order doesn't matter, comboCount = result of combinationCount() */
-function getCombinationN(n, array, slotCount, comboCount) {
-  let combo = [],
+export function getCombinationN<T>(
+  n: number,
+  array: T[],
+  slotCount: number,
+  comboCount: number,
+) {
+  let combo = [] as T[],
     len = array.length;
 
   for (let curIndex = comboCount; slotCount > 0; slotCount--) {
@@ -56,7 +61,10 @@ function getCombinationN(n, array, slotCount, comboCount) {
  * @param {number} size - Size of each combination to return
  * @returns {any[][]} - Next unique array of size 'size'.
  */
-function* getUniqueCombinations(array, size) {
+export function* getUniqueCombinations<T>(
+  array: T[][],
+  size: number,
+): Generator<T[][]> {
   // Handle invalid array length
   if (!array?.length) return;
 
@@ -93,9 +101,12 @@ function* getUniqueCombinations(array, size) {
  *   (No empties, order doesn't matter)
  * @param {any[]} array - Array containing any type of item
  * @param {number} slotCount - Size of each combination to return
- * @returns {any[][]} - Next array of size 'size'
+ * @returns {any[]} - Next array of size 'size'
  */
-function* getCombinations(array, slotCount) {
+export function* getCombinations<T>(
+  array: T[],
+  slotCount: number,
+): Generator<T[]> {
   // Handle invalid array length
   if (!array?.length) return;
 
@@ -124,7 +135,11 @@ function* getCombinations(array, slotCount) {
 }
 
 /** Calculate count of all possible non-repetitive combinations of items in slotCount slots, allowing empty slots */
-function permutationCount(arrayLength, slotCount, includeBlanks) {
+export function permutationCount(
+  arrayLength: number,
+  slotCount: number,
+  includeBlanks = false,
+) {
   // Simple permutation formula
   if (!includeBlanks)
     return slotCount > arrayLength
@@ -149,7 +164,11 @@ function permutationCount(arrayLength, slotCount, includeBlanks) {
 
 /** Get all non-repeating permutations from array of size slotCount (order matters)
  *  includeBlanks will return permutations containing one or more empty slots */
-function* getPermutations(array, slotCount, includeBlanks = false) {
+export function* getPermutations<T>(
+  array: T[],
+  slotCount: number,
+  includeBlanks = false,
+): Generator<T[]> {
   const maxIdx = array.length - +!includeBlanks,
     lastSlot = slotCount - 1;
   let indexes = Array.from({ length: slotCount }, (_, idx) =>
@@ -168,9 +187,9 @@ function* getPermutations(array, slotCount, includeBlanks = false) {
 // HELPERS \\
 
 /** Calculate the factorial of N (non-recursive) */
-function fact(n) {
+function fact(n: number) {
   if (n in factCache) return factCache[n];
-  let i, f;
+  let i: number, f: number;
   for (f = i = 1; i <= n; i++) f *= i;
   return f;
 }
@@ -180,9 +199,9 @@ for (let i = 1; i <= 170; i++) {
   factCache[i] = factCache[i - 1] * i;
 }
 
-/** Return true if array has any repeating values,
+/** Return true if 'array' has any repeating values,
  * unless the repeated value is ignoreValue */
-function hasRepeats(array, ignoreValue) {
+function hasRepeats(array: any[], ignoreValue: any) {
   return array.some((val, idx) => {
     if (val === ignoreValue) return false;
 
@@ -192,13 +211,3 @@ function hasRepeats(array, ignoreValue) {
     return false;
   });
 }
-
-// EXPORTS \\
-module.exports = {
-  getUniqueCombinations,
-  getCombinationN,
-  combinationCount,
-  getCombinations,
-  permutationCount,
-  getPermutations,
-};

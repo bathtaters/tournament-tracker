@@ -1,27 +1,30 @@
-const { matchedData } = require("express-validator");
+import type { Request, Response } from "express";
+import type { Match, Player } from "types/models";
+import type { OppData } from "types/generators";
+import { matchedData } from "express-validator";
 
-// Models
-const event = require("../db/models/event");
-const match = require("../db/models/match");
-const clock = require("../db/models/clock");
+import * as event from "../db/models/event";
+import * as match from "../db/models/match";
+import * as clock from "../db/models/clock";
+import * as settings from "../db/models/settings";
 
-// Lookup Settings
-const settings = require("../db/models/settings");
-const { asType } = require("../services/settings.services");
-const autoByesDef = require("../config/validation").defaults.settings.autobyes;
-
-// Services
-const roundService = require("../services/round.services");
-const {
-  swapPlayersService,
+import { asType } from "../services/settings.services";
+import { defaults } from "../config/validation";
+import roundService from "../services/round.services";
+import {
   getUniqueIds,
-} = require("../services/swapPlayers.services");
-const { arrToObj } = require("../utils/shared.utils");
+  swapPlayersService,
+} from "../services/swapPlayers.services";
+import { arrToObj } from "../utils/shared.utils";
+
+type SwapData = {
+  swap: { id: Match["id"]; matchIdx: number; playerid: Player["id"] }[];
+};
 
 // Swap players in matches
-async function swapPlayers(req, res) {
+export async function swapPlayers(req: Request, res: Response) {
   // Get data
-  const { swap } = matchedData(req);
+  const { swap } = matchedData(req) as SwapData;
   let matchData = await match.getMulti(getUniqueIds(swap, "id"), false, [
     "id",
     "eventid",
@@ -44,15 +47,17 @@ async function swapPlayers(req, res) {
 
   // Write changes
   const result = await match.updateMulti(matchData, req);
-  if (!result || result.some((r) => r.eventid !== eventid))
+  if (!result?.length || result.some((r) => r.eventid !== eventid))
     throw new Error("Error writing swap to database.");
 
   return res.sendAndLog({ eventid });
 }
 
 // Create round matches
-async function nextRound(req, res) {
-  const { id, roundactive } = matchedData(req);
+export async function nextRound(req: Request, res: Response) {
+  const { id, roundactive } = matchedData<{ id: string; roundactive: number }>(
+    req,
+  );
   const data = await event.get(id, true);
 
   // Error check
@@ -76,9 +81,11 @@ async function nextRound(req, res) {
   // Get additional data
   const [matchData, oppData, allMatchups, autoByes] = await Promise.all([
     match.getByEvent(id),
-    event.getOpponents(id).then(arrToObj("playerid", { valKey: "oppids" })),
+    event
+      .getOpponents(id)
+      .then(arrToObj("playerid", { valKey: "oppids" })) as Promise<OppData>,
     match.getMatchups(id),
-    settings.get("autobyes"),
+    settings.get(["autobyes"]).then((r) => r?.[0]),
   ]);
 
   // Build round
@@ -87,7 +94,7 @@ async function nextRound(req, res) {
     matchData,
     oppData,
     allMatchups,
-    autoByes ? asType(autoByes) : autoByesDef,
+    autoByes ? asType(autoByes) : defaults.settings.autobyes,
   );
 
   // Create matches
@@ -100,13 +107,15 @@ async function nextRound(req, res) {
   return res.sendAndLog({
     id: ret[0].id,
     round: ret[0].roundactive,
-    matches: ret[1] && ret[1].map((m) => m.id),
+    matches: ret[1]?.map((m) => m.id),
   });
 }
 
 // Delete round matches
-async function prevRound(req, res) {
-  const { id, roundactive } = matchedData(req);
+export async function prevRound(req: Request, res: Response) {
+  const { id, roundactive } = matchedData<{ id: string; roundactive: number }>(
+    req,
+  );
 
   const round = await event.getRound(id); // Get latest round num
   if (round == null) throw new Error("No matches found.");
@@ -118,11 +127,5 @@ async function prevRound(req, res) {
 
   await clock.reset(id, req);
 
-  return res.sendAndLog({ id: id, round });
+  return res.sendAndLog({ id, round });
 }
-
-module.exports = {
-  swapPlayers,
-  nextRound,
-  prevRound,
-};

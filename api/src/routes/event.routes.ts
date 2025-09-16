@@ -2,7 +2,7 @@ import { Router } from "express";
 import validate from "../validators/event.validators";
 import * as controller from "../controllers/event.controllers";
 import stats from "../controllers/stats.controllers";
-import action from "../controllers/action.controllers";
+import { nextRound, prevRound } from "../controllers/action.controllers";
 
 const router = Router();
 
@@ -34,7 +34,7 @@ router.post("/:id/clock/reset", validate.eventid, controller.clockOp("reset"));
 router.post("/:id/clock/pause", validate.eventid, controller.clockOp("pause"));
 
 // Create matches
-router.post("/:id/round/:roundactive", validate.rounds, action.nextRound);
-router.delete("/:id/round/:roundactive", validate.rounds, action.prevRound);
+router.post("/:id/round/:roundactive", validate.rounds, nextRound);
+router.delete("/:id/round/:roundactive", validate.rounds, prevRound);
 
 export default router;

@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import type { Event } from "types/models";
+import type { ClockState } from "types/base";
 import { matchedData } from "express-validator";
 import { arrToObj } from "../utils/shared.utils";
 import { defaults } from "../config/validation";
@@ -14,7 +15,7 @@ import * as match from "../db/models/match";
 export async function getEvent(req: Request, res: Response) {
   const { id } = matchedData(req);
   const eventData = await event.get(id, true);
-  if (!eventData || eventData.length === 0) return res.sendStatus(204);
+  if (!eventData) return res.sendStatus(204);
 
   const matches = await match.listByEvent(id).then(sortMatchResult);
 
@@ -58,7 +59,7 @@ export async function removeEvent(req: Request, res: Response) {
 
 // Manually set event data (Guess day-slot if missing when updating day)
 export async function updateEvent(req: Request, res: Response) {
-  let { id, ...body } = matchedData(req) as Partial<Event> & Pick<Event, "id">;
+  let { id, ...body } = matchedData<Partial<Event> & Pick<Event, "id">>(req);
   if (!("day" in body) && req.body.day === null) body.day = null; // Fix validation
 
   if (body.players) body.playercount = body.players.length;
@@ -75,7 +76,7 @@ export function setPlan(req: Request, res: Response) {
 }
 
 // Clock operations -- run/pause/reset
-export const clockOp = (action: ClockAction) => {
+export const clockOp = (action: ClockState) => {
   switch (action) {
     case "run":
       return (req: Request, res: Response) => {
@@ -115,7 +116,7 @@ const sortMatchResult = (result: { round: number; matches: string[] }[]) =>
   }, [] as string[][]);
 
 // Clock catcher
-const catchClockError = (action: ClockAction) => (err: any) => {
+const catchClockError = (action: ClockState) => (err: any) => {
   if (err.message === "Event not found") {
     if (action === "run")
       throw new Error("Clock is already running or event not found");
@@ -124,5 +125,3 @@ const catchClockError = (action: ClockAction) => (err: any) => {
   }
   throw err;
 };
-
-type ClockAction = "run" | "reset" | "pause";
