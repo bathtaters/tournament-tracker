@@ -1,15 +1,9 @@
 /* *** EVENT Table Operations *** */
 import type { Request } from "express";
-import type {
-  Event,
-  EventDay,
-  EventDetail,
-  EventOpps,
-  Match,
-  Plan,
-} from "types/models";
-import db from "../admin/interface";
-import log from "./log";
+import type { Event, EventDay, EventDetail, Match, Plan } from "types/models";
+import type { EventOpps } from "types/generators";
+import { getRow, getRows, operation } from "../admin/interface";
+import { addRows, query, rmvRows, updateRows } from "./log";
 import { event as strings } from "../sql/strings";
 import { enums } from "../../config/validation";
 
@@ -22,11 +16,6 @@ export async function get(
   planOnly?: boolean,
 ): Promise<Event[]>;
 export async function get(
-  id: undefined,
-  detail: true,
-  planOnly?: boolean,
-): Promise<EventDetail[]>;
-export async function get(
   id: Event["id"],
   detail?: false,
   planOnly?: boolean,
@@ -36,52 +25,40 @@ export async function get(
   detail: true,
   planOnly?: boolean,
 ): Promise<EventDetail | undefined>;
-export async function get(
-  id?: Event["id"],
-  detail = false,
-  planOnly = false,
-): Promise<Event[] | EventDetail[] | Event | EventDetail | undefined> {
-  if (!id) return db.getRows("event", planOnly ? "WHERE plan > 0" : undefined);
+export async function get(id?: Event["id"], detail = false, planOnly = false) {
+  if (!id)
+    return getRows<Event>("event", planOnly ? "WHERE plan > 0" : undefined);
 
-  const eventData: EventDetail | EventDetail[] | undefined = await db.getRow(
-    "event" + (detail ? "Detail" : ""),
+  const eventData = await getRow<Event | EventDetail>(
+    detail ? "eventdetail" : "event",
     id,
   );
-  if (!eventData || (Array.isArray(eventData) && eventData.length === 0))
-    return;
-  if (!Array.isArray(eventData) && eventData.drops.length)
+  if (!eventData) return;
+  if ("drops" in eventData && eventData.drops.length)
     eventData.drops = eventData.drops.flat(1);
   return eventData;
 }
 
-export const getSchedule = (planOnly: boolean): EventDay[] =>
-  db.query(
+export const getSchedule = (planOnly = false) =>
+  query<EventDay>(
     `${strings.schedule.prefix}${
       planOnly ? strings.schedule.planOnly : strings.schedule.useSettings
     }${strings.schedule.suffix}`,
   );
 
-export function getOpponents(
-  eventid?: undefined,
-  completed?: boolean,
-): Promise<EventOpps[]>;
-export function getOpponents(
-  eventid: Event["id"],
-  completed?: boolean,
-): Promise<EventOpps | undefined>;
-export function getOpponents(
-  eventid?: Event["id"],
-  completed = true,
-): Promise<EventOpps | EventOpps[] | undefined> {
+export function getOpponents(eventid?: Event["id"], completed = true) {
   return eventid
-    ? db.getRow("eventOpps", eventid, null, { idCol: "eventid", getOne: false })
-    : db.getRows("eventOpps", completed && strings.complete);
+    ? getRow<EventOpps>("eventopps", eventid, "*", {
+        idCol: "eventid",
+        getOne: false,
+      })
+    : getRows<EventOpps>("eventopps", completed && strings.complete);
 }
 
 export const getPlayers = (
   id: Event["id"],
 ): Promise<Pick<Event, "id" | "players"> | undefined> =>
-  db.getRow("event", id, "players");
+  getRow("event", id, ["players"]);
 
 export const getLastSlot = (
   day: Event["day"],
@@ -92,37 +69,36 @@ export const getLastSlot = (
     (day ? "day = $1" : "day IS NULL") +
     (!id ? "" : day ? " AND id != $2" : " AND id != $1") +
     strings.maxSlot[1];
-  return db
-    .query(qry, [day, id].filter(Boolean))
-    .then((r) => r?.[0]?.slot || 0);
+  return query<Event>(qry, [day, id].filter(Boolean)).then(
+    (r) => r[0]?.slot ?? 0,
+  );
 };
 
 export const getRound = (
   id: Event["id"],
-): Promise<Event["roundactive"] | undefined> =>
-  db.query(strings.maxRound, [id]).then((r) => r?.[0]?.round);
+): Promise<Match["round"] | undefined> =>
+  query<Match>(strings.maxRound, [id]).then((r) => r?.[0]?.round);
 
 // Create a new event
-export const add = (
-  eventData: Omit<Event, "id">,
-  req: Request,
-): Promise<Event[]> => {
+export const add = (eventData: Omit<Event, "id">, req: Request) => {
   eventData.players = eventData.players || [];
-  return log.addRows("event", eventData, req);
+  return addRows<Event>("event", [eventData], req);
 };
 
 export const pushRound = (
   eventid: Event["id"],
   round: Event["roundactive"],
-  matchData: Omit<Match, "id"> | undefined,
-  req: Request,
-): Promise<[Event[], Match[] | undefined]> =>
-  db.operation((client: any) =>
+  matchData?: Partial<Match>[],
+  req?: Request,
+): Promise<[Event | undefined, Match[] | undefined]> =>
+  operation((client) =>
     Promise.all([
       // Increase active round counter
-      log.updateRows("event", eventid, { roundactive: round }, req, { client }),
+      updateRows<Event>("event", eventid, { roundactive: round }, req, {
+        client,
+      }).then((r) => r[0]),
       // Create matches
-      matchData && log.addRows("match", matchData, req, { client }),
+      addRows<Match>("match", matchData ?? [], req, { client }),
     ]),
   );
 
@@ -131,23 +107,29 @@ export const popRound = (
   round: Event["roundactive"],
   req: Request,
 ): Promise<[Match[], Event[]]> =>
-  db.operation((client: any) =>
+  operation((client) =>
     Promise.all([
       // Delete matches
-      log.rmvRows("match", [eventid, round], strings.deleteRound, req, client),
+      rmvRows<Match>(
+        "match",
+        [eventid, round],
+        strings.deleteRound,
+        req,
+        client,
+      ),
       // Decrease active round counter
-      log.updateRows("event", eventid, { roundactive: round - 1 }, req, {
+      updateRows<Event>("event", eventid, { roundactive: round - 1 }, req, {
         client,
       }),
     ]),
   );
 
 export const setPlan = (ids: Plan["events"], req: Request) =>
-  db.operation(
+  operation(
     (client: any): Promise<[Event[], Event[] | undefined]> =>
       Promise.all([
         // Clear unplanned events
-        log.query(
+        query<Event>(
           strings.unplan,
           [ids],
           (data, error) =>
@@ -166,13 +148,12 @@ export const setPlan = (ids: Plan["events"], req: Request) =>
                   data,
                 },
           req,
-          false,
           client,
         ),
         // Set new plan order
         !ids.length
-          ? Promise.resolve()
-          : log.updateRows(
+          ? Promise.resolve(undefined)
+          : updateRows<Event>(
               "event",
               null,
               ids.map((id, idx) => ({ id, plan: idx + 1 })),
@@ -185,10 +166,12 @@ export const setPlan = (ids: Plan["events"], req: Request) =>
 export const rmv = (
   id: Event["id"],
   req: Request,
-): Promise<Event | undefined> => log.rmvRows("event", id, null, req);
+): Promise<Event | undefined> =>
+  rmvRows<Event>("event", id, undefined, req).then((r) => r[0]);
 
 export const set = (
   id: Event["id"],
   newParams: Partial<Event>,
   req: Request,
-): Promise<Event | undefined> => log.updateRows("event", id, newParams, req);
+): Promise<Event | undefined> =>
+  updateRows<Event>("event", id, newParams, req).then((r) => r[0]);

@@ -1,4 +1,6 @@
 // SQL Constants
+import type { TableName } from "types/base";
+import type { LogEntry } from "types/models";
 
 export const clock = {
   start:
@@ -48,7 +50,9 @@ export const team = {
 };
 
 export const match = {
-  list: "SELECT round, array_agg(id) matches FROM match WHERE eventid = $1 GROUP BY round;",
+  listAll:
+    "SELECT eventid, round, array_agg(id) matches FROM match GROUP BY eventid, round;",
+  list: "SELECT eventid, round, array_agg(id) matches FROM match WHERE eventid = $1 GROUP BY eventid, round;",
   drop: "UPDATE match SET drops = ARRAY_APPEND(drops, $2) WHERE id = $1 RETURNING *;",
   undrop:
     "UPDATE match SET drops = ARRAY_REMOVE(drops, $2) WHERE id = $1 RETURNING *;",
@@ -93,7 +97,7 @@ export const log = {
   sessionFilter: "AND sessionid = $1 AND userid IS NOT NULL",
   userFilter: "AND userid = $1 AND sessionid IS NOT NULL",
   logFilter,
-  matchesFilter: (sqlFilter) =>
+  matchesFilter: (sqlFilter: string) =>
     sqlFilter.replace(
       /tableid = [^$]+(\$\d+)[^\s]+/,
       (_, p) =>
@@ -103,14 +107,14 @@ export const log = {
 
 /** Build log SQL filter and Args array from parameters */
 function logFilter(
-  tables,
-  timeRange,
-  inclFailed,
-  tableids,
-  userids,
+  tables: TableName[] | null,
+  timeRange: TimeRange,
+  inclFailed = false,
+  tableids: LogEntry["tableid"][] = [],
+  userids: LogEntry["userid"][] = [],
   timeSort = true,
-) {
-  let sqlFilters = [],
+): [string, any[]] {
+  let sqlFilters: string[] = [],
     args = [];
 
   if (tables?.length) {
@@ -141,3 +145,5 @@ function logFilter(
 
   return [`WHERE ${sqlFilters.join(" AND ")}${sortStr}`, args];
 }
+
+export type TimeRange = { after?: Date; before?: Date };

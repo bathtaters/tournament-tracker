@@ -29,9 +29,14 @@ export const enums = {
     EVENT: "event",
     MATCH: "match",
     PLAYER: "player",
+    TEAM: "team",
     VOTER: "voter",
     SETTINGS: "settings",
     LOG: "log",
+    SESSION: "session",
+    EVENT_DET: "eventdetail",
+    MATCH_DET: "matchdetail",
+    EVENT_OPPS: "eventopps",
   },
 
   /** @enum {string} */

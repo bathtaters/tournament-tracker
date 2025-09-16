@@ -12,7 +12,7 @@ const get = (id) =>
   db
     .getRow("player", id)
     .then((r) =>
-      Array.isArray(r) ? r.map(util.stripPassword) : r && util.stripPassword(r)
+      Array.isArray(r) ? r.map(util.stripPassword) : r && util.stripPassword(r),
     );
 const getUser = (name) =>
   db.getRow("player", name, ["id", "password"], {
@@ -24,10 +24,10 @@ const hasPass = (id) =>
   db
     .getRow("player", id)
     .then((r) =>
-      Array.isArray(r) ? r.map(util.checkPassword) : r && util.checkPassword(r)
+      Array.isArray(r) ? r.map(util.checkPassword) : r && util.checkPassword(r),
     );
 const list = () =>
-  db.getRow("player", null, "id").then((r) => r && r.map((p) => p.id));
+  db.getRow("player", null, ["id"]).then((r) => r && r.map((p) => p.id));
 
 /** Checks if the given player is an admin and, if so, at least 1 other admin exists (=> true). */
 const isLastAdmin = (id) =>
@@ -40,7 +40,7 @@ const resetLogin = (id, req) =>
       "player",
       id,
       { session: util.newSessionID(), password: null },
-      { ...req, session: { user: req.session.user || id } }
+      { ...req, session: { user: req.session.user || id } },
     )
     .then((r) => r.session);
 
@@ -53,7 +53,7 @@ const startSession = (name, req) =>
 
 const sessionPlayer = (session) =>
   db
-    .getRow("player", session, null, { idCol: "session", getOne: true })
+    .getRow("player", session, "*", { idCol: "session", getOne: true })
     .then((r) => r && util.stripPassword(r));
 
 const endSession = (req) =>
@@ -63,15 +63,15 @@ const endSession = (req) =>
 
 // Get Event detail for player
 const getPlayerEvents = (playerids) =>
-  db.query(
+  db.multiQuery(
     playerids.map(() => strings.eventFilter),
     playerids.map((id) => [id]),
-    true
+    true,
   );
 
 // Get Match detail for player
 const getPlayerMatches = (playerid) =>
-  db.getRow("matchDetail", playerid, null, {
+  db.getRow("matchDetail", playerid, "*", {
     idCol: "ANY(players)",
     getOne: false,
   });
@@ -91,7 +91,7 @@ async function checkPassword(name, password, user, { sessionID }) {
     return log.login(
       user.id,
       sessionID,
-      err.message || err || "Error encrypting password."
+      err.message || err || "Error encrypting password.",
     );
   }
 
@@ -99,13 +99,13 @@ async function checkPassword(name, password, user, { sessionID }) {
     return log.login(
       user.id,
       sessionID,
-      "Password not set, contact administrator if you don't have a password link."
+      "Password not set, contact administrator if you don't have a password link.",
     );
 
   return log.login(
     user.id,
     sessionID,
-    util.passwordsMatch(guess, user.password) ? null : "Incorrect password."
+    util.passwordsMatch(guess, user.password) ? null : "Incorrect password.",
   );
 }
 
