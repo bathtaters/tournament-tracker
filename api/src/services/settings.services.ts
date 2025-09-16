@@ -1,7 +1,9 @@
-const logger = require("../utils/log.adapter");
+import type { Settings, SettingsType } from "types/base";
+import type { SettingsEntry } from "types/models";
+import logger from "../utils/log.adapter";
 
 // Convert between values
-exports.asType = ({ value, type }) => {
+export function asType({ value, type }: SettingsEntry): any {
   switch (type) {
     case "string":
       return value;
@@ -14,11 +16,11 @@ exports.asType = ({ value, type }) => {
       return !!value && value !== "false";
     case "object":
     default:
-      return value ? JSON.parse(value) : value;
+      return value ? JSON.parse(value) : null;
   }
-};
+}
 
-const toType = (value, type) => {
+function toType(value: any, type: SettingsType): string {
   switch (type) {
     case "string":
       return value;
@@ -33,20 +35,22 @@ const toType = (value, type) => {
     // case "object": ... Do nothing ...
   }
   return value && JSON.stringify(value);
-};
+}
 
-const getType = (value, forceType) => {
+function getType(value: any, forceType?: SettingsType) {
   let type = forceType || typeof value;
   if (type === "object" && value && typeof value.toISOString === "function")
     type = "date";
   return { value: toType(value, type), type };
-};
+}
 
-exports.toObjArray = (settings) =>
-  Object.keys(settings).map((id) => ({ ...getType(settings[id]), id }));
+export const toObjArray = (settings: Partial<Settings>) =>
+  Object.keys(settings).map(
+    (id) => ({ ...getType(settings[id]), id }) as SettingsEntry,
+  );
 
-exports.fromObjArray = (settingsArr) =>
-  (settingsArr || []).reduce(
-    (settings, entry) => ({ ...settings, [entry.id]: exports.asType(entry) }),
-    {},
+export const fromObjArray = (settingsArr: SettingsEntry[]) =>
+  (settingsArr ?? []).reduce(
+    (settings, entry) => ({ ...settings, [entry.id]: asType(entry) }),
+    {} as Partial<Settings>,
   );
