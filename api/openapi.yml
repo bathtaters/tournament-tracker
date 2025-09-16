@@ -90,7 +90,7 @@ paths:
       tags:
         - Base
       summary: Get Event Schedule
-      description: Retrieves events organized by date, based on settings.showplan.
+      description: Retrieves events organized by date, based on settings.planschedule.
       responses:
         '200':
           description: Schedule data.

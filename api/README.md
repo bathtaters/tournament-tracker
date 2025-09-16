@@ -22,13 +22,13 @@ _Represented below by api/v[n]_
 
 ### _Base_ - [Domain]/api/v[n]/...
 
-| URL            | Method | Body               | Return                                                    | Description                                        |
-|----------------|--------|--------------------|-----------------------------------------------------------|----------------------------------------------------|
-| /all           | GET    |                    | {settings,schedule,events,players}                        | All objects in DB                                  |
-| /schedule      | GET    |                    | { settings, schedule: { YYYY-MM-DD/none: [ eventids ] } } | Events by date + settings (uses settings.showplan) |
-| /schedule/plan | GET    |                    | { settings, schedule: { YYYY-MM-DD/none: [ eventids ] } } | Planned events by date + relevant settings         |
-| /settings      | GET    |                    | { setting: value, ... }                                   | All stored settings                                |
-| /settings      | PATCH  | { setting: value } | { success, set: [setting] }                               | Update setting(s)                                  |
+| URL            | Method | Body               | Return                                                    | Description                                            |
+|----------------|--------|--------------------|-----------------------------------------------------------|--------------------------------------------------------|
+| /all           | GET    |                    | {settings,schedule,events,players}                        | All objects in DB                                      |
+| /schedule      | GET    |                    | { settings, schedule: { YYYY-MM-DD/none: [ eventids ] } } | Events by date + settings (uses settings.planschedule) |
+| /schedule/plan | GET    |                    | { settings, schedule: { YYYY-MM-DD/none: [ eventids ] } } | Planned events by date + relevant settings             |
+| /settings      | GET    |                    | { setting: value, ... }                                   | All stored settings                                    |
+| /settings      | PATCH  | { setting: value } | { success, set: [setting] }                               | Update setting(s)                                      |
 
 ---
 
