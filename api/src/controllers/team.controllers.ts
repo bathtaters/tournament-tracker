@@ -1,6 +1,6 @@
 import type { RequestHandler } from "express";
 import type { Team } from "types/models";
-import teams from "../db/models/team";
+import * as teams from "../db/models/team";
 import { arrToObj } from "../utils/shared.utils";
 import { matchedData } from "express-validator";
 
