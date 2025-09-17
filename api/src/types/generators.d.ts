@@ -5,6 +5,7 @@ import type {
   OppData,
   Player,
   Stats,
+  Team,
 } from "./models";
 import type { PlayerRecord } from "./base";
 
@@ -43,7 +44,13 @@ export type MatchupData = {
   count: number;
 };
 
-type GenerateData = Pick<EventDetail, "playerspermatch" | "byes"> & {
+export type TeamData = Record<Team["id"], Team["players"]>;
+
+export type GenerateData = Pick<
+  EventDetail,
+  "team" | "playerspermatch" | "byes"
+> & {
+  teamData?: TeamData;
   oppData: OppData;
   allMatchups: MatchupData[];
 };

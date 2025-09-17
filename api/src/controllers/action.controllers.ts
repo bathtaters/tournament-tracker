@@ -1,21 +1,24 @@
 import type { Request, Response } from "express";
 import type { Match, Player } from "types/models";
-import type { OppData } from "types/generators";
+import type { OppData, TeamData } from "types/generators";
 import { matchedData } from "express-validator";
 
 import * as event from "../db/models/event";
 import * as match from "../db/models/match";
 import * as clock from "../db/models/clock";
 import * as settings from "../db/models/settings";
+import * as teams from "../db/models/team";
 
 import { asType } from "../services/settings.services";
-import { defaults } from "../config/validation";
+import { defaults, enums } from "../config/validation";
 import roundService from "../services/round.services";
 import {
   getUniqueIds,
   swapPlayersService,
 } from "../services/swapPlayers.services";
 import { arrToObj } from "../utils/shared.utils";
+
+const { TeamType } = enums;
 
 type SwapData = {
   swap: { id: Match["id"]; matchIdx: number; playerid: Player["id"] }[];
@@ -79,14 +82,20 @@ export async function nextRound(req: Request, res: Response) {
     throw new Error("All matches have not been reported");
 
   // Get additional data
-  const [matchData, oppData, allMatchups, autoByes] = await Promise.all([
-    match.getByEvent(id),
-    event
-      .getOpponents(id)
-      .then(arrToObj("playerid", { valKey: "oppids" })) as Promise<OppData>,
-    match.getMatchups(id),
-    settings.get(["autobyes"]).then((r) => r?.[0]),
-  ]);
+  const [matchData, oppData, allMatchups, autoByes, teamData] =
+    await Promise.all([
+      match.getByEvent(id),
+      event
+        .getOpponents(id)
+        .then(arrToObj("playerid", { valKey: "oppids" })) as Promise<OppData>,
+      match.getMatchups(id),
+      settings.get(["autobyes"]).then((r) => r?.[0]),
+      data.team !== TeamType.DISTRIB
+        ? null
+        : (teams
+            .list(id)
+            .then(arrToObj("id", { valKey: "players" })) as Promise<TeamData>),
+    ]);
 
   // Build round
   const { eventid, round, matches } = roundService(
@@ -94,6 +103,7 @@ export async function nextRound(req: Request, res: Response) {
     matchData,
     oppData,
     allMatchups,
+    teamData,
     autoByes ? asType(autoByes) : defaults.settings.autobyes,
   );
 
