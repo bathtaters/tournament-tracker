@@ -3,12 +3,9 @@ import type {
   GenerateData,
   MatchupData,
   OppData,
+  Stats,
   TeamData,
 } from "types/generators";
-import roundRobin from "./matchGenerators/roundRobin";
-import swissMonrad from "./matchGenerators/swissMonrad";
-import swissDutch from "./matchGenerators/swissDutch";
-import elimination from "./matchGenerators/elimination";
 import toStats from "./stats.services";
 import { enums } from "../config/validation";
 
@@ -40,12 +37,13 @@ export default function roundService(
 
   // Collect data for match generator
   const ranking =
-    eventData.team === TeamType.DISTRIB
+    eventData.team === "DISTRIB"
       ? Object.values(teamData).flat(1)
       : eventData.players;
-  let stats = eventData.roundactive
+  let stats: Stats = eventData.roundactive
     ? toStats({ solo: matchData }, ranking, { solo: oppData }, true, true)
     : { ranking, noStats: true };
+
   if (!stats.ranking) stats.ranking = [];
   if (eventData.drops?.length)
     stats.ranking = stats.ranking.filter((p) => !eventData.drops.includes(p));
@@ -60,16 +58,16 @@ export default function roundService(
   // Generate match table (Can add more algorithms later)
   let matchTable: string[][];
   switch (eventData.format) {
-    case EventFormat.ROBIN:
+    case "ROBIN":
       matchTable = roundRobin(stats, genData);
       break;
-    case EventFormat.MONRAD:
+    case "MONRAD":
       matchTable = swissMonrad(stats, genData);
       break;
-    case EventFormat.DUTCH:
+    case "DUTCH":
       matchTable = swissDutch(stats, genData);
       break;
-    case EventFormat.ELIM:
+    case "ELIM":
       matchTable = elimination(stats, genData);
       break;
     default:

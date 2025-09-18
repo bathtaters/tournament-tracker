@@ -90,7 +90,7 @@ export async function nextRound(req: Request, res: Response) {
         .then(arrToObj("playerid", { valKey: "oppids" })) as Promise<OppData>,
       match.getMatchups(id),
       settings.get(["autobyes"]).then((r) => r?.[0]),
-      data.team !== TeamType.DISTRIB
+      data.team !== "DISTRIB"
         ? null
         : (teams
             .list(id)

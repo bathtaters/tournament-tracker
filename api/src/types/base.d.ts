@@ -2,9 +2,8 @@ import type { enums } from "config/validation";
 
 export type TableName = (typeof enums.TableName)[keyof typeof enums.TableName];
 export type LogAction = (typeof enums.LogAction)[keyof typeof enums.LogAction];
-export type EventFormat =
-  (typeof enums.EventFormat)[keyof typeof enums.EventFormat];
-export type TeamType = (typeof enums.TeamType)[keyof typeof enums.TeamType];
+export type EventFormat = keyof typeof enums.EventFormat;
+export type TeamType = keyof typeof enums.TeamType;
 
 export type ClockState = "run" | "reset" | "pause";
 

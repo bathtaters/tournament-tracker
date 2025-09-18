@@ -24,6 +24,7 @@ export type StatsEntry = {
 export type Stats = {
   [playerid: Player["id"]]: StatsEntry;
   ranking: Player["id"][];
+  noStats?: boolean;
 };
 
 export type StatsReturn = Stats | (Pick<Stats, "ranking"> & { noStats: true });
