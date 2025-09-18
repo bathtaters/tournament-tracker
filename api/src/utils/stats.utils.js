@@ -7,7 +7,7 @@ const { points } = require("../config/constants");
 exports.rate = (score, record, useFloor) =>
   Math.max(
     score / (sumArr(record || []) * points.win),
-    useFloor ? points.floor || 0 : 0
+    useFloor ? points.floor || 0 : 0,
   ); // If no games played, returns NaN
 
 // Builds player array of 'WLD' index (ie Player Win = 0, Player Loss = 1, Draw = 2)
@@ -17,7 +17,7 @@ exports.getWLD = ({ wins, maxwins }) =>
     if (w < maxwins) return false;
     // Catch invalid state
     throw new Error(
-      "Invalid maxwins: " + maxwins + " => " + JSON.stringify(wins)
+      "Invalid maxwins: " + maxwins + " => " + JSON.stringify(wins),
     );
   }).length === 1
     ? wins.map((w) => +(w !== maxwins))
@@ -40,7 +40,7 @@ exports.calcRates = (result, useFloor) =>
     gameRate: exports.rate(
       result.gameScore,
       result.gameRecord?.slice(0, 2),
-      useFloor
+      useFloor,
     ),
   });
 
@@ -145,4 +145,4 @@ const sumArr = (array) => array.reduce((sum, n) => sum + n, 0);
 const addArrs = (arrA, arrB) => arrA.map((a, i) => a + arrB[i]);
 
 // Get average value of array
-const avgArr = (array) => sumArr(array) / array.length;
+const avgArr = (array) => (array.length ? sumArr(array) / array.length : 0);
