@@ -99,14 +99,26 @@ export function* getUniqueCombinations<T>(
 /**
  * Generator that yields all combinations of array items of the given size.
  *   (No empties, order doesn't matter)
- * @param {any[]} array - Array containing any type of item
- * @param {number} slotCount - Size of each combination to return
- * @returns {any[]} - Next array of size 'size'
+ * @param array - Array containing any type of item
+ * @param slotCount - Size of each combination to return
+ * @param asIndexes - If true, yields will be indexes instead of actual values
+ * @returns Next array of size 'size'
  */
+export function getCombinations<T>(
+  array: T[],
+  slotCount: number,
+  asIndexes: true,
+): Generator<number[]>;
+export function getCombinations<T>(
+  array: T[],
+  slotCount: number,
+  asIndexes?: false | undefined,
+): Generator<T[]>;
 export function* getCombinations<T>(
   array: T[],
   slotCount: number,
-): Generator<T[]> {
+  asIndexes = false,
+): Generator<T[] | number[]> {
   // Handle invalid array length
   if (!array?.length) return;
 
@@ -129,8 +141,9 @@ export function* getCombinations<T>(
     // Base increment
     ++slotPtr[0];
 
-    // Convert pointers to actual array values
-    yield slotPtr.map((idx) => array[idx]).reverse();
+    // Convert pointers to actual array values (If !asIndexes)
+    const next = asIndexes ? slotPtr : slotPtr.map((idx) => array[idx]);
+    yield next.reverse();
   }
 }
 
