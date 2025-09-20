@@ -123,9 +123,9 @@ function fastAlgorithm(
 ): Match["players"][] {
   const players = stats.ranking.slice();
   const matches: Match["players"][] = [];
-  const usedPlayers = new Set();
+  const usedPlayers = new Set<string>();
   const byePlayers =
-    byes.length < players.length ? new Set(byes ?? []) : new Set();
+    byes.length < players.length ? new Set(byes ?? []) : new Set<string>();
   const dutchFactor = isDutch
     ? Math.trunc(players.length / playerspermatch)
     : 0;
@@ -144,7 +144,7 @@ function fastAlgorithm(
 
   // Generate matches
   while (usedPlayers.size < players.length) {
-    const match = [];
+    const match: Player["id"][] = [];
 
     for (let slot = 0; slot < playerspermatch; slot++) {
       let player = null;
@@ -229,12 +229,12 @@ function fastAlgorithm(
   if (playerspermatch > 1 && byePlayers.size) {
     for (let byeIdx = 0; byeIdx < matches.length; byeIdx++) {
       const byeMatch = matches[byeIdx];
-      if (byeMatch.length !== 1 || !byePlayers.has(byeMatch)) continue;
+      if (byeMatch.length !== 1 || !byePlayers.has(byeMatch[0])) continue;
 
       const byePlayer = byeMatch[0];
 
       // Find the nearest player w/o a bye that can be swapped with the byePlayer
-      let swapMatch: string[];
+      let swapMatch: Player["id"][];
       const swapPlayer = findNearest(
         players,
         players.indexOf(byePlayer),

@@ -25,7 +25,8 @@ export const useFastAlgorithm = false;
 
 /** Convert each match array to a numeric score to help align ideal matches w/ proposed matches
  *    This value will be used to sort the matches, then they will be matched based on their indexes once sorted. */
-const getMatchScore = (matchScores: number[]) => Math.max(...matchScores); // Highest score
+const getMatchScore = (matchScores: number[]) =>
+  !matchScores.length ? 0 : Math.max(...matchScores); // Highest score
 // Math.min(...matchScores); // Lowest score
 // avg(matchScores); // Average scores
 // avg([Math.min(...matchScores), Math.max(...matchScores)]); // Range median
