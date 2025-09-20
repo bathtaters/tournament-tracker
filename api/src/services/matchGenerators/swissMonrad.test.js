@@ -8,7 +8,7 @@ afterAll(() => {
 });
 
 // Mocks
-const generateMatchups = require("./swissMonrad");
+const generateMatchups = require("./swiss");
 
 // NOTE: Uses un-mocked matchGen.utils, ensure that passes test first //
 
@@ -69,7 +69,7 @@ describe("generateMatchups", () => {
       generateMatchups(stats, {
         playerspermatch: 3,
         byes: ["d", "c"],
-      })
+      }),
     ).toEqual([["a", "c", "d"], ["b"]]);
   });
 
@@ -85,7 +85,7 @@ describe("generateMatchups", () => {
           e: ["f", "a"],
           f: ["a", "e", "d", "c"],
         },
-      })
+      }),
     ).toEqual([
       ["a", "c"],
       ["b", "f"],
@@ -98,7 +98,7 @@ describe("generateMatchups", () => {
       generateMatchups(stats, {
         playerspermatch: 3,
         byes: ["a", "b", "c", "d", "d", "d", "c", "c", "b", "a"],
-      })
+      }),
     ).toEqual([["a", "c", "d"], ["b"]]);
   });
 
@@ -114,7 +114,7 @@ describe("generateMatchups", () => {
           e: ["f", "f", "f", "a", "a", "b"],
           f: ["a", "a", "a", "e", "e", "e", "d", "d", "c", "c", "b"],
         },
-      })
+      }),
     ).toEqual([
       ["a", "c"],
       ["b", "f"],
@@ -130,7 +130,7 @@ describe("generateMatchups", () => {
     };
 
     expect(
-      generateMatchups(extStats, { playerspermatch: 2, allMatchups })
+      generateMatchups(extStats, { playerspermatch: 2, allMatchups }),
     ).toEqual([["a", "b"], ["c", "d"], ["e", "g"], ["f"]]);
     expect(generateMatchups(extStats, { playerspermatch: 2 })).toEqual([
       ["a", "b"],
@@ -146,7 +146,7 @@ describe("generateMatchups", () => {
     stats.ranking = [];
 
     expect(() => generateMatchups(stats, { playerspermatch: 2 })).toThrow(
-      "SWISS MONRAD failed to find best match pairing."
+      "SWISS MONRAD failed to find best match pairing.",
     );
     avgSpy.mockReset();
 
@@ -159,7 +159,7 @@ describe("generateMatchups", () => {
         playerspermatch: 2,
         byes: undefined,
         oppData: undefined,
-      }
+      },
     );
     expect(errSpy).toHaveBeenNthCalledWith(2, "SWISS MONRAD Results:", {
       bestScore: NaN,

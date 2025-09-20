@@ -6,10 +6,10 @@ import type {
   Stats,
   TeamData,
 } from "types/generators";
+import generateRoundRobin from "./matchGenerators/roundRobin";
+import generateSwiss from "./matchGenerators/swiss";
+import generateElimination from "./matchGenerators/elimination";
 import toStats from "./stats.services";
-import { enums } from "../config/validation";
-
-const { EventFormat, TeamType } = enums;
 
 type RoundServiceReturn = {
   eventid: Match["eventid"];
@@ -40,6 +40,7 @@ export default function roundService(
     eventData.team === "DISTRIB"
       ? Object.values(teamData).flat(1)
       : eventData.players;
+
   let stats: Stats = eventData.roundactive
     ? toStats({ solo: matchData }, ranking, { solo: oppData }, true, true)
     : { ranking, noStats: true };
@@ -59,16 +60,16 @@ export default function roundService(
   let matchTable: string[][];
   switch (eventData.format) {
     case "ROBIN":
-      matchTable = roundRobin(stats, genData);
+      matchTable = generateRoundRobin(stats, genData);
       break;
     case "MONRAD":
-      matchTable = swissMonrad(stats, genData);
+      matchTable = generateSwiss(stats, genData, false);
       break;
     case "DUTCH":
-      matchTable = swissDutch(stats, genData);
+      matchTable = generateSwiss(stats, genData, true);
       break;
     case "ELIM":
-      matchTable = elimination(stats, genData);
+      matchTable = generateElimination(stats, genData);
       break;
     default:
       throw new Error(`Unknown format ${eventData.format}`);

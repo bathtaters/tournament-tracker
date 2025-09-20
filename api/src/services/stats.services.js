@@ -64,10 +64,20 @@ function stats(
         ? // Combine entry
           combineFinal(
             final[player],
-            calcOpps(current[player], current, oppData[event][player]),
+            calcOpps(
+              current[player],
+              current,
+              oppData[event][player],
+              usePercentFloor,
+            ),
             // New entry
           )
-        : calcOpps(current[player], current, oppData[event][player]);
+        : calcOpps(
+            current[player],
+            current,
+            oppData[event][player],
+            usePercentFloor,
+          );
     });
   });
 
@@ -77,9 +87,9 @@ function stats(
   );
 
   // Rank players
-  final.ranking = (originalOrder || Object.keys(final)).sort(
-    rankSort(final, originalOrder, useMatchScore),
-  );
+  final.ranking = (
+    originalOrder ? originalOrder.slice() : Object.keys(final)
+  ).sort(rankSort(final, originalOrder, useMatchScore));
 
   return final;
 }

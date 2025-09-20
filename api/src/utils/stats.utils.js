@@ -44,7 +44,7 @@ exports.calcRates = (result, useFloor) =>
     ),
   });
 
-exports.calcOpps = (result, current, oppList) => {
+exports.calcOpps = (result, current, oppList, useFloor) => {
   // Collect
   let oppMatch = [],
     oppGame = [];
@@ -57,8 +57,8 @@ exports.calcOpps = (result, current, oppList) => {
       }
     });
   // Average (In array for combineFinal)
-  result.oppMatch = [avgArr(oppMatch)];
-  result.oppGame = [avgArr(oppGame)];
+  result.oppMatch = [avgArr(oppMatch, useFloor)];
+  result.oppGame = [avgArr(oppGame, useFloor)];
   return result;
 };
 
@@ -84,8 +84,14 @@ exports.finalize = (result, useFloor) => {
   if (result.eventids.length > 1) result = exports.calcRates(result, useFloor);
 
   // Average oppRates (Ignoring NaNs)
-  result.oppMatch = avgArr(result.oppMatch.filter((n) => !isNaN(n)));
-  result.oppGame = avgArr(result.oppGame.filter((n) => !isNaN(n)));
+  result.oppMatch = avgArr(
+    result.oppMatch.filter((n) => !isNaN(n)),
+    useFloor,
+  );
+  result.oppGame = avgArr(
+    result.oppGame.filter((n) => !isNaN(n)),
+    useFloor,
+  );
   return result;
 };
 
@@ -145,4 +151,5 @@ const sumArr = (array) => array.reduce((sum, n) => sum + n, 0);
 const addArrs = (arrA, arrB) => arrA.map((a, i) => a + arrB[i]);
 
 // Get average value of array
-const avgArr = (array) => (array.length ? sumArr(array) / array.length : 0);
+const avgArr = (array, useFloor) =>
+  array.length ? sumArr(array) / array.length : useFloor ? points.floor : 0;

@@ -6,8 +6,8 @@ const toStats = require("./stats.services");
 jest.mock("./stats.services", () => jest.fn((_, ranking) => ({ ranking })));
 
 // Mock array 'denester'
-const matchGen = require("./matchGenerators/swissMonrad");
-jest.mock("./matchGenerators/swissMonrad");
+const matchGen = require("./matchGenerators/swiss");
+jest.mock("./matchGenerators/swiss");
 
 describe("new round", () => {
   let eventData;

@@ -90,23 +90,65 @@ export function* getGroups<T>(array: T[], width: number): Generator<T[][]> {
  * Generate the first grouped set of size 'width' from 'array' elements
  * @param array - Input elements
  * @param width - Max size of each group
+ * @param isDutch - Split using dutch pairing rules
  * @returns Array of arrays containing each group as an array
  */
-export function getGroupsSimple<T>(array: T[], width: number): T[][] {
-  let result = [] as T[][],
-    current = [];
+export function getGroupsSimple<T>(
+  array: T[],
+  width: number,
+  isDutch = false,
+): T[][] {
+  let result: T[][] = [];
 
-  for (const entry of array) {
-    current.push(entry);
+  if (isDutch) {
+    const grpSize = Math.trunc(array.length / width);
+    let idx = 0;
 
-    if (current.length >= width) {
-      result.push(current);
-      current = [];
+    for (let slot = 0; slot < width; slot++) {
+      for (let grp = 0; grp < grpSize; grp++) {
+        if (!slot) result[grp] = [array[idx++]];
+        else result[grp].push(array[idx++]);
+      }
+    }
+    if (idx < array.length) result.push(array.slice(idx));
+  } else {
+    let current: T[] = [];
+
+    for (const entry of array) {
+      current.push(entry);
+      if (current.length >= width) {
+        result.push(current);
+        current = [];
+      }
+    }
+    if (current.length > 0) result.push(current);
+  }
+  return result;
+}
+
+/**
+ * Find the entry nearest to the index that fulfills the given predicate.
+ * @param array - Array to find an entry within
+ * @param index - Index of item to start the search next to
+ * @param predicate - Function returning True will match this entry
+ * @returns Entry matching the predicate or undefined if no matches were found
+ */
+export function findNearest<T>(
+  array: T[],
+  index: number,
+  predicate: (entry: T, idx: number) => boolean,
+): T | undefined {
+  for (let l = index - 1, r = index + 1; l >= 0 || r < array.length; ) {
+    if (r < array.length) {
+      if (predicate(array[r], r)) return array[r];
+      r++;
+    }
+    if (l >= 0) {
+      if (predicate(array[l], l)) return array[l];
+      l--;
     }
   }
-
-  if (current.length) result.push(current);
-  return result;
+  return undefined;
 }
 
 // --- RANDOMIZE/2D-IZE ARRAY --- \\
