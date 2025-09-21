@@ -34,7 +34,7 @@ export async function get(id?: Event["id"], detail = false, planOnly = false) {
     id,
   );
   if (!eventData) return;
-  if ("drops" in eventData && eventData.drops.length)
+  if ("drops" in eventData && eventData.drops?.length)
     eventData.drops = eventData.drops.flat(1);
   return eventData;
 }

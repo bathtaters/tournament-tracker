@@ -61,10 +61,10 @@ export type Event = {
 export type EventDetail = {
   id: string; // uuid
   title: string;
-  day?: Date;
+  day: Date | null;
   slot: number;
   format: EventFormat;
-  team?: TeamType;
+  team: TeamType | null;
   players: string[]; // uuid[]
   playercount: number;
   teamsize: number;
@@ -74,10 +74,10 @@ export type EventDetail = {
   playerspermatch: number;
   notes: string;
   link: string;
-  allreported: boolean;
-  anyreported: boolean;
-  byes: string[]; // uuid[]
-  drops: string[]; // uuid[] (Returned from DB as uuid[][])
+  allreported: boolean | null;
+  anyreported: boolean | null;
+  byes: string[] | null; // uuid[]
+  drops: string[] | null; // uuid[] (Returned from DB as uuid[][])
   clocklimit: string; // interval
 };
 
