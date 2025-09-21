@@ -81,10 +81,11 @@ SELECT event.id,
        BOOL_OR(reported) FILTER (
            WHERE match.round = roundactive AND ARRAY_LENGTH(match.players, 1) != 1),
        ARRAY_AGG(match.players[1]) FILTER (WHERE ARRAY_LENGTH(match.players, 1) = 1),
-       JSON_AGG(drops)
+       JSON_AGG(drops) FILTER (WHERE drops IS NOT NULL)
 FROM event
          LEFT JOIN match ON event.id = match.eventid
 GROUP BY event.id, event.players;
+
 
 
 -- Update DB version Number --
