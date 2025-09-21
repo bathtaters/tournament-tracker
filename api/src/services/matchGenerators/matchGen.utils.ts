@@ -1,4 +1,6 @@
 // --- SHARED UTILITIES FOR GENERATING MATCHES --- \\
+import type { Player } from "../../types/models";
+import type { TeamData } from "../../types/generators";
 import {
   getCombinations,
   getUniqueCombinations,
@@ -151,6 +153,54 @@ export function findNearest<T>(
   return undefined;
 }
 
+/**
+ * Remove the given 'player's entire team from 'players'
+ *  (Or just the player if no team array exists or player is not found.
+ * @param player - Player whose team to lookup
+ * @param players - Set of players to remove the team/individual from
+ * @param teams - Object containing arrays of player IDs corresponding to teams
+ */
+export const removeTeam = (
+  player: Player["id"],
+  players: Set<Player["id"]>,
+  teams?: TeamData,
+) => {
+  const team =
+    teams && Object.values(teams).find((team) => team.includes(player));
+  if (team) {
+    team.forEach((p) => players.delete(p));
+  } else {
+    players.delete(player);
+  }
+};
+
+/**
+ * Convert an object of arrays into a map of the array entries to their keys.
+ * @param arrayObj - { key: [...entries], ... }
+ * @returns - { entry: key, ... }
+ */
+export const invertArrayObj = <
+  T extends string | number | symbol,
+  K extends string | number | symbol,
+>(
+  arrayObj: Record<K, T[]>,
+) =>
+  (Object.entries(arrayObj) as [K, T[]][]).reduce(
+    (invObj, [key, values]) =>
+      values.reduce((subObj, value) => ({ ...subObj, [value]: key }), invObj),
+    {} as Record<T, K>,
+  );
+
+/**
+ * Sort array by mapped value
+ * @param sortMap - Object with array entries as keys and sort keys as values
+ * @returns - Function to sort a given array according to sortMap
+ */
+export const sortByKey =
+  <T extends string | number | symbol>(sortMap: Record<T, any>) =>
+  (array: T[]) =>
+    array.sort((a, b) => (sortMap[a] < sortMap[b] ? 1 : -1));
+
 // --- RANDOMIZE/2D-IZE ARRAY --- \\
 
 /**
@@ -170,4 +220,38 @@ export function randomGroup<T>(array: T[], groupSize = 0): T[][] | T[] {
     newArr.push(array.slice(i, i + groupSize));
   }
   return newArr;
+}
+
+/**
+ * Create 2-D array from team data, randomly grouping every 'elemSize' elements,
+ *  preventing players on the same team from being grouped together.
+ * @param teams - Object containing arrays of team members as values.
+ * @param groupSize - Size of innerArrays in result
+ * @returns 2-D result array
+ */
+export function randomTeamGroup<T extends string | number | symbol>(
+  teams: Record<any, T[]>,
+  groupSize: number,
+): T[][] {
+  if (groupSize < 1) throw new Error("groupSize required");
+
+  // Convert to 2D array & randomize inner arrays
+  const teamGroups: T[][] = shuffle(Object.values(teams).map(shuffle));
+
+  // Build groups using the algorithm
+  const result: T[][] = [];
+  while (teamGroups.some((group) => group.length > 0)) {
+    // 1) Sort (larger to shorter arrays)
+    teamGroups.sort((a, b) => b.length - a.length);
+    const nextGroup: T[] = [];
+    for (let idx = 0; idx < groupSize; idx++) {
+      if (teamGroups[idx].length < 1) break; // Stop if the array is empty
+      // 2) Take the last item from the first 'groupSize' arrays
+      nextGroup.push(teamGroups[idx].pop());
+    }
+    result.push(nextGroup);
+  }
+
+  // Sort groups by team IDs
+  return result;
 }

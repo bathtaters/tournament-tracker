@@ -1,6 +1,11 @@
 import type { Event, Match, Player } from "../../types/models";
-import type { MatchupData } from "../../types/generators";
-import { randomGroup } from "./matchGen.utils";
+import type { MatchupData, TeamData } from "../../types/generators";
+import {
+  randomGroup,
+  randomTeamGroup,
+  removeTeam,
+  sortByKey,
+} from "./matchGen.utils";
 import { shuffle } from "../../utils/shared.utils";
 import { getMinMatchups } from "./swiss.config";
 
@@ -8,9 +13,13 @@ export default function noStatsAlgorithm(
   players: Player["id"][],
   playerspermatch: Event["playerspermatch"],
   allMatchups: MatchupData[],
+  teams?: TeamData,
 ): Match["players"][] {
   // If no data provided, do a completely random pairing
-  if (!allMatchups?.length) return randomGroup(players, playerspermatch);
+  if (!allMatchups?.length)
+    return teams
+      ? randomTeamGroup(teams, playerspermatch).map(sortByKey(teams))
+      : randomGroup(players, playerspermatch);
 
   players = shuffle(players); // Randomize array initially
 
@@ -20,15 +29,18 @@ export default function noStatsAlgorithm(
   while (remaining.size) {
     // Start match with next player
     const match = [remaining.values().next().value];
-    remaining.delete(match[0]);
     // Add best matches until match is full, or you run out of players
-    while (match.length < playerspermatch && remaining.size) {
-      const opp = getMinMatchups(match, remaining, allMatchups);
+    const opposingPlayers = new Set(remaining);
+    removeTeam(match[0], opposingPlayers, teams);
+    remaining.delete(match[0]);
+    while (match.length < playerspermatch && opposingPlayers.size) {
+      const opp = getMinMatchups(match, opposingPlayers, allMatchups);
       match.push(opp);
+      removeTeam(opp, opposingPlayers, teams);
       remaining.delete(opp);
     }
     if (match.length) matches.push(match);
   }
 
-  return matches;
+  return teams ? matches.map(sortByKey(teams)) : matches;
 }

@@ -5,14 +5,15 @@ import type {
   Stats,
   StatsEntry,
 } from "types/generators";
-import type { Player } from "types/models";
+import type { Player, Team } from "types/models";
 import { avg, count, diff } from "./matchGen.utils";
 
 // --- SPECIFIC SETTINGS --- \\
 
 // Stats weighting for calculations
 const weight = {
-  penalty: 10000000004, // Per rematched player or x2 for each bye
+  teamPenalty: 1000000000005,
+  penalty: 10000000004, // 1x per rematch, 2x per bye
   matchRate: 100000003,
   oppMatch: 1000002,
   gameRate: 10001,
@@ -60,6 +61,7 @@ export const getComboScore = (
   opps: OppData,
   allMatchups: MatchupData[],
   idealMatch: [Player["id"], Player["id"]] | null,
+  teams: [Team["id"], Team["id"]] | null,
 ) =>
   (idealMatch
     ? avg([
@@ -69,7 +71,8 @@ export const getComboScore = (
     : diff(scores[playerA], scores[playerB])) +
   (count(playerB, opps?.[playerA]) + count(playerA, opps?.[playerB])) *
     weight.penalty +
-  getMatchupCount(allMatchups, playerA, playerB) * weight.matchups;
+  getMatchupCount(allMatchups, playerA, playerB) * weight.matchups +
+  (teams && teams[0] === teams[1] ? weight.teamPenalty : 0);
 
 /** Calculate score for single player match (base + bye penalties) */
 export const getSoloScore = (
@@ -84,10 +87,13 @@ export const canBePaired = (
   opponents: Player["id"][] = [],
   playerOpps: Player["id"][] = [],
   minCount = 0,
+  teamMap?: Record<Player["id"], Team["id"]>,
 ) =>
   opponents.every(
     (opp) =>
-      opp !== player && playerOpps.filter((o) => o === opp).length === minCount,
+      opp !== player &&
+      playerOpps.filter((o) => o === opp).length === minCount &&
+      (!teamMap || teamMap[player] !== teamMap[opp]),
   );
 
 /** Get minimum pairings, keyed by player */

@@ -1,8 +1,15 @@
 import type { GenerateData, Stats, StatsReturn } from "types/generators";
-import type { Match, Player } from "types/models";
+import type { Match, Player, Team } from "types/models";
 import logger from "../../utils/log.adapter";
 import noStatsAlgorithm from "./noStats";
-import { avg, findNearest, getGroups, getGroupsSimple } from "./matchGen.utils";
+import {
+  avg,
+  findNearest,
+  getGroups,
+  getGroupsSimple,
+  invertArrayObj,
+  sortByKey,
+} from "./matchGen.utils";
 import { getCombinations } from "../../utils/combination.utils";
 import { pairingThreshold } from "../../config/meta";
 import {
@@ -27,6 +34,7 @@ export default function generateMatchups(
       stats.ranking,
       data.playerspermatch,
       data.allMatchups,
+      data.teamData,
     );
 
   // Pair with simpler algorithm if over threshold
@@ -40,10 +48,11 @@ export default function generateMatchups(
 
 function slowAlgorithm(
   stats: Stats,
-  { playerspermatch, byes, oppData, allMatchups }: GenerateData,
+  { playerspermatch, byes, oppData, allMatchups, teamData }: GenerateData,
   isDutch: boolean,
 ): Match["players"][] {
   const players = stats.ranking.slice();
+  const teamMap = teamData && invertArrayObj(teamData);
 
   // Calculate base player scores
   const playerScores = players.reduce(
@@ -78,13 +87,19 @@ function slowAlgorithm(
         let count = 0,
           total = 0;
         for (const nextIndexes of getCombinations(match, 2, true)) {
+          const nextPlayers = nextIndexes.map((idx) => match[idx]) as [
+            string,
+            string,
+          ];
           total += getComboScore(
-            nextIndexes.map((idx) => match[idx]) as [string, string],
+            nextPlayers,
             playerScores,
             oppData,
             allMatchups ?? [],
             idealMatch &&
               (nextIndexes.map((idx) => idealMatch[idx]) as [string, string]),
+            teamMap &&
+              (nextPlayers.map((id) => teamMap[id]) as [string, string]),
           );
           count++;
         }
@@ -118,17 +133,27 @@ function slowAlgorithm(
 
 function fastAlgorithm(
   stats: Stats,
-  { playerspermatch, byes, oppData }: GenerateData,
+  { playerspermatch, byes, oppData, teamData }: GenerateData,
   isDutch: boolean,
 ): Match["players"][] {
   const players = stats.ranking.slice();
   const matches: Match["players"][] = [];
   const usedPlayers = new Set<string>();
+  const teamMap = teamData && invertArrayObj(teamData);
   const byePlayers =
-    byes.length < players.length ? new Set(byes ?? []) : new Set<string>();
+    byes?.length < players.length ? new Set(byes ?? []) : new Set<string>();
   const dutchFactor = isDutch
     ? Math.trunc(players.length / playerspermatch)
     : 0;
+  const teamRemaining: Record<Team["id"], number> | null =
+    teamData &&
+    Object.keys(teamData).reduce(
+      (counts, teamId) => ({
+        ...counts,
+        [teamId]: teamData[teamId].length,
+      }),
+      {},
+    );
 
   // Calculate base player scores
   const playerScores = players.reduce(
@@ -147,12 +172,11 @@ function fastAlgorithm(
     const match: Player["id"][] = [];
 
     for (let slot = 0; slot < playerspermatch; slot++) {
-      let player = null;
-
       // Offset to next 'dutch' group for dutch pairing
       const end =
         Math.min((slot + 1) * dutchFactor, players.length) || players.length;
 
+      const validCandidates: Player["id"][] = [];
       for (let playIdx = slot * dutchFactor; playIdx < end; playIdx++) {
         const candidate = players[playIdx];
         if (
@@ -163,15 +187,21 @@ function fastAlgorithm(
               match,
               oppData[candidate],
               minPairings[candidate],
+              teamMap,
             ))
         ) {
-          player = candidate;
-          break;
+          validCandidates.push(candidate);
         }
       }
-      if (player !== null) {
-        match.push(player);
-        usedPlayers.add(player);
+      if (validCandidates.length > 0) {
+        if (teamRemaining) {
+          // Prefer candidates from teams with more unselected players
+          validCandidates.sort(
+            (a, b) => teamRemaining[teamMap[b]] - teamRemaining[teamMap[a]],
+          );
+        }
+        match.push(validCandidates[0]);
+        usedPlayers.add(validCandidates[0]);
       }
     }
     if (!match.length) break; // No players left
@@ -198,6 +228,7 @@ function fastAlgorithm(
             match,
             oppData[candidate],
             minPairings[candidate],
+            teamMap,
           )
         ) {
           player = candidate;
@@ -222,7 +253,8 @@ function fastAlgorithm(
       resultsLogObject(stats, playerScores, "null (Fast Algo)"),
     );
     logger.error("Algorithm A failed, falling back on no pairing.");
-    return getGroupsSimple(players, playerspermatch, isDutch);
+    const result = getGroupsSimple(players, playerspermatch, isDutch);
+    return teamMap ? result.map(sortByKey(teamMap)) : result;
   }
 
   // Fix any byePlayers that were assigned byes
@@ -249,6 +281,7 @@ function fastAlgorithm(
             swapMatch.filter((p) => p !== player),
             oppData[byePlayer],
             minPairings[byePlayer],
+            teamMap,
           );
         },
       );
@@ -262,5 +295,6 @@ function fastAlgorithm(
     }
   }
 
-  return matches;
+  // Ensure that players are sorted by team data (If it exists) for consistent visuals
+  return teamMap ? matches.map(sortByKey(teamMap)) : matches;
 }
