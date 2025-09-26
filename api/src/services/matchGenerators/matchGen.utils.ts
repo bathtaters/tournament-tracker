@@ -1,6 +1,6 @@
 // --- SHARED UTILITIES FOR GENERATING MATCHES --- \\
 import type { Player } from "../../types/models";
-import type { TeamData } from "../../types/generators";
+import type { MatchupData, TeamData } from "../../types/generators";
 import {
   getCombinations,
   getUniqueCombinations,
@@ -62,6 +62,17 @@ export function remaining<T>(base: T[], array: T[][]): T[] {
   }
   return remain;
 }
+
+/** Count the number of times players played each other in all other events combined. */
+export const matchupCount = (
+  allMatchups: MatchupData[],
+  playerA: Player["id"],
+  playerB: Player["id"],
+) =>
+  Number(
+    allMatchups.find(({ id, opp }) => playerA === id && playerB === opp)
+      ?.count ?? 0,
+  );
 
 // --- COMBINATION OPS --- \\
 

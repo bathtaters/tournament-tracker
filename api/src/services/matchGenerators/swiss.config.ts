@@ -6,7 +6,7 @@ import type {
   StatsEntry,
 } from "types/generators";
 import type { Player, Team } from "types/models";
-import { avg, count, diff } from "./matchGen.utils";
+import { avg, count, diff, matchupCount } from "./matchGen.utils";
 
 // --- SPECIFIC SETTINGS --- \\
 
@@ -31,17 +31,6 @@ const getMatchScore = (matchScores: number[]) =>
 // Math.min(...matchScores); // Lowest score
 // avg(matchScores); // Average scores
 // avg([Math.min(...matchScores), Math.max(...matchScores)]); // Range median
-
-/** Tie-breaker: Check number of times players played each other in all other events combined. */
-const getMatchupCount = (
-  allMatchups: MatchupData[],
-  playerA: Player["id"],
-  playerB: Player["id"],
-) =>
-  Number(
-    allMatchups.find(({ id, opp }) => playerA === id && playerB === opp)
-      ?.count || 0,
-  );
 
 /** Calculate single player's base score */
 export const getPlayerScore = (stats: StatsEntry) =>
@@ -71,7 +60,7 @@ export const getComboScore = (
     : diff(scores[playerA], scores[playerB])) +
   (count(playerB, opps?.[playerA]) + count(playerA, opps?.[playerB])) *
     weight.penalty +
-  getMatchupCount(allMatchups, playerA, playerB) * weight.matchups +
+  matchupCount(allMatchups, playerA, playerB) * weight.matchups +
   (teams && teams[0] === teams[1] ? weight.teamPenalty : 0);
 
 /** Calculate score for single player match (base + bye penalties) */
@@ -120,7 +109,7 @@ export const getMinMatchups = (
     minOpp;
   for (const opp of opps) {
     const count = match.reduce(
-      (sum, player) => sum + getMatchupCount(allMatchups, player, opp),
+      (sum, player) => sum + matchupCount(allMatchups, player, opp),
       0,
     );
     if (count < minVal) {
