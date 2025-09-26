@@ -1,4 +1,4 @@
-import type { Event, Match, Player } from "../../types/models";
+import type { Event, Match, Player, Team } from "../../types/models";
 import type { MatchupData, TeamData } from "../../types/generators";
 import {
   randomGroup,
@@ -28,7 +28,7 @@ export default function noStatsAlgorithm(
   const matches: Match["players"][] = [];
   while (remaining.size) {
     // Start match with next player
-    const match = [remaining.values().next().value];
+    const match = [getNextPlayer(remaining, teams)];
     // Add best matches until match is full, or you run out of players
     const opposingPlayers = new Set(remaining);
     removeTeam(match[0], opposingPlayers, teams);
@@ -44,3 +44,31 @@ export default function noStatsAlgorithm(
 
   return teams ? matches.map(sortByKey(teams)) : matches;
 }
+
+/** Get player from the team with the most remaining players. */
+const getNextPlayer = (
+  remaining: Set<Player["id"]>,
+  teams?: TeamData,
+): Player["id"] => {
+  // Pick next player
+  const defaultPlayer = remaining.values().next().value;
+  if (!teams) return defaultPlayer;
+
+  // Find team with the most remaining players
+  let maxTeam: Team["id"] = null,
+    maxCount = 0;
+  for (const team in teams) {
+    const count = teams[team].reduce(
+      (count, player) => count + +remaining.has(player),
+      0,
+    );
+    if (count > maxCount) {
+      maxCount = count;
+      maxTeam = team;
+    }
+  }
+
+  // Find the next available player on the team
+  if (!maxCount) return defaultPlayer;
+  return teams[maxTeam].find((p) => remaining.has(p)) ?? defaultPlayer;
+};
