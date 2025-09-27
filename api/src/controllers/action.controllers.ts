@@ -10,15 +10,13 @@ import * as settings from "../db/models/settings";
 import * as teams from "../db/models/team";
 
 import { asType } from "../services/settings.services";
-import { defaults, enums } from "../config/validation";
+import { defaults } from "../config/validation";
 import roundService from "../services/round.services";
 import {
   getUniqueIds,
   swapPlayersService,
 } from "../services/swapPlayers.services";
 import { arrToObj } from "../utils/shared.utils";
-
-const { TeamType } = enums;
 
 type SwapData = {
   swap: { id: Match["id"]; matchIdx: number; playerid: Player["id"] }[];
@@ -109,7 +107,7 @@ export async function nextRound(req: Request, res: Response) {
     throw new Error("No active team players are registered");
 
   // Build round
-  const { eventid, round, matches } = roundService(
+  const { eventid, round, drops, matches } = roundService(
     data,
     matchData,
     oppData,
@@ -117,6 +115,12 @@ export async function nextRound(req: Request, res: Response) {
     teamData,
     autoByes ? asType(autoByes) : defaults.settings.autobyes,
   );
+
+  if (drops?.length) {
+    const dropRet = await match.updateMulti(drops, req);
+    if (!dropRet || "error" in dropRet)
+      throw new Error("Error eliminating players from event");
+  }
 
   // Create matches
   const ret = await event.pushRound(eventid, round, matches, req);
