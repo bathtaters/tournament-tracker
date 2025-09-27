@@ -51,8 +51,8 @@ export const team = {
 
 export const match = {
   listAll:
-    "SELECT eventid, round, array_agg(id) matches FROM match GROUP BY eventid, round;",
-  list: "SELECT eventid, round, array_agg(id) matches FROM match WHERE eventid = $1 GROUP BY eventid, round;",
+    "SELECT eventid, round, array_agg(id ORDER BY array_length(players, 1) DESC, id) matches FROM match GROUP BY eventid, round;",
+  list: "SELECT eventid, round, array_agg(id ORDER BY array_length(players, 1) DESC, id) matches FROM match WHERE eventid = $1 GROUP BY eventid, round;",
   drop: "UPDATE match SET drops = ARRAY_APPEND(drops, $2) WHERE id = $1 RETURNING *;",
   undrop:
     "UPDATE match SET drops = ARRAY_REMOVE(drops, $2) WHERE id = $1 RETURNING *;",

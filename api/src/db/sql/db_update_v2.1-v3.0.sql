@@ -63,7 +63,7 @@ CREATE VIEW eventDetail
 AS
 SELECT event.id,
        MAX(event.title),
-       event.players,
+       ARRAY_AGG(DISTINCT event.players)[1],
        MAX(format),
        MAX(team),
        MAX(teamsize),
@@ -84,8 +84,36 @@ SELECT event.id,
        JSON_AGG(drops) FILTER (WHERE drops IS NOT NULL)
 FROM event
          LEFT JOIN match ON event.id = match.eventid
-GROUP BY event.id, event.players;
+GROUP BY event.id;
 
+
+-- Update order of matchDetail --
+---------------------------------
+
+DROP VIEW matchdetail;
+
+CREATE VIEW matchDetail
+            (
+             id, eventid, round, reported,
+             draws, drops,
+             maxwins, totalwins,
+             players, wins
+                )
+AS
+SELECT match.id,
+       eventid,
+       MAX(round),
+       MAX(reported),
+       MAX(draws),
+       ARRAY_AGG(DISTINCT drops)[1],
+       MAX(player.win),
+       SUM(player.win),
+       ARRAY_AGG(DISTINCT players)[1],
+       ARRAY_AGG(DISTINCT wins)[1]
+FROM match,
+     UNNEST(players, wins) player(id, win)
+GROUP BY match.id, eventid
+ORDER BY array_length(match.players, 1) DESC, match.id;
 
 
 -- Update DB version Number --
