@@ -4,12 +4,9 @@ import type { LogEntry } from "types/models";
 
 export const clock = {
   start:
-    "UPDATE event SET clockstart = now() - COALESCE(clockmod, '0 seconds'), clockmod = NULL " +
-    "WHERE id = $1 AND clockstart IS NULL RETURNING *;",
+    "UPDATE event SET clockstart = now() - COALESCE(clockmod, '0 seconds'), clockmod = NULL WHERE id = $1 AND clockstart IS NULL RETURNING *;",
   pause:
-    "UPDATE event SET clockstart = NULL, " +
-    "clockmod = now() - (SELECT clockstart FROM event WHERE id = $1) " +
-    "WHERE id = $1 AND clockmod IS NULL AND clockstart IS NOT NULL RETURNING *;",
+    "UPDATE event SET clockstart = NULL, clockmod = now() - (SELECT clockstart FROM event WHERE id = $1) WHERE id = $1 AND clockmod IS NULL AND clockstart IS NOT NULL RETURNING *;",
 };
 
 export const event = {
