@@ -259,7 +259,7 @@ export function groupTeamArray<T extends string | number | symbol>(
   groupSize: number,
   randomize = true,
 ): T[][] {
-  if (groupSize < 1) throw new Error("groupSize required");
+  if (!groupSize) throw new Error("groupSize required");
 
   // Convert to 2D array & randomize inner arrays
   const teamGroups: T[][] = randomize
@@ -273,7 +273,7 @@ export function groupTeamArray<T extends string | number | symbol>(
     teamGroups.sort((a, b) => b.length - a.length);
     const nextGroup: T[] = [];
     for (let idx = 0; idx < groupSize; idx++) {
-      if (teamGroups[idx].length < 1) break; // Stop if the array is empty
+      if (!teamGroups[idx]?.length) break; // Stop if the array is empty
       // 2) Take the last item from the first 'groupSize' arrays
       nextGroup.push(teamGroups[idx].shift());
     }
