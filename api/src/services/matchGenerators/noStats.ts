@@ -1,8 +1,8 @@
 import type { Event, Match, Player, Team } from "../../types/models";
 import type { MatchupData, TeamData } from "../../types/generators";
 import {
-  randomGroup,
-  randomTeamGroup,
+  groupArray,
+  groupTeamArray,
   removeTeam,
   sortByKey,
 } from "./matchGen.utils";
@@ -18,8 +18,10 @@ export default function noStatsAlgorithm(
   // If no data provided, do a completely random pairing
   if (!allMatchups?.length)
     return teams
-      ? randomTeamGroup(teams, playerspermatch).map(sortByKey(teams))
-      : randomGroup(players, playerspermatch);
+      ? groupTeamArray(Object.values(teams), playerspermatch).map(
+          sortByKey(teams),
+        )
+      : groupArray(players, playerspermatch);
 
   players = shuffle(players); // Randomize array initially
 

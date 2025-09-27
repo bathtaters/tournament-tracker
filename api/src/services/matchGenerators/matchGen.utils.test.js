@@ -7,7 +7,7 @@ const {
   remaining,
   getGroups,
   getGroupsSimple,
-  randomGroup,
+  groupArray,
 } = require("./matchGen.utils");
 
 // console.warn setup
@@ -92,8 +92,8 @@ describe("arrayOps", () => {
           [
             [1, 2, 3],
             [4, 5, 6],
-          ]
-        )
+          ],
+        ),
       ).toEqual([]);
       expect(remaining([1, 2, 3, 4, 5, 6], [])).toEqual([1, 2, 3, 4, 5, 6]);
     });
@@ -104,8 +104,8 @@ describe("arrayOps", () => {
           [
             [1, 2, 3],
             [4, 5, 6],
-          ]
-        )
+          ],
+        ),
       ).toEqual([]);
       expect(
         remaining(
@@ -113,8 +113,8 @@ describe("arrayOps", () => {
           [
             [1, 2, 3],
             [4, 5],
-          ]
-        )
+          ],
+        ),
       ).toEqual([6]);
       expect(
         remaining(
@@ -122,8 +122,8 @@ describe("arrayOps", () => {
           [
             [1, 3],
             [7, 5, 6],
-          ]
-        )
+          ],
+        ),
       ).toEqual([2, 4]);
     });
     it("allows null parameter 2", () => {
@@ -361,18 +361,18 @@ describe("getGroupsSimple", () => {
 });
 
 // ---- Randomize & 2D-ize Array ---- //
-describe("randomGroup", () => {
+describe("groupArray", () => {
   const input = ["a", "b", "c", "d"];
   const output = expect.stringMatching(RegExp("^[" + input.join("") + "]$"));
 
   it("elemSize of 2", () => {
-    expect(randomGroup(input, 2)).toEqual([
+    expect(groupArray(input, 2)).toEqual([
       [output, output],
       [output, output],
     ]);
   });
   it("elemSize of 1", () => {
-    expect(randomGroup(input, 1)).toEqual([
+    expect(groupArray(input, 1)).toEqual([
       [output],
       [output],
       [output],
@@ -380,22 +380,22 @@ describe("randomGroup", () => {
     ]);
   });
   it("elemSize of 0 copies array", () => {
-    expect(randomGroup(input, 0)).toEqual(input.map(() => output));
+    expect(groupArray(input, 0)).toEqual(input.map(() => output));
   });
   it("elemSize is array length", () => {
-    expect(randomGroup(input, 4)).toEqual([input.map(() => output)]);
+    expect(groupArray(input, 4)).toEqual([input.map(() => output)]);
   });
   it("elemSize not factor of array length", () => {
-    expect(randomGroup(input, 3)).toEqual([[output, output, output], [output]]);
+    expect(groupArray(input, 3)).toEqual([[output, output, output], [output]]);
   });
   it("empty array passes through", () => {
-    expect(randomGroup([], 1)).toEqual([]);
-    expect(randomGroup([], 3)).toEqual([]);
-    expect(randomGroup([], 0)).toEqual([]);
+    expect(groupArray([], 1)).toEqual([]);
+    expect(groupArray([], 3)).toEqual([]);
+    expect(groupArray([], 0)).toEqual([]);
   });
   it("doesn't mutate array", () => {
     let array = input.slice();
-    const result = randomGroup(array, 1);
+    const result = groupArray(array, 1);
     expect(result).not.toBe(array);
     expect(array).toEqual(input);
   });

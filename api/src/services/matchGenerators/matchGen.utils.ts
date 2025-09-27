@@ -216,15 +216,28 @@ export const sortByKey =
 
 /**
  * Randomize & Un-flatten array
- * Create 2-D array, randomly grouping every 'elemSize' elements
+ * Create 2-D array, randomly grouping every 'groupSize' elements
  * @param array - Input array
  * @param groupSize - Size of innerArrays in result
+ * @param randomize - Randomize pairings unless set to FALSE
  * @returns 2-D result array
  */
-export function randomGroup<T>(array: T[], groupSize?: 0): T[];
-export function randomGroup<T>(array: T[], groupSize: number): T[][];
-export function randomGroup<T>(array: T[], groupSize = 0): T[][] | T[] {
-  array = shuffle(array.slice());
+export function groupArray<T>(
+  array: T[],
+  groupSize?: 0,
+  randomize?: boolean,
+): T[];
+export function groupArray<T>(
+  array: T[],
+  groupSize: number,
+  randomize?: boolean,
+): T[][];
+export function groupArray<T>(
+  array: T[],
+  groupSize = 0,
+  randomize = true,
+): T[][] | T[] {
+  array = randomize ? shuffle(array.slice()) : array.slice();
   if (groupSize < 1) return array;
   let newArr = [] as T[][];
   for (let i = 0; i < array.length; i += groupSize) {
@@ -234,20 +247,24 @@ export function randomGroup<T>(array: T[], groupSize = 0): T[][] | T[] {
 }
 
 /**
- * Create 2-D array from team data, randomly grouping every 'elemSize' elements,
+ * Create 2-D array from team data, randomly grouping every 'groupSize' elements,
  *  preventing players on the same team from being grouped together.
  * @param teams - Object containing arrays of team members as values.
  * @param groupSize - Size of innerArrays in result
+ * @param randomize - Randomize pairings unless set to FALSE
  * @returns 2-D result array
  */
-export function randomTeamGroup<T extends string | number | symbol>(
-  teams: Record<any, T[]>,
+export function groupTeamArray<T extends string | number | symbol>(
+  teams: T[][],
   groupSize: number,
+  randomize = true,
 ): T[][] {
   if (groupSize < 1) throw new Error("groupSize required");
 
   // Convert to 2D array & randomize inner arrays
-  const teamGroups: T[][] = shuffle(Object.values(teams).map(shuffle));
+  const teamGroups: T[][] = randomize
+    ? shuffle(teams.map((team) => shuffle(team.slice())))
+    : teams.map((team) => team.slice());
 
   // Build groups using the algorithm
   const result: T[][] = [];
@@ -258,11 +275,40 @@ export function randomTeamGroup<T extends string | number | symbol>(
     for (let idx = 0; idx < groupSize; idx++) {
       if (teamGroups[idx].length < 1) break; // Stop if the array is empty
       // 2) Take the last item from the first 'groupSize' arrays
-      nextGroup.push(teamGroups[idx].pop());
+      nextGroup.push(teamGroups[idx].shift());
     }
     result.push(nextGroup);
   }
 
   // Sort groups by team IDs
   return result;
+}
+
+/**
+ * Un-flatten array, maintaining a consistent order
+ * Create 2-D array, grouping every 'groupSize' elements
+ * @param array - Input array
+ * @param groupSize - Size of innerArrays in result
+ * @param teams - Object containing arrays of team members as values.
+ * @returns 2-D result array
+ */
+export function getOrderedGroup<T extends string | number | symbol>(
+  array: T[],
+  groupSize: number,
+  teams?: Record<any, T[]>,
+) {
+  let groups: T[][];
+
+  if (!teams) {
+    // Simple pairing
+    groups = groupArray(array, groupSize, false);
+  } else {
+    // Order team array then do a team pairing
+    const orderedTeams = Object.values(teams)
+      .map((team) => array.filter((id) => team.includes(id)))
+      .filter((subArray) => subArray.length)
+      .sort((a, b) => array.indexOf(a[0]) - array.indexOf(b[0]));
+    groups = groupTeamArray(orderedTeams, groupSize, false);
+  }
+  return groups;
 }
