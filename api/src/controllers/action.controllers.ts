@@ -72,7 +72,9 @@ export async function nextRound(req: Request, res: Response) {
   if (
     !data.players ||
     !data.players.length ||
-    (data.drops && data.drops.length >= data.players.length)
+    (data.team !== "DISTRIB" &&
+      data.drops &&
+      data.drops.length >= data.players.length)
   )
     throw new Error("No active players are registered");
 
@@ -96,6 +98,15 @@ export async function nextRound(req: Request, res: Response) {
             .list(id)
             .then(arrToObj("id", { valKey: "players" })) as Promise<TeamData>),
     ]);
+
+  // Check that team events are not empty
+  if (
+    teamData &&
+    data.drops &&
+    data.drops.length >=
+      Object.values(teamData).reduce((sum, players) => sum + players.length, 0)
+  )
+    throw new Error("No active team players are registered");
 
   // Build round
   const { eventid, round, matches } = roundService(
