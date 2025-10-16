@@ -29,10 +29,8 @@ export default function reportLayout(
         defaultValue: matchBase.defaults.draws,
         min: matchBase.limits.draws.min,
         max: wincount,
-        isFragment: true,
-
-        // Each player - drop
       },
+      // Each player - drop
       {
         label: "Drop",
         id: "drops." + pid,
@@ -41,6 +39,7 @@ export default function reportLayout(
         labelClass: reportStyles.dropLabel,
         inputClass: reportStyles.dropInput,
         labelPosition: "right",
+        isFragment: false,
       },
     ]),
     // Draws
