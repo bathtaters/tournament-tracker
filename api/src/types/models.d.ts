@@ -107,6 +107,11 @@ export type MatchDetail = {
   totalwins: number;
 };
 
+export type MatchReport = Pick<
+  Match,
+  "id" | "eventid" | "wins" | "draws" | "drops" | "reported"
+>;
+
 export type Team = {
   id: string; // uuid
   name?: string | null;

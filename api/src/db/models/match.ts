@@ -14,7 +14,7 @@ const { TableName, LogAction } = enums;
 
 // Get match base or match detail
 export function get(
-  matchId: Match["id"],
+  matchId?: Match["id"],
   detail?: false,
   fields?: (keyof Match)[],
 ): Promise<Match | undefined>;
@@ -24,7 +24,7 @@ export function get(
   fields?: (keyof MatchDetail)[],
 ): Promise<MatchDetail | undefined>;
 export function get(
-  matchId: Match["id"],
+  matchId?: Match["id"],
   detail = false,
   fields?: (keyof Match | keyof MatchDetail)[],
 ): Promise<Match | MatchDetail | undefined> {
@@ -64,7 +64,7 @@ export function getMulti(
 export const getMatchups = (eventId: Event["id"]) =>
   query<MatchupData>(strings.allCounts, [eventId]);
 
-// Get list of IDs only
+// Get a list of IDs only
 export const listByEvent = (eventid?: Event["id"]) =>
   query<{
     eventid: Match["eventid"];
@@ -88,7 +88,7 @@ export const getAll = (completed = true) =>
     completed ? "matchDetail.*" : "*",
   );
 
-// Drop/Undrop player from match
+// Drop/Undrop player from a match
 export const dropPlayer = (
   id: Match["id"],
   player: Player["id"],
@@ -116,12 +116,12 @@ export const dropPlayer = (
     req,
   ).then((r) => r?.[0]);
 
-// Update match data (Providing match.player will overwrite entire object)
+// Update match data (Providing match.player will overwrite the entire object)
 export const update = (
   id: Match["id"],
   newData: Partial<Omit<Match, "id">>,
   req?: Request,
-) => updateRows<Match>("match", id, newData, req);
+) => updateRows<Match>("match", id, newData, req).then((r) => r?.[0]);
 
 export const updateMulti = (
   dataArray: (Partial<Match> & Pick<Match, "id">)[],
