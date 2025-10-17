@@ -1,4 +1,4 @@
-import type { enums } from "config/validation";
+import { enums } from "config/validation";
 
 export type TableName = (typeof enums.TableName)[keyof typeof enums.TableName];
 export type LogAction = (typeof enums.LogAction)[keyof typeof enums.LogAction];
