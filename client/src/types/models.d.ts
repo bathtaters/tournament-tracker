@@ -35,6 +35,27 @@ export type Match = {
   isDrop?: boolean;
 };
 
+export type MatchData = {
+  id: string;
+  eventid: string;
+  round: number;
+  players: string[];
+  wins: number[];
+  draws: number;
+  drops?: string[];
+  reported: boolean;
+  maxwins: number;
+  totalwins: number;
+  isDraw: boolean;
+};
+
+export type MatchReport = Pick<
+  MatchData,
+  "id" | "eventid" | "wins" | "draws" | "drops" | "reported"
+>;
+
+export type PlayerRecord = [win: number, loss: number, draw: number];
+
 export type Stats = {
   matchRecord: [number, number, number];
   gameRate: number;

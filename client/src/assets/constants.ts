@@ -1,7 +1,7 @@
 // Import info from package.json
 import pkg from "../../package.json";
 
-export const { version } = pkg;
+export const version: string = pkg.version;
 
 // -- User Messages -- \\
 
@@ -13,17 +13,22 @@ export const planMessage = {
 
 // -- String Sets -- \\
 
-export const footerText = (apiVersion) =>
+export const footerText = (apiVersion?: string) =>
   `bathtaters • 2022 • UI v${version} • API v${apiVersion || "....."}`;
 
 export const dragType = {
-  event: "json/eventday",
-  player: "json/matchplayer",
+  event: "json/eventDay",
+  player: "json/matchPlayer",
   vote: "json/vote",
 };
 export const boxIDs = { RANKED: "ranked", UNRANKED: "unranked" };
 
-export const statusInfo = [
+export const statusInfo: {
+  label: string;
+  badge: string;
+  linkClass: string;
+  textClass: string;
+}[] = [
   {
     label: "N/A",
     badge: "badge-warning",
@@ -91,7 +96,7 @@ export const roundButtonLockCaption = "Generating round...";
 export const editEventLockCaptions = ["Creating event...", "Updating event..."];
 export const resetDataLockCaption = "Resetting data...";
 export const reportLockCaption = "Updating standings...";
-export const createLockCaption = (type) => `Creating ${type}...`;
+export const createLockCaption = (type: string) => `Creating ${type}...`;
 
 // -- Server error adapters -- \\
 
@@ -101,13 +106,13 @@ export const roundThresholdMsg =
 
 // FORMAT = endpoint: (arg) => `Endpoint ${arg}`,
 export const errorTitle = {
-  default: "Error",
+  default: (_?: any) => "Error",
 };
 
 // FORMAT = msg/TEXT_STATUS: (arg) => `New msg ${arg}.`,
 export const errorMessage = {
-  default: "An unknown server error occurred.",
-  PARSING_ERROR: (args) => {
+  default: (_?: any) => "An unknown server error occurred.",
+  PARSING_ERROR: (args?: any) => {
     console.error("Invalid server response", args);
     return "Server is not responding.";
   },

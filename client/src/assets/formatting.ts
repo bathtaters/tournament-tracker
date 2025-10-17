@@ -1,29 +1,37 @@
 // Format data for display
+import { EventData, MatchData, Player, PlayerRecord } from "../types/models";
 import { debugLogging } from "./config";
 
-export const formatQueryError = (err) =>
+export const formatQueryError = (err: any) =>
   debugLogging
     ? String(err?.message || err || "Unknown error")
     : "Please refresh page";
 
-export const formatMatchTitle = (matchPlayers, playerData) =>
+export const formatMatchTitle = (
+  matchPlayers: MatchData["players"],
+  playerData: Record<Player["id"], Player>,
+) =>
   matchPlayers
     .map((id) => (playerData[id] && playerData[id].name) || "?")
     .join(" vs. ");
 
-export const formatMatchStatus = (statusLabel, isDrop) =>
+export const formatMatchStatus = (statusLabel: string, isDrop = false) =>
   isDrop ? `Dropped (${statusLabel})` : statusLabel;
 
-export const formatRecord = (record, braces = true) =>
+export const formatRecord = (record: PlayerRecord, braces = true) =>
   (braces ? "[ " : "") +
   (record || ["", ""]).join(" - ") +
   (braces ? " ]" : "");
 
-export const formatPercent = (decimal) =>
+export const formatPercent = (decimal: number) =>
   decimal == null ? "- %" : Math.round(decimal * 1000) / 10 + "%";
 
 // Copy Round format
-export const formatCopyRound = (matchList, matches, players) =>
+export const formatCopyRound = (
+  matchList: MatchData["id"][],
+  matches: Record<MatchData["id"], MatchData>,
+  players: MatchData["players"],
+) =>
   matchList
     .map(
       (matchId) =>
@@ -46,10 +54,10 @@ export const formatCopyRound = (matchList, matches, players) =>
     .join("\n");
 
 export const formatCopySeats = (
-  matchList,
-  matches,
-  players,
-  playerspermatch,
+  matchList: MatchData["id"][],
+  matches: Record<MatchData["id"], MatchData>,
+  players: MatchData["players"],
+  playerspermatch: EventData["playerspermatch"],
 ) => {
   const playerList = [];
   for (let p = 0; p < playerspermatch; p++) {

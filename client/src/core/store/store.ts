@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import globalSlice from "./globalSlice";
-import alertSlice from "./alertSlice";
+import alertSlice, { alertMiddleware } from "./alertSlice";
 import { fetchApi } from "./fetchApi";
 import errorMiddleware from "../services/error.services";
 
@@ -9,8 +9,6 @@ import {} from "../../common/General/common.fetch";
 import {} from "../../pages/schedule/schedule.fetch";
 import {} from "../../pages/match/match.fetch";
 
-const thunkExtra = { store: null };
-
 const store = configureStore({
   reducer: {
     global: globalSlice,
@@ -18,10 +16,13 @@ const store = configureStore({
     [fetchApi.reducerPath]: fetchApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ thunk: { extraArgument: thunkExtra } })
+    getDefaultMiddleware()
       .concat(errorMiddleware)
-      .concat(fetchApi.middleware),
+      .concat(fetchApi.middleware)
+      .concat(alertMiddleware),
 });
 
-thunkExtra.store = store;
 export default store;
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

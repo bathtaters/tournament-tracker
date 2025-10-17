@@ -1,32 +1,29 @@
+import type { RootState } from "../store/store";
 import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchApi, tagTypes } from "../store/fetchApi";
-import {
-  setFetch,
-  lockScreenUntilLoaded,
-  globalSlice,
-} from "../store/globalSlice";
+import { lockScreen, setFetch, unlockScreen } from "../store/globalSlice";
 
 // Get global status
 export const useFetchingStatus = () =>
-  useSelector((state) => state.global.isFetching);
+  useSelector((state: RootState) => state.global.isFetching);
 
-// Get args of all cache items under endpoint
-export const getCachedArgs = (globalState, endpoint) =>
+// Get args of all cache items under a given endpoint
+export const getCachedArgs = (globalState: RootState, endpoint: string) =>
   Object.values(globalState.dbApi.queries)
     .filter(
       ({ endpointName, originalArgs }) =>
-        originalArgs && endpointName === endpoint
+        originalArgs && endpointName === endpoint,
     )
     .map(({ originalArgs }) => originalArgs);
 
 // Check if any queries are currently running, set global
 export function useFetchingProvider(reducerPath = fetchApi.reducerPath) {
   // Get actual value
-  const anyLoading = useSelector((state) =>
+  const anyLoading = useSelector((state: RootState) =>
     Object.values(state[reducerPath].queries).some(
-      (qry) => qry.status === "pending"
-    )
+      (qry) => qry.status === "pending",
+    ),
   );
 
   // Set state to actual value
@@ -41,22 +38,24 @@ export function useFetchingProvider(reducerPath = fetchApi.reducerPath) {
 // Force refetch of all data
 export function useForceRefetch() {
   const dispatch = useDispatch();
-  return () => dispatch(fetchApi.util.invalidateTags(tagTypes));
+  return () => dispatch(fetchApi.util.invalidateTags(tagTypes.slice()));
 }
 
 // Lock on isLoading = true, unlock when anyFetching = false
-export function useLockScreen(isLoading, caption) {
+export function useLockScreen(isLoading: boolean, caption?: string) {
   const dispatch = useDispatch();
-  const isLocked = useSelector((state) => state.global.lockScreen.isLocked);
+  const isLocked = useSelector(
+    (state: RootState) => state.global.lockScreen.isLocked,
+  );
 
   useEffect(() => {
-    if (!isLoading) dispatch(lockScreenUntilLoaded(caption));
+    if (!isLoading) dispatch(lockScreen(caption));
   }, [dispatch, isLoading, caption]);
 
   return [
     isLocked,
-    (overrideCaption) =>
-      dispatch(globalSlice.actions.lockScreen(overrideCaption ?? caption)),
-    () => dispatch(globalSlice.actions.unlockScreen()),
+    (overrideCaption?: string) =>
+      dispatch(lockScreen(overrideCaption ?? caption)),
+    () => dispatch(unlockScreen()),
   ];
 }
