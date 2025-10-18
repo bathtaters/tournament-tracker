@@ -19,7 +19,7 @@ import {
 } from "./services/matchFetch.services";
 import { debugLogging } from "../../assets/config";
 
-export const eventApi = commonApi.injectEndpoints({
+export const matchApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
     match: build.query<
       Record<MatchData["id"], MatchData>,
@@ -124,4 +124,4 @@ export const {
   useReportMutation,
   useUpdateDropsMutation,
   useSwapPlayersMutation,
-} = eventApi;
+} = matchApi;

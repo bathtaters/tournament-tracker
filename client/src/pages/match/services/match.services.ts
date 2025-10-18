@@ -6,11 +6,12 @@ import { debugLogging } from "../../../assets/config";
 export const getMatchTitle = (
   match: MatchData,
   players: Record<Player["id"], Player>,
-) =>
-  players && match?.players
-    ? formatMatchTitle(match.players, players)
-    : (debugLogging && console.warn("Invalid Match Title:", match, players)) ||
-      "Untitled";
+) => {
+  if (players && match?.players)
+    return formatMatchTitle(match.players, players);
+  debugLogging && console.warn("Invalid Match Title:", match, players);
+  return "Untitled";
+};
 
 // Get value for wins counter
 export const winValue = (wins: MatchData["wins"], idx: number) =>
