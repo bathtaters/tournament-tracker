@@ -1,7 +1,7 @@
 import ReloadIcon from "common/icons/ReloadIcon";
 import { reloadingClass } from "../styles/HeaderStyles";
 import {
-  useFetchingProvider,
+  useFetchingStatus,
   useForceRefetch,
 } from "common/General/common.fetch";
 
@@ -16,7 +16,7 @@ type ReloadButtonProps = {
 
 export default function ReloadButton(props: ReloadButtonProps) {
   // Check for active queries
-  const _isFetching = useFetchingProvider(); // setup isFetching global
+  const _isFetching = useFetchingStatus();
   const isFetching = props.force ?? _isFetching;
 
   // Force refetch of all data

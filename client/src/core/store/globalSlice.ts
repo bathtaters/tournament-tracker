@@ -1,20 +1,21 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  type Middleware,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
+import { type FetchState, isFetching } from "./fetchApi";
 
 const initialState = {
-  isFetching: true,
-  lockScreen: { isLocked: false } as { isLocked: boolean; caption?: string },
+  lockScreen: { isLocked: false } as {
+    isLocked: boolean;
+    caption?: string;
+  },
 };
 
 export const globalSlice = createSlice({
   name: "global",
-  initialState,
+  initialState: { ...initialState },
   reducers: {
-    setFetch: (state, action: PayloadAction<boolean>) => {
-      state.isFetching = Boolean(action.payload);
-      if (!state.isFetching && state.lockScreen.isLocked) {
-        state.lockScreen = { ...initialState.lockScreen };
-      }
-    },
     lockScreen: (state, action: PayloadAction<string>) => {
       state.lockScreen = { isLocked: true, caption: action.payload };
     },
@@ -24,5 +25,22 @@ export const globalSlice = createSlice({
   },
 });
 
-export const { setFetch, lockScreen, unlockScreen } = globalSlice.actions;
+/** If the screen is locked and fetching has ceased, unlock the screen. */
+export const globalMiddleware: Middleware =
+  ({ getState, dispatch }) =>
+  (next) =>
+  (action) => {
+    const nextRes = next(action);
+
+    const state = getState() as GlobalState;
+    if (state.global.lockScreen.isLocked && !isFetching(state))
+      dispatch(unlockScreen());
+    return nextRes;
+  };
+
+export const { lockScreen, unlockScreen } = globalSlice.actions;
 export default globalSlice.reducer;
+
+export type GlobalState = FetchState & {
+  global: ReturnType<typeof globalSlice.reducer>;
+};

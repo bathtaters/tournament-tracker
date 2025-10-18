@@ -1,13 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import globalSlice from "./globalSlice";
+import globalSlice, { globalMiddleware } from "./globalSlice";
 import alertSlice, { alertMiddleware } from "./alertSlice";
 import { fetchApi } from "./fetchApi";
 import errorMiddleware from "../services/error.services";
 
 // Load in basic queries to allow prefetching w/ lazy loading
-import {} from "../../common/General/common.fetch";
-import {} from "../../pages/schedule/schedule.fetch";
-import {} from "../../pages/match/match.fetch";
 
 const store = configureStore({
   reducer: {
@@ -19,7 +16,8 @@ const store = configureStore({
     getDefaultMiddleware()
       .concat(errorMiddleware)
       .concat(fetchApi.middleware)
-      .concat(alertMiddleware),
+      .concat(alertMiddleware)
+      .concat(globalMiddleware),
 });
 
 export default store;

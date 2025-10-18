@@ -5,6 +5,7 @@ import {
   createApi,
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
+import { useSelector } from "react-redux";
 import getTags, { ALL_ID, tagTypes } from "../services/tags.services";
 import { metadata } from "../services/validation.services";
 import { sessionCookie } from "../../assets/config";
@@ -43,5 +44,18 @@ export const fetchApi = createApi({
   }),
 });
 
+/** Check if any functions are fetching */
+export const useFetchingStatus = () =>
+  useSelector((state: FetchState) => isFetching(state));
+
 export { getTags, tagTypes, ALL_ID };
 export const { useTestApiQuery } = fetchApi;
+
+export const isFetching = (state: FetchState) =>
+  Object.values(state[fetchApi.reducerPath].queries).some(
+    (qry) => qry.status === "pending",
+  );
+
+export type FetchState = {
+  [fetchApi.reducerPath]: ReturnType<typeof fetchApi.reducer>;
+};

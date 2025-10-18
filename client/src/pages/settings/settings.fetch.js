@@ -2,7 +2,6 @@ import { settingsUpdate } from "./services/settingsFetch.services";
 import {
   commonApi,
   tagTypes,
-  useFetchingProvider,
   useForceRefetch,
   useSettingsQuery,
 } from "../../common/General/common.fetch";
@@ -30,11 +29,5 @@ export const headerApi = commonApi.injectEndpoints({
   overrideExisting: true,
 });
 
-export {
-  commonApi,
-  tagTypes,
-  useSettingsQuery,
-  useForceRefetch,
-  useFetchingProvider,
-};
+export { commonApi, tagTypes, useSettingsQuery, useForceRefetch };
 export const { useUpdateSettingsMutation, useResetDbMutation } = headerApi;

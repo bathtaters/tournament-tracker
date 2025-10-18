@@ -1,11 +1,13 @@
 import type { EventData, Player, Settings, Stats } from "types/models";
 import type { OverloadQuery } from "types/helpers";
-import { ALL_ID, fetchApi, getTags, tagTypes } from "../../core/store/fetchApi";
 import {
-  useFetchingProvider,
+  ALL_ID,
+  fetchApi,
+  getTags,
+  tagTypes,
   useFetchingStatus,
-  useForceRefetch,
-} from "../../core/services/global.services";
+} from "../../core/store/fetchApi";
+import { useForceRefetch } from "../../core/services/global.services";
 import { getEvent, getSettings } from "./services/fetch.services";
 import { debugLogging } from "../../assets/config";
 
@@ -68,18 +70,10 @@ export const commonApi = fetchApi.injectEndpoints({
   overrideExisting: true,
 });
 
-export {
-  tagTypes,
-  ALL_ID,
-  getTags,
-  useFetchingStatus,
-  useFetchingProvider,
-  useForceRefetch,
-};
+export { tagTypes, ALL_ID, getTags, useFetchingStatus, useForceRefetch };
 
 // Export Query functions (Apply overloads to queries with multiple return types)
-export const { useSessionQuery, useSettingsQuery, useStatsQuery, usePrefetch } =
-  commonApi;
+export const { useSessionQuery, useSettingsQuery, useStatsQuery } = commonApi;
 export const usePlayerQuery: OverloadQuery<
   Player,
   Player["id"],
