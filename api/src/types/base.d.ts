@@ -19,7 +19,6 @@ export type SettingsType =
   | "function";
 
 export type Settings = {
-  id: string;
   title: string;
   showrawjson: boolean;
   autofillsize: number;
