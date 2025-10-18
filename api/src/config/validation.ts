@@ -245,7 +245,7 @@ export const limits = {
     wins: { array: sharedLimits.player, elem: sharedLimits.wins },
     draws: sharedLimits.wins,
     drops: sharedLimits.player,
-    setDrawsMax: 1,
+    setDraws: { max: 1 },
   },
   team: {
     name: sharedLimits.title,

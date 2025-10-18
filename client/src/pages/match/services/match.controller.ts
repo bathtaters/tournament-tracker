@@ -19,8 +19,7 @@ import { reportLockCaption } from "../../../assets/constants";
 import { apiPollMs } from "../../../assets/config";
 
 // Get max possible draws
-import { getLimit } from "../../../core/services/validation.services";
-const maxDraws = getLimit("match", "setDrawsMax") ?? 0;
+const maxDraws = getLimit("match", "setDraws")?.max ?? 0;
 
 export default function useMatchController(eventid, matchId) {
   // Base Hooks
