@@ -7,10 +7,11 @@ import {
 
 export default function NumberPicker<Data extends Record<string, any>>({
   inputProps,
+  handleChange,
   className = "",
   wrapperClass = "",
 }: FormElementProps<Data>) {
-  const { decHandler, incHandler } = useNumberPicker(inputProps);
+  const { decHandler, incHandler } = useNumberPicker(inputProps, handleChange);
 
   return (
     <div className={`join ${wrapperClass}`}>

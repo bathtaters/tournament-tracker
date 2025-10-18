@@ -134,7 +134,6 @@ const baseProps = <Data>(
           max,
           minLength,
           maxLength,
-          handleChange,
           name: id,
           onChange: (ev) =>
             handleChange?.({ [id]: ev.target.value } as Partial<Data>),

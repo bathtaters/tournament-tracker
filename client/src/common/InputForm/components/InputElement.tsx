@@ -33,6 +33,7 @@ export default function InputElement<Data extends Record<string, any>>({
     >
       <ElementInput
         inputProps={inputProps}
+        handleChange={props.handleChange}
         className={inputClass}
         wrapperClass={inputWrapperClass}
       />

@@ -97,7 +97,8 @@ export type InputPropsReturn<Data> =
   | (InputAttributes<Data> & Record<TimePlace, InputAttributes<Data>>);
 
 export type FormElementProps<Data> = {
-  inputProps: InputPropsReturn<Data>;
+  inputProps: Omit<InputPropsReturn<Data>, "handleChange">;
+  handleChange?: HandleChange<Data>;
   className?: string;
   wrapperClass?: string;
 };

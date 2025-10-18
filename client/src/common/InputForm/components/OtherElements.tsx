@@ -9,6 +9,7 @@ export const defaultInputType = "text"; // Default <input> "type" attribute
 
 export function ElementInput<Data extends Record<string, any>>({
   inputProps = {},
+  handleChange,
   className,
   wrapperClass,
 }: FormElementProps<Data>) {
@@ -20,6 +21,7 @@ export function ElementInput<Data extends Record<string, any>>({
     return (
       <DropdownSelector
         inputProps={inputProps}
+        handleChange={handleChange}
         className={inputClass}
         wrapperClass={wrapperClass}
       />
@@ -30,6 +32,7 @@ export function ElementInput<Data extends Record<string, any>>({
     return (
       <NumberPicker
         inputProps={inputProps}
+        handleChange={handleChange}
         className={inputClass}
         wrapperClass={wrapperClass}
       />

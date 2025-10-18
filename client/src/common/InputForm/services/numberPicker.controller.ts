@@ -1,4 +1,4 @@
-import { InputPropsReturn } from "../InputForm.d";
+import type { HandleChange, InputPropsReturn } from "../InputForm.d";
 import { type ChangeEventHandler, useMemo } from "react";
 import { toNum } from "./inputForm.services";
 
@@ -6,12 +6,10 @@ import { toNum } from "./inputForm.services";
 export const invalidHandler: ChangeEventHandler<HTMLInputElement> = (ev) =>
   ev.target.value.length && ev.preventDefault();
 
-export function useNumberPicker<Data extends Record<string, any>>({
-  id,
-  min,
-  max,
-  handleChange,
-}: InputPropsReturn<Data>) {
+export function useNumberPicker<Data extends Record<string, any>>(
+  { id, min, max }: InputPropsReturn<Data>,
+  handleChange: HandleChange<Data>,
+) {
   return useMemo(
     () => ({
       decHandler: () =>

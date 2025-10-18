@@ -5,8 +5,12 @@ export default function DropdownSelector<Data extends Record<string, any>>({
   wrapperClass,
   className,
   inputProps,
+  handleChange,
 }: FormElementProps<Data>) {
-  const { options, placeholder, attributes } = splitAttributes(inputProps);
+  const { options, placeholder, attributes } = splitAttributes(
+    inputProps,
+    handleChange,
+  );
   return (
     <select {...attributes} className={className}>
       {placeholder && (

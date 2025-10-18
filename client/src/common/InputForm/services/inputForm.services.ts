@@ -1,6 +1,7 @@
 import type {
   FormInput,
   FormLayout,
+  HandleChange,
   InputAttributes,
   Setters,
 } from "../InputForm.d";
@@ -16,12 +17,10 @@ export const toNum = (value: any): number | null => {
 };
 
 /** Split out non HTML values from InputAttributes */
-export const splitAttributes = <Data extends Record<string, any>>({
-  placeholder,
-  options,
-  handleChange,
-  ...attributes
-}: InputAttributes<Data>) =>
+export const splitAttributes = <Data extends Record<string, any>>(
+  { placeholder, options, ...attributes }: InputAttributes<Data>,
+  handleChange: HandleChange<Data>,
+) =>
   attributes.type === "select"
     ? { attributes, placeholder, handleChange, options }
     : { attributes: { placeholder, ...attributes }, handleChange };
