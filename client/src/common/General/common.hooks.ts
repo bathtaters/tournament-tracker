@@ -1,3 +1,4 @@
+import type { Settings } from "types/models";
 import {
   useCallback,
   useEffect,
@@ -6,7 +7,8 @@ import {
   useState,
 } from "react";
 import { useDispatch } from "react-redux";
-import { usePrefetch } from "./common.fetch";
+import { scheduleApi } from "../../pages/schedule/schedule.fetch";
+import { matchApi } from "../../pages/match/match.fetch";
 import { useLockScreen } from "../../core/services/global.services";
 import { deepEquals, useThrottle } from "./services/basic.services";
 import { getLocalVar, setLocalVar } from "./services/fetch.services";
@@ -25,38 +27,41 @@ export {
   useLockScreen,
 };
 
-// Preload page data
+/** Preload page data */
 export function usePrefetchBase() {
-  const loadSched = usePrefetch("schedule");
-  const loadEvent = usePrefetch("event");
-  const loadPlayer = usePrefetch("player");
-  const loadStats = usePrefetch("stats");
+  const loadSched = scheduleApi.usePrefetch("schedule");
+  const loadEvent = scheduleApi.usePrefetch("event");
+  const loadPlayer = scheduleApi.usePrefetch("player");
+  const loadStats = scheduleApi.usePrefetch("stats");
   useEffect(() => {
-    loadSched();
-    loadEvent();
-    loadPlayer();
-    loadStats();
+    loadSched(null);
+    loadEvent(null);
+    loadPlayer(null);
+    loadStats(null);
   }, [loadSched, loadEvent, loadPlayer, loadStats]);
 }
 
-// Preload event data
+/** Preload event data */
 export function usePrefetchEvent() {
-  const prefetchEvent = usePrefetch("event");
-  const prefetchMatch = usePrefetch("match");
-  const prefetchStats = usePrefetch("stats");
-  return (id) => {
+  const prefetchEvent = matchApi.usePrefetch("event");
+  const prefetchMatch = matchApi.usePrefetch("match" as any);
+  const prefetchStats = matchApi.usePrefetch("stats");
+  return (id: string) => {
     prefetchEvent(id);
     prefetchMatch(id);
     prefetchStats(id);
   };
 }
 
-export function useLocalStorage(key, initial = null) {
+export function useLocalStorage<K extends keyof Settings>(
+  key: K,
+  initial?: Settings[K],
+) {
   const dispatch = useDispatch();
-  const [state, setState] = useState(getLocalVar(key ?? initial));
+  const [state, setState] = useState(getLocalVar(key) ?? initial);
 
   const updateValue = useCallback(
-    (value) => {
+    (value: SetParam<Settings[K]>) => {
       if (typeof value === "function") {
         setState((val) => {
           val = value(val);
@@ -71,7 +76,7 @@ export function useLocalStorage(key, initial = null) {
     [key, dispatch],
   );
 
-  return [state, updateValue, setState];
+  return [state, updateValue, setState] as const;
 }
 
 /**
@@ -82,7 +87,10 @@ export function useLocalStorage(key, initial = null) {
  * @param {(a: any, b: any) => boolean} [isEqual] - Optional custom equality function.
  * @returns {[any, (val: any) => void]} - The internalValue and a setter function.
  */
-export function useSyncState(extValue, isEqual) {
+export function useSyncState<T>(
+  extValue: T,
+  isEqual?: (a: T, b: T) => boolean,
+) {
   const prev = useRef(extValue);
   const [intVal, setIntVal] = useState(extValue);
 
@@ -93,7 +101,7 @@ export function useSyncState(extValue, isEqual) {
     }
   }, [extValue, isEqual]);
 
-  return [intVal, setIntVal];
+  return [intVal, setIntVal] as const;
 }
 
 /**
@@ -107,11 +115,12 @@ export function useSyncState(extValue, isEqual) {
  *
  * @returns {[any, (val: any) => void]} - [localValue, setLocalValue]
  */
-
-export function useServerValue(
-  value,
-  updateServerCallback,
-  { throttleDelay = 500, equalsTest } = {},
+export function useServerValue<
+  T extends string | number | boolean | any[] | Record<any, any>,
+>(
+  value: T,
+  updateServerCallback: (value: T) => void,
+  { throttleDelay = 500, equalsTest }: ServerValueOptions<T> = {},
 ) {
   // Init hooks
   const throttle = useThrottle(throttleDelay);
@@ -119,11 +128,11 @@ export function useServerValue(
 
   // Update function
   const setValue = useCallback(
-    (newValue) => {
+    (newValue: SetParam<T>) => {
       // Uses setState((currVal) => newVal) form
       if (typeof newValue === "function")
         return setLocal((local) => {
-          const val = newValue(local);
+          const val: T = newValue(local);
           throttle(() => updateServerCallback(val));
           return val;
         });
@@ -136,24 +145,24 @@ export function useServerValue(
   );
 
   // Return value & setter
-  return [localVal, setValue];
+  return [localVal, setValue] as const;
 }
-export const useServerListValue = (
-  listValue,
-  updateServerCallback,
-  options = {},
+export const useServerListValue = <T>(
+  listValue: T[],
+  updateServerCallback: (value: T[]) => void,
+  options: ServerValueOptions<T> = {},
 ) =>
-  useServerValue(listValue || [], updateServerCallback, {
+  useServerValue(listValue ?? [], updateServerCallback, {
     equalsTest: deepEquals,
     ...options,
   });
 
-// Scales height based on internal content (padding = vertical padding, everything is in pixels)
+/** Scales height based on internal content (padding = vertical padding, everything is in pixels) */
 export function useScaleToFitRef(
-  depends = [],
+  depends: any[] = [],
   { padding = 0, minHeight = 32 } = {},
 ) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLBaseElement>(null);
 
   useLayoutEffect(
     () => {
@@ -168,16 +177,20 @@ export function useScaleToFitRef(
   return ref;
 }
 
-// Runs 'onClick' when you click outside of ref element (if skip == falsy)
-export function useOnClickOutsideRef(onClick, { depends = [], skip }) {
-  const ref = useRef(null);
+/** Runs 'onClick' when you click outside of ref element (if skip == falsy) */
+export function useOnClickOutsideRef(
+  onClick: () => any,
+  { depends = [], skip = false } = {},
+) {
+  const ref = useRef<HTMLBaseElement>(null);
+  const _skip = skip || !ref.current;
 
   useEffect(() => {
-    if (skip || !ref.current) return;
+    if (_skip) return;
 
     // Build & register listener
-    const onOutsideClick = (ev) => {
-      !ref.current.contains(ev.target) && onClick();
+    const onOutsideClick = (ev: MouseEvent) => {
+      !ref.current.contains(ev.target as Node) && onClick();
     };
     document.addEventListener("mousedown", onOutsideClick);
 
@@ -187,7 +200,15 @@ export function useOnClickOutsideRef(onClick, { depends = [], skip }) {
     };
 
     // eslint-disable-next-line
-  }, [...depends, onClick, skip, Boolean(ref.current)]);
+  }, [...depends, onClick, _skip]);
 
   return ref;
 }
+
+// Types
+
+type SetParam<T> = T | ((current: T) => T);
+type ServerValueOptions<T> = {
+  throttleDelay?: number;
+  equalsTest?: (a: T, b: T) => boolean;
+};

@@ -9,7 +9,8 @@ import {
 } from "../../General/services/basic.services";
 
 type TimePickerProps<T> = Omit<FormElementProps<T>, "inputProps"> & {
-  inputProps: InputAttributes<T> & Record<TimePlace, InputAttributes<T>>;
+  inputProps: InputAttributes<T, HTMLDivElement> &
+    Record<TimePlace, InputAttributes<T, HTMLInputElement>>;
 };
 
 export default function TimePicker<Data extends Record<string, any>>({
@@ -23,7 +24,7 @@ export default function TimePicker<Data extends Record<string, any>>({
     seconds: padded(seconds),
   };
 
-  const listeners = useParentFocus(
+  const listeners = useParentFocus<HTMLDivElement>(
     null,
     onBlur && ((ev) => onBlur(eventWithValue(ev, value))),
   );

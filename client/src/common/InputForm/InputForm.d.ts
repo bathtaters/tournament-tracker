@@ -75,26 +75,31 @@ export type TimePlace = "hours" | "minutes" | "seconds";
 export type Interval = { [key in TimePlace]?: number };
 export type TimeLimit = Readonly<{ [key in TimePlace]?: InnerLimit }>;
 
-export type InputAttributes<Data> = InputHTMLAttributes<
-  HTMLInputElement | HTMLSelectElement
-> & {
+export type InputAttributes<
+  Data,
+  Element extends HTMLElement = HTMLInputElement | HTMLSelectElement,
+> = InputHTMLAttributes<Element> & {
   options?: Record<string, string>;
   handleChange?: HandleChange<Data>;
 };
 
-export type InputOptions<Data> = Omit<
-  InputAttributes<Data>,
-  "type" | "onChange" | "onBlur"
-> &
+export type InputOptions<
+  Data,
+  Element extends HTMLElement = HTMLInputElement | HTMLSelectElement,
+> = Omit<InputAttributes<Data, Element>, "type" | "onChange" | "onBlur"> &
   Pick<FormInput<Data>, "type" | "limits"> & {
     handleChange?: HandleChange<Data>;
     setter?: Setter<Data>;
     valueAsNumber?: boolean;
   };
 
-export type InputPropsReturn<Data> =
-  | InputAttributes<Data>
-  | (InputAttributes<Data> & Record<TimePlace, InputAttributes<Data>>);
+export type InputPropsReturn<
+  Data,
+  Element extends HTMLElement = HTMLInputElement | HTMLSelectElement,
+> =
+  | InputAttributes<Data, Element>
+  | (InputAttributes<Data, Element> &
+      Record<TimePlace, InputAttributes<Data, Element>>);
 
 export type FormElementProps<Data> = {
   inputProps: Omit<InputPropsReturn<Data>, "handleChange">;

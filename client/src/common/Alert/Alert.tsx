@@ -40,7 +40,8 @@ function Alert() {
   useHotkeys(
     {
       Enter: () => (document.activeElement as HTMLButtonElement)?.click?.(), // Enter: Click if on a clickable object
-      Escape: (escValue ?? true) ? () => close(escValue || undefined) : null,
+      Escape:
+        (escValue ?? true) ? () => close(escValue || undefined) : undefined,
     },
     { skip: !isOpen, deps: [close] },
   );
