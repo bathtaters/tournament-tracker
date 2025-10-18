@@ -2,13 +2,11 @@ import { Modal } from "common/Modal/Modal";
 import Counter from "common/Counter/Counter";
 import RawData from "common/RawData/RawData";
 import Loading from "common/Loading/Loading";
-
 import MatchPlayer from "./components/MatchPlayer";
 import MatchWins from "./components/MatchWins";
 import Report from "./components/Report";
 import { MatchStyle, PlayerStyle } from "./styles/MatchStyles";
 import { drawsClass, DrawsStyle, WinsStyle } from "./styles/CounterStyles";
-
 import { formatDraws } from "./services/match.services";
 import useMatchController from "./services/match.controller";
 import reportLayout from "./report.layout";
@@ -71,7 +69,9 @@ export default function Match({
 
       {matchData.reported && (
         <DrawsStyle
-          hidden={!isEditing && (!matchData.draws || matchData.isbye)}
+          hidden={
+            !isEditing && (!matchData.draws || matchData.players.length === 1)
+          }
         >
           <Counter
             className={drawsClass(isEditing)}

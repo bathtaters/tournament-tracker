@@ -49,7 +49,7 @@ export type FormButton = {
 };
 
 export type BaseData<Data extends Record<string, any>> = {
-  defaults?: Partial<Data>;
+  defaults?: Readonly<Partial<Data>>;
   limits?: { [key in keyof Data]?: Limit | TimeLimit };
 };
 
@@ -67,10 +67,13 @@ export type FormLayout<Data extends Record<string, any>> =
 
 // Backend types
 
+type InnerLimit = Readonly<{ min?: number; max?: number }>;
+export type Limit = InnerLimit &
+  Readonly<{ array?: InnerLimit; elem?: InnerLimit }>;
+
 export type TimePlace = "hours" | "minutes" | "seconds";
 export type Interval = { [key in TimePlace]?: number };
-export type Limit = { min?: number; max?: number };
-export type TimeLimit = { [key in TimePlace]?: Limit };
+export type TimeLimit = Readonly<{ [key in TimePlace]?: InnerLimit }>;
 
 export type InputAttributes<Data> = InputHTMLAttributes<
   HTMLInputElement | HTMLSelectElement

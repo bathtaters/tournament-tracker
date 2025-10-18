@@ -1,4 +1,4 @@
-import type { EventData, Match } from "types/models";
+import type { EventData, PlayerEventData } from "types/models";
 import type { Column } from "common/DataTable/DataTable.d";
 import { dayClasses } from "pages/schedule/services/date.utils";
 import { statusInfo } from "assets/constants";
@@ -6,8 +6,8 @@ import { formatMatchStatus, formatRecord } from "assets/formatting";
 
 // Player Schedule Columns
 const eventsLayout: Column<{
-  events: Record<string, EventData>;
-  matches: Record<string, Match>;
+  events: Record<EventData["id"], EventData>;
+  matches: Record<EventData["id"], PlayerEventData>;
 }>[] = [
   {
     label: "Date",

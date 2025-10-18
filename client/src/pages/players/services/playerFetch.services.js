@@ -1,14 +1,14 @@
-import { fetchApi } from "../../../common/General/common.fetch";
+import { commonApi } from "../../../common/General/common.fetch";
 import { nextTempId } from "../../../common/General/services/basic.services";
 
 export function playerUpdate({ id, ...body }, { dispatch, queryFulfilled }) {
   const updateAll = dispatch(
-    fetchApi.util.updateQueryData("player", undefined, (draft) => {
+    commonApi.util.updateQueryData("player", undefined, (draft) => {
       Object.assign(draft[id], body);
     }),
   );
   const updateOne = dispatch(
-    fetchApi.util.updateQueryData("player", id, (draft) => {
+    commonApi.util.updateQueryData("player", id, (draft) => {
       Object.assign(draft, body);
     }),
   );
@@ -22,12 +22,12 @@ export function createUpdate(body, { dispatch, getState, queryFulfilled }) {
   const stats = getState().dbApi.queries["stats(undefined)"];
   const id = nextTempId("PLAYER", stats?.data?.ranking);
   const updatePlayer = dispatch(
-    fetchApi.util.updateQueryData("player", undefined, (draft) => {
+    commonApi.util.updateQueryData("player", undefined, (draft) => {
       draft[id] = body;
     }),
   );
   const updateStats = dispatch(
-    fetchApi.util.updateQueryData("stats", undefined, (draft) => {
+    commonApi.util.updateQueryData("stats", undefined, (draft) => {
       draft.ranking.push(id);
     }),
   );
@@ -39,12 +39,12 @@ export function createUpdate(body, { dispatch, getState, queryFulfilled }) {
 
 export function deleteUpdate(id, { dispatch, queryFulfilled }) {
   const updatePlayer = dispatch(
-    fetchApi.util.updateQueryData("player", undefined, (draft) => {
+    commonApi.util.updateQueryData("player", undefined, (draft) => {
       delete draft[id];
     }),
   );
   const updateStats = dispatch(
-    fetchApi.util.updateQueryData("stats", undefined, (draft) => {
+    commonApi.util.updateQueryData("stats", undefined, (draft) => {
       const idx = draft.ranking ? draft.ranking.indexOf(id) : -1;
       if (idx > -1) draft.ranking.splice(idx, 1);
       delete draft[id];

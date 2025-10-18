@@ -5,7 +5,7 @@ import { BasicPlayerNameStyle, FullPlayerNameStyle } from "./StatsStyle";
 
 type ExtraData = {
   players: Record<string, Player>;
-  stats: Record<string, Stats>;
+  stats: Stats;
 };
 
 // Stats table classes

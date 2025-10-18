@@ -1,3 +1,5 @@
+import type { AlertOptions, AlertState } from "types/base";
+import type { AppDispatch, RootState } from "../../core/store/store";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { closeAlert, openAlert } from "../../core/store/alertSlice";
@@ -8,47 +10,55 @@ const optionFilter = ({
   buttons = ["Ok"],
   title,
   className = "",
-}) => ({ message, buttons, title, className });
+}: AlertOptions): Partial<AlertState> => ({
+  message,
+  buttons,
+  title,
+  className,
+});
 
 // --- PUBLIC HOOKS --- \\
 
 // Hook returning function to open alert
 export function useOpenAlert() {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   return useCallback(
-    (options, expectedIndex = null) => {
+    async (options: AlertOptions, expectedBtnIdx?: number) => {
       const expected =
-        typeof expectedIndex === "number" &&
-        getReturnValue(options.buttons[expectedIndex], expectedIndex);
-      return dispatch(openAlert(optionFilter(options)))
-        .unwrap()
-        .then((result) => (expected ? result === expected : result));
+        typeof expectedBtnIdx === "number"
+          ? getReturnValue(options.buttons[expectedBtnIdx], expectedBtnIdx)
+          : null;
+      const result = await dispatch(openAlert(optionFilter(options))).unwrap();
+      return expected ? result === expected : result;
     },
+    [dispatch],
+  ) as OpenAlertFunction;
+}
+
+interface OpenAlertFunction {
+  (options: AlertOptions): Promise<string>;
+  (options: AlertOptions, expectedBtnIdx: number): Promise<boolean>;
+  (options: AlertOptions, expectedBtnIdx?: number): Promise<string | boolean>;
+}
+
+// Hook returning function to force an open alert to close
+export function useCloseAlert() {
+  const dispatch: AppDispatch = useDispatch();
+  return useCallback(
+    (result?: string) => dispatch(closeAlert(result)),
     [dispatch],
   );
 }
 
-// Hook returning function to force alert to close
-export function useCloseAlert() {
-  const dispatch = useDispatch();
-  return useCallback((result) => dispatch(closeAlert(result)), [dispatch]);
-}
-
 // Hook returning function to get alert open/close status (True = Open)
-export const useAlertStatus = () => useSelector((state) => state.alert.isOpen);
+export const useAlertStatus = () =>
+  useSelector((state: RootState) => state.alert.isOpen);
 
 // Hook returning function to get result of last-closed alert
-export const useAlertResult = () => useSelector((state) => state.alert.result);
+export const useAlertResult = () =>
+  useSelector((state: RootState) => state.alert.result);
 
 // --- INTERNAL FUNCTIONS --- \\
-
-export const breakMessage = (message) => (
-  <>
-    {message.split("\n").map((line, idx) => (
-      <div key={idx}>{line}</div>
-    ))}
-  </>
-);
 
 const getReturnValue = (button, idx) =>
   typeof button === "string"

@@ -1,10 +1,14 @@
+import type { Player } from "types/models";
 import { playerExists, randomArray } from "./playerEditor.utils";
 import {
+  useCreatePlayerMutation,
   usePlayerQuery,
   useSettingsQuery,
-  useCreatePlayerMutation,
 } from "../eventEditor.fetch";
-import { useOpenAlert, useLockScreen } from "../../../common/General/common.hooks";
+import {
+  useLockScreen,
+  useOpenAlert,
+} from "../../../common/General/common.hooks";
 import { createLockCaption } from "../../../assets/constants";
 import {
   createItemAlert,
@@ -15,7 +19,7 @@ import {
 export default function usePlayerEditorController(type, onChange, fillAll) {
   // Load DB
   const { data: settings } = useSettingsQuery();
-  const query = usePlayerQuery();
+  const query = usePlayerQuery(null);
   const [createPlayerMutation, { isLoading: isAddingPlayer }] =
     useCreatePlayerMutation();
 
@@ -24,22 +28,22 @@ export default function usePlayerEditorController(type, onChange, fillAll) {
   useLockScreen(isAddingPlayer, createLockCaption(type));
 
   // Add new player to DB
-  const createPlayer = async (name) => {
+  const createPlayer = async (name: Player["name"]) => {
     // Check for errors
-    if (!name.trim()) return false;
+    if (!name.trim()) return;
     if (playerExists(name, query.data))
       return openAlert(duplicateItemAlert(type, name));
 
     // Confirm create
     const answer = await openAlert(createItemAlert(type, name), 0);
-    if (!answer) return false;
+    if (!answer) return;
 
     // Create & Push player
     const playerData = { name };
     const result = await createPlayerMutation(playerData);
     if (result?.error || !result?.data?.id)
       throw itemCreateError(type, result, playerData);
-    return result.data;
+    return result.data as Player;
   };
 
   return {
@@ -51,11 +55,13 @@ export default function usePlayerEditorController(type, onChange, fillAll) {
         : `Random ${settings?.autofillsize || ""}`,
 
       onClick: fillAll
-        ? () => onChange(Object.keys(query.data))
+        ? () => {
+            onChange(Object.keys(query.data));
+          }
         : settings?.autofillsize &&
           (() => {
             onChange(
-              randomArray(Object.keys(query.data), settings?.autofillsize)
+              randomArray(Object.keys(query.data), settings?.autofillsize),
             );
           }),
     },

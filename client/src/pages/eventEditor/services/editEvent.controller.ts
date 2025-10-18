@@ -1,22 +1,25 @@
+import type { EventData } from "types/models";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  useDeleteEventMutation,
   useEventQuery,
   useSetEventMutation,
-  useDeleteEventMutation,
 } from "../eventEditor.fetch";
-
 import { editorButtonLayout } from "../eventEditor.layout";
 import { deleteEventAlert } from "../../../assets/alerts";
 import { editEventLockCaptions } from "../../../assets/constants";
 import { getChanged } from "../../../common/General/services/basic.services";
-import { useLockScreen, useOpenAlert } from "../../../common/General/common.hooks";
+import {
+  useLockScreen,
+  useOpenAlert,
+} from "../../../common/General/common.hooks";
 
 export default function useEditEventController(
-  eventid,
-  closeModal,
-  hidePlayers,
-  deleteRedirect
+  eventid: EventData["id"],
+  closeModal?: (overrideLock?: boolean) => void,
+  hidePlayers = false,
+  deleteRedirect?: string,
 ) {
   // Get server data
   const { data, isLoading, error } = useEventQuery(eventid, { skip: !eventid });
@@ -33,7 +36,7 @@ export default function useEditEventController(
 
   // Create/Update event & close modal
   const submitHandler = useCallback(
-    async (event) => {
+    async (event: Partial<EventData>) => {
       // Build event object
       if (!event.title.trim() && !playerList?.length) return closeModal(true);
       if (!hidePlayers) event.players = playerList;
@@ -48,7 +51,7 @@ export default function useEditEventController(
       // Push event to server (Create/Update)
       return setEvent(event).then(() => closeModal(true));
     },
-    [data, setEvent, eventid, playerList, hidePlayers, closeModal]
+    [data, setEvent, eventid, playerList, hidePlayers, closeModal],
   );
 
   // Break early if no data/error
@@ -69,7 +72,8 @@ export default function useEditEventController(
     playerList,
     updatePlayerList,
     submitHandler,
-    // Button layout
-    buttons: editorButtonLayout(eventid, deleteHandler, closeModal),
+    buttons: editorButtonLayout(eventid, deleteHandler, () => closeModal()),
+    isLoading,
+    notLoaded: false,
   };
 }

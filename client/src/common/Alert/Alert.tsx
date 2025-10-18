@@ -1,7 +1,6 @@
-import React from "react";
+import type { RootState } from "core/store/store";
 import { useSelector } from "react-redux";
 import { FocusTrap } from "focus-trap-react";
-
 import RawData from "../RawData/RawData";
 import {
   AlertButton,
@@ -9,24 +8,19 @@ import {
   AlertMessageStyle,
   alertModalClass,
   AlertTitleStyle,
+  BreakMessage,
   CloseButton,
   ModalStyle,
 } from "./AlertStyles";
-
-import {
-  breakMessage,
-  getButtonProps,
-  useCloseAlert,
-} from "./alert.services";
+import { getButtonProps, useCloseAlert } from "./alert.services";
 import { useHotkeys } from "../General/services/basic.services";
 
 /* *** ALERT OPTIONS *** *\
   Title = header text
   Message = body text
   ClassName = extra modal classes
-  DefaultResult = result passed to Close when closed via window [X] or <Esc>
   ShowClose = forces showing/not window close button (i.e., [X]), otherwise shows only w/ no buttons
-  EscValue = false disables Esc, truthy makes EscValue close result on <Esc>, otherwise enables w/ defaultResult
+  EscValue = false disables Esc, truthy makes EscValue close result on <Esc>
   Buttons = [ ...buttonLabels ] (onClick => clickedButtonLabel)
     OR
   Buttons = { value: returnValue, id: uniqueId, label: displayText, ...propsForwardedToInputTag }
@@ -35,7 +29,7 @@ import { useHotkeys } from "../General/services/basic.services";
 // Alert base component
 function Alert() {
   // Get alert settings
-  const alertOptions = useSelector((state) => state.alert);
+  const alertOptions = useSelector((state: RootState) => state.alert);
   const { isOpen, title, message, buttons, className, showClose, escValue } =
     alertOptions;
 
@@ -45,7 +39,7 @@ function Alert() {
   // Setup hotkeys
   useHotkeys(
     {
-      Enter: () => document.activeElement?.click(), // Enter: Click if on a clickable object
+      Enter: () => (document.activeElement as HTMLButtonElement)?.click?.(), // Enter: Click if on a clickable object
       Escape: (escValue ?? true) ? () => close(escValue || undefined) : null,
     },
     { skip: !isOpen, deps: [close] },
@@ -60,13 +54,15 @@ function Alert() {
         z="z-90"
       >
         {Boolean(showClose ?? !buttons?.length) && (
-          <CloseButton onClick={() => close(showClose || undefined)} />
+          <CloseButton onClick={() => close()} />
         )}
 
         {title && <AlertTitleStyle>{title}</AlertTitleStyle>}
 
         {message && (
-          <AlertMessageStyle>{breakMessage(message)}</AlertMessageStyle>
+          <AlertMessageStyle>
+            <BreakMessage message={message} />
+          </AlertMessageStyle>
         )}
 
         {buttons && (
@@ -75,7 +71,11 @@ function Alert() {
               // React key for button is ID => Label => Value => Index
               <AlertButton
                 {...getButtonProps(btn, close, i)}
-                key={btn.key || btn.id || btn.label || btn.value || i}
+                key={
+                  typeof btn === "string"
+                    ? btn
+                    : btn.key || btn.id || btn.label || btn.value
+                }
               />
             ))}
           </AlertButtonWrapperStyle>

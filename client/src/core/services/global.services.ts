@@ -57,5 +57,5 @@ export function useLockScreen(isLoading: boolean, caption?: string) {
     (overrideCaption?: string) =>
       dispatch(lockScreen(overrideCaption ?? caption)),
     () => dispatch(unlockScreen()),
-  ];
+  ] as const;
 }

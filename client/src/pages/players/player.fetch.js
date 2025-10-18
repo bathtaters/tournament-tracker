@@ -1,17 +1,17 @@
 import {
-  fetchApi,
+  commonApi,
   getTags,
   usePlayerQuery,
   useSettingsQuery,
 } from "../../common/General/common.fetch";
 import {
-  playerUpdate,
   createUpdate,
   deleteUpdate,
+  playerUpdate,
 } from "./services/playerFetch.services";
 import { debugLogging } from "../../assets/config";
 
-export const playerApi = fetchApi.injectEndpoints({
+export const playerApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
     updatePlayer: build.mutation({
       query: ({ id, ...body }) => ({

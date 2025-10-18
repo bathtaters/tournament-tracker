@@ -1,3 +1,5 @@
+import type { Settings } from "types/models";
+
 // Config settings
 
 export const debugLogging = false;
@@ -27,7 +29,7 @@ export const alert = {
 
 export const settings = {
   // Store these settings locally (per user settings)
-  storeLocal: ["showrawjson"],
+  storeLocal: ["showrawjson"] as (keyof Settings)[],
   localPrefix: "tt", // Use before localStorage keys to avoid potential collisions
 };
 

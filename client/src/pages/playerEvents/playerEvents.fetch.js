@@ -1,9 +1,13 @@
-import { fetchApi, useEventQuery, getTags } from "../../common/General/common.fetch";
+import {
+  commonApi,
+  getTags,
+  useEventQuery,
+} from "../../common/General/common.fetch";
 import { usePrefetchEvent } from "../../common/General/common.hooks";
 import { getMatchData } from "./services/playerEventFetch.services";
 import { debugLogging } from "../../assets/config";
 
-export const playerEventsApi = fetchApi.injectEndpoints({
+export const playerEventsApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
     playerEvents: build.query({
       query: (id) => `player/${id}/events`,

@@ -1,8 +1,8 @@
-import { fetchApi } from "../../../common/General/common.fetch";
+import { commonApi } from "../../../common/General/common.fetch";
 
 export function sessionLogin({ name }, { dispatch, queryFulfilled }) {
   const update = dispatch(
-    fetchApi.util.updateQueryData("session", undefined, () => ({ name }))
+    commonApi.util.updateQueryData("session", undefined, () => ({ name })),
   );
   queryFulfilled.catch(() => {
     update.undo();
@@ -11,7 +11,7 @@ export function sessionLogin({ name }, { dispatch, queryFulfilled }) {
 
 export function sessionLogout(_, { dispatch, queryFulfilled }) {
   const update = dispatch(
-    fetchApi.util.updateQueryData("session", undefined, () => ({}))
+    commonApi.util.updateQueryData("session", undefined, () => ({})),
   );
   queryFulfilled.catch(() => {
     update.undo();

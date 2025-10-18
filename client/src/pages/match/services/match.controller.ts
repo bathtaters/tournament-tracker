@@ -1,19 +1,26 @@
+import type { MatchData, Player } from "types/models";
+import type { UpdateMatchBody } from "types/api";
 import { useModal } from "../../../common/Modal/Modal";
-import { useOpenAlert, useLockScreen } from "../../../common/General/common.hooks";
+import {
+  useLockScreen,
+  useOpenAlert,
+} from "../../../common/General/common.hooks";
+import {
+  useSessionState,
+  useShowRaw,
+} from "../../../common/General/common.fetch";
 import {
   useMatchQuery,
+  usePlayerQuery,
   useReportMutation,
-  useUpdateMatchMutation,
+  useStatsQuery,
   useSwapPlayersMutation,
   useUpdateDropsMutation,
-  useStatsQuery,
-  usePlayerQuery,
+  useUpdateMatchMutation,
 } from "../match.fetch";
-import { useSessionState, useShowRaw } from "../../../common/General/common.fetch";
-
 import { getMatchTitle } from "./match.services";
-import { swapController, canSwap } from "./swap.services";
-
+import { canSwap, swapController } from "./swap.services";
+import { getLimit } from "../../../core/services/validation.services";
 import { clearReportAlert } from "../../../assets/alerts";
 import { reportLockCaption } from "../../../assets/constants";
 import { apiPollMs } from "../../../assets/config";
@@ -21,8 +28,10 @@ import { apiPollMs } from "../../../assets/config";
 // Get max possible draws
 const maxDraws = getLimit("match", "setDraws")?.max ?? 0;
 
-export default function useMatchController(eventid, matchId) {
-  // Base Hooks
+export default function useMatchController(
+  eventid: MatchData["eventid"],
+  matchId: MatchData["id"],
+) {
   const openAlert = useOpenAlert();
   const reportModal = useModal();
 
@@ -41,7 +50,7 @@ export default function useMatchController(eventid, matchId) {
     data: players,
     isLoading: loadingPlayers,
     error: playerError,
-  } = usePlayerQuery();
+  } = usePlayerQuery(null);
   const { data: user } = useSessionState();
   const showRaw = useShowRaw();
 
@@ -54,7 +63,7 @@ export default function useMatchController(eventid, matchId) {
 
   // Catch loading/error
   const matchData = matches?.[matchId],
-    error = matchError || rankError || playerError;
+    error: any = matchError || rankError || playerError;
   if (loadingMatch || loadingRank || loadingPlayers || !matchData || error)
     return { showLoading: true, error };
 
@@ -64,7 +73,7 @@ export default function useMatchController(eventid, matchId) {
   // UnReport match
   const clearReport = () =>
     openAlert(clearReportAlert(title), 0).then(
-      (r) => r && report({ id: matchData.id, eventid, clear: true })
+      (r) => r && report({ id: matchData.id, eventid, clear: true }),
     );
 
   return {
@@ -77,15 +86,16 @@ export default function useMatchController(eventid, matchId) {
     isLocked,
     reportModal,
     maxDraws,
-    showReport:
+    showReport: Boolean(
       user?.id && (user.access > 1 || matchData.players.includes(user.id)),
+    ),
 
     // Mutators
     clearReport,
     report,
 
     // Change reported values
-    setVal: (key) => (value) =>
+    setVal: (key: UpdateMatchBody["key"]) => (value: any) =>
       update({ id: matchData.id, eventid, key, value }),
 
     // Data for swapping players
@@ -96,7 +106,7 @@ export default function useMatchController(eventid, matchId) {
       handleSwap: swapController(swapPlayers, eventid, openAlert),
 
       // Un/Drop players
-      handleDrop: (playerid, undrop) =>
+      handleDrop: (playerid: Player["id"], undrop: boolean) =>
         updateDrops({ id: matchId, playerid, undrop, eventid }),
     },
   };

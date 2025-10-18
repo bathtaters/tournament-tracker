@@ -1,5 +1,4 @@
-import type { Match } from "types/models";
-import type { ReportData } from "../report.layout";
+import type { MatchData, MatchReport } from "types/models";
 import { useCallback } from "react";
 import InputForm from "common/InputForm/InputForm";
 import { FormLayout } from "common/InputForm/InputForm.d";
@@ -12,9 +11,9 @@ import { reportAdapter } from "../services/match.services";
 
 type ReportProps = {
   title?: string;
-  match: Match;
-  report: (data: ReportData) => void;
-  layout: FormLayout<ReportData>[];
+  match: MatchData;
+  report: (data: MatchReport) => void;
+  layout: FormLayout<MatchReport>[];
   lock: () => void;
   close: (refresh?: boolean) => void;
 };
@@ -29,7 +28,7 @@ export default function Report({
 }: ReportProps) {
   // Actions
   const submitReport = useCallback(
-    (reportData: ReportData) => {
+    (reportData: MatchReport) => {
       report(reportAdapter(reportData, match.id, match.eventid));
       close(true);
     },

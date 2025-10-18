@@ -1,5 +1,5 @@
 import { ModalTitleStyle } from "../General/styles/CommonStyles";
-import { ModalStyle, CloseButton } from "../Modal/ModalStyle";
+import { CloseButton, ModalStyle } from "../Modal/ModalStyle";
 
 export function AlertButton({ className, ...props }) {
   return (
@@ -24,3 +24,11 @@ export function AlertButtonWrapperStyle({ children }) {
 export const alertModalClass = "text-center p-4 max-w-xs sm:max-w-sm ";
 
 export { ModalStyle, CloseButton };
+
+export const BreakMessage = ({ message }: { message: string }) => (
+  <>
+    {message.split("\n").map((line, idx) => (
+      <div key={idx}>{line}</div>
+    ))}
+  </>
+);

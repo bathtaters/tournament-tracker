@@ -1,14 +1,14 @@
 import { settingsUpdate } from "./services/settingsFetch.services";
 import {
-  fetchApi,
+  commonApi,
   tagTypes,
-  useSettingsQuery,
-  useForceRefetch,
   useFetchingProvider,
+  useForceRefetch,
+  useSettingsQuery,
 } from "../../common/General/common.fetch";
 import { debugLogging } from "../../assets/config";
 
-export const headerApi = fetchApi.injectEndpoints({
+export const headerApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
     updateSettings: build.mutation({
       query: (body) => ({ url: "settings", method: "PATCH", body }),
@@ -31,7 +31,7 @@ export const headerApi = fetchApi.injectEndpoints({
 });
 
 export {
-  fetchApi,
+  commonApi,
   tagTypes,
   useSettingsQuery,
   useForceRefetch,

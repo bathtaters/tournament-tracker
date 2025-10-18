@@ -16,13 +16,13 @@ type AutofillOptions = {
  * and undefined if creation failed.  */
 type AddItemMutation = (
   addName: string,
-) => Promise<Record<string, any> | "OK" | undefined>;
+) => Promise<Record<string, any> | string | undefined>;
 
 type EditableListProps = {
   type?: string;
   value: string[];
   onChange: (value: string[]) => void;
-  query?: { data: Record<string, any>; isLoading: boolean; error: any };
+  query?: { data?: Record<string, any>; isLoading: boolean; error?: any };
   autofill?: AutofillOptions;
   create?: {
     mutation?: AddItemMutation;

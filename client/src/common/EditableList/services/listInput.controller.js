@@ -19,7 +19,7 @@ export default function useListInputController({
   const handleNewItem = async (name) => {
     if (!create?.mutation) return false;
     const result = await create.mutation(name);
-    return result && result !== "Ok" && pushItem(result[idKey]);
+    return result && typeof result === "object" && pushItem(result[idKey]);
   };
 
   // Click add button

@@ -1,21 +1,21 @@
 import { getCachedArgs } from "../../../core/services/global.services";
-import { fetchApi } from "../../../common/General/common.fetch";
+import { commonApi } from "../../../common/General/common.fetch";
 import { noDate } from "../../schedule/services/date.utils";
 
 const newVoter = (id, idx = 0) => ({ id, idx, dates: [], games: [] });
 
 export function voterUpdate({ id, ...body }, { dispatch, queryFulfilled }) {
   const updateAll = dispatch(
-    fetchApi.util.updateQueryData("voter", undefined, (draft) => {
+    commonApi.util.updateQueryData("voter", undefined, (draft) => {
       Object.assign(draft[id], body);
-    })
+    }),
   );
 
   const updateOne = dispatch(
-    fetchApi.util.updateQueryData("voter", id, (draft) => ({
+    commonApi.util.updateQueryData("voter", id, (draft) => ({
       ...draft,
       ...body,
-    }))
+    })),
   );
 
   queryFulfilled.catch(() => {
@@ -26,7 +26,7 @@ export function voterUpdate({ id, ...body }, { dispatch, queryFulfilled }) {
 
 export function updateVoters(voters, { dispatch, queryFulfilled, getState }) {
   const updateAll = dispatch(
-    fetchApi.util.updateQueryData("voter", undefined, (draft) => {
+    commonApi.util.updateQueryData("voter", undefined, (draft) => {
       Object.keys(draft).forEach((id) => {
         if (!voters.includes(id)) delete draft[id];
       });
@@ -34,15 +34,15 @@ export function updateVoters(voters, { dispatch, queryFulfilled, getState }) {
         if (!draft[id]) draft[id] = newVoter(id, idx + 1);
         else draft[id].idx = idx + 1;
       });
-    })
+    }),
   );
 
   const updateOne = getCachedArgs(getState(), "voter").map((voter) =>
     dispatch(
-      fetchApi.util.updateQueryData("voter", voter, (draft) => {
+      commonApi.util.updateQueryData("voter", voter, (draft) => {
         if (!voters.includes(voter)) draft = null;
-      })
-    )
+      }),
+    ),
   );
 
   queryFulfilled.catch(() => {
@@ -53,19 +53,19 @@ export function updateVoters(voters, { dispatch, queryFulfilled, getState }) {
 
 export function updateEvents(events, { dispatch, queryFulfilled, getState }) {
   const updateAll = dispatch(
-    fetchApi.util.updateQueryData("event", undefined, (draft) => {
+    commonApi.util.updateQueryData("event", undefined, (draft) => {
       Object.keys(draft).forEach((id) => {
         draft[id].plan = events.indexOf(id) + 1;
       });
-    })
+    }),
   );
 
   const updateOne = getCachedArgs(getState(), "event").map((event) =>
     dispatch(
-      fetchApi.util.updateQueryData("event", event, (draft) => {
+      commonApi.util.updateQueryData("event", event, (draft) => {
         draft.plan = events.indexOf(event) + 1;
-      })
-    )
+      }),
+    ),
   );
 
   queryFulfilled.catch(() => {
@@ -76,16 +76,16 @@ export function updateEvents(events, { dispatch, queryFulfilled, getState }) {
 
 export function updatePlanGen(_, { dispatch, queryFulfilled }) {
   const updateSettings = dispatch(
-    fetchApi.util.updateQueryData("settings", undefined, (draft) => ({
+    commonApi.util.updateQueryData("settings", undefined, (draft) => ({
       ...draft,
       planstatus: 3,
-    }))
+    })),
   );
   dispatch(
-    fetchApi.util.updateQueryData("planStatus", undefined, (draft) => ({
+    commonApi.util.updateQueryData("planStatus", undefined, (draft) => ({
       ...draft,
       planprogress: 0,
-    }))
+    })),
   );
   queryFulfilled.catch(() => {
     updateSettings.undo();
@@ -94,32 +94,32 @@ export function updatePlanGen(_, { dispatch, queryFulfilled }) {
 
 export function updatePlanSave(_, { dispatch, queryFulfilled, getState }) {
   const updateSettings = dispatch(
-    fetchApi.util.updateQueryData("settings", undefined, (draft) => ({
+    commonApi.util.updateQueryData("settings", undefined, (draft) => ({
       ...draft,
       planstatus: 0,
-    }))
+    })),
   );
 
   const updateEvents = dispatch(
-    fetchApi.util.updateQueryData("event", undefined, (draft) => {
+    commonApi.util.updateQueryData("event", undefined, (draft) => {
       Object.keys(draft).forEach((id) => {
         if (!draft[id].plan) draft[id].day = null;
         else draft[id].plan = false;
       });
-    })
+    }),
   );
 
   const updateIndivEvents = getCachedArgs(getState(), "event").map((event) =>
     dispatch(
-      fetchApi.util.updateQueryData("event", event, (draft) => {
+      commonApi.util.updateQueryData("event", event, (draft) => {
         if (!draft.plan) draft.day = null;
         else draft.plan = false;
-      })
-    )
+      }),
+    ),
   );
 
   const updateSched = dispatch(
-    fetchApi.util.updateQueryData("schedule", false, (draft) => {
+    commonApi.util.updateQueryData("schedule", false, (draft) => {
       let events = [];
       Object.keys(draft).forEach((key) => {
         events.push(...draft[key].events);
@@ -134,13 +134,13 @@ export function updatePlanSave(_, { dispatch, queryFulfilled, getState }) {
         if (!events.includes(event.id) && draft[event.day]?.events)
           draft[event.day].events.push(event.id);
       });
-    })
+    }),
   );
 
   const updatePlan = dispatch(
-    fetchApi.util.updateQueryData("schedule", true, (draft) => {
+    commonApi.util.updateQueryData("schedule", true, (draft) => {
       Object.keys(draft).forEach((key) => (draft[key].events = []));
-    })
+    }),
   );
 
   // rollback
@@ -155,34 +155,34 @@ export function updatePlanSave(_, { dispatch, queryFulfilled, getState }) {
 
 export function updatePlanReset(_, { dispatch, queryFulfilled, getState }) {
   const updateEvents = dispatch(
-    fetchApi.util.updateQueryData("event", undefined, (draft) => {
+    commonApi.util.updateQueryData("event", undefined, (draft) => {
       Object.keys(draft).forEach((id) => {
         draft[id].plan = false;
       });
-    })
+    }),
   );
 
   const updateIndivEvents = getCachedArgs(getState(), "event").map((event) =>
     dispatch(
-      fetchApi.util.updateQueryData("event", event, (draft) => {
+      commonApi.util.updateQueryData("event", event, (draft) => {
         draft.plan = false;
-      })
-    )
+      }),
+    ),
   );
 
   const updateSettings = dispatch(
-    fetchApi.util.updateQueryData("settings", undefined, (draft) => {
+    commonApi.util.updateQueryData("settings", undefined, (draft) => {
       delete draft.plandates;
       delete draft.planslots;
-    })
+    }),
   );
 
   const updateVoters = dispatch(
-    fetchApi.util.updateQueryData("voter", undefined, () => ({}))
+    commonApi.util.updateQueryData("voter", undefined, () => ({})),
   );
 
   const updateIndivVoters = getCachedArgs(getState(), "voter").map((voter) =>
-    dispatch(fetchApi.util.updateQueryData("voter", voter, () => ({})))
+    dispatch(commonApi.util.updateQueryData("voter", voter, () => ({}))),
   );
 
   // rollback

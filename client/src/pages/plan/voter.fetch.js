@@ -1,22 +1,22 @@
 import {
-  fetchApi,
+  commonApi,
   getTags,
-  usePlayerQuery,
   useEventQuery,
+  usePlayerQuery,
   useSettingsQuery,
 } from "../../common/General/common.fetch";
 import {
-  voterUpdate,
-  updateVoters,
   updateEvents,
+  updatePlanGen,
   updatePlanReset,
   updatePlanSave,
-  updatePlanGen,
+  updateVoters,
+  voterUpdate,
 } from "./services/voterFetch.services";
 import { useUpdateSettingsMutation } from "../settings/settings.fetch";
 import { debugLogging } from "../../assets/config";
 
-export const voterApi = fetchApi.injectEndpoints({
+export const voterApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
     voter: build.query({
       query: (id = null) => `voter/${id || "all"}`,

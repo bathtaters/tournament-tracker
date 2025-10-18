@@ -1,8 +1,8 @@
-import { fetchApi, getTags } from "../../common/General/common.fetch";
+import { commonApi, getTags } from "../../common/General/common.fetch";
 import { playerUpdate, resetUpdate } from "./services/profileFetch.services";
 import { debugLogging } from "../../assets/config";
 
-export const profileApi = fetchApi.injectEndpoints({
+export const profileApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
     setupUser: build.query({
       query: ({ id, session }) => ({
@@ -44,7 +44,7 @@ export const profileApi = fetchApi.injectEndpoints({
   overrideExisting: true,
 });
 
-export const usePlayerState = fetchApi.endpoints.player.useQueryState;
+export const usePlayerState = commonApi.endpoints.player.useQueryState;
 export { useCreatePlayerMutation } from "../players/player.fetch";
 export {
   usePlayerQuery,

@@ -1,8 +1,8 @@
-import { fetchApi } from "../../common/General/common.fetch";
+import { commonApi } from "../../common/General/common.fetch";
 import { sessionLogin, sessionLogout } from "./services/session.services";
 import { debugLogging } from "../../assets/config";
 
-export const sessionApi = fetchApi.injectEndpoints({
+export const sessionApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
     login: build.mutation({
       query: ({ name, password }) => ({

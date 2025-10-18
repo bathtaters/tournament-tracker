@@ -1,5 +1,6 @@
+import type { EventData } from "types/models";
 import {
-  fetchApi,
+  commonApi,
   getTags,
   useEventQuery,
   usePlayerQuery,
@@ -9,15 +10,18 @@ import { deleteUpdate, eventSet } from "./services/eventEditorFetch.services";
 import { useCreatePlayerMutation } from "../players/player.fetch";
 import { debugLogging } from "../../assets/config";
 
-export const eventEditorApi = fetchApi.injectEndpoints({
+export const eventEditorApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
-    setEvent: build.mutation({
+    setEvent: build.mutation<any, Partial<EventData>>({
       query: ({ id, ...body }) =>
         id
           ? { url: `event/${id}`, method: "PATCH", body }
           : { url: `event`, method: "POST", body },
       transformResponse: debugLogging
-        ? (res) => console.log("SET_EVENT", res) || res
+        ? (res: any) => {
+            console.log("SET_EVENT", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(["Event", "Stats", "Clock"], {
         addBase: ["Schedule", { type: "Stats", id: "TOTAL" }],
@@ -25,10 +29,13 @@ export const eventEditorApi = fetchApi.injectEndpoints({
       onQueryStarted: eventSet,
     }),
 
-    deleteEvent: build.mutation({
+    deleteEvent: build.mutation<any, EventData["id"]>({
       query: (id) => ({ url: `event/${id}`, method: "DELETE" }),
       transformResponse: debugLogging
-        ? (res) => console.log("DEL_EVENT", res) || res
+        ? (res: any) => {
+            console.log("DEL_EVENT", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(["Event", "Stats"], {
         addBase: ["Schedule", { type: "Stats", id: "TOTAL" }],

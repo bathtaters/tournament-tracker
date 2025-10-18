@@ -4,10 +4,10 @@ import React from "react";
 export function ModalStyle({
   isOpen,
   className,
-  onClick,
+  onClick = null,
   z = "z-70",
   children,
-  modalRef,
+  modalRef = null,
 }) {
   return (
     isOpen && (

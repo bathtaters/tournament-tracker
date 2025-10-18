@@ -1,7 +1,9 @@
 // Build a playerid list from rank (Include missing players if listAll=true)
+import { Player } from "../../../types/models";
+
 export const getPlayerList = (
-  ranking,
-  players,
+  ranking: Player["id"][],
+  players: Record<Player["id"], Player>,
   listAll = false,
   hideHidden = false,
 ) => {

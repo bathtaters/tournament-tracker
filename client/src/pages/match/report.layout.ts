@@ -1,21 +1,15 @@
-import type { Player } from "types/models";
+import type { MatchReport, Player } from "types/models";
 import type { FormLayout } from "common/InputForm/InputForm.d";
 import { reportStyles } from "./styles/ReportStyles";
 import { getBaseData } from "core/services/validation.services";
 
 const matchBase = getBaseData("match");
 
-export type ReportData = {
-  wins: number[];
-  drops: Record<string, boolean>;
-  draws: number;
-};
-
 export default function reportLayout(
   playerList: string[],
   players: Record<string, Player>,
   wincount?: number,
-): FormLayout<ReportData>[] {
+): FormLayout<MatchReport>[] {
   return [
     ...playerList.map((pid, idx) => [
       // Each player - wins

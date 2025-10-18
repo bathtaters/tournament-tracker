@@ -154,7 +154,7 @@ type TagDefinition = { [T in TagType]?: string | TagIdFunc };
 type TagsOptions = Partial<{
   key: string;
   all: boolean;
-  addBase: TagObject[];
+  addBase: (TagObject | TagType)[];
   addAll: TagType[];
   limit: number;
 }>;
