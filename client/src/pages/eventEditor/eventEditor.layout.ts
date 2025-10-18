@@ -57,15 +57,6 @@ export const editorLayout = (hidePlayers: boolean): FormLayout<EventData> => [
       type: "number",
       disabled: lockAt(3),
       min: (data) => data?.roundactive,
-      hidden: ({ format }) => format === "ELIM",
-    },
-    {
-      label: "Losses Needed for Elimination",
-      id: "roundcount",
-      type: "number",
-      disabled: lockAt(2),
-      min: (data) => 1,
-      hidden: ({ format }) => format !== "ELIM",
     },
     {
       label: "Team Pairing",
