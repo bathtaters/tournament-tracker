@@ -1,7 +1,13 @@
-import React from "react";
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
-export function MatchStyle({ children, showRaw = false }) {
+export function MatchStyle({
+  children,
+  showRaw,
+}: {
+  children?: ReactNode;
+  showRaw?: boolean;
+}) {
   const height = showRaw ? "h-64" : "h-32";
   return (
     <div
@@ -19,7 +25,7 @@ export function MatchStyle({ children, showRaw = false }) {
 export const playerBoxStyle =
   "inline-block grow rounded-lg px-2 py-1 mx-2 my-1";
 
-export function PlayerStyle({ children }) {
+export function PlayerStyle({ children }: { children?: ReactNode }) {
   return (
     <div className="flex justify-evenly items-center text-center">
       {children}
@@ -27,7 +33,13 @@ export function PlayerStyle({ children }) {
   );
 }
 
-export function NameStyle({ linkTo, children }) {
+export function NameStyle({
+  linkTo,
+  children,
+}: {
+  linkTo?: string;
+  children?: ReactNode;
+}) {
   return (
     <h4
       className={
@@ -45,7 +57,7 @@ export function NameStyle({ linkTo, children }) {
   );
 }
 
-export function VsStyle({ children }) {
+export function VsStyle({ children }: { children?: ReactNode }) {
   return (
     <div className="inline-block shrink font-thin text-sm text-neutral-content p-2 align-middle pointer-events-none">
       {children}
@@ -53,7 +65,13 @@ export function VsStyle({ children }) {
   );
 }
 
-export function PlayerInfoStyle({ isDrop, children }) {
+export function PlayerInfoStyle({
+  isDrop,
+  children,
+}: {
+  isDrop?: boolean;
+  children?: ReactNode;
+}) {
   return (
     <div className="text-xs font-thin mt-0 pt-0 mb-1 relative group">
       <div className={isDrop ? "text-error" : "text-neutral-content"}>
@@ -63,7 +81,13 @@ export function PlayerInfoStyle({ isDrop, children }) {
   );
 }
 
-export function PlayerDropStyle({ children, visible }) {
+export function PlayerDropStyle({
+  children,
+  visible = true,
+}: {
+  children?: ReactNode;
+  visible?: boolean;
+}) {
   if (!visible) return null;
   return (
     <div className="hidden group-hover:block hover:block absolute -bottom-1 right-0 left-0">

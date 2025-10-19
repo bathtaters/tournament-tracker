@@ -15,7 +15,7 @@ export const getMatchTitle = (
 
 // Get value for wins counter
 export const winValue = (wins: MatchData["wins"], idx: number) =>
-  wins && isNaN(wins[idx]) ? wins[idx] : wins ? +wins[idx] : "-";
+  wins && isNaN(wins[idx]) ? wins[idx] : wins ? +wins[idx] : null;
 
 // Get suffix for 'draws' counter
 export const formatDraws = (draws: MatchData["draws"]) =>

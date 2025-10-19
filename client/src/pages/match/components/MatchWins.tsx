@@ -1,13 +1,24 @@
-import React from "react";
-
+import type { MatchData } from "types/models";
 import Counter from "../../../common/Counter/Counter";
 import { ByeStyle, winClass, WinsSeparator } from "../styles/CounterStyles";
 import { ClearReportButton, ReportButton } from "../styles/ButtonStyles";
 import { IncompleteStyle } from "../styles/ReportStyles";
-
 import { winValue } from "../services/match.services";
 
-// All win counters
+type WinsBoxProps = {
+  matchData: MatchData;
+  wincount: number;
+  index: number;
+  isEditing: boolean;
+  setVal: (key: string) => (value: number) => any;
+};
+
+type MatchWinsProps = Omit<WinsBoxProps, "index"> & {
+  clearReport: () => any;
+  openReport: () => any;
+  showReport: boolean;
+};
+
 function MatchWins({
   matchData,
   wincount,
@@ -16,7 +27,7 @@ function MatchWins({
   setVal,
   openReport,
   showReport,
-}) {
+}: MatchWinsProps) {
   if (!matchData.reported)
     return showReport ? (
       <ReportButton disabled={isEditing} onClick={openReport} />
@@ -42,13 +53,19 @@ function MatchWins({
 }
 
 // Each win counter
-function WinsBox({ matchData, wincount, index, isEditing, setVal }) {
+function WinsBox({
+  matchData,
+  wincount,
+  index,
+  isEditing,
+  setVal,
+}: WinsBoxProps) {
   if (matchData.players?.length === 1 && !isEditing)
     return <ByeStyle>Bye</ByeStyle>;
 
   return (
     <>
-      <WinsSeparator visible={index} />
+      <WinsSeparator visible={!!index} />
 
       <Counter
         isEditing={isEditing}

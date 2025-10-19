@@ -1,7 +1,13 @@
-import React from "react";
+import type { MouseEventHandler } from "react";
 import CancelIcon from "../../../common/icons/Cancelcon";
 
-export function ReportButton({ disabled, onClick }) {
+export function ReportButton({
+  disabled,
+  onClick,
+}: {
+  disabled?: boolean;
+  onClick?: MouseEventHandler<HTMLInputElement>;
+}) {
   return (
     <input
       className="btn btn-accent btn-sm font-light mt-1"
@@ -13,7 +19,11 @@ export function ReportButton({ disabled, onClick }) {
   );
 }
 
-export function ClearReportButton({ onClick }) {
+export function ClearReportButton({
+  onClick,
+}: {
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}) {
   return (
     <button
       className="absolute bottom-0 right-0 btn btn-ghost btn-circle btn-xs w-4 h-4 min-h-0 m-0.5"
@@ -25,7 +35,13 @@ export function ClearReportButton({ onClick }) {
   );
 }
 
-export function DropButton({ onClick, isDrop }) {
+export function DropButton({
+  onClick,
+  isDrop,
+}: {
+  onClick?: MouseEventHandler<HTMLInputElement>;
+  isDrop?: boolean;
+}) {
   return (
     <input
       className={

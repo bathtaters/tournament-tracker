@@ -1,10 +1,8 @@
 import { type MouseEventHandler, type ReactNode, useMemo } from "react";
-import dragClassController, {
-  getClasses,
-} from "./services/dragClass.services";
+import dragClassController, { getClasses } from "./services/dragClass.services";
 import useDndController from "./services/dragBlock.controller";
 
-type DragBlockProps<T, D> = {
+export type DragBlockProps<T, D> = {
   type?: string;
   item: T;
   onDrop: (droppedItem: D, thisItem: T) => void;
