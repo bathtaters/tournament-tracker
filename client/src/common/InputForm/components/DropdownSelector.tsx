@@ -22,7 +22,7 @@ export default function DropdownSelector<Data extends Record<string, any>>({
         </option>
       )}
       {Object.entries(options).map(([value, text]) => (
-        <option key={value} value={value || " "} className={wrapperClass}>
+        <option key={value} value={value || ""} className={wrapperClass}>
           {text}
         </option>
       ))}
