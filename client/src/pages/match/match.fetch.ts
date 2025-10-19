@@ -10,6 +10,7 @@ import {
   usePlayerQuery,
   useSettingsQuery,
   useStatsQuery,
+  useTeamQuery,
 } from "../../common/General/common.fetch";
 import {
   dropsUpdate,
@@ -117,7 +118,7 @@ export const matchApi = commonApi.injectEndpoints({
   overrideExisting: true,
 });
 
-export { usePlayerQuery, useSettingsQuery, useStatsQuery };
+export { usePlayerQuery, useTeamQuery, useSettingsQuery, useStatsQuery };
 export const {
   useMatchQuery,
   useUpdateMatchMutation,

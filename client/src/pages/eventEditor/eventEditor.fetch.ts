@@ -5,6 +5,7 @@ import {
   useEventQuery,
   usePlayerQuery,
   useSettingsQuery,
+  useTeamQuery,
 } from "../../common/General/common.fetch";
 import { deleteUpdate, eventSet } from "./services/eventEditorFetch.services";
 import { useCreatePlayerMutation } from "../players/player.fetch";
@@ -49,6 +50,7 @@ export const eventEditorApi = commonApi.injectEndpoints({
 export {
   useEventQuery,
   usePlayerQuery,
+  useTeamQuery,
   useSettingsQuery,
   useCreatePlayerMutation,
 };

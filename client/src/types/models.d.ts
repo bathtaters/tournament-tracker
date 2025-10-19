@@ -53,6 +53,12 @@ export type Player = {
   hide?: boolean;
 };
 
+export type Team = {
+  id: string;
+  name?: string;
+  players: Player["id"][];
+};
+
 export type Match = {
   id: string;
   eventid: string;

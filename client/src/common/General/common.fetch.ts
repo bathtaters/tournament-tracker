@@ -1,4 +1,4 @@
-import type { EventData, Player, Settings, Stats } from "types/models";
+import type { EventData, Player, Settings, Stats, Team } from "types/models";
 import type { OverloadQuery } from "types/helpers";
 import {
   ALL_ID,
@@ -66,6 +66,17 @@ export const commonApi = fetchApi.injectEndpoints({
         : undefined,
       providesTags: getTags(["Player"]),
     }),
+
+    team: build.query<Team | Record<Team["id"], Team>, Team["id"] | null>({
+      query: (id = null) => `team/${id ?? "all"}`,
+      transformResponse: debugLogging
+        ? (res: any) => {
+            console.log("TEAM", res);
+            return res;
+          }
+        : undefined,
+      providesTags: getTags(["Team"]),
+    }),
   }),
   overrideExisting: true,
 });
@@ -79,6 +90,11 @@ export const usePlayerQuery: OverloadQuery<
   Player["id"],
   typeof commonApi.usePlayerQuery
 > = commonApi.usePlayerQuery;
+export const useTeamQuery: OverloadQuery<
+  Team,
+  Team["id"],
+  typeof commonApi.useTeamQuery
+> = commonApi.useTeamQuery;
 export const useEventQuery: OverloadQuery<
   EventData,
   EventData["id"],

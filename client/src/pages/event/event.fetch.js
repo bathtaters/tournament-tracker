@@ -5,6 +5,7 @@ import {
   usePlayerQuery,
   useSettingsQuery,
   useStatsQuery,
+  useTeamQuery,
 } from "../../common/General/common.fetch";
 import { useMatchQuery } from "../match/match.fetch";
 import { useSetEventMutation } from "../eventEditor/eventEditor.fetch";
@@ -86,6 +87,7 @@ const refetchStats = (id) =>
 export {
   useEventQuery,
   usePlayerQuery,
+  useTeamQuery,
   useSettingsQuery,
   useStatsQuery,
   useSetEventMutation,

@@ -11,6 +11,7 @@ export const tagTypes = [
   "Event",
   "Match",
   "Player",
+  "Team",
   "PlayerMatch",
   "Stats",
   "Clock",
