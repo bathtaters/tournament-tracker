@@ -33,8 +33,10 @@ const getMatchScore = (matchScores: number[]) =>
 // avg([Math.min(...matchScores), Math.max(...matchScores)]); // Range median
 
 /** Calculate single player's base score */
-export const getPlayerScore = (stats: StatsEntry) =>
-  !stats
+export const getPlayerScore = (
+  stats: StatsEntry | Pick<StatsEntry, "eventids">,
+) =>
+  !stats || !("matchRecord" in stats)
     ? 0
     : Object.keys(weight).reduce(
         (tot, key) =>

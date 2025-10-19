@@ -44,9 +44,9 @@ export default function roundService(
       ? Object.values(teamData).flat(1)
       : eventData.players;
 
-  let stats: Stats = eventData.roundactive
-    ? toStats({ solo: matchData }, ranking, { solo: oppData }, true, true)
-    : { ranking, noStats: true };
+  let stats = eventData.roundactive
+    ? toStats({ solo: matchData }, ranking, { solo: oppData }, {}, true, true)
+    : ({ ranking, noStats: true } as Stats);
 
   // Handle prior round eliminations
   let drops: RoundServiceReturn["drops"];

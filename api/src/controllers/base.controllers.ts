@@ -31,7 +31,7 @@ export async function getAll(_: Request, res: Response) {
   const events: Record<Event["id"], Event & { matches?: Match["id"][][] }> =
     await event.get().then(arrToObj("id"));
   const players: Record<Player["id"], Player> = await player
-    .get()
+    .getAll()
     .then(arrToObj("id"));
 
   const matches = await match.listByEvent();
