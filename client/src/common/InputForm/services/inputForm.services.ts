@@ -25,6 +25,14 @@ export const splitAttributes = <Data extends Record<string, any>>(
     ? { attributes, placeholder, handleChange, options }
     : { attributes: { placeholder, ...attributes }, handleChange };
 
+export const fixSelectAttribs = <T extends Record<string, any>>({
+  value,
+  ...attributes
+}: T): Omit<T, "value"> & { value: string } => ({
+  ...attributes,
+  value: typeof value === "number" ? value : value || " ",
+});
+
 /** Collect all default values */
 export const getDefaultValues = <T>(
   rows: FormLayout<T>,
