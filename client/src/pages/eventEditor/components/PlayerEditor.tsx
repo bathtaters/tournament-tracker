@@ -1,3 +1,4 @@
+import type { Player } from "types/models";
 import EditableList, {
   type EditableListProps,
 } from "../../../common/EditableList/EditableList";
@@ -35,7 +36,7 @@ export default function PlayerEditor({
       create={create}
       isLocked={isStarted}
       onFirstChange={onFirstChange}
-      filter={({ hide }) => !hide}
+      filter={({ hide }: Partial<Player>) => !hide}
     />
   );
 }

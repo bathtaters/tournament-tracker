@@ -1,5 +1,6 @@
 import type { Player } from "types/models";
-import { playerExists, randomArray } from "./playerEditor.utils";
+import type { EditableListProps } from "common/EditableList/EditableList";
+import { playerExists, randomArray } from "./listEditor.utils";
 import {
   useCreatePlayerMutation,
   usePlayerQuery,
@@ -16,7 +17,11 @@ import {
   itemCreateError,
 } from "../../../assets/alerts";
 
-export default function usePlayerEditorController(type, onChange, fillAll) {
+export default function usePlayerEditorController(
+  type: EditableListProps["type"],
+  onChange: EditableListProps["onChange"],
+  fillAll: boolean,
+) {
   // Load DB
   const { data: settings } = useSettingsQuery();
   const query = usePlayerQuery(null);
