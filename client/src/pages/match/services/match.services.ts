@@ -1,4 +1,4 @@
-import type { MatchData, MatchReport, Player } from "types/models";
+import type { MatchData, MatchReport, Player, Team } from "types/models";
 import { formatMatchTitle } from "../../../assets/formatting";
 import { debugLogging } from "../../../assets/config";
 
@@ -6,9 +6,10 @@ import { debugLogging } from "../../../assets/config";
 export const getMatchTitle = (
   match: MatchData,
   players: Record<Player["id"], Player>,
+  teams: Record<Team["id"], Team>,
 ) => {
   if (players && match?.players)
-    return formatMatchTitle(match.players, players);
+    return formatMatchTitle(match.players, players, teams);
   debugLogging && console.warn("Invalid Match Title:", match, players);
   return "Untitled";
 };

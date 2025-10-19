@@ -36,9 +36,13 @@ export const formatTeamName = (
 export const formatMatchTitle = (
   matchPlayers: MatchData["players"],
   playerData: Record<Player["id"], Player>,
+  teamData: Record<Team["id"], Team>,
 ) =>
   matchPlayers
-    .map((id) => (playerData[id] && playerData[id].name) || "?")
+    .map(
+      (id) =>
+        playerData[id]?.name || formatTeamName(teamData[id], playerData) || "?",
+    )
     .join(" vs. ");
 
 export const formatMatchStatus = (statusLabel: string, isDrop = false) =>

@@ -8,6 +8,7 @@ import {
 import {
   useSessionState,
   useShowRaw,
+  useTeamQuery,
 } from "../../../common/General/common.fetch";
 import {
   useMatchQuery,
@@ -51,6 +52,11 @@ export default function useMatchController(
     isLoading: loadingPlayers,
     error: playerError,
   } = usePlayerQuery(null);
+  const {
+    data: teams,
+    isLoading: loadingTeams,
+    error: teamError,
+  } = useTeamQuery(null);
   const { data: user } = useSessionState();
   const showRaw = useShowRaw();
 
@@ -63,12 +69,19 @@ export default function useMatchController(
 
   // Catch loading/error
   const matchData = matches?.[matchId],
-    error: any = matchError || rankError || playerError;
-  if (loadingMatch || loadingRank || loadingPlayers || !matchData || error)
+    error: any = matchError || rankError || playerError || teamError;
+  if (
+    loadingMatch ||
+    loadingRank ||
+    loadingPlayers ||
+    loadingTeams ||
+    !matchData ||
+    error
+  )
     return { showLoading: true, error };
 
   // Get match title
-  const title = getMatchTitle(matchData, players);
+  const title = getMatchTitle(matchData, players, teams);
 
   // UnReport match
   const clearReport = () =>
@@ -81,6 +94,7 @@ export default function useMatchController(
     matchData,
     rankings,
     players,
+    teams,
     showRaw,
     title,
     isLocked,

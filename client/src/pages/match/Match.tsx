@@ -9,6 +9,7 @@ import { MatchStyle, PlayerStyle } from "./styles/MatchStyles";
 import { drawsClass, DrawsStyle, WinsStyle } from "./styles/CounterStyles";
 import { formatDraws } from "./services/match.services";
 import useMatchController from "./services/match.controller";
+import { getPlayerOrTeam } from "../stats/services/stats.services";
 import reportLayout from "./report.layout";
 
 type MatchProps = {
@@ -29,6 +30,7 @@ export default function Match({
     matchData,
     rankings,
     players,
+    teams,
     showRaw,
     title,
     reportModal,
@@ -59,9 +61,9 @@ export default function Match({
             key={playerid}
             id={playerid}
             index={index}
-            playerData={players[playerid]}
             record={rankings?.[playerid]?.matchRecord}
             isEditing={isEditing}
+            {...getPlayerOrTeam(playerid, players, teams)}
             {...swapProps}
           />
         ))}
@@ -103,7 +105,7 @@ export default function Match({
           title={title}
           match={matchData}
           report={report}
-          layout={reportLayout(matchData.players, players, wincount)}
+          layout={reportLayout(matchData.players, players, teams, wincount)}
           lock={reportModal.lock}
           close={reportModal.close}
         />

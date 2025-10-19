@@ -1,13 +1,15 @@
-import type { MatchReport, Player } from "types/models";
+import type { MatchReport, Player, Team } from "types/models";
 import type { FormLayout } from "common/InputForm/InputForm.d";
 import { reportStyles } from "./styles/ReportStyles";
 import { getBaseData } from "core/services/validation.services";
+import { formatTeamName } from "../../assets/formatting";
 
 const matchBase = getBaseData("match");
 
 export default function reportLayout(
-  playerList: string[],
-  players: Record<string, Player>,
+  playerList: Player["id"][],
+  players: Record<Player["id"], Player>,
+  teams: Record<Team["id"], Team>,
   wincount?: number,
 ): FormLayout<MatchReport>[] {
   return [
@@ -16,7 +18,7 @@ export default function reportLayout(
       {
         id: "wins." + idx,
         type: "number",
-        label: (players[pid] && players[pid].name) || pid,
+        label: players[pid]?.name || formatTeamName(teams[pid], players) || pid,
         labelClass: reportStyles.wins,
         inputClass: "",
         inputWrapperClass: reportStyles.counterWrappers,

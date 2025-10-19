@@ -1,4 +1,4 @@
-import type { MatchData, Player, PlayerRecord } from "types/models";
+import type { MatchData, Player, PlayerRecord, Team } from "types/models";
 import type { SwapDragData } from "types/base";
 import DragBlock, { DragBlockProps } from "../../../common/DragBlock/DragBlock";
 import {
@@ -11,11 +11,12 @@ import {
 import { DropButton } from "../styles/ButtonStyles";
 import { dataType } from "../services/swap.services";
 import { useLinkId } from "../../../common/General/services/idUrl.services";
-import { formatRecord } from "../../../assets/formatting";
+import { formatRecord, formatTeamName } from "../../../assets/formatting";
 
 type MatchPlayerProps = {
   id: Player["id"];
-  playerData: Player;
+  player?: Player;
+  team?: Team & { members: Player[] };
   matchData: MatchData;
   handleSwap: DragBlockProps<SwapDragData, SwapDragData>["onDrop"];
   handleDrop: (playerid: Player["id"], undrop: boolean) => any;
@@ -27,7 +28,8 @@ type MatchPlayerProps = {
 
 function MatchPlayer({
   id,
-  playerData,
+  player,
+  team,
   matchData,
   handleSwap,
   handleDrop,
@@ -58,8 +60,8 @@ function MatchPlayer({
         className={playerBoxStyle}
         disabled={!isEditing}
       >
-        <NameStyle linkTo={!isEditing && playerData ? playerUrl : null}>
-          {playerData?.name ?? "?"}
+        <NameStyle linkTo={!isEditing && player ? playerUrl : null}>
+          {player?.name ?? formatTeamName(team) ?? "?"}
         </NameStyle>
 
         <PlayerInfoStyle isDrop={isDrop}>
