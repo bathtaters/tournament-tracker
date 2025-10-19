@@ -4,11 +4,15 @@ import {
   useEventQuery,
   usePlayerQuery,
   useSettingsQuery,
-  useStatsQuery
+  useStatsQuery,
 } from "../../common/General/common.fetch";
 import { useMatchQuery } from "../match/match.fetch";
 import { useSetEventMutation } from "../eventEditor/eventEditor.fetch";
-import { clearRoundUpdate, clockUpdate, nextRoundUpdate } from "./services/eventFetch.services";
+import {
+  clearRoundUpdate,
+  clockUpdate,
+  nextRoundUpdate,
+} from "./services/eventFetch.services";
 import { calcClock } from "./services/clock.services";
 import { debugLogging } from "../../assets/config";
 
@@ -31,7 +35,7 @@ export const eventApi = commonApi.injectEndpoints({
         : undefined,
       invalidatesTags: getTags(
         ["Event", "Match", "Stats", "PlayerMatch", "Clock"],
-        { all: 0, addAll: ["Stats"] }
+        { all: 0, addAll: ["Stats", "Match"] },
       ),
       onQueryStarted: nextRoundUpdate,
     }),
@@ -46,7 +50,7 @@ export const eventApi = commonApi.injectEndpoints({
         : undefined,
       invalidatesTags: getTags(
         ["Event", "Match", "Stats", "PlayerMatch", "Clock"],
-        { all: 0, addAll: ["Stats"] }
+        { all: 0, addAll: ["Stats"] },
       ),
       onQueryStarted: clearRoundUpdate,
     }),
