@@ -5,7 +5,7 @@ import { statsStyle } from "../../styles/StatsStyles";
 import { formatRecord } from "../../../../assets/formatting";
 import { useLinkId } from "../../../../common/General/services/idUrl.services";
 
-function StatsRow({ rowNum, id, name, isDrop, record }) {
+function StatsRow({ rowNum, id, name, isDrop, record, disableLink }) {
   // Row Number
   const rowHead = (
     <span className={statsStyle.number(isDrop)}>
@@ -29,7 +29,10 @@ function StatsRow({ rowNum, id, name, isDrop, record }) {
     <>
       {rowHead}
 
-      <Link className={statsStyle.name(rowNum)} to={playerUrl}>
+      <Link
+        className={statsStyle.name(rowNum, disableLink)}
+        to={disableLink ? null : playerUrl}
+      >
         {name}
       </Link>
 

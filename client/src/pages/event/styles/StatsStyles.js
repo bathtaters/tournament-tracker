@@ -1,11 +1,12 @@
 import React from "react";
 import { ModalTitleStyle } from "../../../common/General/styles/CommonStyles";
+
 export { ModalTitleStyle };
 
 export const statsStyle = {
   number: (isDrop) => "font-light text-right " + (isDrop ? "text-error" : ""),
-  name: (isRanked) =>
-    `col-span-${isRanked ? 2 : 4} text-lg font-normal text-left link link-hover`,
+  name: (isRanked, disableLink) =>
+    `${isRanked ? "col-span-2" : "col-span-4"} text-lg font-normal text-left ${disableLink ? "pointer-events-none" : "link link-hover"}`,
   record: "col-span-2 text-xs font-light align-middle",
   missing:
     "col-span-4 text-md font-thin align-middle text-center opacity-90 italic",

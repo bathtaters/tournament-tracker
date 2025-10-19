@@ -1,6 +1,6 @@
 import type { Player, Stats, Team } from "types/models";
 import type { CellStyle, Column } from "common/DataTable/DataTable.d";
-import { formatPercent, formatTeamName } from "assets/formatting";
+import { formatPercent } from "assets/formatting";
 import { BasicPlayerNameStyle, FullPlayerNameStyle } from "./StatsStyle";
 
 type ExtraData = {
@@ -30,13 +30,31 @@ const hdrClass = "text-md sm:text-lg",
     align: "center",
   };
 
+/** Get team or player data for name */
+// const getData = (team?: Team, players: ExtraData["players"] = {}) =>
+//   team?.players?.map((id) => players[id]).filter((p) => p?.name && !p.hide);
+
+export const getData = (
+  id: Player["id"] | Team["id"],
+  players: Record<Player["id"], Player>,
+  teams: Record<Team["id"], Team>,
+): { player?: Player; team?: Team & { members: Player[] } } => {
+  if (!teams[id]) return { player: players[id] ?? { id, name: "" } };
+  return {
+    team: {
+      ...teams[id],
+      members: teams[id].players.map((id) => players[id] ?? { id, name: "" }),
+    },
+  };
+};
+
 // Stats columns
 const statsLayout: Column<ExtraData>[] = [
   { label: "", get: "index", cellStyle: indexStyle },
   {
     label: "Name",
     get: (id, { players, teams }) => (
-      <FullPlayerNameStyle data={formatTeamName(id, players, teams)} />
+      <FullPlayerNameStyle {...getData(id, players, teams)} />
     ),
     cellStyle: titleStyle,
     hdrClass: "text-lg",
@@ -90,7 +108,7 @@ const basicLayout: Column<ExtraData>[] = [
     hdrClass: "text-lg",
     default: "?",
     get: (id, { players, teams }) => (
-      <BasicPlayerNameStyle data={formatTeamName(id, players, teams)} />
+      <BasicPlayerNameStyle {...getData(id, players, teams)} />
     ),
   },
 ];

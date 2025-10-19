@@ -61,6 +61,7 @@ export default function Stats({
   const playerList = getPlayerList(
     stats?.ranking,
     players,
+    teams,
     !eventid,
     hideHidden,
   );
@@ -91,13 +92,14 @@ export default function Stats({
     );
 
   // Render
+  const isTeam = playerList[0] in teams;
   return (
     <div className="w-full overflow-auto">
       <DataTable
         colLayout={statsLayout(hideStats, enableCredits)}
         rowIds={playerList}
         extra={{ stats, players, teams }}
-        rowLink="profile/"
+        rowLink={isTeam ? undefined : "profile/"}
         rowClass={highlightClass}
         className={className}
         hdrClass="text-center mb-2"

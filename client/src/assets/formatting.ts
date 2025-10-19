@@ -14,17 +14,23 @@ export const formatQueryError = (err: any) =>
     : "Please refresh page";
 
 export const formatTeamName = (
-  id: Player["id"] | Team["id"],
-  players: Record<Player["id"], Player>,
-  teams: Record<Team["id"], Team>,
-): Partial<Pick<Player, "name" | "hide">> => {
-  if (id in players) return players[id] ?? {};
-  if (id in teams && teams[id].name == null)
-    return {
-      ...teams[id],
-      name: teams[id].players.map((pid) => players[pid]?.name ?? "?").join("/"),
-    };
-  return teams[id] ?? {};
+  team: (Team & { members?: Player[] }) | undefined,
+  players?: Record<Player["id"], Player>,
+) => {
+  if (!team || team.name) return team?.name;
+
+  const members = team.members
+    ? team.members
+    : players
+      ? team.players.map((id) => players[id])
+      : [];
+
+  return (
+    members
+      .filter((p) => p?.name && !p.hide)
+      .map(({ name }) => name)
+      .join("/") || undefined
+  );
 };
 
 export const formatMatchTitle = (

@@ -60,9 +60,10 @@ export default function EventStats({ event }: { event: EventData }) {
           <StatsRow
             rowNum={isRanked && idx + 1}
             id={pid}
-            name={formatTeamName(pid, players, teams).name}
+            name={players[pid]?.name ?? formatTeamName(teams[pid], players)}
             isDrop={event.drops?.includes(pid)}
             record={data[pid]?.matchRecord}
+            disableLink={!!event.team}
             key={pid}
           />
         ))}

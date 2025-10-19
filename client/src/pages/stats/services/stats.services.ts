@@ -1,16 +1,17 @@
 // Build a playerid list from rank (Include missing players if listAll=true)
-import type { Player } from "types/models";
+import type { Player, Team } from "types/models";
 
 export const getPlayerList = (
   ranking: Player["id"][],
   players: Record<Player["id"], Player>,
+  teams: Record<Team["id"], Team> = {},
   listAll = false,
   hideHidden = false,
 ) => {
   if (!players) return ranking || [];
 
   let list = ranking
-    ? ranking.filter((p) => players[p])
+    ? ranking.filter((p) => p in players || p in teams)
     : listAll
       ? Object.keys(players)
       : [];
