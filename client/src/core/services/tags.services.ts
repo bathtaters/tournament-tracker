@@ -133,7 +133,7 @@ function getVal(
 ): string | null {
   if (typeof keyOrGetter === "function")
     return keyOrGetter(obj, origKey, origArgs);
-  else if (obj)
+  else if (obj && keyOrGetter)
     return keyOrGetter.split(".").reduce((ptr, key) => ptr?.[key], obj);
   return null;
 }
