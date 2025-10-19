@@ -1,11 +1,12 @@
-import type { Player, Stats } from "types/models";
+import type { Player, Stats, Team } from "types/models";
 import type { CellStyle, Column } from "common/DataTable/DataTable.d";
-import { formatPercent } from "assets/formatting";
+import { formatPercent, formatTeamName } from "assets/formatting";
 import { BasicPlayerNameStyle, FullPlayerNameStyle } from "./StatsStyle";
 
 type ExtraData = {
-  players: Record<string, Player>;
   stats: Stats;
+  players: Record<Player["id"], Player>;
+  teams: Record<Team["id"], Team>;
 };
 
 // Stats table classes
@@ -34,7 +35,9 @@ const statsLayout: Column<ExtraData>[] = [
   { label: "", get: "index", cellStyle: indexStyle },
   {
     label: "Name",
-    get: (id, { players }) => <FullPlayerNameStyle player={players[id]} />,
+    get: (id, { players, teams }) => (
+      <FullPlayerNameStyle data={formatTeamName(id, players, teams)} />
+    ),
     cellStyle: titleStyle,
     hdrClass: "text-lg",
     default: "?",
@@ -86,7 +89,9 @@ const basicLayout: Column<ExtraData>[] = [
     cellStyle: listStyle,
     hdrClass: "text-lg",
     default: "?",
-    get: (id, { players }) => <BasicPlayerNameStyle player={players[id]} />,
+    get: (id, { players, teams }) => (
+      <BasicPlayerNameStyle data={formatTeamName(id, players, teams)} />
+    ),
   },
 ];
 

@@ -1,7 +1,7 @@
 import type { EventData } from "types/models";
-import { Modal, useModal } from "common/Modal/Modal";
-import Loading from "common/Loading/Loading";
-import Stats from "pages/stats/Stats";
+import { Modal, useModal } from "../../../common/Modal/Modal";
+import Loading from "../../../common/Loading/Loading";
+import Stats from "../../stats/Stats";
 import StatsRow from "./subcomponents/StatsRow";
 import {
   EventStatsStyle,
@@ -9,8 +9,9 @@ import {
   StatsRowStyle,
   ViewStatsStyle,
 } from "../styles/StatsStyles";
-import { usePlayerQuery, useStatsQuery } from "../event.fetch";
-import { apiPollMs } from "assets/config";
+import { usePlayerQuery, useStatsQuery, useTeamQuery } from "../event.fetch";
+import { apiPollMs } from "../../../assets/config";
+import { formatTeamName } from "../../../assets/formatting";
 
 export default function EventStats({ event }: { event: EventData }) {
   // Global
@@ -22,15 +23,26 @@ export default function EventStats({ event }: { event: EventData }) {
     data: players,
     isLoading: loadingPlayers,
     error: playerError,
-    // @ts-ignore -- RTK imports have incorrect arg count
-  } = usePlayerQuery();
+  } = usePlayerQuery(null);
+  const {
+    data: teams,
+    isLoading: teamLoading,
+    error: teamError,
+  } = useTeamQuery(null);
 
   // Loading/Error catcher
-  if (isLoading || loadingPlayers || error || playerError)
+  if (
+    isLoading ||
+    loadingPlayers ||
+    teamLoading ||
+    error ||
+    playerError ||
+    teamError
+  )
     return (
       <Loading
-        loading={isLoading || loadingPlayers}
-        error={error || playerError}
+        loading={isLoading || loadingPlayers || teamLoading}
+        error={error || playerError || teamError}
         className="text-xs mb-2"
       />
     );
@@ -44,18 +56,16 @@ export default function EventStats({ event }: { event: EventData }) {
       </ViewStatsStyle>
 
       <StatsRowStyle>
-        {(isRanked ? (data.ranking as string[]) : event.players).map(
-          (pid, idx) => (
-            <StatsRow
-              rowNum={isRanked && idx + 1}
-              id={pid}
-              name={players[pid]?.name}
-              isDrop={event.drops?.includes(pid)}
-              record={data[pid]?.matchRecord}
-              key={pid}
-            />
-          ),
-        )}
+        {(isRanked ? data.ranking : event.players).map((pid, idx) => (
+          <StatsRow
+            rowNum={isRanked && idx + 1}
+            id={pid}
+            name={formatTeamName(pid, players, teams).name}
+            isDrop={event.drops?.includes(pid)}
+            record={data[pid]?.matchRecord}
+            key={pid}
+          />
+        ))}
       </StatsRowStyle>
 
       <Modal backend={backend}>

@@ -6,6 +6,7 @@ import {
   usePlayerQuery,
   useSettingsQuery,
   useStatsQuery,
+  useTeamQuery,
 } from "common/General/common.fetch";
 import statsLayout from "./stats.layout";
 import { getPlayerList } from "./services/stats.services";
@@ -44,7 +45,12 @@ export default function Stats({
     data: players,
     isLoading: playLoad,
     error: playErr,
-  } = usePlayerQuery(undefined, { pollingInterval: apiPollMs });
+  } = usePlayerQuery(null, { pollingInterval: apiPollMs });
+  const {
+    data: teams,
+    isLoading: teamLoad,
+    error: teamErr,
+  } = useTeamQuery(null, { pollingInterval: apiPollMs });
   const {
     data: settings,
     isLoading: sLoad,
@@ -62,15 +68,24 @@ export default function Stats({
     sLoad || sErr ? showCredits : showCredits && settings.showcredits;
 
   // Loading/Error catcher
-  if (isLoading || playLoad || sLoad || error || playErr || sErr)
+  if (
+    isLoading ||
+    playLoad ||
+    teamLoad ||
+    sLoad ||
+    error ||
+    playErr ||
+    teamErr ||
+    sErr
+  )
     return (
       <DataTable
         colLayout={statsLayout(true, enableCredits)}
         className={className}
       >
         <Loading
-          loading={isLoading || playLoad || sLoad}
-          error={error || playErr || sErr}
+          loading={isLoading || playLoad || teamLoad || sLoad}
+          error={error || playErr || teamErr || sErr}
         />
       </DataTable>
     );
@@ -81,7 +96,7 @@ export default function Stats({
       <DataTable
         colLayout={statsLayout(hideStats, enableCredits)}
         rowIds={playerList}
-        extra={{ stats, players }}
+        extra={{ stats, players, teams }}
         rowLink="profile/"
         rowClass={highlightClass}
         className={className}

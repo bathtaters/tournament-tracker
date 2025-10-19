@@ -1,11 +1,31 @@
 // Format data for display
-import { EventData, MatchData, Player, PlayerRecord } from "../types/models";
+import {
+  EventData,
+  MatchData,
+  Player,
+  PlayerRecord,
+  Team,
+} from "../types/models";
 import { debugLogging } from "./config";
 
 export const formatQueryError = (err: any) =>
   debugLogging
     ? String(err?.message || err || "Unknown error")
     : "Please refresh page";
+
+export const formatTeamName = (
+  id: Player["id"] | Team["id"],
+  players: Record<Player["id"], Player>,
+  teams: Record<Team["id"], Team>,
+): Partial<Pick<Player, "name" | "hide">> => {
+  if (id in players) return players[id] ?? {};
+  if (id in teams && teams[id].name == null)
+    return {
+      ...teams[id],
+      name: teams[id].players.map((pid) => players[pid]?.name ?? "?").join("/"),
+    };
+  return teams[id] ?? {};
+};
 
 export const formatMatchTitle = (
   matchPlayers: MatchData["players"],
