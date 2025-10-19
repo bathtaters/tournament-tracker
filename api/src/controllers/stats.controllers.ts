@@ -1,29 +1,38 @@
-const { matchedData } = require("express-validator");
-const logger = require("../utils/log.adapter");
+import type { RequestHandler } from "express";
+import type { Match, MatchDetail, Player } from "types/models";
+import type {
+  EventOpps,
+  OppData,
+  Stats,
+  TeamRelations,
+} from "types/generators";
+import { matchedData } from "express-validator";
+import logger from "../utils/log.adapter";
 
 // Models
 const event = require("../db/models/event");
 const player = require("../db/models/player");
 const match = require("../db/models/match");
+import * as event from "../db/models/event";
+import * as player from "../db/models/player";
+import * as match from "../db/models/match";
 
 // Services/Utils
-const toStats = require("../services/stats.services");
-const { arrToObj } = require("../utils/shared.utils");
-const { creditsPerRank, didntPlayCredits } = require("../config/constants");
+import toStats from "../services/stats.services";
+import { arrToObj } from "../utils/shared.utils";
+import { creditsPerRank, didntPlayCredits } from "../config/constants";
 
 // Get Event Stats //
 
 async function getAllStats(_, res) {
-  const matches = await match.getAll(true).then(matchesByEvent);
-  const players = await player.list();
-  const opps = await event.getOpponents(null, true).then(oppsByEvent);
+export const getAllStats: RequestHandler = async (_, res) => {
 
   return withMissingEventIds(toStats(matches, players, opps, false)).then(
     res.sendAndLog,
   );
 }
 
-async function getStats(req, res) {
+export const getStats: RequestHandler = async (req, res) => {
   const { id } = matchedData(req);
   const players = await event.getPlayers(id).then((r) => r?.players);
   if (!players) return res.sendStatus(204);
@@ -36,10 +45,23 @@ async function getStats(req, res) {
   return res.sendAndLog(
     toStats({ [id]: matches }, players, { [id]: opps }, true),
   );
-}
+};
 
 const getEventCredits = (id, matches, players, opps, credits = {}) => {
   const { ranking } = toStats({ [id]: matches }, players, { [id]: opps }, true);
+const getEventCredits = (
+  id: Match["eventid"],
+  matches: MatchDetail[],
+  players: Match["players"],
+  opps: Record<Player["id"], Player["id"][]>,
+  credits: Record<Player["id"], Player["credits"]> = {},
+) => {
+  const { ranking } = toStats(
+    { [id]: matches },
+    players,
+    { [id]: opps },
+    true,
+  );
   if (!ranking?.length) return credits;
 
   players.forEach((player) => {
@@ -53,7 +75,7 @@ const getEventCredits = (id, matches, players, opps, credits = {}) => {
   return credits;
 };
 
-const resetAllCredits = (includeFinished = false) =>
+export const resetAllCredits = (includeFinished = false): RequestHandler =>
   includeFinished
     ? async function resetAllCredits(req, res) {
         const matches = await match.getAll(true).then(matchesByEvent);
@@ -82,7 +104,7 @@ const resetAllCredits = (includeFinished = false) =>
         return res.sendAndLog(credits);
       };
 
-const setCredits = (undo = false) =>
+export const setCredits = (undo = false): RequestHandler =>
   async function setCredits(req, res) {
     const { id } = matchedData(req);
     const players = await event.getPlayers(id).then((r) => r?.players);
@@ -107,32 +129,36 @@ const setCredits = (undo = false) =>
     return res.sendAndLog(eventCredits);
   };
 
-module.exports = { getAllStats, getStats, resetAllCredits, setCredits };
-
 // HELPERS - statsGetAll - index opps/matches by event
-const oppsByEvent = (opps) =>
-  opps.reduce((obj, entry) => {
-    if (!obj[entry.eventid]) obj[entry.eventid] = {};
-    else if (obj[entry.eventid][entry.playerid])
-      logger.error(
-        "Duplicate player opponent objects:",
-        entry,
-        obj[entry.eventid][entry.playerid],
-      );
+const oppsByEvent = (opps: EventOpps[]) =>
+  opps.reduce(
+    (obj, entry) => {
+      if (!obj[entry.eventid]) obj[entry.eventid] = {};
+      else if (obj[entry.eventid][entry.playerid])
+        logger.error(
+          "Duplicate player opponent objects:",
+          entry,
+          obj[entry.eventid][entry.playerid],
+        );
 
-    obj[entry.eventid][entry.playerid] = entry.oppids;
-    return obj;
-  }, {});
+      obj[entry.eventid][entry.playerid] = entry.oppids;
+      return obj;
+    },
+    {} as Record<EventOpps["eventid"], OppData>,
+  );
 
-const matchesByEvent = (matches) =>
+const matchesByEvent = (matches: MatchDetail[]) =>
   matches &&
-  matches.reduce((obj, entry) => {
-    if (!obj[entry.eventid]) obj[entry.eventid] = [entry];
-    else obj[entry.eventid].push(entry);
-    return obj;
-  }, {});
+  matches.reduce(
+    (obj, entry) => {
+      if (!obj[entry.eventid]) obj[entry.eventid] = [entry];
+      else obj[entry.eventid].push(entry);
+      return obj;
+    },
+    {} as Record<Match["eventid"], MatchDetail[]>,
+  );
 
-async function withMissingEventIds(stats) {
+async function withMissingEventIds(stats: Stats) {
   if (!stats?.ranking) return stats;
 
   // Collect missing ids
@@ -143,10 +169,10 @@ async function withMissingEventIds(stats) {
   const playerEvents = await player.getPlayerEvents(playerids);
   if (!playerEvents) return stats;
 
-  // Create stats entries for missing players
-  playerEvents.forEach((playerData, idx) => {
-    if (!playerData?.length || !playerids[idx]) return;
-    stats[playerids[idx]] = { eventids: playerData.map((d) => d.id) };
+  // Create statsEntries for missing players
+  playerEvents.forEach((eventids, idx) => {
+    if (!eventids?.length || !playerids[idx]) return;
+    stats[playerids[idx]] = { eventids };
   });
 
   return stats;

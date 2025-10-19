@@ -353,7 +353,7 @@ export const file = (...files: string[]) => execFiles(files);
 
 export type GetOptions<T extends Record<string, any>> = {
   /** Name of ID column (Default: 'id'). */
-  idCol?: keyof T & string;
+  idCol?: (keyof T & string) | string;
   /** Use 'LIMIT 1' to optimize response time (Default: true). */
   getOne?: boolean;
   /** Use 'ILIKE' instead of '=' for looser matching (Default: false) */
@@ -373,7 +373,7 @@ export type AddOptions<T extends Record<string, any>> = {
 
 export type UpdateOptions<T extends Record<string, any>> = {
   /** Name of ID column (Default: 'id'). */
-  idCol?: keyof T & string;
+  idCol?: (keyof T & string) | string;
   /** Use 'ILIKE' instead of '=' for looser matching (Default: false) */
   looseMatch?: boolean;
   /** If true, only returns first result (Default: true). */

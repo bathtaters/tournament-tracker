@@ -1,7 +1,7 @@
 import { Router } from "express";
 import validate from "../validators/event.validators";
 import * as controller from "../controllers/event.controllers";
-import stats from "../controllers/stats.controllers";
+import * as stats from "../controllers/stats.controllers";
 import { nextRound, prevRound } from "../controllers/action.controllers";
 
 const router = Router();

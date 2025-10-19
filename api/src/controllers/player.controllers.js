@@ -12,15 +12,15 @@ const getPlayer = (req, res) =>
   players.get(matchedData(req).id).then(res.sendAndLog);
 
 // All players
-const getAllPlayers = (_, res) => players.get().then(byID).then(res.sendAndLog);
+const getAllPlayers = (_, res) =>
+  players.getAll().then(byID).then(res.sendAndLog);
 const byID = arrToObj("id");
 
 // Individual player event details
 const getPlayerEvents = (req, res) =>
   players
     .getPlayerEvents([matchedData(req).id])
-    .then((events) => events?.map((d) => d.id))
-    .then(res.sendAndLog);
+    .then((events) => res.send(events[0]));
 
 // Individual player match details
 async function getPlayerMatches(req, res) {

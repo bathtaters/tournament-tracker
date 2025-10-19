@@ -34,6 +34,7 @@ export type Player = {
   access: number;
   session?: string;
   hide: boolean;
+  lower_name?: string;
 };
 
 export type Event = {
