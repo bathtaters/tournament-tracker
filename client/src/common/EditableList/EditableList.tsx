@@ -18,7 +18,7 @@ type AddItemMutation = (
   addName: string,
 ) => Promise<Record<string, any> | string | undefined>;
 
-type EditableListProps = {
+export type EditableListProps = {
   type?: string;
   value: string[];
   onChange: (value: string[]) => void;

@@ -1,14 +1,24 @@
-import EditableList from "../../../common/EditableList/EditableList";
+import EditableList, {
+  type EditableListProps,
+} from "../../../common/EditableList/EditableList";
 import usePlayerEditorController from "../services/playerEditor.controller";
 
-function PlayerEditor({
+type PlayerEditorProps = Pick<
+  EditableListProps,
+  "type" | "value" | "onChange" | "onFirstChange"
+> & {
+  isStarted?: EditableListProps["isLocked"];
+  fillAll?: boolean;
+};
+
+export default function PlayerEditor({
   type = "Player",
   value,
   onChange,
   isStarted,
   onFirstChange,
   fillAll = false,
-}) {
+}: PlayerEditorProps) {
   const { query, autofill, create } = usePlayerEditorController(
     type,
     onChange,
@@ -29,5 +39,3 @@ function PlayerEditor({
     />
   );
 }
-
-export default PlayerEditor;
