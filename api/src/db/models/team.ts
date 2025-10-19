@@ -1,7 +1,7 @@
 import type { Event, Team } from "types/models";
 import type { Request } from "express";
 import { getCount, getRow, getRows, operation } from "../admin/interface";
-import { addRows, rmvRows, updateRows } from "./log";
+import { addRows, query, rmvRows, updateRows } from "./log";
 import { team } from "../sql/strings";
 
 // GETS \\
@@ -12,6 +12,12 @@ export const list = (eventid?: Event["id"]): Promise<Team[]> =>
   eventid
     ? getRows<Team>("team", team.eventFilter, [eventid])
     : getRows<Team>("team");
+
+export const getRelations = (eventid?: Event["id"]) =>
+  query<Pick<Team, "id" | "players">>(
+    eventid ? team.eventRelations : team.allRelations,
+    eventid ? [eventid] : [],
+  );
 
 // SETS \\
 

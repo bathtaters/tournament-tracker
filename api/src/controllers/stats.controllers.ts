@@ -10,12 +10,10 @@ import { matchedData } from "express-validator";
 import logger from "../utils/log.adapter";
 
 // Models
-const event = require("../db/models/event");
-const player = require("../db/models/player");
-const match = require("../db/models/match");
 import * as event from "../db/models/event";
 import * as player from "../db/models/player";
 import * as match from "../db/models/match";
+import * as team from "../db/models/team";
 
 // Services/Utils
 import toStats from "../services/stats.services";
@@ -24,42 +22,48 @@ import { creditsPerRank, didntPlayCredits } from "../config/constants";
 
 // Get Event Stats //
 
-async function getAllStats(_, res) {
 export const getAllStats: RequestHandler = async (_, res) => {
+  const [matches, players, opps, teams] = await Promise.all([
+    match.getAll(true).then(matchesByEvent),
+    player.list(),
+    event.getOpponents(null, true).then(oppsByEvent),
+    team.getRelations().then(arrToObj("id", { valKey: "players" })),
+  ]);
 
-  return withMissingEventIds(toStats(matches, players, opps, false)).then(
-    res.sendAndLog,
-  );
-}
+  return withMissingEventIds(
+    toStats(matches, players, opps, teams, false),
+  ).then(res.sendAndLog);
+};
 
 export const getStats: RequestHandler = async (req, res) => {
   const { id } = matchedData(req);
   const players = await event.getPlayers(id).then((r) => r?.players);
   if (!players) return res.sendStatus(204);
 
-  const [matches, opps] = await Promise.all([
+  const [matches, opps, teams] = await Promise.all([
     match.getByEvent(id),
     event.getOpponents(id).then(arrToObj("playerid", { valKey: "oppids" })),
+    team.getRelations(id).then(arrToObj("id", { valKey: "players" })),
   ]);
 
   return res.sendAndLog(
-    toStats({ [id]: matches }, players, { [id]: opps }, true),
+    toStats({ [id]: matches }, players, { [id]: opps }, teams, true),
   );
 };
 
-const getEventCredits = (id, matches, players, opps, credits = {}) => {
-  const { ranking } = toStats({ [id]: matches }, players, { [id]: opps }, true);
 const getEventCredits = (
   id: Match["eventid"],
   matches: MatchDetail[],
   players: Match["players"],
   opps: Record<Player["id"], Player["id"][]>,
+  teams: TeamRelations = {},
   credits: Record<Player["id"], Player["credits"]> = {},
 ) => {
   const { ranking } = toStats(
     { [id]: matches },
     players,
     { [id]: opps },
+    teams,
     true,
   );
   if (!ranking?.length) return credits;
@@ -78,14 +82,17 @@ const getEventCredits = (
 export const resetAllCredits = (includeFinished = false): RequestHandler =>
   includeFinished
     ? async function resetAllCredits(req, res) {
-        const matches = await match.getAll(true).then(matchesByEvent);
-        const players = await player.list();
-        const opps = await event.getOpponents(null, true).then(oppsByEvent);
+        const [matches, players, opps, teams] = await Promise.all([
+          match.getAll(true).then(matchesByEvent),
+          player.list(),
+          event.getOpponents(null, true).then(oppsByEvent),
+          team.getRelations().then(arrToObj("id", { valKey: "players" })),
+        ]);
 
         let credits = {};
 
         for (const id in matches) {
-          getEventCredits(id, matches[id], players, opps[id], credits);
+          getEventCredits(id, matches[id], players, opps[id], teams, credits);
         }
 
         for (const id in credits) {
@@ -110,13 +117,18 @@ export const setCredits = (undo = false): RequestHandler =>
     const players = await event.getPlayers(id).then((r) => r?.players);
     if (!players) return res.sendStatus(204);
 
-    const [allPlayers, matches, opps] = await Promise.all([
-      player.get(),
+    const [allPlayers, matches, opps, teams] = await Promise.all([
+      player.getAll(),
       match.getByEvent(id),
-      event.getOpponents(id).then(arrToObj("playerid", { valKey: "oppids" })),
+      event
+        .getOpponents(id)
+        .then(arrToObj("playerid", { valKey: "oppids" })) as Promise<
+        Record<Player["id"], Player["id"][]>
+      >,
+      team.getRelations(id).then(arrToObj("id", { valKey: "players" })),
     ]);
 
-    let eventCredits = getEventCredits(id, matches, players, opps);
+    let eventCredits = getEventCredits(id, matches, players, opps, teams);
 
     for (const { id, credits } of allPlayers) {
       if (!(id in eventCredits)) eventCredits[id] = didntPlayCredits;

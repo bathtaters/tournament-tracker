@@ -41,7 +41,7 @@ export const calcBase = (
   { wins, draws, totalwins }: Pick<MatchDetail, "wins" | "draws" | "totalwins">,
   event: Event["id"],
 ): StatsEntryBase => ({
-  eventIdSet: new Set(event), // In set for combineFinal
+  eventIdSet: new Set([event]), // In set for combineFinal
   matchRecord: Object.assign([0, 0, 0], { [wldArr[playerIdx]]: 1 }),
   gameRecord: [wins[playerIdx], totalwins - wins[playerIdx], draws],
   matchScore: [points.win, 0, points.draw][wldArr[playerIdx]],
@@ -51,11 +51,11 @@ export const calcBase = (
 export const calcRates = <T extends Omit<StatsEntryBase, "eventIdSet">>(
   result: T,
   useFloor = false,
-) =>
-  Object.assign(result, {
-    matchRate: rate(result.matchScore, result.matchRecord, useFloor),
-    gameRate: rate(result.gameScore, result.gameRecord?.slice(0, 2), useFloor),
-  });
+) => ({
+  ...result,
+  matchRate: rate(result.matchScore, result.matchRecord, useFloor),
+  gameRate: rate(result.gameScore, result.gameRecord?.slice(0, 2), useFloor),
+});
 
 export const calcOpps = <T extends StatsEntryBase>(
   result: T,
@@ -85,20 +85,21 @@ export const calcOpps = <T extends StatsEntryBase>(
 // Combining/Finalizing Stat Objects //
 
 /** Add match/game records/scores from 'additional' into 'base' */
-export const combineStats = <T extends StatsEntryBase>(entries: T[]) =>
-  Object.assign(entries[0], {
-    matchRecord: addArrays(entries.map(({ matchRecord }) => matchRecord)),
-    gameRecord: addArrays(entries.map(({ gameRecord }) => gameRecord)),
-    matchScore: entries.reduce((sum, { matchScore }) => sum + matchScore, 0),
-    gameScore: entries.reduce((sum, { gameScore }) => sum + gameScore, 0),
-  });
+export const combineStats = <T extends StatsEntryBase>(entries: T[]) => ({
+  ...entries[0],
+  matchRecord: addArrays(entries.map(({ matchRecord }) => matchRecord)),
+  gameRecord: addArrays(entries.map(({ gameRecord }) => gameRecord)),
+  matchScore: entries.reduce((sum, { matchScore }) => sum + matchScore, 0),
+  gameScore: entries.reduce((sum, { gameScore }) => sum + gameScore, 0),
+});
 
 /** Run 'combineStats', plus add eventIds and opponent arrays from 'additional' into 'base' */
 export const combineFinal = <T extends StatsEntryOpps>(entries: T[]) => {
-  const result = Object.assign(combineStats(entries), {
+  const result = {
+    ...combineStats(entries),
     oppMatches: entries.flatMap(({ oppMatches }) => oppMatches),
     oppGames: entries.flatMap(({ oppGames }) => oppGames),
-  });
+  };
 
   // Add additional 'eventIdSet' items to the first one, which is already added in combineStats
   entries.forEach(
@@ -138,7 +139,12 @@ export const rankSort =
     if (a === b) return 0;
 
     if (data) {
-      if ("matchRecord" in data[a] && "matchRecord" in data[b]) {
+      if (
+        data[a] &&
+        data[b] &&
+        "matchRecord" in data[a] &&
+        "matchRecord" in data[b]
+      ) {
         // MTG rules:
         // 1. Match points (useMatchScore ? matchScore : matchRate)
         let val = useMatchScore
@@ -160,8 +166,8 @@ export const rankSort =
       }
 
       // If data exists but only 1 player
-      else if ("matchRecord" in data[b]) return 1;
-      else if ("matchRecord" in data[a]) return -1;
+      else if (data[b] && "matchRecord" in data[b]) return 1;
+      else if (data[a] && "matchRecord" in data[a]) return -1;
     }
 
     // 5. Original player order

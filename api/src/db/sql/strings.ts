@@ -44,6 +44,59 @@ export const player = {
 export const team = {
   eventFilter:
     "t WHERE t.id = ANY(SELECT unnest(e.players) FROM event e WHERE e.id = $1)",
+  allRelations: `
+    SELECT
+      player_id AS id,
+      ARRAY_AGG(team_id) AS players
+    FROM (
+           SELECT
+             UNNEST(t.players) AS player_id,
+             t.id AS team_id
+           FROM team t
+           WHERE t.id = ANY(
+             SELECT UNNEST(e.players)
+             FROM event e
+             WHERE e.team = 'UNIFIED'
+           )
+         ) player_team_pairs
+    GROUP BY player_id;`,
+  /* Only do 'UNIFIED' here because 'DISTRIB' will copy
+   *  scores from every game by every team member to the team
+   *  instead of only the games that player was on that team.
+   *  Also it's unnecessary since this is only for player rankings. */
+
+  eventRelations: `
+    WITH event_teams AS (
+        SELECT 
+            t.id AS team_id,
+            t.players,
+            e.team AS event_team_type
+        FROM team t
+        INNER JOIN (
+            SELECT id, UNNEST(players) AS team_id, team 
+            FROM event 
+            WHERE event.id = $1 AND team IN ('DISTRIB', 'UNIFIED')
+        ) e ON t.id = e.team_id
+    )
+    SELECT 
+        team_id AS id,
+        players
+    FROM event_teams 
+    WHERE event_team_type = 'DISTRIB'
+    
+    UNION ALL
+    
+    SELECT 
+        player_id AS id,
+        ARRAY_AGG(team_id) AS players
+    FROM (
+        SELECT 
+            UNNEST(players) AS player_id,
+            team_id
+        FROM event_teams 
+        WHERE event_team_type = 'UNIFIED'
+    ) player_teams
+    GROUP BY player_id;`,
 };
 
 export const match = {

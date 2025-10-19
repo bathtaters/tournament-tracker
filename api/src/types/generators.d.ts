@@ -21,8 +21,22 @@ export type StatsEntry = {
   oppGame: number;
 };
 
+export type StatsEntryBase = Pick<StatsEntry, "matchScore" | "gameScore"> & {
+  eventIdSet: Set<string>;
+  matchRecord: number[];
+  gameRecord: number[];
+};
+
+export type StatsEntryRates = StatsEntryBase &
+  Pick<StatsEntry, "matchRate" | "gameRate">;
+
+export type StatsEntryOpps = StatsEntryRates & {
+  oppMatches: number[];
+  oppGames: number[];
+};
+
 export type Stats = {
-  [playerid: Player["id"]]: StatsEntry;
+  [playerid: Player["id"]]: StatsEntry | Pick<StatsEntry, "eventids">;
   ranking: Player["id"][];
   noStats?: boolean;
 };
@@ -38,6 +52,9 @@ export type EventOpps = {
 export type OppData = {
   [playerid: EventOpps["playerid"]]: EventOpps["oppids"];
 };
+
+export type TeamRelations = Record<Team["id"], Player["id"][]> &
+  Record<Player["id"], Team["id"][]>;
 
 export type MatchupData = {
   id: Player["id"];

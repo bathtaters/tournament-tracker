@@ -25,18 +25,16 @@ import {
  * @param originalOrder - [ playerids, ... ]
  * @param oppData - { eventid: { playerid: [ oppids, ... ], ... }, ... }
  * @param teamRelations - { teamid/playerid: [ playerids/teamsids, ... ], ... }
+ *  (Optional) If included, calculate the aggregate score for missing teams/players.
  * @param useMatchScore - use matchScore (Within same event) vs. percent (Comparing apples to oranges)
  * @param usePercentFloor - round down on percents, should be used only when determining pairings (See /config/constants {points.floor})
  * @returns - { ranking: [ playerids... ], playerid: { ...playerStats }, ... }
  */
-function stats(
-  matchData,
-  originalOrder,
-  oppData,
 export default function toStats(
   matchData: Record<MatchDetail["eventid"], MatchDetail[]>,
   originalOrder: MatchDetail["players"],
   oppData: Record<MatchDetail["eventid"], OppData>,
+  teamRelations: TeamRelations = {},
   useMatchScore = true,
   usePercentFloor = false,
 ) {
@@ -94,10 +92,18 @@ export default function toStats(
     }
   }
 
-  // Finalize records
-  Object.keys(final).forEach(
-    (player) => (final[player] = finalize(final[player], usePercentFloor)),
-  );
+  // Combine player stats into team stats (Or spread team stats to players)
+  for (const team in teamRelations) {
+    const teamStats = teamRelations[team]
+      .map((playerId) => comboStats[playerId])
+      .filter(Boolean);
+    if (!teamStats.length) continue; // No data found for team players
+    if (comboStats[team]) teamStats.unshift(comboStats[team]); // Include existing data
+    comboStats[team] =
+      teamStats.length === 1 ? teamStats[0] : combineFinal(teamStats);
+    comboStats[team] = calcRates(comboStats[team], usePercentFloor);
+  }
+
   // Finalize records, conform to 'StatsEntry'
   const final = {} as Stats;
   for (const player in comboStats) {
