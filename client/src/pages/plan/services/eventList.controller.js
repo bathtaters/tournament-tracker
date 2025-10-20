@@ -2,7 +2,10 @@ import { useState } from "react";
 import { useEventQuery } from "../voter.fetch";
 import { useSetEventMutation } from "../../eventEditor/eventEditor.fetch";
 import { createItemAlert, itemCreateError } from "../../../assets/alerts";
-import { useLockScreen, useOpenAlert } from "../../../common/General/common.hooks";
+import {
+  useLockScreen,
+  useOpenAlert,
+} from "../../../common/General/common.hooks";
 import { createLockCaption } from "../../../assets/constants";
 import { useModal } from "../../../common/Modal/Modal";
 
@@ -50,7 +53,7 @@ export default function useEventList(value, onChange) {
       onChange,
       query,
       filter,
-      displayKey: "title",
+      displayValue: "title",
 
       onClick: (id) => () => {
         setEditId(id);
