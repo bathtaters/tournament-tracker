@@ -12,6 +12,7 @@ CREATE DATABASE IF NOT EXISTS %DB%;
 
 USE %DB%;
 
+BEGIN;
 
 -- TYPES/ENUMS --
 
@@ -201,3 +202,5 @@ WHERE oppid != playerid GROUP BY eventid, playerid;
 
 -- ADD VERSION NUMBER TO DB --
 INSERT INTO settings (id, value) VALUES ('dbversion', '2.0.0');
+
+COMMIT;
