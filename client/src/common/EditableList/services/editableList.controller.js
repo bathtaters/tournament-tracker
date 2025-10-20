@@ -8,7 +8,7 @@ export default function useEditableListController({
   onChange,
   query,
   idKey,
-  displayKey,
+  displayValue,
   filter,
   autofill,
   isLocked,
@@ -20,13 +20,18 @@ export default function useEditableListController({
   // Init Local State
   const openAlert = useOpenAlert();
 
+  const getDisplay =
+    typeof displayValue === "function"
+      ? displayValue
+      : (val, data) => data?.[val]?.[displayValue] || val;
+
   // Add item to list
   const pushItem = async (id) => {
     if (!id) throw new Error(`Added ${type} is missing id!`);
     if (!value) value = [];
 
     if (value.includes(id)) {
-      await openAlert(duplicateItemAlert(type, data[id]?.[displayKey]));
+      await openAlert(duplicateItemAlert(type, getDisplay(id, data)));
       return false;
     }
 
@@ -57,13 +62,13 @@ export default function useEditableListController({
   // Passed to ListInput
   if (!isLocked && value?.length) autofill.hidden = true;
   const inputData = isLocked
-    ? {}
+    ? { getDisplay }
     : {
         data,
         pushItem,
         onFirstEdit,
         idKey,
-        displayKey,
+        getDisplay,
         autofill,
         // Get list of items that are not already selected
         remaining: data

@@ -34,10 +34,10 @@ export function SuggestTextSpacer() {
 export const suggestListLayout = (
   list,
   data,
-  displayKey,
+  getDisplay,
   { mutation, label } = {},
 ) => {
-  const suggestList = list.map((id) => ({ id, value: data[id][displayKey] }));
+  const suggestList = list.map((id) => ({ id, value: getDisplay(id, data) }));
   return !mutation || !label
     ? suggestList
     : suggestList.concat({

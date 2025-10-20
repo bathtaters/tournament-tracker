@@ -18,11 +18,11 @@ type AddItemMutation = (
   addName: string,
 ) => Promise<Record<string, any> | string | undefined>;
 
-export type EditableListProps = {
+export type EditableListProps<T extends Record<string, any>> = {
   type?: string;
   value: string[];
   onChange: (value: string[]) => void;
-  query?: { data?: Record<string, any>; isLoading: boolean; error?: any };
+  query?: { data?: T; isLoading: boolean; error?: any };
   autofill?: AutofillOptions;
   create?: {
     mutation?: AddItemMutation;
@@ -35,12 +35,14 @@ export type EditableListProps = {
   /** Runs once, when item is changed for the first time. */
   onFirstChange?: () => void;
   /** Filter predicate tested w/ each data member in the query. */
-  filter?: (value: any, key: string) => boolean;
+  filter?: (value: T[keyof T], key: string) => boolean;
   idKey?: string;
   displayKey?: string;
+  /** 'Key' from query data to use or transform function. */
+  displayValue?: string | ((value: string, data?: T) => string);
 };
 
-export default function EditableList({
+export default function EditableList<T extends Record<string, any>>({
   type = "Item",
   value,
   onChange,
@@ -52,8 +54,8 @@ export default function EditableList({
   onFirstChange,
   filter,
   idKey = "id",
-  displayKey = "name",
-}: EditableListProps) {
+  displayValue = "name",
+}: EditableListProps<T>) {
   const { data, inputData, popItem, isLoading, error } =
     useEditableListController({
       type,
@@ -61,7 +63,7 @@ export default function EditableList({
       onChange,
       query,
       idKey,
-      displayKey,
+      displayValue,
       filter,
       autofill,
       isLocked,
@@ -84,7 +86,7 @@ export default function EditableList({
     <EditableListStyle type={type} count={value?.length}>
       {value?.map((id, idx) => (
         <ListRow
-          name={data[id]?.[displayKey]}
+          name={inputData.getDisplay(id, data)}
           onClick={!isLocked && popItem(id, idx)}
           onClickName={onClick && onClick(id, idx)}
           key={id}
