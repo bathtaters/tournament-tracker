@@ -54,7 +54,9 @@ if (process.env.NODE_ENV === "development") {
 }
 initServices().then(() => {
   // Start server
-  app.listen(port, () => {
-    logger.log(`${name} (v${version}) started. Listening on port ${port}.`);
+  app.listen(port, (err: any) => {
+    if (err) logger.error("Exiting due to:", err);
+    else
+      logger.log(`${name} (v${version}) started. Listening on port ${port}.`);
   });
 });
