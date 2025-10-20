@@ -36,7 +36,12 @@ export const event = {
 
 export const player = {
   eventFilter:
-    "SELECT id FROM event WHERE $1::UUID = ANY(players) ORDER BY day;",
+    "SELECT e.id FROM event e WHERE $1::UUID = ANY(e.players) OR e.id IN ( " +
+    "SELECT e2.id FROM event e2 JOIN team t ON t.id = ANY(e2.players) " +
+    "WHERE $1::UUID = ANY(t.players) ) ORDER BY e.day;",
+  matchFilter:
+    "m LEFT JOIN team t ON t.id = ANY(m.players) AND $1::UUID = ANY(t.players)" +
+    "WHERE $1::UUID = ANY(m.players) OR t.id IS NOT NULL",
   hasAdminFilter: "WHERE access > 2 LIMIT 2",
   isLastAdmin: `
     SELECT (SELECT COUNT(*) FROM player WHERE access > 2 AND id  = $1 LIMIT 1) > 0

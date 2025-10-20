@@ -1,7 +1,13 @@
 /* *** PLAYER Object *** */
 import type { Request } from "express";
-import type { Event, MatchDetail, Player } from "types/models";
-import { getCount, getRow, multiQuery, query } from "../admin/interface";
+import type { Event, MatchDetail, Player, Team } from "types/models";
+import {
+  getCount,
+  getRow,
+  getRows,
+  multiQuery,
+  query,
+} from "../admin/interface";
 import { addRows, login, rmvRows, updateRows } from "./log";
 import { player as strings } from "../sql/strings";
 import { defaults } from "../../config/validation";
@@ -100,10 +106,12 @@ export const getPlayerEvents = (playerids: Player["id"][]) =>
 
 /** Get Match detail for player */
 export const getPlayerMatches = (playerid: Player["id"]) =>
-  getRow<MatchDetail>("matchdetail", playerid, "*", {
-    idCol: "ANY(players)",
-    getOne: false,
-  });
+  getRows<MatchDetail & { teamid: Team["id"] | null }>(
+    "matchdetail",
+    strings.matchFilter,
+    [playerid],
+    "m.*, t.id AS teamid",
+  );
 
 /** Check password (Or set if no password) --
  *  Return [user, null] on success, [null, reason string] on failure */

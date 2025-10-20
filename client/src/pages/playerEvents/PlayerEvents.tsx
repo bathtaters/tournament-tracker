@@ -12,8 +12,11 @@ import {
   useEventQuery,
   usePlayerEventsQuery,
   usePlayerMatchesQuery,
+  usePlayerQuery,
   usePrefetchEvent,
+  useTeamQuery,
 } from "./playerEvents.fetch";
+import { convertTeams } from "./services/playerEvents.utils";
 
 export default function PlayerEvents({ id }: { id: string }) {
   // Fetch global state
@@ -27,16 +30,25 @@ export default function PlayerEvents({ id }: { id: string }) {
     data: events,
     isLoading: eventLoad,
     error: eventErr,
-    // @ts-ignore -- RTK imports have incorrect arg count
-  } = useEventQuery();
+  } = useEventQuery(null);
+  const {
+    data: teams,
+    isLoading: teamLoad,
+    error: teamErr,
+  } = useTeamQuery(null);
+  const {
+    data: players,
+    isLoading: playLoad,
+    error: playErr,
+  } = usePlayerQuery(null);
 
   // Setup pre-fetching
   const prefetch = usePrefetchEvent();
 
   // Handle loading/errors
   const [loading, err] = [
-    isLoading || matchLoad || eventLoad,
-    error || matchErr || eventErr,
+    isLoading || matchLoad || eventLoad || playLoad || teamLoad,
+    error || matchErr || eventErr || playErr || teamErr,
   ];
   if (loading || err || !events || !Array.isArray(eventIds))
     return (
@@ -52,6 +64,7 @@ export default function PlayerEvents({ id }: { id: string }) {
     );
 
   // Render
+  const teamMap = convertTeams(id, eventIds, teams, events, players);
   return (
     <WrapperStyle>
       <HeaderStyle>Schedule</HeaderStyle>
@@ -59,7 +72,7 @@ export default function PlayerEvents({ id }: { id: string }) {
       <DataTable
         colLayout={eventsLayout}
         rowIds={eventIds}
-        extra={{ events, matches }}
+        extra={{ events, matches, teamMap }}
         rowLink="event/"
         className="mx-4"
         cellClass="py-1"
@@ -69,7 +82,7 @@ export default function PlayerEvents({ id }: { id: string }) {
         – None –
       </DataTable>
 
-      <RawData className="mt-6" data={eventIds} />
+      <RawData className="mt-6" data={{ eventIds, matches, teamMap }} />
     </WrapperStyle>
   );
 }

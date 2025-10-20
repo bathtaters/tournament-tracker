@@ -1,13 +1,18 @@
-import type { EventData, PlayerEventData } from "types/models";
+import type { EventData, Player, PlayerEventData, Team } from "types/models";
 import type { Column } from "common/DataTable/DataTable.d";
 import { dayClasses } from "pages/schedule/services/date.utils";
 import { statusInfo } from "assets/constants";
-import { formatMatchStatus, formatRecord } from "assets/formatting";
+import {
+  formatMatchStatus,
+  formatRecord,
+  formatTeamName,
+} from "assets/formatting";
 
 // Player Schedule Columns
 const eventsLayout: Column<{
   events: Record<EventData["id"], EventData>;
   matches: Record<EventData["id"], PlayerEventData>;
+  teamMap: Record<EventData["id"], Team & { members: Player[] }>;
 }>[] = [
   {
     label: "Date",
@@ -24,7 +29,10 @@ const eventsLayout: Column<{
     default: "?",
     hdrClass: "text-left",
     className: "text-primary",
-    get: (id, { events }) => events[id]?.title,
+    get: (id, { events, teamMap }) =>
+      events[id]?.team
+        ? `${events[id].title} (as ${formatTeamName(teamMap[id])})`
+        : events[id]?.title,
     span: 3,
   },
   {

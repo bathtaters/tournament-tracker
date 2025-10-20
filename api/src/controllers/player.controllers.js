@@ -24,12 +24,12 @@ const getPlayerEvents = (req, res) =>
 
 // Individual player match details
 async function getPlayerMatches(req, res) {
-  const matchData = await players.getPlayerMatches(matchedData(req).playerid);
+  const matchData = await players.getPlayerMatches(matchedData(req).id);
   matchData &&
     matchData.forEach(
       (m) => (m.isDraw = m.wins.filter((w) => w === m.maxwins).length !== 1),
     );
-  return res.sendAndLog(byEID(matchData || {}));
+  return res.sendAndLog(byEID(matchData || []));
 }
 const byEID = arrToObj("eventid", { delKey: false, combo: true });
 
