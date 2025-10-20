@@ -36,6 +36,12 @@ export const deleteEventAlert = (title?: string): AlertOptions => ({
   buttons: [{ value: "Delete Event", className: "btn-error" }, "Cancel"], // [0]=Y
 });
 
+export const deleteTeamAlert: AlertOptions = {
+  message:
+    "Are you sure you want to delete this team? It will be lost for good.",
+  buttons: [{ value: "Delete Team", className: "btn-error" }, "Cancel"], // [0]=Y
+};
+
 export const duplicateItemAlert = (
   type: string,
   name?: string,

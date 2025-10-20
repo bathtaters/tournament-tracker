@@ -14,7 +14,7 @@ export const formatQueryError = (err: any) =>
     : "Please refresh page";
 
 export const formatTeamName = (
-  team: (Team & { members?: Player[] }) | undefined,
+  team: (Partial<Team> & { members?: Player[] }) | undefined,
   players?: Record<Player["id"], Player>,
 ) => {
   if (!team || team.name) return team?.name;

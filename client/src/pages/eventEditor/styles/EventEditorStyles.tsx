@@ -1,10 +1,8 @@
 import { ModalTitleStyle } from "../../../common/General/styles/CommonStyles";
 import { statusInfo } from "../../../assets/constants";
 
-export function TitleStyle({ isNew }: { isNew?: boolean }) {
-  return (
-    <ModalTitleStyle>{isNew ? "New Event" : "Edit Event"}</ModalTitleStyle>
-  );
+export function TitleStyle({ title }: { title: string }) {
+  return <ModalTitleStyle>{title}</ModalTitleStyle>;
 }
 
 export function StatusStyle({ status }: { status: number }) {

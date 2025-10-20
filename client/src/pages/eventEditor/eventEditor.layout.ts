@@ -1,5 +1,5 @@
 import type { MouseEventHandler } from "react";
-import type { EventData } from "types/models";
+import type { EventData, Team } from "types/models";
 import type { FormButton, FormLayout } from "common/InputForm/InputForm.d";
 import { enums } from "../../assets/validation";
 import { getDefault } from "core/services/validation.services";
@@ -93,11 +93,11 @@ export const editorLayout = (hidePlayers: boolean): FormLayout<EventData> => [
 ];
 
 export const editorButtonLayout = (
-  eventid: string | null,
+  id: string | null,
   clickDelete: MouseEventHandler<HTMLInputElement>,
   clickCancel: MouseEventHandler<HTMLInputElement>,
 ): FormButton[] => {
-  const base = eventid
+  const base = id
     ? [
         {
           label: "Delete",
@@ -108,3 +108,14 @@ export const editorButtonLayout = (
     : [];
   return [...base, { label: "Cancel", onClick: clickCancel }];
 };
+
+export const teamEditorLayout: FormLayout<Team> = [
+  {
+    id: "name",
+    label: "Name",
+    inputClass: "w-full",
+    labelClass: "font-light pb-2 w-full",
+    isFragment: true,
+  },
+  "custom",
+];

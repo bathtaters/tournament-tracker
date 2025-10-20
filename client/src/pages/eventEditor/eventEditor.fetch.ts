@@ -1,4 +1,4 @@
-import type { EventData } from "types/models";
+import type { EventData, Team } from "types/models";
 import {
   commonApi,
   getTags,
@@ -43,6 +43,33 @@ export const eventEditorApi = commonApi.injectEndpoints({
       }),
       onQueryStarted: deleteUpdate,
     }),
+
+    setTeam: build.mutation<any, Partial<Team>>({
+      query: ({ id, ...body }) =>
+        id
+          ? { url: `team/${id}`, method: "PATCH", body }
+          : { url: `team`, method: "POST", body },
+      transformResponse: debugLogging
+        ? (res: any) => {
+            console.log("SET_TEAM", res);
+            return res;
+          }
+        : undefined,
+      invalidatesTags: getTags(["Team"]),
+      // onQueryStarted: teamSet,
+    }),
+
+    deleteTeam: build.mutation<any, Team["id"]>({
+      query: (id) => ({ url: `team/${id}`, method: "DELETE" }),
+      transformResponse: debugLogging
+        ? (res: any) => {
+            console.log("DEL_TEAM", res);
+            return res;
+          }
+        : undefined,
+      invalidatesTags: getTags(["Team"]),
+      // onQueryStarted: deleteTeam,
+    }),
   }),
   overrideExisting: true,
 });
@@ -54,4 +81,9 @@ export {
   useSettingsQuery,
   useCreatePlayerMutation,
 };
-export const { useSetEventMutation, useDeleteEventMutation } = eventEditorApi;
+export const {
+  useSetEventMutation,
+  useDeleteEventMutation,
+  useSetTeamMutation,
+  useDeleteTeamMutation,
+} = eventEditorApi;

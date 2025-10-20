@@ -1,4 +1,5 @@
 import PlayerEditor from "./components/PlayerEditor";
+import TeamEditor from "./components/TeamEditor";
 import InputForm from "common/InputForm/InputForm";
 import RawData from "common/RawData/RawData";
 import Loading from "common/Loading/Loading";
@@ -7,6 +8,7 @@ import useEditEventController from "./services/editEvent.controller";
 import { editorLayout } from "./eventEditor.layout";
 
 import { getBaseData } from "core/services/validation.services";
+import TeamCreatorModal from "./components/TeamCreatorModal";
 
 const baseData = getBaseData("event");
 
@@ -28,10 +30,21 @@ function EditEvent({
 }: EditEventProps) {
   const {
     data,
+    teams,
     playerList,
     updatePlayerList,
+    teamList,
+    saveTeam,
+    removeTeam,
+    selectedTeam,
+    updateSelectedTeam,
+    ignorePlayers,
     buttons,
+    handleChange,
     submitHandler,
+    openTeamModal,
+    teamModal,
+    isTeam,
     isLoading,
     error,
     notLoaded,
@@ -55,7 +68,7 @@ function EditEvent({
 
   return (
     <div>
-      <TitleStyle isNew={!data} />
+      <TitleStyle title={data ? "Edit Event" : "New Event"} />
       {Boolean(data?.status) && <StatusStyle status={data.status} />}
 
       <InputForm
@@ -64,10 +77,18 @@ function EditEvent({
         baseData={baseData}
         onSubmit={submitHandler}
         onEdit={lockModal}
+        onChange={handleChange}
         buttons={buttons}
         rowFirst={true}
       >
-        {!hidePlayers && (
+        {hidePlayers ? null : isTeam ? (
+          <TeamEditor
+            value={teamList}
+            teams={teams}
+            isStarted={data?.status && data?.status > 1}
+            openEditor={openTeamModal}
+          />
+        ) : (
           <PlayerEditor
             value={playerList}
             onChange={updatePlayerList}
@@ -78,6 +99,16 @@ function EditEvent({
       </InputForm>
 
       <RawData className="text-sm mt-4" data={data} />
+
+      <TeamCreatorModal
+        team={selectedTeam}
+        updateTeam={updateSelectedTeam}
+        ignorePlayers={ignorePlayers}
+        handleSubmit={saveTeam}
+        handleDelete={removeTeam}
+        onFirstChange={teamModal.lock}
+        backend={teamModal.backend}
+      />
     </div>
   );
 }

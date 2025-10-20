@@ -1,5 +1,5 @@
 // Check if player already exists in list
-import type { Player } from "types/models";
+import type { Player, Team } from "types/models";
 
 export const playerExists = (
   player: Player["name"],
@@ -19,3 +19,9 @@ export const randomArray = <T>(arr: T[], size?: number) => {
   }
   return res;
 };
+
+// Gets the related playerIds from an array of teamIds
+export const getTeamPlayers = (
+  teamIds: Team["id"][],
+  teams: Record<Team["id"], Team>,
+) => teamIds.flatMap((teamId) => teams[teamId]?.players ?? []);
