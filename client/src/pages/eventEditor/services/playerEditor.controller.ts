@@ -18,9 +18,10 @@ import {
 } from "../../../assets/alerts";
 
 export default function usePlayerEditorController(
-  type: EditableListProps["type"],
-  onChange: EditableListProps["onChange"],
+  type: EditableListProps<Player>["type"],
+  onChange: EditableListProps<Player>["onChange"],
   fillAll: boolean,
+  ignoreList?: Player["id"][],
 ) {
   // Load DB
   const { data: settings } = useSettingsQuery();
@@ -51,25 +52,32 @@ export default function usePlayerEditorController(
     return result.data as Player;
   };
 
+  const filter = ignoreList
+    ? ({ id, hide }: Player) => !hide && !ignoreList.includes(id)
+    : ({ hide }: Player) => !hide;
+
   return {
     query,
+    filter,
 
-    autofill: {
-      label: fillAll
-        ? `Fill ${query.data ? Object.keys(query.data).length : "All"}`
-        : `Random ${settings?.autofillsize || ""}`,
+    autofill: ignoreList
+      ? undefined
+      : {
+          label: fillAll
+            ? `Fill ${query.data ? Object.keys(query.data).length : "All"}`
+            : `Random ${settings?.autofillsize || ""}`,
 
-      onClick: fillAll
-        ? () => {
-            onChange(Object.keys(query.data));
-          }
-        : settings?.autofillsize &&
-          (() => {
-            onChange(
-              randomArray(Object.keys(query.data), settings?.autofillsize),
-            );
-          }),
-    },
+          onClick: fillAll
+            ? () => {
+                onChange(Object.keys(query.data));
+              }
+            : settings?.autofillsize &&
+              (() => {
+                onChange(
+                  randomArray(Object.keys(query.data), settings?.autofillsize),
+                );
+              }),
+        },
 
     create: {
       label: "Add player...",

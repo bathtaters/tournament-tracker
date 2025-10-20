@@ -5,11 +5,13 @@ import EditableList, {
 import usePlayerEditorController from "../services/playerEditor.controller";
 
 type PlayerEditorProps = Pick<
-  EditableListProps,
+  EditableListProps<Player>,
   "type" | "value" | "onChange" | "onFirstChange"
 > & {
-  isStarted?: EditableListProps["isLocked"];
+  isStarted?: EditableListProps<Player>["isLocked"];
   fillAll?: boolean;
+  ignoreList?: Player["id"][];
+  className?: string;
 };
 
 export default function PlayerEditor({
@@ -19,11 +21,14 @@ export default function PlayerEditor({
   isStarted,
   onFirstChange,
   fillAll = false,
+  ignoreList,
+  className,
 }: PlayerEditorProps) {
-  const { query, autofill, create } = usePlayerEditorController(
+  const { query, autofill, create, filter } = usePlayerEditorController(
     type,
     onChange,
     fillAll,
+    ignoreList,
   );
 
   return (
@@ -36,7 +41,8 @@ export default function PlayerEditor({
       create={create}
       isLocked={isStarted}
       onFirstChange={onFirstChange}
-      filter={({ hide }: Partial<Player>) => !hide}
+      filter={filter}
+      className={className}
     />
   );
 }
