@@ -9,7 +9,7 @@ const MAX_WINS = 10,
 const sharedLimits = {
   title: { min: 1, max: 50 },
   player: { min: 0, max: 32 },
-  rounds: { min: 1, max: 20 },
+  rounds: { min: 0, max: 20 },
   wins: { min: 0, max: MAX_WINS },
   wincount: { min: 1, max: MAX_WINS },
   dates: { min: 0, max: 30 },
