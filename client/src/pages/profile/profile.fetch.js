@@ -25,7 +25,7 @@ export const profileApi = commonApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("UPD_PLAYER", res) || res
         : undefined,
-      invalidatesTags: getTags("Player", {
+      invalidatesTags: getTags(["Player"], {
         all: 0,
         addBase: ["Setup", "Session"],
       }),

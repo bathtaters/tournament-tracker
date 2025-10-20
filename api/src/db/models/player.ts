@@ -47,7 +47,9 @@ export const list = () =>
 
 /** Add new player */
 export const add = (playerData: Partial<Player>, req: Request) =>
-  addRows<Player>("player", [{ ...defaults.player, ...playerData }], req);
+  addRows<Player>("player", [{ ...defaults.player, ...playerData }], req).then(
+    (r) => r?.[0],
+  );
 
 export const rmv = (id: Player["id"], req: Request) =>
   rmvRows<Player>("player", id, null, req);

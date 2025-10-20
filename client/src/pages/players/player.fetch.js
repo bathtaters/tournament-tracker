@@ -22,7 +22,7 @@ export const playerApi = commonApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("UPD_PLAYER", res) || res
         : undefined,
-      invalidatesTags: getTags("Player", { all: 0 }),
+      invalidatesTags: getTags(["Player"], { all: 0 }),
       onQueryStarted: playerUpdate,
     }),
 
@@ -31,7 +31,7 @@ export const playerApi = commonApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("ADD_PLAYER", res) || res
         : undefined,
-      invalidatesTags: getTags("Player", { addBase: ["Setup"] }),
+      invalidatesTags: getTags(["Player"], { addBase: ["Setup"] }),
       onQueryStarted: createUpdate,
     }),
 
@@ -40,7 +40,7 @@ export const playerApi = commonApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("DEL_PLAYER", res) || res
         : undefined,
-      invalidatesTags: getTags("Player", { addBase: ["Session"] }),
+      invalidatesTags: getTags(["Player"], { addBase: ["Session"] }),
       onQueryStarted: deleteUpdate,
     }),
   }),

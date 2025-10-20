@@ -22,7 +22,7 @@ export const eventApi = commonApi.injectEndpoints({
     clock: build.query({
       query: (id) => ({ url: `event/${id}/clock`, method: "GET" }),
       transformResponse: calcClock,
-      providesTags: getTags("Clock"),
+      providesTags: getTags(["Clock"]),
       onQueryStarted: clockUpdate,
     }),
 
@@ -64,7 +64,7 @@ export const eventApi = commonApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("UPD_CREDITS", res) || res
         : undefined,
-      invalidatesTags: getTags("Player", { addAll: ["Player"] }),
+      invalidatesTags: getTags(["Player"], { addAll: ["Player"] }),
     }),
 
     clockAction: build.mutation({
@@ -76,13 +76,13 @@ export const eventApi = commonApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("CLOCK_OP", res) || res
         : undefined,
-      invalidatesTags: getTags("Clock"),
+      invalidatesTags: getTags(["Clock"]),
     }),
   }),
   overrideExisting: true,
 });
 const refetchStats = (id) =>
-  commonApi.util.invalidateTags(getTags("Stats", { all: 0 })({ id }));
+  commonApi.util.invalidateTags(getTags(["Stats"], { all: 0 })({ id }));
 
 export {
   useEventQuery,
