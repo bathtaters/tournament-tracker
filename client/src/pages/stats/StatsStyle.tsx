@@ -32,7 +32,7 @@ export function FullPlayerNameStyle({ player, team }: NameProps) {
 
   return (
     <>
-      <div className="flex flex-col">
+      <div className="inline-flex flex-col">
         {name && (
           <span className={player?.hide ? "opacity-80" : ""}>{name}</span>
         )}
