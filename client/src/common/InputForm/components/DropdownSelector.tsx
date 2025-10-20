@@ -1,8 +1,5 @@
 import type { FormElementProps } from "../InputForm.d";
-import {
-  fixSelectAttribs,
-  splitAttributes,
-} from "../services/inputForm.services";
+import { fixNullValue, splitAttributes } from "../services/inputForm.services";
 
 export default function DropdownSelector<Data extends Record<string, any>>({
   wrapperClass,
@@ -15,7 +12,7 @@ export default function DropdownSelector<Data extends Record<string, any>>({
     handleChange,
   );
   return (
-    <select {...fixSelectAttribs(attributes)} className={className}>
+    <select {...fixNullValue(attributes)} className={className}>
       {placeholder && (
         <option disabled={true} className={wrapperClass}>
           {placeholder}

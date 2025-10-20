@@ -4,6 +4,7 @@ import NumberPicker from "./NumberPicker";
 import RangeSelector from "./RangeSelector";
 import TimePicker from "./TimePicker";
 import { elementDefaults, typeDefaults } from "../InputFormStyles";
+import { fixNullValue } from "../services/inputForm.services";
 
 export const defaultInputType = "text"; // Default <input> "type" attribute
 
@@ -58,7 +59,7 @@ export function ElementInput<Data extends Record<string, any>>({
 
   return (
     <input
-      {...inputProps}
+      {...fixNullValue(inputProps)}
       className={`join-item dark:[color-scheme:dark] ${inputClass}`}
     />
   );
