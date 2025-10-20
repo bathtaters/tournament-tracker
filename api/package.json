@@ -1,6 +1,6 @@
 {
   "name": "tournament-tracker-api",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Tournament Tracker backend",
   "main": "src/server.ts",
   "scripts": {
