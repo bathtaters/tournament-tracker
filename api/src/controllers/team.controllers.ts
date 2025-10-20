@@ -39,6 +39,7 @@ const removeTeam: RequestHandler = async (req, res) => {
 
 const updateTeam: RequestHandler = async (req, res) => {
   const { id, ...updates } = matchedData(req);
+  if (!("name" in updates) && req.body.name === "") updates.name = null; // Fix validation
   const result = await teams.set(id, updates, req);
   return res.sendAndLog(result);
 };

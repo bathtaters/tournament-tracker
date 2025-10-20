@@ -60,6 +60,7 @@ export async function removeEvent(req: Request, res: Response) {
 // Manually set event data (Guess day-slot if missing when updating day)
 export async function updateEvent(req: Request, res: Response) {
   let { id, ...body } = matchedData<Partial<Event> & Pick<Event, "id">>(req);
+  if (!("team" in body) && req.body.team === "") body.team = null; // Fix validation
   if (!("day" in body) && req.body.day === null) body.day = null; // Fix validation
 
   if (body.players) body.playercount = body.players.length;
