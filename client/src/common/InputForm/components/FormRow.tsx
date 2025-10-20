@@ -32,7 +32,7 @@ export default function FormRow<Data extends Record<string, any>>({
   custom,
   isRow = false,
   keySuffix = ":0",
-}: FormRowProps<Data>): ReactNode {
+}: FormRowProps<Data>) {
   // React element (or no data) => itself
   if (!row) return null;
   if (isValidElement(row)) return row;

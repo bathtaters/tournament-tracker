@@ -227,7 +227,7 @@ export function useScrollToRef({
     const observer = new IntersectionObserver(
       (entries) => {
         if (elementRef && !entries[0].isIntersecting)
-          elementRef.scrollIntoView({ behavior, block, inline });
+          elementRef.scrollIntoView({ behavior, block, inline } as any);
       },
       { root, threshold, rootMargin },
     );
