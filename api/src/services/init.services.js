@@ -15,6 +15,12 @@ async function initServices() {
   // Ensure that DB has been loaded
   const connect = await import("../db/admin/connect");
   await connect.openConnection();
+
+  // Run DB cleanup tasks
+  const { clean } = await import("../db/models/team");
+  await clean().then(
+    (c) => c && console.log(`Removed ${c} unused teams from the database.`),
+  );
   logger.log("Background General started.");
 }
 

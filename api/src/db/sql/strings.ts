@@ -15,6 +15,9 @@ export const event = {
     "SELECT slot FROM event@date_idx WHERE ",
     " ORDER BY slot DESC LIMIT 1;",
   ],
+  removePlayer:
+    "UPDATE event SET players = array_remove(players, $1::UUID) WHERE $1::UUID = ANY(players) " +
+    "RETURNING *",
   maxRound:
     "SELECT round FROM match WHERE eventid = $1 ORDER BY round DESC LIMIT 1;",
   deleteRound: "WHERE eventid = $1 AND round = $2",
@@ -44,6 +47,10 @@ export const player = {
 export const team = {
   eventFilter:
     "t WHERE t.id = ANY(SELECT unnest(e.players) FROM event e WHERE e.id = $1)",
+  cleanupFilter:
+    "WHERE id NOT IN (" +
+    " SELECT DISTINCT unnest(players) FROM event" +
+    " WHERE players IS NOT NULL AND array_length(players, 1) > 0 )",
   allRelations: `
     SELECT
       player_id AS id,

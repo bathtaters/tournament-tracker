@@ -1,5 +1,6 @@
 /* *** EVENT Table Operations *** */
 import type { Request } from "express";
+import type { PoolClient } from "pg";
 import type { Event, EventDay, EventDetail, Match, Plan } from "types/models";
 import type { EventOpps } from "types/generators";
 import { getRow, getRows, operation } from "../admin/interface";
@@ -84,6 +85,33 @@ export const add = (eventData: Omit<Event, "id">, req: Request) => {
   eventData.players = eventData.players || [];
   return addRows<Event>("event", [eventData], req);
 };
+
+export const rmvPlayer = (
+  playerId: Event["players"][number],
+  req?: Request,
+  client?: PoolClient,
+) =>
+  query<Event>(
+    strings.removePlayer,
+    [playerId],
+    (data, error) =>
+      error
+        ? {
+            dbtable: TableName.EVENT,
+            action: LogAction.UPDATE,
+            tableid: `${playerId} = ANY(players)`,
+            data: { players: [playerId] },
+            error,
+          }
+        : {
+            dbtable: TableName.EVENT,
+            action: LogAction.UPDATE,
+            tableid: data.id,
+            data,
+          },
+    req,
+    client,
+  );
 
 export const pushRound = (
   eventid: Event["id"],
