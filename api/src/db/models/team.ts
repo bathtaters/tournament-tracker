@@ -42,7 +42,7 @@ export const add = (
 
     // Create team
     return addRows<Team>("team", [{ players, name }], req, { client });
-  }).then((r) => (Array.isArray(r) ? r[0] : r));
+  }).then((r) => r?.[0]);
 
 export const rmv = (id: Team["id"], req: Request): Promise<Team | undefined> =>
   operation(async (client) => {

@@ -83,7 +83,7 @@ export const getRound = (
 // Create a new event
 export const add = (eventData: Omit<Event, "id">, req: Request) => {
   eventData.players = eventData.players || [];
-  return addRows<Event>("event", [eventData], req);
+  return addRows<Event>("event", [eventData], req).then((r) => r?.[0]);
 };
 
 export const rmvPlayer = (
