@@ -20,7 +20,7 @@ import { useOpenAlert } from "../General/common.hooks";
 export default function useModal(
   startOpen = false,
   startLocked = false,
-  lockAlert = undefined
+  lockAlert = undefined,
 ) {
   const openAlert = useOpenAlert();
   const [isOpen, setOpen] = useState(startOpen);
@@ -36,19 +36,22 @@ export default function useModal(
       setOpen(false);
       setLock(startLocked);
     },
-    [isLocked, startLocked]
+    [isLocked, startLocked],
   );
 
-  const closeWithMsg = useCallback(() => {
-    if (!isLocked) return close(true);
-    return openAlert(modalCloseAlert(lockAlert), 0).then(
-      (r) => r && close(true)
-    );
-  }, [close, isLocked, lockAlert, openAlert]);
+  const closeWithMsg = useCallback(
+    (overrideLock = false) => {
+      if (!isLocked || overrideLock) return close(true);
+      return openAlert(modalCloseAlert(lockAlert), 0).then(
+        (r) => r && close(true),
+      );
+    },
+    [close, isLocked, lockAlert, openAlert],
+  );
 
   return {
     open,
-    close,
+    close: closeWithMsg,
     lock,
     backend: { isOpen, isLocked, close, closeWithMsg },
   };
