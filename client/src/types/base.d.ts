@@ -38,6 +38,12 @@ export type AlertOptions = Partial<
   Pick<AlertState, "title" | "message" | "buttons" | "className" | "showClose">
 >;
 
+export interface OpenAlertFunction {
+  (options: AlertOptions): Promise<string>;
+  (options: AlertOptions, expectedBtnIdx: number): Promise<boolean>;
+  (options: AlertOptions, expectedBtnIdx?: number): Promise<string | boolean>;
+}
+
 export type SwapDragData = {
   id: Match["id"];
   playerid: Player["id"];

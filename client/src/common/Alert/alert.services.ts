@@ -1,4 +1,4 @@
-import type { AlertOptions, AlertState } from "types/base";
+import type { AlertOptions, AlertState, OpenAlertFunction } from "types/base";
 import type { AppDispatch, RootState } from "../../core/store/store";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,12 +33,6 @@ export function useOpenAlert() {
     },
     [dispatch],
   ) as OpenAlertFunction;
-}
-
-interface OpenAlertFunction {
-  (options: AlertOptions): Promise<string>;
-  (options: AlertOptions, expectedBtnIdx: number): Promise<boolean>;
-  (options: AlertOptions, expectedBtnIdx?: number): Promise<string | boolean>;
 }
 
 // Hook returning function to force an open alert to close
