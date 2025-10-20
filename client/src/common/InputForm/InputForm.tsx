@@ -45,7 +45,7 @@ export default function InputForm<Data extends Record<string, any>>({
   baseData,
   isLoaded = true,
   // Styling
-  className = "flex justify-center",
+  className = "flex justify-center grow",
   submitLabel = "Save",
   rowFirst = false,
   isGrid = false,

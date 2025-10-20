@@ -31,7 +31,11 @@ export function FormContainer({
   onSubmit?: FormEventHandler<HTMLFormElement>;
   children?: ReactNode;
 }) {
-  return <form onSubmit={onSubmit}>{children}</form>;
+  return (
+    <form onSubmit={onSubmit} className="flex flex-col grow">
+      {children}
+    </form>
+  );
 }
 
 // Row/Column wrapper
