@@ -19,6 +19,10 @@ const { TableName, LogAction } = enums;
 // Maximum number of LOG entries to return at a time if not specified
 const DEFAULT_LIMIT = 100;
 
+/** Use as Request for log functions when executed by the system */
+export const SYSTEM_ID = "_SYSTEM_";
+export const SYSTEM_REQ = { sessionID: SYSTEM_ID } as Request;
+
 /** Simplify Request object for use with log functions */
 export const simpleReq = ({
   sessionID,
