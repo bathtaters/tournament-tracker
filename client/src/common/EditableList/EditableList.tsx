@@ -37,9 +37,9 @@ export type EditableListProps<T extends Record<string, any>> = {
   /** Filter predicate tested w/ each data member in the query. */
   filter?: (value: T[keyof T], key: string) => boolean;
   idKey?: string;
-  displayKey?: string;
   /** 'Key' from query data to use or transform function. */
   displayValue?: string | ((value: string, data?: T) => string);
+  className?: string;
 };
 
 export default function EditableList<T extends Record<string, any>>({
@@ -55,6 +55,7 @@ export default function EditableList<T extends Record<string, any>>({
   filter,
   idKey = "id",
   displayValue = "name",
+  className,
 }: EditableListProps<T>) {
   const { data, inputData, popItem, isLoading, error } =
     useEditableListController({
@@ -73,7 +74,7 @@ export default function EditableList<T extends Record<string, any>>({
   // Loading/Error catcher
   if (!data)
     return (
-      <EditableListStyle type={type}>
+      <EditableListStyle type={type} className={className}>
         <Loading
           loading={isLoading}
           error={error}
@@ -83,7 +84,7 @@ export default function EditableList<T extends Record<string, any>>({
     );
 
   return (
-    <EditableListStyle type={type} count={value?.length}>
+    <EditableListStyle type={type} count={value?.length} className={className}>
       {value?.map((id, idx) => (
         <ListRow
           name={inputData.getDisplay(id, data)}

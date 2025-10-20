@@ -2,7 +2,11 @@ import React from "react";
 
 export function ListRowButton({ disabled, onClick }) {
   if (disabled)
-    return <span className="mx-1 text-[0.5em] align-middle">⏺</span>;
+    return (
+      <span className="inline-block mx-1 py-2 text-[0.75em] align-middle">
+        ⏺
+      </span>
+    );
   return (
     <input
       className="btn btn-circle btn-error btn-xs my-1 mx-2 text-xs"

@@ -1,8 +1,13 @@
 export const titleStyle = "label font-light mb-2";
 
-export function EditableListStyle({ type, count = null, children }) {
+export function EditableListStyle({
+  type,
+  count = null,
+  className = "",
+  children,
+}) {
   return (
-    <div className="m-4 w-full">
+    <div className={`w-full ${className ?? "m-4"}`}>
       <div
         className={titleStyle}
       >{`${type}s${typeof count !== "number" ? "" : ` (${count})`}`}</div>
