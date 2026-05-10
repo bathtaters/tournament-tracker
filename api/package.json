@@ -4,13 +4,17 @@
   "description": "Tournament Tracker backend",
   "main": "src/server.ts",
   "scripts": {
-    "start": "export NODE_ENV=production; node ./dist/server.js",
+    "start:local": "export NODE_ENV=production; node ./dist/server.js",
+    "start": "podman run --name tournament-tracker-api -p 9090:9090 -v ~/.postgresql:/home/appuser/.postgresql:Z,ro tournament-tracker-api",
+    "stop": "podman stop tournament-tracker-api; podman rm tournament-tracker-api",
     "dev": "export NODE_ENV=development; nodemon --watch src --ext ts,js,json src/server.ts",
-    "build": "tsc -b src",
+    "build:local": "tsc -b src && cp src/db/sql/*.sql dist/db/sql/",
+    "build": "podman build -t tournament-tracker-api .",
     "sync": "ts-node src/config/exportToClient.ts",
     "devdb": "cockroach start-single-node --insecure --store=path=\"$PWD/cockroach-data\" --listen-addr=localhost:36257 --sql-addr=localhost:26257 --http-addr=localhost:9095",
     "test": "jest",
-    "initdb": "./src/config/initDB.sh --host=localhost:26257 --user=root --database=defaultdb --insecure"
+    "initdb": "./src/config/initDB.sh --host=localhost:26257 --user=root --database=defaultdb --insecure",
+    "clean": "podman image prune -a -f"
   },
   "config": {
     "port": "9090"

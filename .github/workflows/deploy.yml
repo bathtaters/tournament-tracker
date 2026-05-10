@@ -60,6 +60,16 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
+      - name: Read Node version from .nvmrc
+        id: node_version
+        run: echo "NODE_VERSION=$(sed 's/^v//' .nvmrc)" >> "$GITHUB_OUTPUT"
+
+      - name: Install Podman
+        run: |
+          if ! command -v podman &> /dev/null; then
+            sudo apt-get install -y podman
+          fi
+
       - name: Install API packages
         run: cd api && npm ci
 
@@ -82,18 +92,36 @@ jobs:
           echo '}' >> temp.json
           mv temp.json "${{ env.API_CFG_PATH }}"
 
-#     SKIP UNTIL TESTS CAN BE CONVERTED TO TS
-#      - name: Test API
-#        run: cd api && npm test
+      #     SKIP UNTIL TESTS CAN BE CONVERTED TO TS
+      #      - name: Test API
+      #        run: cd api && npm test
 
-      - name: Build API (TypeScript)
-        run: cd api && npm run build
+      - name: Fix for podman cache
+        # Fixes permissions error during cleanup
+        run: |
+          sudo mv -fv /usr/bin/tar /usr/bin/tar.orig
+          echo -e '#!/bin/sh\n\nsudo /usr/bin/tar.orig "$@"' | sudo tee -a /usr/bin/tar
+          sudo chmod +x /usr/bin/tar
 
-      - name: Upload API
-        uses: actions/upload-artifact@v4
+      - name: Cache podman-machine
+        uses: actions/cache@main
         with:
-          name: api-code
-          path: api/dist
+          path: |
+            ~/.local/share/containers
+            ~/.config/containers
+          key: ${{ runner.os }}-${{ github.workflow }}-${{ hashFiles('api/package-lock.json', 'api/Containerfile') }}
+
+      - name: Build image
+        run: podman build --build-arg NODE_VERSION=${{ steps.node_version.outputs.NODE_VERSION }} -t ${{ env.PROC_NAME }}-api api
+
+      - name: Compress image
+        run: podman save -o ${{ env.PROC_NAME }}-api.tar ${{ env.PROC_NAME }}-api
+
+      - name: Upload API image
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ env.PROC_NAME }}-api-image
+          path: ${{ env.PROC_NAME }}-api.tar
 
       - name: Sync API to client
         run: cd api && npm run sync
@@ -121,10 +149,10 @@ jobs:
           name: client-build
           path: client
 
-      - name: Download API code
-        uses: actions/download-artifact@v4
+      - name: Download API image
+        uses: actions/download-artifact@main
         with:
-          name: api-code
+          name: ${{ env.PROC_NAME }}-api-image
           path: api
 
       - name: Install SSH key
@@ -133,12 +161,47 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.REMOTE_HOST }} > ~/.ssh/known_hosts
 
-      - name: Copy builds to host
-        run: rsync -avz api client ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ env.REMOTE_DIR }}/
+      - name: Archive current builds
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+          [ -d "${{ env.REMOTE_DIR }}_old" ] && rm -rf "${{ env.REMOTE_DIR }}_old"
+          [ -d "${{ env.REMOTE_DIR }}" ] && mv "${{ env.REMOTE_DIR }}" "${{ env.REMOTE_DIR }}_old"
+          mkdir -p "${{ env.REMOTE_DIR }}"
+          EOF
 
-      - name: Restart API server
-        run: >
-          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}
-          'source ~/.nvm/nvm.sh &&
-          PORT=${{ env.PROC_PORT }} npx --yes pm2 restart "${{ env.PROC_NAME }}" --update-env ||
-          PORT=${{ env.PROC_PORT }} npx --yes pm2 start ${{ env.REMOTE_DIR }}/${{ env.SERVER_PATH }} --name "${{ env.PROC_NAME }}"'
+      - name: Copy client build to host
+        run: rsync -avz client/ ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ env.REMOTE_DIR }}/client/
+
+      - name: Load API image on host
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} \
+            'podman tag ${{ env.PROC_NAME }}-api ${{ env.PROC_NAME }}-api:previous 2>/dev/null || true; podman load' \
+            < api/${{ env.PROC_NAME }}-api.tar
+
+      - name: Deploy new container
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+          set -e
+          podman stop -i ${{ env.PROC_NAME }}-api
+          podman rm -i ${{ env.PROC_NAME }}-api
+          podman run --memory 512m -d --name ${{ env.PROC_NAME }}-api \
+            -p ${{ env.PROC_PORT }}:9090 \
+            -v ~/.postgresql:/home/appuser/.postgresql:Z,ro \
+            ${{ env.PROC_NAME }}-api
+          EOF
+
+      - name: Verify new container
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+          sleep 5
+          if ! podman ps --filter name=${{ env.PROC_NAME }}-api --filter status=running -q | grep -q .; then
+            echo "New container failed to stay up — rolling back"
+            podman rm -f ${{ env.PROC_NAME }}-api
+            podman run --memory 512m -d --name ${{ env.PROC_NAME }}-api \
+              -p ${{ env.PROC_PORT }}:9090 \
+              -v ~/.postgresql:/home/appuser/.postgresql:Z,ro \
+              ${{ env.PROC_NAME }}-api:previous
+            exit 1
+          fi
+          podman image prune -a -f
+          EOF

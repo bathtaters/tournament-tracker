@@ -7,6 +7,7 @@
 
 # credentials
 dbServer.json
+dbServer.test.json
 
 # IDE config
 .idea
@@ -19,7 +20,7 @@ dbServer.json
 /client/build
 /api/dist
 *.tsbuildinfo
-/deploy.sh
+/deploy*.sh
 
 # generated
 /client/src/assets/validation.ts
