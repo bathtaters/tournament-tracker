@@ -407,11 +407,13 @@ export async function query<T extends Record<string, any>>(
     }
     return res;
   } catch (error) {
-    const entry = logMap(
-      null,
-      error?.message || error?.toString() || "Unknown error",
-    );
-    await addEntries(Array.isArray(entry) ? entry : [entry], req);
+    if (logMap) {
+      const entry = logMap(
+        null,
+        error?.message || error?.toString() || "Unknown error",
+      );
+      await addEntries(Array.isArray(entry) ? entry : [entry], req);
+    }
     throw error;
   }
 }
