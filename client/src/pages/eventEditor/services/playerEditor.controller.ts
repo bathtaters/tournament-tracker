@@ -56,6 +56,9 @@ export default function usePlayerEditorController(
     ? ({ id, hide }: Player) => !hide && !ignoreList.includes(id)
     : ({ hide }: Player) => !hide;
 
+  const activePlayers =
+    query.data && Object.keys(query.data).filter((id) => !query.data[id].hide);
+
   return {
     query,
     filter,
@@ -64,18 +67,16 @@ export default function usePlayerEditorController(
       ? undefined
       : {
           label: fillAll
-            ? `Fill ${query.data ? Object.keys(query.data).length : "All"}`
+            ? `Fill ${query.data ? activePlayers.length : "All"}`
             : `Random ${settings?.autofillsize || ""}`,
 
           onClick: fillAll
             ? () => {
-                onChange(Object.keys(query.data));
+                onChange(activePlayers);
               }
             : settings?.autofillsize &&
               (() => {
-                onChange(
-                  randomArray(Object.keys(query.data), settings?.autofillsize),
-                );
+                onChange(randomArray(activePlayers, settings?.autofillsize));
               }),
         },
 
