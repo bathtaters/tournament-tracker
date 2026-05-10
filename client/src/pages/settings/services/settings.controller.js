@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { useCallback } from "react";
 import { useSettingsQuery, useUpdateSettingsMutation } from "../settings.fetch";
 import { getNewSettings } from "./settings.services";
-import { setLocalVar } from "../../common/services/fetch.services";
+import { setLocalVar } from "../../../common/General/services/fetch.services";
 import { settings } from "../../../assets/config";
 
 export default function useSettingsController(close) {

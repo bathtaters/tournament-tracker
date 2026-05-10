@@ -12,7 +12,7 @@ const { simpleReq } = require("../db/models/log");
 const { threadSanitize } = require("../utils/shared.utils");
 const { planId } = require("../config/meta");
 
-const parentPlanFile = join(__dirname, "../services/plan.services"),
+const parentPlanFile = join(__dirname, "../General/plan.General"),
   runInThread = true; // Run plan generator in a non-blocking thread
 
 // Get plan status (Used for polling)

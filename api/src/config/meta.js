@@ -1,6 +1,4 @@
-// Load project metadata
-
-const join = require("path").join;
+const { join } = require("path");
 const pkg = require("../../package.json");
 const serverCfg = require("./dbServer.json");
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import DaysContainer from "../schedule/components/DaysContainer";
 import PlanTabView from "./components/PlanTabView";
-import Tabs from "../common/Tabs";
+import Tabs from "../../common/General/styles/Tabs";
 import {
   PlanWrapperStyle,
   PlanTitleStyle,

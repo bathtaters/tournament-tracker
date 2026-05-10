@@ -1,19 +1,19 @@
-import RawData from "../common/RawData";
+import RawData from "../../common/RawData/RawData";
 
 import EventHeader from "./components/EventHeader";
 import EventDashboard from "./components/EventDashboard";
 import EditEvent from "../eventEditor/EditEvent";
 import EventClock from "./components/EventClock";
 import Round from "./components/Round";
-import { Modal, useModal } from "../common/Modal";
-import Loading from "../common/Loading";
+import { Modal, useModal } from "../../common/Modal/Modal";
+import Loading from "../../common/Loading/Loading";
 import CreditButtons from "./components/subcomponents/CreditButtons";
 import { TitleStyle, DashboardStyle } from "./styles/DashboardStyles";
 
 import { useEventQuery, useSettingsQuery } from "./event.fetch";
 import { roundArray, useEventClock } from "./services/event.services";
 import { isFinished, useDeleteRound } from "./services/roundButton.services";
-import { useParamIds } from "../common/services/idUrl.services";
+import { useParamIds } from "../../common/General/services/idUrl.services";
 import { isZero } from "./services/clock.services";
 
 function Event() {

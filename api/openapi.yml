@@ -1,0 +1,1102 @@
+openapi: 3.0.0
+info:
+  title: Tournament Tracker API
+  version: "3.0.0"
+  description: API for tournament-tracker app.
+servers:
+  - url: /api/v2
+    description: API Version 2
+tags:
+  - name: Testing
+    description: API metadata and testing endpoints.
+  - name: Base
+    description: Basic application-wide data and settings.
+  - name: Session
+    description: User session and authentication management.
+  - name: Voter
+    description: Operations related to plan voting.
+  - name: Plan
+    description: Endpoints for managing the tournament plan.
+  - name: Event
+    description: All operations related to events.
+  - name: Match
+    description: Endpoints for managing matches within an event.
+  - name: Player
+    description: Player management endpoints.
+  - name: Team
+    description: Team management and organization endpoints.
+paths:
+  /meta:
+    get:
+      tags:
+        - Testing
+      summary: Get API Metadata
+      description: Provides metadata about the API connection and version.
+      responses:
+        '200':
+          description: API metadata object.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  connected:
+                    type: boolean
+                  name:
+                    type: string
+                  version:
+                    type: string
+  /error:
+    get:
+      tags:
+        - Testing
+      summary: Test Error Endpoint
+      description: Returns a sample error for testing purposes.
+      responses:
+        '418':
+          description: Sample error response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Sample error message"
+  /all:
+    get:
+      tags:
+        - Base
+      summary: Get All Data
+      description: Retrieves all primary objects from the database.
+      responses:
+        '200':
+          description: All data objects.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  settings:
+                    type: object
+                  schedule:
+                    type: object
+                  events:
+                    type: object
+                  players:
+                    type: object
+  /schedule:
+    get:
+      tags:
+        - Base
+      summary: Get Event Schedule
+      description: Retrieves events organized by date, based on settings.planschedule.
+      responses:
+        '200':
+          description: Schedule data.
+          content:
+            application/json:
+              schema:
+                type: object
+  /schedule/plan:
+    get:
+      tags:
+        - Base
+      summary: Get Planned Events Schedule
+      description: Retrieves planned events organized by date.
+      responses:
+        '200':
+          description: Planned schedule data.
+          content:
+            application/json:
+              schema:
+                type: object
+  /settings:
+    get:
+      tags:
+        - Base
+      summary: Get All Settings
+      description: Retrieves all stored settings.
+      responses:
+        '200':
+          description: All settings.
+          content:
+            application/json:
+              schema:
+                type: object
+    patch:
+      tags:
+        - Base
+      summary: Update Settings
+      description: Updates one or more settings.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Update confirmation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  set:
+                    type: array
+                    items:
+                      type: string
+  /session:
+    get:
+      tags:
+        - Session
+      summary: Fetch Session Cookie
+      description: Establishes a session.
+      responses:
+        '200':
+          description: Session cookie is set.
+    post:
+      tags:
+        - Session
+      summary: Player Login
+      description: Links the current session to a player account.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login status.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+    delete:
+      tags:
+        - Session
+      summary: Player Logout
+      description: Removes the player link from the current session.
+      responses:
+        '200':
+          description: Logout status.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /session/player:
+    get:
+      tags:
+        - Session
+      summary: Get Player from Session
+      description: Retrieves player data associated with the current session cookie.
+      responses:
+        '200':
+          description: Player data.
+          content:
+            application/json:
+              schema:
+                type: object
+  /session/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Session
+      summary: Get Password Reset Status
+      description: Checks the password reset status for a given player.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session:
+                  type: string
+      responses:
+        '200':
+          description: Reset status.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  isSet:
+                    type: boolean
+  /voter/all:
+    get:
+      tags:
+        - Voter
+      summary: Get All Voter Data
+      description: Retrieves all vote data, organized by Player ID.
+      responses:
+        '200':
+          description: All voter data.
+          content:
+            application/json:
+              schema:
+                type: object
+  /voter:
+    post:
+      tags:
+        - Voter
+      summary: Add Player as Voter
+      description: Registers a player as a voter for the plan.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      responses:
+        '200':
+          description: Confirmation of voter addition.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+  /voter/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Voter
+      summary: Get Player's Vote Data
+      description: Retrieves vote data for a specific player.
+      responses:
+        '200':
+          description: Player's vote data.
+          content:
+            application/json:
+              schema:
+                type: object
+    patch:
+      tags:
+        - Voter
+      summary: Update Player's Vote Data
+      description: Updates the vote data for a specific player.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Confirmation of update.
+          content:
+            application/json:
+              schema:
+                type: object
+  /plan/status:
+    get:
+      tags:
+        - Plan
+      summary: Get Plan Status
+      description: Retrieves the current status number of the plan.
+      responses:
+        '200':
+          description: Plan status.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  planStatus:
+                    type: integer
+  /plan/save:
+    post:
+      tags:
+        - Plan
+      summary: Save Plan
+      description: Adds the current plan to the schedule and de-schedules any existing events.
+      responses:
+        '200':
+          description: A list of events from the saved plan.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+  /plan/generate:
+    post:
+      tags:
+        - Plan
+      summary: Generate Plan
+      description: Automatically sets dates for the events in the current plan.
+      responses:
+        '200':
+          description: A list of events from the generated plan.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+  /plan:
+    delete:
+      tags:
+        - Plan
+      summary: Clear Plan
+      description: Removes all voters and events from the current plan.
+      responses:
+        '200':
+          description: Clear confirmation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /event/all:
+    get:
+      tags:
+        - Event
+      summary: Get All Events
+      description: Retrieves data for all events, indexed by ID.
+      responses:
+        '200':
+          description: All event data.
+          content:
+            application/json:
+              schema:
+                type: object
+  /event:
+    post:
+      tags:
+        - Event
+      summary: Create New Event
+      description: Creates a new event with the provided data.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: ID of the newly created event.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+  /event/plan:
+    post:
+      tags:
+        - Event
+      summary: Set Plan Events
+      description: Sets the list of events for the current plan.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                events:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: List of event IDs in the plan.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+  /event/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Event
+      summary: Get Event Data
+      description: Retrieves data for a specific event.
+      responses:
+        '200':
+          description: Event data.
+          content:
+            application/json:
+              schema:
+                type: object
+    patch:
+      tags:
+        - Event
+      summary: Update Event Data
+      description: Updates data for a specific event.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Confirmation of update.
+          content:
+            application/json:
+              schema:
+                type: object
+    delete:
+      tags:
+        - Event
+      summary: Delete Event
+      description: Deletes an event from the database.
+      responses:
+        '200':
+          description: Confirmation of deletion.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+  /event/all/stats:
+    get:
+      tags:
+        - Event
+      summary: Get All-Event Stats
+      description: Retrieves player stats from all events.
+      responses:
+        '200':
+          description: All-event stats.
+          content:
+            application/json:
+              schema:
+                type: object
+  /event/{id}/stats:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Event
+      summary: Get Event Stats
+      description: Retrieves player stats from a specific event.
+      responses:
+        '200':
+          description: Event-specific stats.
+          content:
+            application/json:
+              schema:
+                type: object
+  /event/{id}/clock:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Event
+      summary: Get Event Clock Data
+      description: Retrieves clock data (limit, start time, etc.) for an event.
+      responses:
+        '200':
+          description: Event clock data.
+          content:
+            application/json:
+              schema:
+                type: object
+  /event/{id}/clock/{action}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: action
+        in: path
+        required: true
+        schema:
+          type: string
+          enum: [run, pause, reset]
+    post:
+      tags:
+        - Event
+      summary: Control Event Clock
+      description: Executes a clock action (run, pause, reset) for an event.
+      responses:
+        '200':
+          description: Current event data after action.
+          content:
+            application/json:
+              schema:
+                type: object
+  /event/{id}/round/{round}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: round
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      tags:
+        - Event
+      summary: Add Round to Event
+      description: Adds a new round of matches to an event.
+      responses:
+        '200':
+          description: Confirmation of new round.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  round:
+                    type: integer
+                  matches:
+                    type: array
+                    items:
+                      type: string
+    delete:
+      tags:
+        - Event
+      summary: Delete Last Round
+      description: Deletes the most recent round from an event.
+      responses:
+        '200':
+          description: Confirmation of round deletion.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  round:
+                    type: integer
+  /event/all/credits:
+    post:
+      tags:
+        - Event
+      summary: Reset Player Credits from All Events
+      description: Resets player credits based on their performance in all finished events.
+      responses:
+        '200':
+          description: Player credits after reset.
+          content:
+            application/json:
+              schema:
+                type: object
+    delete:
+      tags:
+        - Event
+      summary: Reset All Player Credits to Zero
+      description: Resets all player credits to zero.
+      responses:
+        '200':
+          description: Player credits after reset.
+          content:
+            application/json:
+              schema:
+                type: object
+  /event/{id}/credits:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Event
+      summary: Add Event Credits to Players
+      description: Adds credits from a specific event to the participating players.
+      responses:
+        '200':
+          description: Player credits after update.
+          content:
+            application/json:
+              schema:
+                type: object
+    delete:
+      tags:
+        - Event
+      summary: Remove Event Credits from Players
+      description: Removes credits from a specific event from the participating players.
+      responses:
+        '200':
+          description: Player credits after update.
+          content:
+            application/json:
+              schema:
+                type: object
+  /match/all:
+    get:
+      tags:
+        - Match
+      summary: Get All Matches
+      description: Retrieves data for all matches, indexed by ID.
+      responses:
+        '200':
+          description: All match data.
+          content:
+            application/json:
+              schema:
+                type: object
+  /match/swap:
+    post:
+      tags:
+        - Match
+      summary: Swap Players Between Matches
+      description: Swaps two players between two different matches.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  playerid:
+                    type: string
+      responses:
+        '200':
+          description: Event ID of the matches.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventid:
+                    type: string
+  /match/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Match
+      summary: Get Match Data
+      description: Retrieves data for a specific match.
+      responses:
+        '200':
+          description: Match data.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      tags:
+        - Match
+      summary: Report Match Result
+      description: Submits the result of a match.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                players:
+                  type: array
+                  items:
+                    type: string
+                draws:
+                  type: array
+                  items:
+                    type: string
+                drops:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Confirmation of report.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventid:
+                    type: string
+                  id:
+                    type: string
+    delete:
+      tags:
+        - Match
+      summary: Clear Match Result
+      description: Clears the result of a previously reported match.
+      responses:
+        '200':
+          description: Confirmation of clear.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventid:
+                    type: string
+                  id:
+                    type: string
+    patch:
+      tags:
+        - Match
+      summary: Update Match Result
+      description: Updates an existing match result.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Confirmation of update.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventid:
+                    type: string
+                  id:
+                    type: string
+  /match/{id}/drop:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    patch:
+      tags:
+        - Match
+      summary: Drop/Undrop Player
+      description: Drops or un-drops a player from an event via a match.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                playerid:
+                  type: string
+                undrop:
+                  type: boolean
+      responses:
+        '200':
+          description: Confirmation of drop/undrop action.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventid:
+                    type: string
+                  id:
+                    type: string
+  /player/all:
+    get:
+      tags:
+        - Player
+      summary: Get All Players
+      description: Retrieves data for all players, indexed by ID.
+      responses:
+        '200':
+          description: All player data.
+          content:
+            application/json:
+              schema:
+                type: object
+  /player:
+    post:
+      tags:
+        - Player
+      summary: Create New Player
+      description: Creates a new player with the provided data.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: ID of the newly created player.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+  /player/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Player
+      summary: Get Player Data
+      description: Retrieves data for a specific player.
+      responses:
+        '200':
+          description: Player data.
+          content:
+            application/json:
+              schema:
+                type: object
+    patch:
+      tags:
+        - Player
+      summary: Update Player Data
+      description: Updates data for a specific player.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Confirmation of update.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+    delete:
+      tags:
+        - Player
+      summary: Delete Player
+      description: Deletes a player from the database.
+      responses:
+        '200':
+          description: Confirmation of deletion.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+  /player/{id}/events:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Player
+      summary: Get Player's Events
+      description: Retrieves a list of event IDs the player is participating in.
+      responses:
+        '200':
+          description: List of event IDs.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /player/{id}/matches:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Player
+      summary: Get Player's Matches
+      description: Retrieves data for a player's matches, organized by event.
+      responses:
+        '200':
+          description: Player's match data.
+          content:
+            application/json:
+              schema:
+                type: object
+  /player/{id}/reset:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Player
+      summary: Reset Player Password
+      description: Erases a player's password and returns a reset session key.
+      responses:
+        '200':
+          description: Password reset session key.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session:
+                    type: string
+  /team/all:
+    get:
+      tags:
+        - Team
+      summary: Get All Teams
+      description: Retrieves data for all teams, indexed by ID.
+      responses:
+        '200':
+          description: All team data.
+          content:
+            application/json:
+              schema:
+                type: object
+  /team/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Team
+      summary: Get Team Data
+      description: Retrieves data for a specific team.
+      responses:
+        '200':
+          description: Team data.
+          content:
+            application/json:
+              schema:
+                type: object
+    patch:
+      tags:
+        - Team
+      summary: Update Team Data
+      description: Updates data for a specific team.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Confirmation of update.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+    delete:
+      tags:
+        - Team
+      summary: Delete Team
+      description: Deletes a team from the database.
+      responses:
+        '200':
+          description: Confirmation of deletion.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+  /team:
+    post:
+      tags:
+        - Team
+      summary: Create New Team
+      description: Creates a new team with the provided data.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: ID of the newly created team.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+  /team/event/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Team
+      summary: Get Event Teams
+      description: Retrieves all teams participating in a specific event.
+      responses:
+        '200':
+          description: List of teams in the event.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object

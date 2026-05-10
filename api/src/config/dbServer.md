@@ -6,8 +6,14 @@
 {
   "connectionString": "%PROTO://%NAME:%PASS@%DOM:%PORT/%DB?sslmode=%MODE&sslrootcert=%CERT&options=%OPTS",
   "users": [
-    { "name": "dbUser", "pass": "password123" },
-    { "name": "api", "pass": "password456" }
+    {
+      "name": "dbUser",
+      "pass": "password123"
+    },
+    {
+      "name": "api",
+      "pass": "password456"
+    }
   ],
   "server": {
     "proto": "postgresql",
@@ -28,7 +34,12 @@ Or for a locally run database _(Dev ONLY!)_:
 ```json
 {
   "connectionString": "%PROTO://%NAME@%DOM:%PORT/%DB?sslmode=%MODE",
-  "users": [{ "name": "api", "pass": "[ignored w/o SSL]" }],
+  "users": [
+    {
+      "name": "api",
+      "pass": "[ignored w/o SSL]"
+    }
+  ],
   "server": {
     "proto": "postgresql",
     "dom": "localhost",
@@ -50,7 +61,8 @@ Or for a locally run database _(Dev ONLY!)_:
 - **_Changing pwsalt will invalidate all passwords in database._**
 - Connection string replaces`%VAR`with`users[n].var`or`server.var`.
 - It also replaces`$VAR`with`process.env.var`.
-- If you are having trouble connecting to a brand new Database, try running [`initDB.sh`](./initDB.sh) using one of the following formats:
+- If you are having trouble connecting to a brand-new Database, try running [`initDB.sh`](initDB.sh) using one of the
+  following formats:
 
 ```sh
 ./api/src/config/initDB.sh --url "<Paste URL to DB>"

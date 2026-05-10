@@ -3,7 +3,7 @@ const logger = require("../utils/log.adapter");
 const { types } = require("pg");
 
 // To be run when server starts
-function initServices() {
+async function initServices() {
   // Setup integer parsing for pg
   types.setTypeParser(types.builtins.INT2, parseInt);
   types.setTypeParser(types.builtins.INT4, parseInt);
@@ -12,8 +12,16 @@ function initServices() {
   // types.setTypeParser(types.builtins.FLOAT8, parseFloat);
   types.setTypeParser(types.builtins.NUMERIC, parseFloat);
 
-  require("../db/admin/connect").openConnection(); // Ensure that DB has been loaded
-  logger.log("Background services started.");
+  // Ensure that DB has been loaded
+  const connect = await import("../db/admin/connect");
+  await connect.openConnection();
+
+  // Run DB cleanup tasks
+  const { clean } = await import("../db/models/team");
+  await clean().then(
+    (c) => c && console.log(`Removed ${c} unused teams from the database.`),
+  );
+  logger.log("Background General started.");
 }
 
 module.exports = initServices;

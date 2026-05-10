@@ -103,7 +103,7 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
   // Set type-specific validators/sanitizers
   switch (type[1]) {
     case "uuid":
-      ptr.isUUID = { options: 4, errorMessage: errorText.uuid }; // pass to string
+      ptr.isUUID = { options: 4, errorMessage: errorText.uuid };
     case "string":
       ptr.isString = { errorMessage: errorText.string };
       if (!type[2]) {
@@ -126,11 +126,11 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
       ptr.toBoolean = true;
       break;
     case "interval":
-      ((ptr.custom = {
+      ptr.custom = {
         options: customInterval.validate,
         errorMessage: errorText.interval,
-      }),
-        (ptr.customSanitizer = customInterval.sanitize));
+      };
+      ptr.customSanitizer = customInterval.sanitize;
       break;
     case "datetime":
       ptr.isISO8601 = {
@@ -148,9 +148,7 @@ function getSchema(key, typeStr, limits, isIn, forceOptional = false) {
       break;
     case "object":
       ptr.isObject = { strict: false, errorMessage: errorText.object }; // pass to default
-    case "any": // pass to default
-    default:
-      break;
+    // case "any": .. DO NOTHING ..
   }
 
   return valid;
@@ -161,7 +159,7 @@ function getSchemaFromCfg(
   set,
   key,
   isIn = ["params"],
-  optionalIfOnlyBody = false
+  optionalIfOnlyBody = false,
 ) {
   // Determine if optional flag should be forced
   let forceOptional = false;
@@ -177,7 +175,7 @@ function getSchemaFromCfg(
     validCfg.types[set][key],
     validCfg.limits[set][key],
     isIn,
-    forceOptional
+    forceOptional,
   );
 }
 

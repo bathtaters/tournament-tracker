@@ -1,11 +1,11 @@
 import AddPlayer from "./components/AddPlayer";
 import Stats from "../stats/Stats";
-import { Modal } from "../common/Modal";
+import { Modal } from "../../common/Modal/Modal";
 import {
-  TitleStyle,
-  StatsStyle,
   FooterStyle,
   statsClass,
+  StatsStyle,
+  TitleStyle,
 } from "./styles/PlayerStyles";
 import {
   AddButton,
@@ -38,7 +38,6 @@ function Players() {
           className={`${statsClass.base(deleteMode)}${access > 2 ? " table-zebra" : ""}`}
           highlightClass={statsClass.hover(deleteMode)}
           onPlayerClick={handlePlayerClick}
-          hideTeams={true}
           hideHidden={hideHidden}
           hideStats={hideStats}
           showCredits={true}

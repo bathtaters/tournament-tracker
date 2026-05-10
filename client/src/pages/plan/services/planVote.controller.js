@@ -3,7 +3,7 @@ import { useGenPlanMutation, useSavePlanMutation } from "../voter.fetch";
 import { usePlanSettings } from "./plan.utils";
 import { savePlanAlert } from "../../../assets/alerts";
 import { planTitle } from "../../../assets/constants";
-import { useOpenAlert } from "../../common/common.hooks";
+import { useOpenAlert } from "../../../common/General/common.hooks";
 
 export const planTabs = ["Vote", "View"];
 export const finishTabs = ["Results", "Votes"];

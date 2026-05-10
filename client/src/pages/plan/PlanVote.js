@@ -1,6 +1,6 @@
 import React from "react";
-import Tabs from "../common/Tabs";
-import Loading from "../common/Loading";
+import Tabs from "../../common/General/styles/Tabs";
+import Loading from "../../common/Loading/Loading";
 import PlanTabVote from "./components/PlanTabVote";
 import PlanTabView from "./components/PlanTabView";
 import {

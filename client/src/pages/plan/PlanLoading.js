@@ -1,5 +1,5 @@
 import React from "react";
-import { LoadingWrapper } from "../common/styles/LoadingStyle";
+import { LoadingWrapper } from "../../common/Loading/LoadingStyle";
 import {
   PlanWrapperStyle,
   PlanTitleStyle,

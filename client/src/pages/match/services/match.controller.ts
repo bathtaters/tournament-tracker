@@ -1,0 +1,127 @@
+import type { MatchData, Player } from "types/models";
+import type { UpdateMatchBody } from "types/api";
+import { useModal } from "../../../common/Modal/Modal";
+import {
+  useLockScreen,
+  useOpenAlert,
+} from "../../../common/General/common.hooks";
+import {
+  useSessionState,
+  useShowRaw,
+  useTeamQuery,
+} from "../../../common/General/common.fetch";
+import {
+  useMatchQuery,
+  usePlayerQuery,
+  useReportMutation,
+  useStatsQuery,
+  useSwapPlayersMutation,
+  useUpdateDropsMutation,
+  useUpdateMatchMutation,
+} from "../match.fetch";
+import { getMatchTitle } from "./match.services";
+import { canSwap, swapController } from "./swap.services";
+import { getLimit } from "../../../core/services/validation.services";
+import { clearReportAlert } from "../../../assets/alerts";
+import { reportLockCaption } from "../../../assets/constants";
+import { apiPollMs } from "../../../assets/config";
+
+// Get max possible draws
+const maxDraws = getLimit("match", "setDraws")?.max ?? 0;
+
+export default function useMatchController(
+  eventid: MatchData["eventid"],
+  matchId: MatchData["id"],
+) {
+  const openAlert = useOpenAlert();
+  const reportModal = useModal();
+
+  // Query Hooks
+  const {
+    data: matches,
+    isLoading: loadingMatch,
+    error: matchError,
+  } = useMatchQuery(eventid, { pollingInterval: apiPollMs });
+  const {
+    data: rankings,
+    isLoading: loadingRank,
+    error: rankError,
+  } = useStatsQuery(eventid, { pollingInterval: apiPollMs });
+  const {
+    data: players,
+    isLoading: loadingPlayers,
+    error: playerError,
+  } = usePlayerQuery(null);
+  const {
+    data: teams,
+    isLoading: loadingTeams,
+    error: teamError,
+  } = useTeamQuery(null);
+  const { data: user } = useSessionState();
+  const showRaw = useShowRaw();
+
+  // Mutation Hooks
+  const [update] = useUpdateMatchMutation();
+  const [swapPlayers] = useSwapPlayersMutation();
+  const [updateDrops] = useUpdateDropsMutation();
+  const [report, { isLoading: isReporting }] = useReportMutation();
+  const [isLocked] = useLockScreen(isReporting, reportLockCaption);
+
+  // Catch loading/error
+  const matchData = matches?.[matchId],
+    error: any = matchError || rankError || playerError || teamError;
+  if (
+    loadingMatch ||
+    loadingRank ||
+    loadingPlayers ||
+    loadingTeams ||
+    !matchData ||
+    error
+  )
+    return { showLoading: true, error };
+
+  // Get match title
+  const title = getMatchTitle(matchData, players, teams);
+
+  // UnReport match
+  const clearReport = () =>
+    openAlert(clearReportAlert(title), 0).then(
+      (r) => r && report({ id: matchData.id, eventid, clear: true }),
+    );
+
+  return {
+    // Base data
+    matchData,
+    rankings,
+    players,
+    teams,
+    showRaw,
+    title,
+    isLocked,
+    reportModal,
+    maxDraws,
+    showReport: Boolean(
+      user?.id && (user.access > 1 || matchData.players.includes(user.id)),
+    ),
+
+    // Mutators
+    clearReport,
+    report,
+
+    // Change reported values
+    setVal: (key: UpdateMatchBody["key"]) => (value: any) =>
+      update({ id: matchData.id, eventid, key, value }),
+
+    // Data for swapping players
+    swapProps: {
+      matchData,
+      canSwap,
+      // Swap players
+      handleSwap: swapController(swapPlayers, eventid, openAlert),
+
+      // Un/Drop players
+      handleDrop: (playerid: Player["id"], undrop: boolean) =>
+        updateDrops({ id: matchId, playerid, undrop, eventid }),
+    },
+  };
+}

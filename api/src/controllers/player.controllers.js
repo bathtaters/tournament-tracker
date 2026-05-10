@@ -13,26 +13,25 @@ const getPlayer = (req, res) =>
 
 // All players
 const getAllPlayers = (_, res) =>
-  players.get().then(arrToObj("id")).then(res.sendAndLog);
+  players.getAll().then(byID).then(res.sendAndLog);
+const byID = arrToObj("id");
 
 // Individual player event details
 const getPlayerEvents = (req, res) =>
   players
     .getPlayerEvents([matchedData(req).id])
-    .then((events) => events?.map((d) => d.id))
-    .then(res.sendAndLog);
+    .then((events) => res.send(events[0]));
 
 // Individual player match details
 async function getPlayerMatches(req, res) {
-  const matchData = await players.getPlayerMatches(matchedData(req).playerid);
+  const matchData = await players.getPlayerMatches(matchedData(req).id);
   matchData &&
     matchData.forEach(
-      (m) => (m.isDraw = m.wins.filter((w) => w == m.maxwins).length !== 1)
+      (m) => (m.isDraw = m.wins.filter((w) => w === m.maxwins).length !== 1),
     );
-  return res.sendAndLog(
-    arrToObj("eventid", { delKey: 0, combo: 1 })(matchData || {})
-  );
+  return res.sendAndLog(byEID(matchData || []));
 }
+const byEID = arrToObj("eventid", { delKey: false, combo: true });
 
 /* SET player database. */
 

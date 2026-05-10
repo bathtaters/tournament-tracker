@@ -1,10 +1,10 @@
-import { useOpenAlert, useLockScreen } from "../../common/common.hooks";
-import { useNextRoundMutation, useClearRoundMutation } from "../event.fetch";
+import { useLockScreen, useOpenAlert } from "../../../common/General/common.hooks";
+import { useClearRoundMutation, useNextRoundMutation } from "../event.fetch";
 
 import { deleteRoundAlert } from "../../../assets/alerts";
 import {
-  roundButtonText,
   roundButtonLockCaption,
+  roundButtonText,
   roundThresholdMsg,
 } from "../../../assets/constants";
 import { metadata } from "../../../core/services/validation.services";
@@ -12,24 +12,18 @@ import { debugLogging } from "../../../assets/config";
 
 // Get Round Button label
 //  none|begin|end|back|next|wait|done
-const getRoundButton = (event, isLocked = false) =>
-  roundButtonText[
-    isLocked
-      ? "wait"
-      : !event || !event.players?.length
-        ? "none"
-        : event.roundactive === 0
-          ? "begin"
-          : event.roundactive > event.roundcount
-            ? "done"
-            : event.allreported === false
-              ? event.anyreported === true
-                ? "wait"
-                : "back"
-              : event.roundactive === event.roundcount
-                ? "end"
-                : "next"
-  ];
+const getRoundButton = (event, isLocked = false) => {
+  if (isLocked) return roundButtonText.wait;
+  if (!event?.players?.length) return roundButtonText.none;
+  if (event.roundactive === 0) return roundButtonText.begin;
+  if (event.roundactive > event.roundcount) return roundButtonText.done;
+  if (event.allreported === false)
+    return event.anyreported === true
+      ? roundButtonText.wait
+      : roundButtonText.back;
+  if (event.roundactive === event.roundcount) return roundButtonText.end;
+  return roundButtonText.next;
+};
 
 // Check if event is over
 export const isFinished = (event) =>
@@ -79,7 +73,7 @@ export default function useRoundButton(event, disabled) {
   };
 }
 
-// Delete Round contoller
+// Delete Round controller
 export function useDeleteRound({ id, anyreported, roundactive } = {}) {
   const [prevRound] = useClearRoundMutation();
   const openAlert = useOpenAlert();
@@ -93,6 +87,6 @@ export function useDeleteRound({ id, anyreported, roundactive } = {}) {
         ? prevRound({ id, roundactive })
         : // Otherwise confirm deleting round data
           openAlert(deleteRoundAlert, 0).then(
-            (r) => r && prevRound({ id, roundactive })
+            (r) => r && prevRound({ id, roundactive }),
           );
 }

@@ -22,7 +22,7 @@ exports.getConnStr = (dbUser, config = null) => {
   const userObj = dbUser
     ? config.users &&
       config.users.find(
-        (user) => user.name.toLowerCase() === dbUser.toLowerCase()
+        (user) => user.name.toLowerCase() === dbUser.toLowerCase(),
       )
     : {};
   if (!userObj) throw new Error("No credentials for " + dbUser);
@@ -56,7 +56,7 @@ exports.retryBlock = async (
   n = 0,
   retryCodes = null,
   retryCb = null,
-  delayMultiplierMs = 10 // 10 x 2^(retry attempt)
+  delayMultiplierMs = 10, // 10 x 2^(retry attempt)
 ) => {
   // Runs func multiple times until it is successful or reaches 'max'
   while (true) {
@@ -64,8 +64,7 @@ exports.retryBlock = async (
       throw new Error("Max retries reached");
     }
     try {
-      const res = await func(...(args || []));
-      return res;
+      return await func(...(args || []));
     } catch (err) {
       if (Array.isArray(retryCodes) && !retryCodes.includes(err.code)) {
         err.stack = extendStackTrace(err.stack, new Error().stack);
@@ -79,7 +78,7 @@ exports.retryBlock = async (
         }
         // Pause for increasingly more time between each attempt
         await new Promise((r) =>
-          setTimeout(r, 2 ** (n - 1) * delayMultiplierMs)
+          setTimeout(r, 2 ** (n - 1) * delayMultiplierMs),
         );
       }
     }
@@ -105,9 +104,9 @@ exports.replaceFromObj = (str, obj, { pre, suff, notAll, caseI, esc } = {}) =>
       curr.replace(
         RegExp(
           (pre || "") + next + (suff || ""),
-          (notAll ? "" : "g") + (caseI ? "i" : "")
+          (notAll ? "" : "g") + (caseI ? "i" : ""),
         ),
-        esc ? escape(obj[next]) : obj[next]
+        esc ? encodeURIComponent(obj[next]) : obj[next],
       ),
-    str
+    str,
   );

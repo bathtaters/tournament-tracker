@@ -1,7 +1,7 @@
 const swapUtils = require("./swapPlayers.utils");
 const { getOtherIdx, updateFilter, swapArrays, moveArrays } = swapUtils;
 
-// These are also NOT mocked for swapPlayers.services tests
+// These are also NOT mocked for swapPlayers.General tests
 
 describe("swapPlayer Utilities", () => {
   describe("getOtherIdx", () => {
@@ -11,7 +11,7 @@ describe("swapPlayer Utilities", () => {
     it("gets 1 for 0", () => {
       expect(getOtherIdx(1)).toBe(0);
     });
-    // Uncomment to test non quick mode
+    // Uncomment to test non-quick mode
     // it('works when > 1', () => { expect(getOtherIdx(4)).toBe(5); expect(getOtherIdx(3)).toBe(2); })
   });
 
@@ -33,18 +33,18 @@ describe("swapPlayer Utilities", () => {
 
     it("filters out saveDrops", () => {
       expect(updateFilter({ drops: "d", saveDrops: false })).not.toHaveProperty(
-        "saveDrops"
+        "saveDrops",
       );
     });
     it("retains drops if saveDrops", () => {
       expect(updateFilter({ drops: "d", saveDrops: true })).toHaveProperty(
         "drops",
-        "d"
+        "d",
       );
     });
     it("filters out drops if !saveDrops", () => {
       expect(updateFilter({ drops: "d", saveDrops: false })).not.toHaveProperty(
-        "drops"
+        "drops",
       );
     });
   });

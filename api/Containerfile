@@ -1,0 +1,53 @@
+# syntax=docker/dockerfile:1
+#
+# build-arg: NODE_VERSION, ENV_FILE, LISTEN_PORT
+
+ARG NODE_VERSION=22.12.0
+FROM node:${NODE_VERSION}-alpine AS base
+RUN apk add --no-cache openssl
+RUN npm install -g npm@latest
+
+################################################################################
+# Install dependecies
+FROM base AS deps
+# RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production && npm cache clean --force
+
+################################################################################
+# Build
+FROM base AS builder
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci
+COPY . .
+RUN npx -y tsc -b src
+RUN cp src/db/sql/*.sql dist/db/sql/
+
+################################################################################
+# Run
+FROM base AS runner
+WORKDIR /app
+ARG LISTEN_PORT=9090
+ENV NODE_ENV=production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 appuser
+
+# Add DB certificate -- At runtime: -v ~/.postgresql:/home/appuser/.postgresql:Z,ro
+RUN mkdir -p /home/appuser/.postgresql
+RUN chown -R appuser:nodejs /home/appuser/.postgresql
+RUN chmod 700 /home/appuser/.postgresql
+
+# Copy build files
+COPY --from=deps --chown=appuser:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=appuser:nodejs /app/dist ./dist
+COPY --from=builder --chown=appuser:nodejs /app/package.json ./
+
+RUN chown -R appuser:nodejs ./
+
+USER appuser
+EXPOSE ${LISTEN_PORT}
+ENV PORT=${LISTEN_PORT}
+CMD ["node", "dist/server.js"]

@@ -1,5 +1,5 @@
 import useSetupUser from "./services/setup.service";
-import Loading from "../common/Loading";
+import Loading from "../../common/Loading/Loading";
 import {
   SetupMessageStyle,
   PageTitleStyle,

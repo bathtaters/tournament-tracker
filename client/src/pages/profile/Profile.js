@@ -4,20 +4,20 @@ import ProfilePic from "./components/ProfilePic";
 import ResetLink from "./components/ResetLink";
 import PlayerDataRow from "./components/PlayerDataRow";
 import PlayerEvents from "../playerEvents/PlayerEvents";
-import RawData from "../common/RawData";
-import Loading from "../common/Loading";
+import RawData from "../../common/RawData/RawData";
+import Loading from "../../common/Loading/Loading";
 
 import {
-  WrapperStyle,
-  ProfileStyle,
-  PlayerDataStyle,
   PicColumnStyle,
+  PlayerDataStyle,
+  ProfileStyle,
+  WrapperStyle,
 } from "./styles/ProfileStyles";
-import profileLayout, { WRITE, getProfileACL } from "./profile.layout";
+import profileLayout, { getProfileACL, WRITE } from "./profile.layout";
 
 import { usePlayerQuery } from "./profile.fetch";
-import { useSessionState, useSettingsQuery } from "../common/common.fetch";
-import { useParamIds } from "../common/services/idUrl.services";
+import { useSessionState, useSettingsQuery } from "../../common/General/common.fetch";
+import { useParamIds } from "../../common/General/services/idUrl.services";
 import { apiPollMs } from "../../assets/config";
 
 function Profile() {
@@ -48,7 +48,7 @@ function Profile() {
     );
 
   return (
-    <WrapperStyle isTeam={playerData.isteam}>
+    <WrapperStyle title="User Profile">
       <ProfileStyle>
         <PicColumnStyle>
           <ProfilePic />
@@ -57,7 +57,7 @@ function Profile() {
         </PicColumnStyle>
 
         <PlayerDataStyle>
-          {profileLayout(enableCredits, playerData.isteam).map((row) => (
+          {profileLayout(enableCredits).map((row) => (
             <PlayerDataRow
               key={row.id}
               rowData={row}

@@ -1,34 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "lib": ["ES2020"],
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": false,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "rootDir": ".",
+    "outDir": ".",
     "resolveJsonModule": true,
-    "allowJs": true,
-    "checkJs": false,
-    "declaration": true,
-    "sourceMap": true,
-    "removeComments": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
-    "strictFunctionTypes": false,
-    "noImplicitReturns": false,
-    "noImplicitThis": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "composite": true
   },
-  "include": ["src/**/*"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.js",
-    "**/*.test.ts",
-    "cockroach-data"
-  ]
+  "files": [ "package.json" ]
 }

@@ -4,8 +4,8 @@ import {
   usePlayerState,
   useResetPasswordMutation,
 } from "../profile.fetch";
-import { hashText, useHotkeys } from "../../common/services/basic.services";
-import { useOpenAlert } from "../../common/common.hooks";
+import { hashText, useHotkeys } from "../../../common/General/services/basic.services";
+import { useOpenAlert } from "../../../common/General/common.hooks";
 import { WRITE } from "../profile.layout";
 import { duplicateNameAlert, hasherAlert } from "../../../assets/alerts";
 

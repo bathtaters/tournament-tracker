@@ -1,0 +1,24 @@
+# NGINX server for testing built app
+version: '3'
+
+services:
+  api:
+    image: tournament-tracker-api
+    container_name: tournament-tracker-api
+    ports:
+      - "9090:9090"
+    volumes:
+      - ~/.postgresql:/home/appuser/.postgresql:Z,ro
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf
+      - ./client/build:/usr/share/server/html
+    depends_on:
+      - api

@@ -1,12 +1,14 @@
--- Select DB
+-- Select DB (Replace %DB% with the name of the database)
 USE %DB%;
 
 -- Erase all entries
 SET sql_safe_updates = FALSE;
-DELETE FROM settings *;
-DELETE FROM event *;
-DELETE FROM match *;
-DELETE FROM player *;
+DELETE FROM settings WHERE TRUE;
+DELETE FROM voter WHERE TRUE;
+DELETE FROM event WHERE TRUE;
+DELETE FROM match WHERE TRUE;
+DELETE FROM team WHERE TRUE;
+DELETE FROM player WHERE TRUE;
 SET sql_safe_updates = TRUE;
 
 
@@ -20,42 +22,48 @@ INSERT INTO settings (id, value, type) VALUES
 
 
 -- Setup Players
-INSERT INTO player (name, access) VALUES ('Nick', 3);
-INSERT INTO player (name) VALUES
-    ('Matt'), ('Cosme'), ('Henry'), ('Taylor'),
-    ('Ian'),  ('Foff'),  ('Stack'), ('Robert');
+INSERT INTO player (name, access, credits) VALUES ('Nick', 3, 12);
+INSERT INTO player (name, credits) VALUES
+    ('Matt', 8), ('Cosme', 4), ('Henry', 0), ('Taylor', 2),
+    ('Ian', 6),  ('Foff', 1),  ('Stack', 0);
+INSERT INTO player (name, hide) VALUES ('Robert', TRUE);
 
 -- Setup Teams
--- INSERT INTO player (name, isteam, members) VALUES
---     ('NI', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
---         isteam IS FALSE AND name = ANY('{"Nick","Ian"}'))),
---     ('MF', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
---         isteam IS FALSE AND name = ANY('{"Matt","Foff"}'))),
---     ('CS', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
---         isteam IS FALSE AND name = ANY('{"Cosme","Stack"}'))),
---     ('TH', TRUE, ARRAY(SELECT id FROM player@team_idx WHERE
---         isteam IS FALSE AND name = ANY('{"Taylor","Henry"}')));
+INSERT INTO team (name, players) VALUES
+    ('NI', ARRAY(SELECT id FROM player WHERE
+        name = ANY('{"Nick","Ian"}'))),
+    ('MF', ARRAY(SELECT id FROM player WHERE
+        name = ANY('{"Matt","Foff"}'))),
+    ('CS', ARRAY(SELECT id FROM player WHERE
+        name = ANY('{"Cosme","Stack"}'))),
+    ('TH', ARRAY(SELECT id FROM player WHERE
+        name = ANY('{"Taylor","Henry"}')));
 
 -- Setup Events
-INSERT INTO event (title, day, roundcount) VALUES
-    ('KLD',  '2020-10-05', 5),
-    ('AKH',  '2020-10-07', 1);
+INSERT INTO event (title, day, roundcount, clocklimit, plan) VALUES
+    ('KLD',  '2020-10-05', 5, '45 mins', 1);
+INSERT INTO event (title, day, roundcount, team, teamsize, format) VALUES
+    ('AKH',  '2020-10-07', 1, 'UNIFIED', 2, 'DUTCH');
 INSERT INTO event (title, day, wincount, roundcount, playerspermatch, notes) VALUES
     ('CPY',  '2020-10-07', 1, 1, 4, 'Notes test');
+INSERT INTO event (title, day, roundcount, format) VALUES
+    ('RIX',  '2020-10-08', 7, 'ROBIN');
+INSERT INTO event (title, day, roundcount, format) VALUES
+    ('HOU',  '2020-10-09', 3, 'ELIM');
 
--- Create Maches for Two-Headed AKH Event
+-- Create Matches for Two-Headed AKH Event
 INSERT INTO match (eventid, round, players, wins) VALUES
     (
         (SELECT id FROM event WHERE title = 'AKH'), 1,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS TRUE AND name = ANY('{"NI","MF"}')
+            SELECT id FROM team
+            WHERE name = ANY('{"NI","MF"}')
         ), '{0,0}'
     ),(
         (SELECT id FROM event WHERE title = 'AKH'), 1,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS TRUE AND name = ANY('{"CS","TH"}')
+            SELECT id FROM team
+            WHERE name = ANY('{"CS","TH"}')
         ), '{0,0}'
     );
 
@@ -64,102 +72,102 @@ INSERT INTO match (eventid, round, players, wins) VALUES
     (
         (SELECT id FROM event WHERE title = 'CPY'), 1,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Nick","Ian","Matt","Foff"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Nick","Ian","Matt","Foff"}')
         ), '{0,0,0,0}'
     ),(
         (SELECT id FROM event WHERE title = 'CPY'), 1,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Cosme","Stack","Taylor","Henry"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Cosme","Stack","Taylor","Henry"}')
         ), '{0,0,0,0}'
     ),(
--- Create Matches for noraml KLD event
+-- Create Matches for normal KLD event
         (SELECT id FROM event WHERE title = 'KLD'), 1,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Nick","Ian"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Nick","Ian"}')
         ), '{0,0}'
     ),(
         (SELECT id FROM event WHERE title = 'KLD'), 1,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Matt","Foff"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Matt","Foff"}')
         ), '{0,0}'
     ),(
         (SELECT id FROM event WHERE title = 'KLD'), 1,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Cosme","Stack"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Cosme","Stack"}')
         ), '{0,0}'
     ),(
         (SELECT id FROM event WHERE title = 'KLD'), 1,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Taylor","Henry"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Taylor","Henry"}')
         ), '{0,0}'
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 2,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Nick","Henry"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Nick","Henry"}')
         ), '{0,0}'
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 2, 
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Matt","Ian"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Matt","Ian"}')
         ), '{0,0}'
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 2,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Cosme","Foff"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Cosme","Foff"}')
         ), '{0,0}'
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 2,
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Taylor","Stack"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Taylor","Stack"}')
         ), '{0,0}'
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 3, 
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Taylor","Ian"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Taylor","Ian"}')
         ), '{0,0}' 
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 3, 
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Nick","Foff"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Nick","Foff"}')
         ), '{0,0}' 
     ),
     ((SELECT id FROM event WHERE title = 'KLD'), 3, 
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Matt","Stack"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Matt","Stack"}')
         ), '{0,0}' 
     );
 INSERT INTO match (eventid, round, players, wins) VALUES
     ((SELECT id FROM event WHERE title = 'KLD'), 3, 
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = ANY('{"Cosme","Henry"}')
+            SELECT id FROM player
+            WHERE name = ANY('{"Cosme","Henry"}')
         ), '{0,0}' 
     );
 INSERT INTO match (eventid, round, players, wins) VALUES
     ((SELECT id FROM event WHERE title = 'KLD'), 4, 
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = 'Nick'
+            SELECT id FROM player
+            WHERE name = 'Nick'
         ), '{0}' 
     );
 INSERT INTO match (eventid, round, players, wins) VALUES
     ((SELECT id FROM event WHERE title = 'AKH'), 4, 
         ARRAY(
-            SELECT id FROM player@team_idx
-            WHERE isteam IS FALSE AND name = 'Ian'
+            SELECT id FROM player
+            WHERE name = 'Ian'
         ), '{0}' 
     );
 
@@ -183,5 +191,24 @@ UPDATE match SET (wins,draws,reported) = (
     IF(round = 3 OR round = 4, 0, 1),
     IF(round = 4, FALSE, TRUE)
 )
-WHERE eventid = (SELECT id FROM event WHERE title = 'KLD') 
+WHERE eventid = (SELECT id FROM event WHERE title = 'KLD')
 AND round != 4;
+
+-- Setup Voters
+INSERT INTO voter (id, days, events, idx)
+SELECT player.id,
+       ARRAY['2020-10-05'::DATE, '2020-10-07'::DATE],
+       ARRAY(SELECT id FROM event WHERE title = ANY('{"KLD","AKH"}')),
+       1
+FROM player WHERE name = 'Nick';
+
+INSERT INTO voter (id, days, events, idx)
+SELECT player.id,
+       ARRAY['2020-10-07'::DATE],
+       ARRAY(SELECT id FROM event WHERE title = 'CPY'),
+       2
+FROM player WHERE name = 'Matt';
+
+INSERT INTO voter (id, days, events, idx)
+SELECT player.id, '{}'::DATE[], '{}'::UUID[], 3
+FROM player WHERE name = 'Ian';

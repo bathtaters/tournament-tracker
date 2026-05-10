@@ -1,7 +1,7 @@
 import React from "react";
 import { useUpdateCreditsMutation } from "../../event.fetch";
 import { CreditButtonWrapper, CreditButton } from "../../styles/ButtonStyles";
-import { useAccessLevel } from "../../../common/common.fetch";
+import { useAccessLevel } from "../../../../common/General/common.fetch";
 
 function CreditButtons({ id }) {
   const { access } = useAccessLevel();

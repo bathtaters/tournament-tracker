@@ -1,7 +1,7 @@
 import React from "react";
 import { hasEnded, useTimer } from "../services/clock.services";
 import { useClockActionMutation } from "../event.fetch";
-import { useAccessLevel } from "../../common/common.fetch";
+import { useAccessLevel } from "../../../common/General/common.fetch";
 import {
   ClockWrapper,
   ClockStyle,

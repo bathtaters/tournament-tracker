@@ -15,7 +15,7 @@ const { randomInt } = require("crypto");
  * @param {Boolean} [options.delKey=false] - Truthy will delete entry['key'] after assigning it to result object['key']
  * @param {Boolean} [options.combo=false] - Truthy will combine matching keys as array, otherwise throws error
  * @param {String} [options.valKey] - If entered will use entry['valKey'] instead of entry in result object
- * @returns {convertArray:Object} function to convert input array into result object
+ * @returns {(convertArray: any) => any} function to convert input array into result object
  */
 exports.arrToObj =
   (key, { delKey = false, valKey = null, combo = false } = {}) =>
@@ -59,7 +59,7 @@ exports.arrToObj =
 const minusKey = (obj, rmvKey) =>
   Object.keys(obj).reduce(
     (res, key) => (key === rmvKey ? res : { ...res, [key]: obj[key] }),
-    {}
+    {},
   );
 
 /** Fischer-Yates shuffle algorithm
@@ -69,7 +69,7 @@ exports.shuffle = (array) => {
     randomIndex;
 
   // While there remain elements to shuffle...
-  while (currentIndex != 0) {
+  while (currentIndex !== 0) {
     // Pick a remaining element...
     randomIndex = randomInt(currentIndex);
     currentIndex--;
@@ -97,13 +97,13 @@ exports.shuffle = (array) => {
  * Based off 'sortedIndex' by 'Web_Designer' on Stack Exchange
  * @param {Array} array - Array to insert into
  * @param {*} item - Item to insert in array
- * @param {isBefore:Boolean} [isBefore=((a,b)=>a<b)] - Callback to test order of items
- * @returns {Array} 'array' with 'item' (Modifys original 'array' also)
+ * @param {(entry: Any, item: Any) => boolean} [isBefore=((a,b)=>a<b)] - Callback to test order of items
+ * @returns {Array} 'array' with 'item' (Modifies original 'array' also)
  */
 exports.insertSorted = (
   array,
   item,
-  isBefore = (entry, item) => entry < item
+  isBefore = (entry, item) => entry < item,
 ) => {
   // Get index
   let low = 0,
@@ -222,12 +222,11 @@ const isCloneable = (value) => {
   if (
     value === null ||
     ["string", "number", "boolean", "undefined", "bigint"].includes(
-      typeof value
+      typeof value,
     )
   )
     return true;
-  if (isDate(value)) return true;
-  return false;
+  return isDate(value);
 };
 
 /** Sanitize data to be passed through a thread (Removes all invalid data) */
@@ -256,7 +255,7 @@ const isDate = (date) =>
   !isNaN(date);
 
 /**
- * Rescursively search 'data' for Date objects
+ * Recursively search 'data' for Date objects
  * and convert them to date strings of form YYYY-MM-DD
  * @param {any} data
  * @returns Copy of data w/ converted dates
@@ -268,7 +267,7 @@ exports.toDateStr = (data) => {
   if (Array.isArray(data)) return data.map(exports.toDateStr);
   return Object.entries(data).reduce(
     (obj, [key, val]) => Object.assign(obj, { [key]: exports.toDateStr(val) }),
-    {}
+    {},
   );
 };
 

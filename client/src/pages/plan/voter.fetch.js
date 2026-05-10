@@ -1,29 +1,29 @@
 import {
-  fetchApi,
+  commonApi,
   getTags,
-  usePlayerQuery,
   useEventQuery,
+  usePlayerQuery,
   useSettingsQuery,
-} from "../common/common.fetch";
+} from "../../common/General/common.fetch";
 import {
-  voterUpdate,
-  updateVoters,
   updateEvents,
+  updatePlanGen,
   updatePlanReset,
   updatePlanSave,
-  updatePlanGen,
+  updateVoters,
+  voterUpdate,
 } from "./services/voterFetch.services";
 import { useUpdateSettingsMutation } from "../settings/settings.fetch";
 import { debugLogging } from "../../assets/config";
 
-export const voterApi = fetchApi.injectEndpoints({
+export const voterApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
     voter: build.query({
       query: (id = null) => `voter/${id || "all"}`,
       transformResponse: debugLogging
         ? (res) => console.log("VOTE", res) || res
         : undefined,
-      providesTags: getTags("Voter"),
+      providesTags: getTags(["Voter"]),
     }),
 
     planStatus: build.query({ query: () => "plan/status" }),
@@ -37,7 +37,7 @@ export const voterApi = fetchApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("UPD_VOTE", res) || res
         : undefined,
-      invalidatesTags: getTags("Voter"),
+      invalidatesTags: getTags(["Voter"]),
       onQueryStarted: voterUpdate,
     }),
 
@@ -46,7 +46,7 @@ export const voterApi = fetchApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("SET_VOTERS", res) || res
         : undefined,
-      invalidatesTags: getTags("Voter"),
+      invalidatesTags: getTags(["Voter"]),
       onQueryStarted: updateVoters,
     }),
 
@@ -59,7 +59,7 @@ export const voterApi = fetchApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("PLAN_EVENTS", res) || res
         : undefined,
-      invalidatesTags: getTags("Event", { addBase: ["Schedule"] }),
+      invalidatesTags: getTags(["Event"], { addBase: ["Schedule"] }),
       onQueryStarted: updateEvents,
     }),
 
@@ -68,7 +68,7 @@ export const voterApi = fetchApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("GEN_PLAN", res) || res
         : undefined,
-      // invalidatesTags: getTags('Event', { addBase: ['Schedule', 'Settings'], addAll: [] }),
+      // invalidatesTags: getTags(["Event"], { addBase: ["Schedule", "Settings"], addAll: [] }),
       onQueryStarted: updatePlanGen,
     }),
 
@@ -77,7 +77,9 @@ export const voterApi = fetchApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("SAVE_PLAN", res) || res
         : undefined,
-      invalidatesTags: getTags("Event", { addBase: ["Schedule", "Settings"] }),
+      invalidatesTags: getTags(["Event"], {
+        addBase: ["Schedule", "Settings"],
+      }),
       onQueryStarted: updatePlanSave,
     }),
 

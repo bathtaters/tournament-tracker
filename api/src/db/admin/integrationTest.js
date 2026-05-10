@@ -2,8 +2,8 @@ const db = require("./interface");
 const player = require("../models/player");
 const settings = require("../models/settings");
 const team = require("../models/team");
-const event = require("../db/controllers/event");
-const match = require("../db/controllers/match");
+const event = require("../models/event");
+const match = require("../models/match");
 const clock = require("../models/clock");
 
 const initTestFile = require("path").join(__dirname, "dbtest.sql");
@@ -23,15 +23,15 @@ async function dbCheck() {
     (a) =>
       console.log(
         "getPlayIds:",
-        a.map((p) => p.name)
-      ) || a.map((p) => p.id)
+        a.map((p) => p.name),
+      ) || a.map((p) => p.id),
   );
   const useEvent = await event
     .list()
-    .then((r) => r.find((d) => d.title == "KLD"));
+    .then((r) => r.find((d) => d.title === "KLD"));
   const altEvent = await event
     .list()
-    .then((r) => r.find((d) => d.title == "CPY"));
+    .then((r) => r.find((d) => d.title === "CPY"));
 
   /* TEST SETTINGS
     await settings.getAll().then(console.log);
@@ -54,9 +54,7 @@ async function dbCheck() {
 
   /* TEST VIEWS
     console.log('Getting player/teamView...');
-    const t = await db.query("SELECT * FROM player WHERE isteam IS TRUE LIMIT 1;")
-    .then(r => console.log(r) || r);
-    const p = await db.query("SELECT * FROM player WHERE id = $1;",[t.members[0]])
+    const p = await db.query("SELECT * FROM team WHERE id = $1;",[t.players[0]])
     .then(r => console.log(r) || r);
     await db.query("SELECT * FROM team WHERE id = $1;",[t.id])
     .then(console.log);
@@ -122,11 +120,11 @@ async function dbCheck() {
     await team.list().then(console.log);
     temp = await team.add(playIds.slice(0,2));
     console.log('NewTeamID:',temp);
-    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.members).length+']'}<${p.id}>`).join(', ')));
+    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.players).length+']'}<${p.id}>`).join(', ')));
     await player.get(temp).then(console.log);
     await team.get(temp).then(console.log);
     await player.rename(temp,'NewTeam').then(console.log);
-    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.members).length+']'}<${p.id}>`).join(', ')));
+    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.players).length+']'}<${p.id}>`).join(', ')));
     await player.get(playIds[2]).then(console.log);
     await team.addMember(temp,playIds[2]);
     await team.get(temp).then(console.log);
@@ -135,9 +133,9 @@ async function dbCheck() {
     await team.get(temp).then(console.log);
     await team.rmvMember(temp,playIds[3]);
     await team.get(temp).then(console.log);
-    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.members).length+']'}<${p.id}>`).join(', ')));
+    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.players).length+']'}<${p.id}>`).join(', ')));
     await team.rmv(temp);
-    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.members).length+']'}<${p.id}>`).join(', ')));
+    await team.list().then(r=>console.log(r.map(p=>`${p.name || '['+Object.keys(p.players).length+']'}<${p.id}>`).join(', ')));
     //*/
 
   /* EVENTS: TEST SUCCESS!

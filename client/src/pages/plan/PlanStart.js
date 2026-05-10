@@ -1,35 +1,30 @@
 import DatePicker from "react-tailwindcss-datepicker";
 import PlayerEditor from "../eventEditor/components/PlayerEditor";
 import EventList from "./components/EventList";
-import RangeSelector from "../common/components/InputForm/RangeSelector";
+import RangeSelector from "../../common/InputForm/components/RangeSelector";
 import {
-  PlanWrapperStyle,
-  PlanTitleStyle,
-  PlanRowStyle,
   InputWrapperStyle,
-  PlanFooterStyle,
   PlanButton,
+  PlanFooterStyle,
+  PlanRowStyle,
+  PlanTitleStyle,
+  PlanWrapperStyle,
 } from "./styles/PlanStyles";
-import RawData from "../common/RawData";
+import RawData from "../../common/RawData/RawData";
 import usePlanStartController from "./services/planStart.controller";
 import { dateArrToPicker } from "./services/plan.utils";
-import { useAccessLevel } from "../common/common.fetch";
+
 import { toDateObj } from "../schedule/services/date.utils";
 import { planTitle } from "../../assets/constants";
 
-import { getLimit } from "../../core/services/validation.services";
-const slotLimits = getLimit("settings", "planslots");
-if (!slotLimits.min) slotLimits.min = 1;
-
 function PlanStart() {
-  const { access } = useAccessLevel();
   const {
+    access,
     settings,
     setStatus,
     dates,
     handleDateChange,
-    slots,
-    handleSlotChange,
+    slotProps,
     players,
     handlePlayerChange,
     events,
@@ -64,12 +59,7 @@ function PlanStart() {
         </InputWrapperStyle>
 
         <InputWrapperStyle label="Daily Events">
-          <RangeSelector
-            {...slotLimits}
-            value={slots}
-            onChange={handleSlotChange}
-            disabled={access < 3}
-          />
+          <RangeSelector inputProps={slotProps} />
         </InputWrapperStyle>
       </PlanRowStyle>
 

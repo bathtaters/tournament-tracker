@@ -31,7 +31,7 @@ if (parentPort) {
     try {
       // Run processor-intensive plan generator
       const planData = await generatePlan(...args).then((data) =>
-        data?.filter(({ id }) => id)
+        data?.filter(({ id }) => id),
       );
 
       // Update DB with result
@@ -85,7 +85,7 @@ async function generatePlan(events, voters, settings = {}) {
     slotsPerDay == null
   )
     throw new Error(
-      "Insufficient data to generate a plan (Check players, events and date/slot settings)."
+      "Insufficient data to generate a plan (Check players, events and date/slot settings).",
     );
   if (events.some(({ playercount }) => !playercount))
     throw new Error("Invalid event player count: Must be at least 1");
@@ -120,7 +120,7 @@ async function generatePlan(events, voters, settings = {}) {
         participateRatio: (slotCount - ignoreSlots.length) / maxAvailability,
       },
     }),
-    {}
+    {},
   );
 
   // Get event scores
@@ -137,15 +137,15 @@ async function generatePlan(events, voters, settings = {}) {
         _size: playercount,
       },
     }),
-    {}
+    {},
   );
   const orderedEvents = shuffle(Object.keys(eventPrefs)).sort(
-    (a, b) => eventPrefs[b]._total - eventPrefs[a]._total
+    (a, b) => eventPrefs[b]._total - eventPrefs[a]._total,
   );
 
   await updateProg(5, 100);
 
-  // Iterate over events, from most to least popular, finding best configurations for each slot
+  // Iterate over events, from most to least popular, finding the best configurations for each slot
   for (const eventId of orderedEvents) {
     const size = eventPrefs[eventId]._size;
     if (voters.length < size) continue; // Not enough players
@@ -157,14 +157,14 @@ async function generatePlan(events, voters, settings = {}) {
     // Add event to each possible slot
     possibleEvents.forEach((slot, index) => {
       let players = orderedVoters.filter(
-        (id) => !voterData[id].ignoreSlots.includes(index)
+        (id) => !voterData[id].ignoreSlots.includes(index),
       );
       if (players.length < size) return; // Not enough players
       players = players.slice(0, size);
 
       const score = players.reduce(
         (score, id) => score + eventPrefs[eventId][id],
-        0
+        0,
       );
       slot.push({ id: eventId, players, score });
     });
@@ -172,7 +172,7 @@ async function generatePlan(events, voters, settings = {}) {
 
   await updateProg(15, 100);
 
-  // Find best possible game for each slot, starting in the middle
+  // Find the best possible game for each slot, starting in the middle
   const scheduled = new Set();
   for (let slot = 0; slot < slotsPerDay; slot++) {
     // Iterate from slot 1 of middle day to last/first day, then slot 2 of middle day...
@@ -180,7 +180,7 @@ async function generatePlan(events, voters, settings = {}) {
       const idx = day * slotsPerDay + slot;
 
       const bestEvent = customMax(possibleEvents[idx], ({ id, score }) =>
-        scheduled.has(id) ? null : score
+        scheduled.has(id) ? null : score,
       );
       if (!bestEvent) continue;
 
@@ -199,7 +199,8 @@ async function generatePlan(events, voters, settings = {}) {
     voter.targetEvents = voter.participateRatio * eventCount;
   });
 
-  let adjustTotal = (lastTotal = null);
+  let adjustTotal = null,
+    lastTotal = null;
   const oneEvent = 1 / eventCount, // value of 1 event after weighting
     halfEvent = 1 / eventCount / 2; // value of 0.5 events after weighting
   do {
@@ -222,7 +223,9 @@ async function generatePlan(events, voters, settings = {}) {
             : null;
       if (isPos == null) continue; // Less than 1 event off
 
-      let swapSlot, swapVoter, swapValue;
+      let swapSlot = null,
+        swapVoter = null,
+        swapValue = null;
       // Check all voters for best swap
       for (const swapId in adjustVoters) {
         // Assign add/rmv voters
@@ -241,7 +244,7 @@ async function generatePlan(events, voters, settings = {}) {
           if (voterData[addVoter].ignoreSlots.includes(slot)) continue;
           if (!schedule[slot] || schedule[slot].players.includes(addVoter))
             continue;
-          // Find ID with largest preference differential
+          // Find ID with the largest preference differential
           const prefs = eventPrefs[schedule[slot].id];
 
           // Create player 'scores': eventRating (prefs) & enrollCount (adjust)
@@ -269,7 +272,7 @@ async function generatePlan(events, voters, settings = {}) {
       // Move voter slot
       voterData[rmvVoter].slots.splice(
         voterData[rmvVoter].slots.indexOf(swapSlot),
-        1
+        1,
       );
       voterData[addVoter].slots.push(swapSlot);
       // Update local counters
@@ -279,11 +282,11 @@ async function generatePlan(events, voters, settings = {}) {
     // Calculate final total (after all adjustments)
     adjustTotal = Object.values(adjustVoters).reduce(
       (sum, adj) => sum + Math.abs(adj),
-      0
+      0,
     );
     await updateProg(
       25 + ((eventCount - adjustTotal / oneEvent) / eventCount) * 70,
-      100
+      100,
     );
 
     // Ensure that total is lowering and has not yet reached 0, otherwise quit
@@ -317,7 +320,7 @@ const cancelPlan = async () => {
 
 async function updateProg(prog, total) {
   await setSetting(toObjArray({ planprogress: (100 * prog) / total }), null);
-  const status = await getSetting("planstatus").then(asType);
+  const status = await getSetting(["planstatus"]).then((r) => asType(r[0]));
   if (status !== 3)
     return cancelPlan().then(() => {
       if (prog < total) logger.log("Plan generation cancelled early.");

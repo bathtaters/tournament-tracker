@@ -2,6 +2,7 @@
 const db = require("../admin/interface");
 const log = require("./log");
 const sql = require("../sql/strings").voter;
+const { TableName, LogAction } = require("../../config/validation").enums;
 
 // Get single or all vote data
 const get = (id) => db.getRow("voter", id);
@@ -16,19 +17,19 @@ const upsert = (ids, req) =>
         (data, error) =>
           error
             ? ids.map((tableid, idx) => ({
-                dbtable: log.TableName.VOTER,
-                action: log.LogAction.UPSERT,
+                dbtable: TableName.VOTER,
+                action: LogAction.UPSERT,
                 data: { idx },
                 tableid,
                 error,
               }))
             : {
-                dbtable: log.TableName.VOTER,
-                action: log.LogAction.UPSERT,
+                dbtable: TableName.VOTER,
+                action: LogAction.UPSERT,
                 tableid: data.id,
                 data,
               },
-        req
+        req,
       );
 
 // Remove player as voter
@@ -39,18 +40,18 @@ const rmvOther = (ids, req) =>
     (data, error) =>
       error
         ? {
-            dbtable: log.TableName.VOTER,
-            action: log.LogAction.DELETE,
+            dbtable: TableName.VOTER,
+            action: LogAction.DELETE,
             tableid: `NOT IN (${ids.join(",")})`,
             error,
           }
         : {
-            dbtable: log.TableName.VOTER,
-            action: log.LogAction.DELETE,
+            dbtable: TableName.VOTER,
+            action: LogAction.DELETE,
             tableid: data.id,
             data,
           },
-    req
+    req,
   );
 
 // Set player's votes

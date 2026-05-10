@@ -9,7 +9,7 @@ import {
   ViewScoreStyle,
   ViewErrors,
 } from "../styles/PlanTabViewStyles";
-import RawData from "../../common/RawData";
+import RawData from "../../../common/RawData/RawData";
 import { PlanRowStyle } from "../styles/PlanStyles";
 import { usePlayerQuery } from "../voter.fetch";
 import { useVoterScores } from "../services/planVote.services";

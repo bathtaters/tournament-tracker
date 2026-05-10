@@ -1,60 +1,73 @@
 import { useCallback, useMemo } from "react";
 import {
-  useSetVotersMutation,
-  useSetEventsMutation,
   useResetPlanMutation,
+  useSetEventsMutation,
+  useSetVotersMutation,
 } from "../voter.fetch";
 import {
-  usePlanSettings,
   datePickerToArr,
-  serverDatesToArr,
-  indexedKeys,
   getPlanned,
+  indexedKeys,
+  serverDatesToArr,
+  usePlanSettings,
 } from "./plan.utils";
+import { useAccessLevel } from "../../../common/General/common.fetch";
 import {
   useOpenAlert,
   useServerListValue,
   useServerValue,
-} from "../../common/common.hooks";
+} from "../../../common/General/common.hooks";
 import { plan as config } from "../../../assets/config";
 import { resetPlanAlert } from "../../../assets/alerts";
+
+import { getLimit } from "../../../core/services/validation.services";
+
+const slotLimits = getLimit("settings", "planslots");
+if (!slotLimits.min) slotLimits.min = 1;
 
 const serverOptions = { throttleDelay: config.updateDelay };
 
 export default function usePlanStartController() {
   const { voters, settings, events, setStatus, updateSettings } =
     usePlanSettings();
+  const { access } = useAccessLevel();
 
   // Date Controller
   const updateServerDates = useCallback(
     (plandates) => updateSettings({ plandates }),
-    [updateSettings]
+    [updateSettings],
   );
   const [dates, setDates] = useServerListValue(
     serverDatesToArr(settings, settings?.plandates),
     updateServerDates,
-    serverOptions
+    serverOptions,
   );
   const { datestart, dateend } = settings;
   const handleDateChange = useCallback(
     (dates) => setDates(datePickerToArr({ datestart, dateend }, dates)),
-    [datestart, dateend, setDates]
+    [datestart, dateend, setDates],
   );
 
   // Slot Controller
   const updateServerSlots = useCallback(
     (planslots) => updateSettings({ planslots }),
-    [updateSettings]
+    [updateSettings],
   );
   const [slots, setSlots] = useServerValue(
     settings?.planslots ?? settings?.dayslots,
     updateServerSlots,
-    serverOptions
+    serverOptions,
   );
   const handleSlotChange = useCallback(
     (ev) => setSlots(+ev.target.value),
-    [setSlots]
+    [setSlots],
   );
+  const slotProps = {
+    ...slotLimits,
+    value: slots,
+    onChange: handleSlotChange,
+    disabled: access < 3,
+  };
 
   // Voters Controller
   const sortedVoters = useMemo(() => indexedKeys(voters), [voters]);
@@ -62,11 +75,11 @@ export default function usePlanStartController() {
   const [players, setPlayers] = useServerListValue(
     sortedVoters,
     setVoters,
-    serverOptions
+    serverOptions,
   );
   const handlePlayerChange = useCallback(
     (players) => setPlayers(players),
-    [setPlayers]
+    [setPlayers],
   );
 
   // Events Controller
@@ -75,11 +88,11 @@ export default function usePlanStartController() {
   const [planEvents, setEvents] = useServerListValue(
     sortedEvents,
     setEventPlan,
-    serverOptions
+    serverOptions,
   );
   const handleEventChange = useCallback(
     (events) => setEvents(events),
-    [setEvents]
+    [setEvents],
   );
 
   // Reset Controller
@@ -87,16 +100,16 @@ export default function usePlanStartController() {
   const [resetPlan] = useResetPlanMutation();
   const handleReset = useCallback(
     () => openAlert(resetPlanAlert, 0).then((answer) => answer && resetPlan()),
-    [openAlert, resetPlan]
+    [openAlert, resetPlan],
   );
 
   return {
+    access,
     settings,
     setStatus,
     dates,
     handleDateChange,
-    slots,
-    handleSlotChange,
+    slotProps,
     players,
     handlePlayerChange,
     events: planEvents,

@@ -1,6 +1,6 @@
-import { PageTitleStyle } from "../../common/styles/CommonStyles";
-import { ElementStyle } from "../../common/styles/InputFormStyles";
-import { titleStyle } from "../../common/EditableList/styles/EditableListStyles";
+import { PageTitleStyle } from "../../../common/General/styles/CommonStyles";
+import { ElementStyle } from "../../../common/InputForm/InputFormStyles";
+import { titleStyle } from "../../../common/EditableList/styles/EditableListStyles";
 
 export const PlanWrapperStyle = ({ children }) => (
   <div className="flex flex-col justify-center items-center gap-2">

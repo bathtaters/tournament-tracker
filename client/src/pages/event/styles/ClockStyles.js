@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
-import ClockIcon from "../../common/icons/ClockIcon";
-import ReloadIcon from "../../common/icons/ReloadIcon";
-import { PauseIcon, PlayIcon } from "../../common/icons/PausePlayIcons";
+import ClockIcon from "../../../common/icons/ClockIcon";
+import ReloadIcon from "../../../common/icons/ReloadIcon";
+import { PauseIcon, PlayIcon } from "../../../common/icons/PausePlayIcons";
 
 export const buttonIcons = {
   run: <PlayIcon className="fill-primary-content" />,

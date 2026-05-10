@@ -1,5 +1,5 @@
 import React from "react";
-import RawData from "../../common/RawData";
+import RawData from "../../../common/RawData/RawData";
 import {
   DropdownButton,
   DropdownInput,
@@ -8,7 +8,7 @@ import {
   MenuCreditsStyle,
 } from "../styles/LoginStyles";
 import { useUserSession } from "../services/session.hooks";
-import { idToUrl } from "../../common/services/idUrl.services";
+import { idToUrl } from "../../../common/General/services/idUrl.services";
 
 function LoginMenu() {
   const { login, logout, user, loading, nameProps, passProps, enableCredits } =

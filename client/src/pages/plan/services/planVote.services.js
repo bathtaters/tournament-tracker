@@ -9,7 +9,7 @@ import {
   dateRangeList,
   trimFalsy,
 } from "./plan.utils";
-import { useServerListValue } from "../../common/common.hooks";
+import { useServerListValue } from "../../../common/General/common.hooks";
 import { noDate } from "../../schedule/services/date.utils";
 import { plan as config } from "../../../assets/config";
 

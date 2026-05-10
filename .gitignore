@@ -7,6 +7,10 @@
 
 # credentials
 dbServer.json
+dbServer.test.json
+
+# IDE config
+.idea
 
 # dev-only testing files
 /*/coverage
@@ -15,10 +19,11 @@ dbServer.json
 # production
 /client/build
 /api/dist
-/deploy.sh
+*.tsbuildinfo
+/deploy*.sh
 
 # generated
-/client/src/assets/validation.json
+/client/src/assets/validation.ts
 /client/src/index.css
 
 # misc

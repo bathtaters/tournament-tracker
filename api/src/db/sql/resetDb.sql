@@ -12,10 +12,15 @@ CREATE DATABASE IF NOT EXISTS %DB%;
 
 USE %DB%;
 
+BEGIN;
 
 -- TYPES/ENUMS --
 
 CREATE TYPE LOG_ACTION AS ENUM ('create', 'update', 'upsert', 'delete', 'login');
+
+CREATE TYPE EVENT_FORMAT AS ENUM ('MONRAD', 'DUTCH', 'ROBIN', 'ELIM');
+
+CREATE TYPE TEAM_TYPE AS ENUM ('UNIFIED', 'DISTRIB');
 
 
 -- BASE TABLES --
@@ -36,14 +41,6 @@ CREATE TABLE player (
     credits DECIMAL DEFAULT 0,
     hide BOOL DEFAULT false,
 
-    -- Team
-    isteam BOOLEAN NOT NULL DEFAULT FALSE,
-    members UUID[] NULL,
-
-    -- Index
-    INDEX team_idx (isteam) STORING (name, members),
-    INVERTED INDEX member_idx (members) WHERE isteam IS TRUE,
-
     -- Rules
     lower_name STRING AS (lower(name)) STORED,
     CONSTRAINT unique_name UNIQUE (lower_name)
@@ -53,17 +50,24 @@ CREATE TABLE event (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     title STRING NULL,
+    notes STRING NOT NULL DEFAULT '',
+    link STRING NOT NULL DEFAULT '',
+    roundactive SMALLINT NOT NULL DEFAULT 0,
+
+    -- Schedule
     day DATE NULL,
     slot SMALLINT NOT NULL DEFAULT 0,
     plan SMALLINT NOT NULL DEFAULT 0,
-    players UUID[] NOT NULL DEFAULT '{}',
     playercount SMALLINT NOT NULL DEFAULT 8,
-    roundactive SMALLINT NOT NULL DEFAULT 0,
+    teamsize SMALLINT NOT NULL DEFAULT 1,
+
+    -- Settings
+    format EVENT_FORMAT NOT NULL DEFAULT 'MONRAD',
+    team TEAM_TYPE NULL,
+    players UUID[] NOT NULL DEFAULT '{}',
     roundcount SMALLINT NOT NULL DEFAULT 3,
     wincount SMALLINT NOT NULL DEFAULT 2,
     playerspermatch SMALLINT NOT NULL DEFAULT 2,
-    notes STRING NOT NULL DEFAULT '',
-    link STRING NOT NULL DEFAULT '',
 
     -- Clock base (clocklimit set by user, others set by start/stop/etc)
     clocklimit INTERVAL NOT NULL DEFAULT '60 mins',
@@ -91,13 +95,24 @@ CREATE TABLE match (
     INVERTED INDEX player_idx (players)
 );
 
+CREATE TABLE team (
+    -- Base
+    id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
+    name STRING NULL,
+    players UUID[] NOT NULL DEFAULT '{}',
+
+    -- Indexes
+    INVERTED INDEX player_idx (players)
+);
+
 CREATE TABLE voter (
     id UUID PRIMARY KEY NOT NULL,
     days DATE[] NOT NULL DEFAULT '{}',
     events UUID[] NOT NULL DEFAULT '{}',
-    idx SMALLINT DEFAULT 0;
+    idx SMALLINT DEFAULT 0
 );
 
+-- noinspection Annotator
 CREATE TABLE log (
     -- Base
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
@@ -140,21 +155,23 @@ GRANT SELECT ON TABLE * TO db_read;
 -- COMBO VIEWS --
 
 CREATE VIEW eventDetail (
-    id, title, players, playercount, playerspermatch,
-    clocklimit, day, slot, roundactive, roundcount, wincount, notes, link,
+    id, title, players, format, team, teamsize,
+    playercount, playerspermatch, clocklimit, day, slot,
+    roundactive, roundcount, wincount, notes, link,
     allreported,
     anyreported,
     byes,
     drops
 ) AS SELECT
-    event.id, event.title, event.players, playercount, playerspermatch,
-    clocklimit, day, slot, roundactive, roundcount, wincount, notes, link,
+    event.id, MAX(event.title), ARRAY_AGG(DISTINCT event.players)[1], MAX(format), MAX(team), MAX(teamsize),
+    MAX(playercount), MAX(playerspermatch), MAX(clocklimit), MAX(day), MAX(slot),
+    MAX(roundactive), MAX(roundcount), MAX(wincount), MAX(notes), MAX(link),
     BOOL_AND(reported),
     BOOL_OR(reported) FILTER(
         WHERE match.round = roundactive AND ARRAY_LENGTH(match.players, 1) != 1),
     ARRAY_AGG(match.players[1]) FILTER(WHERE ARRAY_LENGTH(match.players, 1) = 1),
-    JSON_AGG(drops)
-FROM event
+    JSON_AGG(drops) FILTER(WHERE drops IS NOT NULL)
+     FROM event
 LEFT JOIN match ON event.id = match.eventid
 GROUP BY event.id;
 
@@ -165,12 +182,12 @@ CREATE VIEW matchDetail (
     maxwins, totalwins,
     players, wins
 ) AS SELECT
-    match.id, eventid, round, reported,
-    draws, drops,
+    match.id, eventid, MAX(round), MAX(reported),
+    MAX(draws), ARRAY_AGG(DISTINCT drops)[1],
     MAX(player.win), SUM(player.win),
-    players, wins
+    ARRAY_AGG(DISTINCT players)[1], ARRAY_AGG(DISTINCT wins)[1]
 FROM match, UNNEST(players,wins) player(id,win)
-GROUP BY match.id ORDER BY match.id;
+GROUP BY match.id, eventid ORDER BY array_length(match.players, 1) DESC, match.id;
 
 
 -- INVERTED INDEX QUERIES --
@@ -184,4 +201,6 @@ WHERE oppid != playerid GROUP BY eventid, playerid;
 
 
 -- ADD VERSION NUMBER TO DB --
-INSERT INTO settings (id, value) VALUES ('dbversion', '2.0.0');
+INSERT INTO settings (id, value) VALUES ('dbversion', '3.0.0');
+
+COMMIT;

@@ -2,9 +2,12 @@ import { useState } from "react";
 import { useEventQuery } from "../voter.fetch";
 import { useSetEventMutation } from "../../eventEditor/eventEditor.fetch";
 import { createItemAlert, itemCreateError } from "../../../assets/alerts";
-import { useLockScreen, useOpenAlert } from "../../common/common.hooks";
+import {
+  useLockScreen,
+  useOpenAlert,
+} from "../../../common/General/common.hooks";
 import { createLockCaption } from "../../../assets/constants";
-import { useModal } from "../../common/Modal";
+import { useModal } from "../../../common/Modal/Modal";
 
 export default function useEventList(value, onChange) {
   // Event Editor modal
@@ -50,7 +53,7 @@ export default function useEventList(value, onChange) {
       onChange,
       query,
       filter,
-      nameKey: "title",
+      displayValue: "title",
 
       onClick: (id) => () => {
         setEditId(id);
@@ -61,7 +64,7 @@ export default function useEventList(value, onChange) {
         label: `Fill ${query.data ? Object.values(query.data).filter(filter).length : "All"}`,
         onClick: () => {
           onChange(
-            Object.keys(query.data).filter((id) => filter(query.data[id]))
+            Object.keys(query.data).filter((id) => filter(query.data[id])),
           );
         },
       },

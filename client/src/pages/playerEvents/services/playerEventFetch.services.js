@@ -7,10 +7,13 @@ export function getMatchData(matches, playerId) {
     result[event] = { record: [0, 0, 0], isDrop: false };
 
     matches[event].forEach((match) => {
-      // Check if dropped
-      if (match.drops.includes(playerId)) result[event].isDrop = true;
+      // Get teamID if it is a team event
+      const id = match.teamid || playerId;
 
-      const playerIdx = match.players.indexOf(playerId);
+      // Check if dropped
+      if (match.drops.includes(id)) result[event].isDrop = true;
+
+      const playerIdx = match.players.indexOf(id);
       if (playerIdx === -1) return; // doesn't have player
 
       if (match.isDraw)

@@ -1,17 +1,17 @@
 import {
-  fetchApi,
+  commonApi,
   getTags,
   usePlayerQuery,
   useSettingsQuery,
-} from "../common/common.fetch";
+} from "../../common/General/common.fetch";
 import {
-  playerUpdate,
   createUpdate,
   deleteUpdate,
+  playerUpdate,
 } from "./services/playerFetch.services";
 import { debugLogging } from "../../assets/config";
 
-export const playerApi = fetchApi.injectEndpoints({
+export const playerApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
     updatePlayer: build.mutation({
       query: ({ id, ...body }) => ({
@@ -22,7 +22,7 @@ export const playerApi = fetchApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("UPD_PLAYER", res) || res
         : undefined,
-      invalidatesTags: getTags("Player", { all: 0 }),
+      invalidatesTags: getTags(["Player"], { all: 0 }),
       onQueryStarted: playerUpdate,
     }),
 
@@ -31,7 +31,7 @@ export const playerApi = fetchApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("ADD_PLAYER", res) || res
         : undefined,
-      invalidatesTags: getTags("Player", { addBase: ["Setup"] }),
+      invalidatesTags: getTags(["Player"], { addBase: ["Setup"] }),
       onQueryStarted: createUpdate,
     }),
 
@@ -40,7 +40,7 @@ export const playerApi = fetchApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("DEL_PLAYER", res) || res
         : undefined,
-      invalidatesTags: getTags("Player", { addBase: ["Session"] }),
+      invalidatesTags: getTags(["Player"], { addBase: ["Session"] }),
       onQueryStarted: deleteUpdate,
     }),
   }),

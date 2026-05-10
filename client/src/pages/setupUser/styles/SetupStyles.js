@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-export { PageTitleStyle } from "../../common/styles/CommonStyles";
+export { PageTitleStyle } from "../../../common/General/styles/CommonStyles";
 
 export const SetupMessageStyle = ({ title, body, link, to }) => (
   <div className="font-thin text-center flex flex-col p-2 gap-4">

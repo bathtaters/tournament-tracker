@@ -1,8 +1,8 @@
-import { fetchApi, getTags, commonApi } from "../common/common.fetch";
+import { commonApi, getTags } from "../../common/General/common.fetch";
 import { playerUpdate, resetUpdate } from "./services/profileFetch.services";
 import { debugLogging } from "../../assets/config";
 
-export const profileApi = fetchApi.injectEndpoints({
+export const profileApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
     setupUser: build.query({
       query: ({ id, session }) => ({
@@ -25,7 +25,7 @@ export const profileApi = fetchApi.injectEndpoints({
       transformResponse: debugLogging
         ? (res) => console.log("UPD_PLAYER", res) || res
         : undefined,
-      invalidatesTags: getTags("Player", {
+      invalidatesTags: getTags(["Player"], {
         all: 0,
         addBase: ["Setup", "Session"],
       }),
@@ -50,7 +50,7 @@ export {
   usePlayerQuery,
   useEventQuery,
   useSettingsQuery,
-} from "../common/common.fetch";
+} from "../../common/General/common.fetch";
 export const {
   useSetupUserQuery,
   useUpdatePlayerMutation,

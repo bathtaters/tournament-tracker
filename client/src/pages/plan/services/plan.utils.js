@@ -1,14 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { fetchApi } from "../../common/common.fetch";
 import {
-  useSettingsQuery,
+  commonApi,
+  useEventQuery,
+  useSessionState,
+} from "../../../common/General/common.fetch";
+import {
   usePlanStatusQuery,
+  useSettingsQuery,
   useUpdateSettingsMutation,
   useUpdateVoterMutation,
   useVoterQuery,
 } from "../voter.fetch";
-import { useEventQuery, useSessionState } from "../../common/common.fetch";
 import { plan as config } from "../../../assets/config";
 
 export function usePollStatus(currentStatus, pollStatus) {
@@ -40,7 +43,12 @@ export function usePollStatus(currentStatus, pollStatus) {
       data.planstatus !== currentStatus
     ) {
       dispatch(
-        fetchApi.util.invalidateTags(["Settings", "Schedule", "Voter", "Event"])
+        commonApi.util.invalidateTags([
+          "Settings",
+          "Schedule",
+          "Voter",
+          "Event",
+        ]),
       );
       refetch();
     }
@@ -71,21 +79,21 @@ export function usePlanSettings(pollStatus = false) {
 
   const { planprogress, error: flashError } = usePollStatus(
     settings?.planstatus,
-    pollStatus
+    pollStatus,
   );
 
   const setStatus = useCallback(
     (planstatus) => () => updateSettings({ planstatus }),
-    [updateSettings]
+    [updateSettings],
   );
 
   const setDays = useCallback(
     (days) => updateVoter({ id: voter?.id, days }),
-    [voter?.id, updateVoter]
+    [voter?.id, updateVoter],
   );
   const setEvents = useCallback(
     (events) => updateVoter({ id: voter?.id, events }),
-    [voter?.id, updateVoter]
+    [voter?.id, updateVoter],
   );
 
   return {
@@ -117,7 +125,7 @@ export const getPlanned = (events) =>
 
 export const datePickerToArr = (
   { datestart, dateend } = {},
-  { startDate, endDate } = {}
+  { startDate, endDate } = {},
 ) => [
   startDate?.toISOString().slice(0, 10) || datestart,
   endDate?.toISOString().slice(0, 10) || dateend,

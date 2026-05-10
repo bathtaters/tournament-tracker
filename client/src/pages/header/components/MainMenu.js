@@ -6,8 +6,8 @@ import {
   headerButtonStyle,
   MenuItemStyle,
 } from "../styles/MenuStyles";
-import MenuIcon from "../../common/icons/MenuIcon";
-import SettingsIcon from "../../common/icons/SettingsIcon";
+import MenuIcon from "../../../common/icons/MenuIcon";
+import SettingsIcon from "../../../common/icons/SettingsIcon";
 import { usePlanSettings } from "../../plan/services/plan.utils";
 
 function MainMenu({ openModal }) {

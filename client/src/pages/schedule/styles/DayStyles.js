@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { statusInfo } from "../../../assets/constants";
-import EditIcon from "../../common/icons/EditIcon";
+import EditIcon from "../../../common/icons/EditIcon";
 
 // DAY.JS STYLES \\
 
@@ -46,12 +46,7 @@ export function EntryTitleStyle({ status, children }) {
 }
 
 export function EntryLinkStyle({ to, status, children }) {
-  if (!to)
-    return (
-      <div to={to} className={baseEntryClass}>
-        {children}
-      </div>
-    );
+  if (!to) return <div className={baseEntryClass}>{children}</div>;
   return (
     <Link
       to={to}
