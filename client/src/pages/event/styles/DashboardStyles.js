@@ -21,7 +21,9 @@ export const ValueStyle = ({ center, children }) => (
   </div>
 );
 export const DetailStyle = ({ center, children }) => (
-  <div className={`stat-desc ${center ? "text-center" : ""}`}>{children}</div>
+  <div className={`stat-desc mt-1 ${center ? "text-center" : ""}`}>
+    {children}
+  </div>
 );
 
 export const EventLinkStyle = ({ text, link }) => (

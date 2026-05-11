@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import EventStats from "./EventStats";
 import { statusInfo } from "../../../assets/constants";
+import { enums } from "../../../assets/validation";
 import { EditEventButton } from "../styles/ButtonStyles";
 import {
   ContainerStyle,
@@ -19,14 +20,26 @@ function EventDashboard({ data, openStats }) {
       ? "Round " + data.roundactive
       : statusInfo[data?.status ?? 0].label;
 
-  const headerDetail = useMemo(
-    () =>
-      data
-        ? `${data.playerspermatch}-Player, ${data.roundcount} Rounds, Best of ${(data.wincount ?? 0) * 2 - 1}`
-        : "",
+  const detailLines = useMemo(() => {
+    if (!data) return [];
+    return [
+      [
+        `${data.playerspermatch}-Player`,
+        `Best of ${(data.wincount ?? 0) * 2 - 1}`,
+        `${data.roundcount} Round${data.roundcount === 1 ? "" : "s"}`,
+      ].join(" · "),
+      [data.team && enums.TeamType[data.team], enums.EventFormat[data.format]]
+        .filter(Boolean)
+        .join(" · "),
+    ];
     // eslint-disable-next-line
-    [data?.playerspermatch, data?.roundcount, data?.wincount]
-  );
+  }, [
+    data?.format,
+    data?.playerspermatch,
+    data?.roundcount,
+    data?.wincount,
+    data?.team,
+  ]);
 
   return (
     <ContainerStyle>
@@ -35,9 +48,13 @@ function EventDashboard({ data, openStats }) {
 
         <ValueStyle center={access <= 1}>{headerValue}</ValueStyle>
 
-        {data.playerspermatch && data.wincount && (
-          <DetailStyle center={access <= 1}>{headerDetail}</DetailStyle>
-        )}
+        {data.playerspermatch &&
+          data.wincount &&
+          detailLines.map((line) => (
+            <DetailStyle center={access <= 1} key={line}>
+              {line}
+            </DetailStyle>
+          ))}
       </HeaderStyle>
 
       {data.players && data.players.length ? <EventStats event={data} /> : null}
