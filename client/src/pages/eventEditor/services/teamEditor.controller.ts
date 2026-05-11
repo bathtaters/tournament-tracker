@@ -1,17 +1,20 @@
 import type { Team } from "types/models";
 import type { OpenAlertFunction } from "types/base";
+import type { AppDispatch } from "../../../core/store/store";
 import {
   type Dispatch,
   type SetStateAction,
   useCallback,
   useState,
 } from "react";
+import { useDispatch } from "react-redux";
 import { nextTempId } from "../../../common/General/services/basic.services";
 import { useModal } from "../../../common/Modal/Modal";
 import {
   useDeleteTeamMutation,
   useSetTeamMutation,
 } from "../eventEditor.fetch";
+import { commonApi } from "../../../common/General/common.fetch";
 import { deleteTeamAlert } from "../../../assets/alerts";
 
 export default function useTeamEditorController(
@@ -22,6 +25,7 @@ export default function useTeamEditorController(
   // Init server fetches
   const [setTeam, { isLoading: teamUpdating }] = useSetTeamMutation();
   const [deleteTeam] = useDeleteTeamMutation();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Init hooks
   const { open, close, lock, backend } = useModal();
@@ -40,10 +44,22 @@ export default function useTeamEditorController(
     if (!selectedTeam.players.length) return close(true);
 
     let tempId: string | undefined;
+    let cacheUndo: (() => void) | undefined;
     if (!team.id) {
-      // Optimistic update
+      // Optimistic updates
       tempId = nextTempId("team", teamList);
       updateTeamList((teams) => teams.concat(tempId));
+      const patch = dispatch(
+        commonApi.util.updateQueryData(
+          "team" as any,
+          undefined,
+          (draft: Record<Team["id"], Team>) => ({
+            ...draft,
+            [tempId]: { ...selectedTeam, id: tempId } as Team,
+          }),
+        ),
+      );
+      cacheUndo = () => patch.undo();
     }
 
     // API call
@@ -59,6 +75,7 @@ export default function useTeamEditorController(
         // Rollback
         if (tempId)
           updateTeamList((teams) => teams.filter((id) => id !== tempId));
+        cacheUndo?.();
       });
     close(true);
   };

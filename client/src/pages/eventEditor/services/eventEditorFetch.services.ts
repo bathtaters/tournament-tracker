@@ -1,4 +1,4 @@
-import type { EventData, Schedule } from "types/models";
+import type { EventData, Schedule, Team } from "types/models";
 import type { MutateApi } from "types/helpers";
 import { commonApi } from "../../../common/General/common.fetch";
 import { updateSchedule } from "../../schedule/services/scheduleFetch.services";
@@ -106,3 +106,56 @@ export const eventSet = (
   body: Partial<EventData>,
   mutateApi: MutateApi<Partial<EventData>>,
 ) => (body.id ? eventUpdate(body, mutateApi) : createUpdate(body, mutateApi));
+
+// Merge updates into an existing team (optimistic)
+function teamUpdate(
+  { id, ...body }: Partial<Team>,
+  { dispatch, queryFulfilled }: MutateApi<Partial<Team>>,
+) {
+  const updateAll = dispatch(
+    commonApi.util.updateQueryData(
+      "team" as any,
+      undefined,
+      (draft: Record<Team["id"], Team>) => ({
+        ...draft,
+        [id]: { ...draft[id], ...body, id },
+      }),
+    ),
+  );
+  const updateOne = dispatch(
+    commonApi.util.updateQueryData("team" as any, id, (draft: Team) => ({
+      ...draft,
+      ...body,
+    })),
+  );
+
+  queryFulfilled.catch(() => {
+    updateAll.undo();
+    updateOne.undo();
+  });
+}
+
+// Remove a team from the cache (optimistic)
+export function teamDelete(
+  id: Team["id"],
+  { dispatch, queryFulfilled }: MutateApi<Team["id"]>,
+) {
+  const update = dispatch(
+    commonApi.util.updateQueryData(
+      "team" as any,
+      undefined,
+      (draft: Record<Team["id"], Team>) =>
+        Object.fromEntries(Object.entries(draft).filter(([key]) => key !== id)),
+    ),
+  );
+
+  queryFulfilled.catch(() => update.undo());
+}
+
+// Optimistic team update
+export const teamSet = (
+  body: Partial<Team>,
+  mutateApi: MutateApi<Partial<Team>>,
+) => {
+  if (body.id) teamUpdate(body, mutateApi);
+};
