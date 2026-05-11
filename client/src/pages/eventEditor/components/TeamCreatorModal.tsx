@@ -46,7 +46,7 @@ export default function TeamCreatorModal({
   const buttons = editorButtonLayout(
     team.id,
     () => handleDelete(team.id),
-    () => backend.close(),
+    () => backend.closeWithMsg(),
   );
 
   return (
