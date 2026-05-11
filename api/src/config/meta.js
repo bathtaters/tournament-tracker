@@ -13,4 +13,5 @@ module.exports = {
   env: process.env.NODE_ENV,
   pairingThreshold: 10, // Max number of players to use advanced pairing algorithm for
   planId: `${serverCfg?.server?.db || pkg.name || "_"}.plan`,
+  metricsToken: serverCfg?.metricsToken || "",
 };

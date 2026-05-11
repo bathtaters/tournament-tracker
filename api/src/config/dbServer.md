@@ -25,7 +25,8 @@
     "opts": ""
   },
   "pwsalt": "[random string]",
-  "sessionSecret": "[random string]"
+  "sessionSecret": "[random string]",
+  "metricsToken": "[random string]"
 }
 ```
 
@@ -50,7 +51,8 @@ Or for a locally run database _(Dev ONLY!)_:
     "opts": ""
   },
   "pwsalt": "[random string]",
-  "sessionSecret": "[random string]"
+  "sessionSecret": "[random string]",
+  "metricsToken": "[random string]"
 }
 ```
 
@@ -59,6 +61,7 @@ Or for a locally run database _(Dev ONLY!)_:
 ## Additional Notes
 
 - **_Changing pwsalt will invalidate all passwords in database._**
+- `metricsToken` is the bearer token Prometheus must send to scrape `/api/metrics`. Omit or leave empty to disable the endpoint (it will return 503).
 - Connection string replaces`%VAR`with`users[n].var`or`server.var`.
 - It also replaces`$VAR`with`process.env.var`.
 - If you are having trouble connecting to a brand-new Database, try running [`initDB.sh`](initDB.sh) using one of the

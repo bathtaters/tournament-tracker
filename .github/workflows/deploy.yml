@@ -23,10 +23,10 @@ on:
         type: number
         default: 3072
       remote_dir:
-        description: "Folder on remote host to deploy client to"
+        description: "Folder on remote host to deploy client to (relative to home)"
         required: false
         type: string
-        default: "~/tt_test"
+        default: "tt_test"
       db_name:
         description: "Name of database used by API"
         required: false
@@ -37,7 +37,7 @@ env:
   # Default to PROD (For push/pull workflow)
   PROC_NAME: ${{ inputs.proc_name || vars.PROC_NAME || 'tournament-tracker-backend' }}
   PROC_PORT: ${{ inputs.proc_port || vars.PROC_PORT || 3070 }}
-  REMOTE_DIR: ${{ inputs.remote_dir || vars.REMOTE_DIR || '~/tournament-tracker' }}
+  REMOTE_DIR: ${{ inputs.remote_dir || vars.REMOTE_DIR || 'tournament-tracker' }}
   DB_NAME: ${{ inputs.db_name || vars.DB_NAME || 'tt_production' }}
   DB_USER: api
   DB_PROTOCOL: postgresql
@@ -109,7 +109,7 @@ jobs:
           path: |
             ~/.local/share/containers
             ~/.config/containers
-          key: ${{ runner.os }}-${{ github.workflow }}-${{ hashFiles('api/package-lock.json', 'api/Containerfile') }}
+          key: ${{ runner.os }}-podman-${{ hashFiles('api/package-lock.json', 'api/Containerfile') }}
 
       - name: Build image
         run: podman build --build-arg NODE_VERSION=${{ steps.node_version.outputs.NODE_VERSION }} -t ${{ env.PROC_NAME }}-api api
@@ -133,18 +133,19 @@ jobs:
         run: cd client && npm run build
 
       - name: Upload client
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@main
         with:
           name: client-build
           path: client/build
 
   deploy:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     needs: build
 
     steps:
       - name: Download client build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@main
         with:
           name: client-build
           path: client
