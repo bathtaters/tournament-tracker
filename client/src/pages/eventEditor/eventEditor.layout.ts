@@ -9,7 +9,10 @@ const lockAt = (statusVal: number) => (data?: { status?: number }) =>
   data?.status != null && data?.status >= statusVal;
 
 // Layout object for InputForm
-export const editorLayout = (hidePlayers: boolean): FormLayout<EventData> => [
+export const editorLayout = (
+  hidePlayers: boolean,
+  recommendedRounds: number | null = null,
+): FormLayout<EventData> => [
   hidePlayers
     ? [
         {
@@ -57,6 +60,8 @@ export const editorLayout = (hidePlayers: boolean): FormLayout<EventData> => [
       type: "number",
       disabled: lockAt(3),
       min: (data) => data?.roundactive,
+      description:
+        recommendedRounds != null ? `Recommended: ${recommendedRounds}` : null,
     },
     {
       label: "Team Pairing",

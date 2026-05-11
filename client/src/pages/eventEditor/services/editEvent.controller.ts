@@ -16,7 +16,7 @@ import { deleteEventAlert } from "../../../assets/alerts";
 import { editEventLockCaptions } from "../../../assets/constants";
 import { editorButtonLayout } from "../eventEditor.layout";
 import useTeamEditorController from "./teamEditor.controller";
-import { getTeamPlayers } from "./listEditor.utils";
+import { getTeamPlayers, recommendedRoundCount } from "./listEditor.utils";
 
 export default function useEditEventController(
   eventid: EventData["id"],
@@ -45,8 +45,10 @@ export default function useEditEventController(
     data?.team ? data?.players || [] : [],
   );
   const [isTeam, setIsTeam] = useState(!!data?.team);
+  const [formValues, setFormValues] = useState<Partial<EventData>>({});
   const handleChange = useCallback((update: Partial<EventData>) => {
     if ("team" in update) setIsTeam(!!update.team);
+    setFormValues(update);
   }, []);
 
   // Team Modal controller
@@ -102,6 +104,22 @@ export default function useEditEventController(
       navigate(deleteRedirect);
     });
 
+  // Recompute recommended rounds reactively from form + list state
+  const format = formValues.format ?? data?.format;
+  const team = "team" in formValues ? formValues.team : data?.team;
+  const playerspermatch =
+    formValues.playerspermatch ?? data?.playerspermatch ?? 2;
+  const competitorCount = team
+    ? teamList.length
+    : hidePlayers
+      ? ((formValues as any).playercount ?? (data as any)?.playercount)
+      : playerList.length;
+  const recommendedRounds = recommendedRoundCount(
+    format,
+    competitorCount,
+    playerspermatch,
+  );
+
   return {
     data,
     teams,
@@ -119,6 +137,7 @@ export default function useEditEventController(
     teamModal,
     buttons: editorButtonLayout(eventid, deleteHandler, () => closeModal()),
     isTeam,
+    recommendedRounds,
     isLoading,
     notLoaded: false,
   };

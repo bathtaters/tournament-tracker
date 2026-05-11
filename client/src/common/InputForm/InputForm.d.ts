@@ -38,6 +38,8 @@ export type FormInput<
   inputClass?: string;
   /** This class is also applied to each 'option' element in a dropdown  */
   inputWrapperClass?: string;
+  /** Small hint rendered next to the input (e.g. "Recommended: 4"). */
+  description?: ReactNode;
 };
 
 export type FormButton = {

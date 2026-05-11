@@ -45,6 +45,7 @@ function EditEvent({
     openTeamModal,
     teamModal,
     isTeam,
+    recommendedRounds,
     isLoading,
     error,
     notLoaded,
@@ -72,7 +73,7 @@ function EditEvent({
       {Boolean(data?.status) && <StatusStyle status={data.status} />}
 
       <InputForm
-        rows={editorLayout(hidePlayers)}
+        rows={editorLayout(hidePlayers, recommendedRounds)}
         data={data}
         baseData={baseData}
         onSubmit={submitHandler}
