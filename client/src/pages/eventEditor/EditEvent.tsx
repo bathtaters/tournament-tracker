@@ -46,6 +46,8 @@ function EditEvent({
     teamModal,
     isTeam,
     recommendedRounds,
+    autoGenerateTeams,
+    defaultTeamSize,
     isLoading,
     error,
     notLoaded,
@@ -88,6 +90,8 @@ function EditEvent({
             teams={teams}
             isStarted={data?.status && data?.status > 1}
             openEditor={openTeamModal}
+            onAutoGenerate={autoGenerateTeams}
+            defaultTeamSize={defaultTeamSize}
           />
         ) : (
           <PlayerEditor

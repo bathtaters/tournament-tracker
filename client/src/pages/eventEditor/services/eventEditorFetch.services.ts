@@ -107,6 +107,26 @@ export const eventSet = (
   mutateApi: MutateApi<Partial<EventData>>,
 ) => (body.id ? eventUpdate(body, mutateApi) : createUpdate(body, mutateApi));
 
+// Insert a new team into the cache under the caller-supplied temp ID
+function teamCreate(
+  { _tempId, ...body }: Partial<Team> & { _tempId?: string },
+  { dispatch, queryFulfilled }: MutateApi<Partial<Team> & { _tempId?: string }>,
+) {
+  if (!_tempId) return;
+  const patch = dispatch(
+    commonApi.util.updateQueryData(
+      "team" as any,
+      undefined,
+      (draft: Record<Team["id"], Team>) => ({
+        ...draft,
+        [_tempId]: { ...body, id: _tempId } as Team,
+      }),
+    ),
+  );
+
+  queryFulfilled.catch(() => patch.undo());
+}
+
 // Merge updates into an existing team (optimistic)
 function teamUpdate(
   { id, ...body }: Partial<Team>,
@@ -152,10 +172,9 @@ export function teamDelete(
   queryFulfilled.catch(() => update.undo());
 }
 
-// Optimistic team update
+// Optimistic team create/update — callers may pass `_tempId` for new teams so
+// the cache and any caller-side list state can share the same identifier.
 export const teamSet = (
-  body: Partial<Team>,
-  mutateApi: MutateApi<Partial<Team>>,
-) => {
-  if (body.id) teamUpdate(body, mutateApi);
-};
+  body: Partial<Team> & { _tempId?: string },
+  mutateApi: MutateApi<Partial<Team> & { _tempId?: string }>,
+) => (body.id ? teamUpdate(body, mutateApi) : teamCreate(body, mutateApi));

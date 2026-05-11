@@ -1,21 +1,19 @@
 import type { Team } from "types/models";
 import type { OpenAlertFunction } from "types/base";
-import type { AppDispatch } from "../../../core/store/store";
 import {
   type Dispatch,
   type SetStateAction,
   useCallback,
   useState,
 } from "react";
-import { useDispatch } from "react-redux";
 import { nextTempId } from "../../../common/General/services/basic.services";
 import { useModal } from "../../../common/Modal/Modal";
 import {
   useDeleteTeamMutation,
   useSetTeamMutation,
 } from "../eventEditor.fetch";
-import { commonApi } from "../../../common/General/common.fetch";
 import { deleteTeamAlert } from "../../../assets/alerts";
+import { chunkArray, randomArray } from "./listEditor.utils";
 
 export default function useTeamEditorController(
   teamList: Team["players"],
@@ -25,7 +23,6 @@ export default function useTeamEditorController(
   // Init server fetches
   const [setTeam, { isLoading: teamUpdating }] = useSetTeamMutation();
   const [deleteTeam] = useDeleteTeamMutation();
-  const dispatch = useDispatch<AppDispatch>();
 
   // Init hooks
   const { open, close, lock, backend } = useModal();
@@ -39,45 +36,39 @@ export default function useTeamEditorController(
     [open],
   );
 
-  // Create/Update/Delete teams
-  const saveTeam = (team: Partial<Team>) => {
-    if (!selectedTeam.players.length) return close(true);
-
-    let tempId: string | undefined;
-    let cacheUndo: (() => void) | undefined;
-    if (!team.id) {
-      // Optimistic updates
-      tempId = nextTempId("team", teamList);
-      updateTeamList((teams) => teams.concat(tempId));
-      const patch = dispatch(
-        commonApi.util.updateQueryData(
-          "team" as any,
-          undefined,
-          (draft: Record<Team["id"], Team>) => ({
-            ...draft,
-            [tempId]: { ...selectedTeam, id: tempId } as Team,
-          }),
-        ),
-      );
-      cacheUndo = () => patch.undo();
-    }
-
-    // API call
-    setTeam(selectedTeam)
+  // Create a team
+  const pushTeam = (team: Partial<Team>, tempId?: string) => {
+    if (tempId) updateTeamList((teams) => teams.concat(tempId));
+    setTeam(tempId ? { ...team, _tempId: tempId } : team)
       .then(({ data }) => {
-        // Replace tempID with response
         if (tempId && data?.id)
           updateTeamList((teams) =>
             teams.filter((id) => id !== tempId).concat(data.id),
           );
       })
       .catch(() => {
-        // Rollback
         if (tempId)
           updateTeamList((teams) => teams.filter((id) => id !== tempId));
-        cacheUndo?.();
       });
+  };
+
+  // Create/Update/Delete teams
+  const saveTeam = (team: Partial<Team>) => {
+    if (!selectedTeam.players.length) return close(true);
+    pushTeam(selectedTeam, team.id ? undefined : nextTempId("team", teamList));
     close(true);
+  };
+
+  // Shuffle the active player pool into teams of `size` and create each.
+  const autoGenerateTeams = (size: number, playerIds: Team["players"]) => {
+    if (!playerIds?.length) return;
+    const groups = chunkArray(randomArray(playerIds), size);
+    const accumulating = [...teamList];
+    groups.forEach((players) => {
+      const tempId = nextTempId("team", accumulating);
+      accumulating.push(tempId);
+      pushTeam({ players }, tempId);
+    });
   };
 
   const removeTeam = useCallback(
@@ -102,6 +93,7 @@ export default function useTeamEditorController(
     updateSelectedTeam,
     saveTeam,
     removeTeam,
+    autoGenerateTeams,
     teamUpdating,
     openTeamModal,
     teamModal: { lock, backend },

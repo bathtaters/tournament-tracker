@@ -57,6 +57,7 @@ export default function useEditEventController(
     updateSelectedTeam,
     saveTeam,
     removeTeam,
+    autoGenerateTeams,
     teamUpdating,
     openTeamModal,
     teamModal,
@@ -143,6 +144,8 @@ export default function useEditEventController(
     buttons: editorButtonLayout(eventid, deleteHandler, () => closeModal()),
     isTeam,
     recommendedRounds,
+    autoGenerateTeams,
+    defaultTeamSize: 2,
     isLoading,
     notLoaded: false,
   };

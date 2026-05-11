@@ -1,6 +1,8 @@
 import type { Team } from "types/models";
 import type { EditableListProps } from "common/EditableList/EditableList";
+import { useState } from "react";
 import TeamListEntry from "./TeamListEntry";
+import AutoGenTeam from "./AutoGenTeam";
 import Loading from "../../../common/Loading/Loading";
 import RawData from "../../../common/RawData/RawData";
 import {
@@ -15,6 +17,8 @@ type TeamEditorProps = {
   teams?: Record<Team["id"], Team>;
   openEditor: (team?: Partial<Team>) => () => void;
   isStarted?: EditableListProps<Team>["isLocked"];
+  onAutoGenerate?: (size: number, playerIds: Team["players"]) => void;
+  defaultTeamSize?: number;
 };
 
 export default function TeamEditor({
@@ -22,8 +26,11 @@ export default function TeamEditor({
   teams,
   isStarted,
   openEditor,
+  onAutoGenerate,
+  defaultTeamSize = 2,
 }: TeamEditorProps) {
   const { data: players, isLoading, error } = usePlayerQuery(null);
+  const [teamsize, setTeamsize] = useState(defaultTeamSize);
 
   if (isLoading || error || !teams || !players)
     return <Loading loading={isLoading} error={error} />;
@@ -41,6 +48,15 @@ export default function TeamEditor({
           />
         ))}
       </TeamListWrapper>
+
+      {!isStarted && value.length === 0 && (
+        <AutoGenTeam
+          teamsize={teamsize}
+          setTeamsize={setTeamsize}
+          players={players}
+          onAutoGenerate={onAutoGenerate}
+        />
+      )}
 
       {!isStarted && (
         <AddTeamButton onClick={openEditor()}>+ Create Team</AddTeamButton>

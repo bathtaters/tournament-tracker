@@ -49,8 +49,8 @@ export const eventEditorApi = commonApi.injectEndpoints({
       onQueryStarted: deleteUpdate,
     }),
 
-    setTeam: build.mutation<any, Partial<Team>>({
-      query: ({ id, ...body }) =>
+    setTeam: build.mutation<any, Partial<Team> & { _tempId?: string }>({
+      query: ({ id, _tempId, ...body }) =>
         id
           ? { url: `team/${id}`, method: "PATCH", body }
           : { url: `team`, method: "POST", body },

@@ -1,6 +1,11 @@
 import type { MouseEventHandler, ReactNode } from "react";
+import type {
+  HandleChange,
+  FormElementProps,
+} from "common/InputForm/InputForm.d";
 import EditIcon from "../../../common/icons/EditIcon";
 import { Modal } from "../../../common/Modal/Modal";
+import NumberPicker from "common/InputForm/components/NumberPicker";
 
 export type ModalBackend = {
   isOpen: boolean;
@@ -86,6 +91,37 @@ export const AddTeamButton = ({
       {children}
     </button>
   );
+
+export const AutoGenTeamStyle = <ID extends string>({
+  disabled,
+  handleChange,
+  onClick,
+  ...inputProps
+}: {
+  id: ID;
+  disabled?: boolean;
+  handleChange: HandleChange<Record<ID, number>>;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+} & FormElementProps<Record<ID, number>>["inputProps"]) => (
+  <div className="flex items-center gap-2 m-2">
+    <button
+      type="button"
+      className="btn btn-secondary btn-outline btn-sm"
+      onClick={onClick}
+      disabled={disabled}
+    >
+      Auto-Generate Teams
+    </button>
+    <label className="font-light text-sm flex items-center gap-2">
+      Size
+      <NumberPicker
+        inputProps={inputProps}
+        handleChange={handleChange}
+        className="input input-bordered input-sm w-16 text-center hide-arrows"
+      />
+    </label>
+  </div>
+);
 
 export const EditTeamButton = ({
   disable,
