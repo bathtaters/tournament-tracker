@@ -15,7 +15,10 @@ import { debugLogging } from "../../../assets/config";
 const getRoundButton = (event, isLocked = false) => {
   if (isLocked) return roundButtonText.wait;
   if (!event?.players?.length) return roundButtonText.none;
-  if (event.roundactive === 0) return roundButtonText.begin;
+  if (event.roundactive === 0)
+    return event.roundcount === 0
+      ? roundButtonText.end
+      : roundButtonText.begin;
   if (event.roundactive > event.roundcount) return roundButtonText.done;
   if (event.allreported === false)
     return event.anyreported === true
