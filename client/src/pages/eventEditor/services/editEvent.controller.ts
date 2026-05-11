@@ -130,7 +130,12 @@ export default function useEditEventController(
     removeTeam,
     selectedTeam,
     updateSelectedTeam,
-    ignorePlayers: isTeam ? getTeamPlayers(teamList, teams) : undefined,
+    ignorePlayers: isTeam
+      ? getTeamPlayers(
+          teamList.filter((id) => id !== selectedTeam?.id),
+          teams,
+        )
+      : undefined,
     handleChange,
     submitHandler,
     openTeamModal,
