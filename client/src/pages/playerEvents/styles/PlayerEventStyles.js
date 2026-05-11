@@ -10,3 +10,16 @@ export function WrapperStyle({ children }) {
 export const HeaderStyle = ({ children }) => (
   <ModalTitleStyle>{children}</ModalTitleStyle>
 );
+
+export function EventCellStyle({ title, teamName }) {
+  return (
+    <div className="flex flex-col leading-tight">
+      <span>{title}</span>
+      {teamName && (
+        <span className="text-xs font-light text-neutral-content italic">
+          {teamName}
+        </span>
+      )}
+    </div>
+  );
+}

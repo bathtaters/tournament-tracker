@@ -7,6 +7,7 @@ import {
   formatRecord,
   formatTeamName,
 } from "assets/formatting";
+import { EventCellStyle } from "./styles/PlayerEventStyles";
 
 // Player Schedule Columns
 const eventsLayout: Column<{
@@ -29,10 +30,12 @@ const eventsLayout: Column<{
     default: "?",
     hdrClass: "text-left",
     className: "text-primary",
-    get: (id, { events, teamMap }) =>
-      events[id]?.team
-        ? `${events[id].title} (as ${formatTeamName(teamMap[id])})`
-        : events[id]?.title,
+    get: (id, { events, teamMap }) => (
+      <EventCellStyle
+        title={events[id]?.title}
+        teamName={events[id]?.team ? formatTeamName(teamMap[id]) : null}
+      />
+    ),
     span: 3,
   },
   {
