@@ -22,8 +22,7 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
 COPY . .
-RUN npx -y tsc -b src
-RUN cp src/db/sql/*.sql dist/db/sql/
+RUN npm run build:local
 
 ################################################################################
 # Run
