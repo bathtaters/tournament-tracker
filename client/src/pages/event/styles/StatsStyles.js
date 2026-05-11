@@ -5,8 +5,10 @@ export { ModalTitleStyle };
 
 export const statsStyle = {
   number: (isDrop) => "font-light text-right " + (isDrop ? "text-error" : ""),
-  name: (isRanked, disableLink) =>
-    `${isRanked ? "col-span-2" : "col-span-4"} text-lg font-normal text-left ${disableLink ? "pointer-events-none" : "link link-hover"}`,
+  name: (isRanked, disableLink, tooltip = false) =>
+    `${isRanked ? "col-span-2" : "col-span-4"} text-lg font-normal text-left ${
+      disableLink ? "cursor-default" : "link link-hover"
+    }${tooltip ? " tooltip" : ""}`,
   record: "col-span-2 text-xs font-light align-middle",
   missing:
     "col-span-4 text-md font-thin align-middle text-center opacity-90 italic",

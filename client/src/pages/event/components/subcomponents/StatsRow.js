@@ -5,7 +5,7 @@ import { statsStyle } from "../../styles/StatsStyles";
 import { formatRecord } from "../../../../assets/formatting";
 import { useLinkId } from "../../../../common/General/services/idUrl.services";
 
-function StatsRow({ rowNum, id, name, isDrop, record, disableLink }) {
+function StatsRow({ rowNum, id, name, isDrop, record, disableLink, tooltip }) {
   // Row Number
   const rowHead = (
     <span className={statsStyle.number(isDrop)}>
@@ -30,8 +30,11 @@ function StatsRow({ rowNum, id, name, isDrop, record, disableLink }) {
       {rowHead}
 
       <Link
-        className={statsStyle.name(rowNum, disableLink)}
+        className={statsStyle.name(rowNum, disableLink, !!tooltip)}
+        data-tip={tooltip}
         to={disableLink ? null : playerUrl}
+        role="link"
+        aria-disabled={disableLink}
       >
         {name}
       </Link>

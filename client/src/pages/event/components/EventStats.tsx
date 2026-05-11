@@ -56,17 +56,28 @@ export default function EventStats({ event }: { event: EventData }) {
       </ViewStatsStyle>
 
       <StatsRowStyle>
-        {(isRanked ? data.ranking : event.players).map((pid, idx) => (
-          <StatsRow
-            rowNum={isRanked && idx + 1}
-            id={pid}
-            name={players[pid]?.name ?? formatTeamName(teams[pid], players)}
-            isDrop={event.drops?.includes(pid)}
-            record={data[pid]?.matchRecord}
-            disableLink={!!event.team}
-            key={pid}
-          />
-        ))}
+        {(isRanked ? data.ranking : event.players).map((pid, idx) => {
+          const team = teams[pid];
+          const tooltip =
+            event.team === "UNIFIED" && team?.players
+              ? team.players
+                  .map((mid) => players[mid]?.name)
+                  .filter(Boolean)
+                  .join(", ")
+              : undefined;
+          return (
+            <StatsRow
+              rowNum={isRanked && idx + 1}
+              id={pid}
+              name={players[pid]?.name ?? formatTeamName(team, players)}
+              isDrop={event.drops?.includes(pid)}
+              record={data[pid]?.matchRecord}
+              disableLink={!!event.team}
+              tooltip={tooltip}
+              key={pid}
+            />
+          );
+        })}
       </StatsRowStyle>
 
       <Modal backend={backend}>
