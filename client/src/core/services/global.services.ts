@@ -36,7 +36,7 @@ export function useLockScreen(isLoading: boolean, caption?: string) {
   const unlock = useCallback(() => dispatch(unlockScreen()), [dispatch]);
 
   useEffect(() => {
-    if (!isLoading) lock();
+    if (isLoading) lock();
   }, [isLoading, lock]);
 
   return [isLocked, lock, unlock] as const;

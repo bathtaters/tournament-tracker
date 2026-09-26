@@ -51,10 +51,13 @@ export const useFetchingStatus = () =>
 export { getTags, tagTypes, ALL_ID };
 export const { useTestApiQuery } = fetchApi;
 
-export const isFetching = (state: FetchState) =>
-  Object.values(state[fetchApi.reducerPath].queries).some(
-    (qry) => qry.status === "pending",
+export const isFetching = (state: FetchState) => {
+  const { queries, mutations } = state[fetchApi.reducerPath];
+  return (
+    Object.values(queries).some((qry) => qry?.status === "pending") ||
+    Object.values(mutations).some((mut) => mut?.status === "pending")
   );
+};
 
 export type FetchState = {
   [fetchApi.reducerPath]: ReturnType<typeof fetchApi.reducer>;

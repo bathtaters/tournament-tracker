@@ -92,7 +92,10 @@ export const roundButtonText = {
 };
 
 // Lock Screen captions
-export const roundButtonLockCaption = "Generating round...";
+export const roundButtonLockCaption = [
+  "Generating round...",
+  "Deleting round...",
+];
 export const editEventLockCaptions = ["Creating event...", "Updating event..."];
 export const resetDataLockCaption = "Resetting data...";
 export const reportLockCaption = "Updating standings...";

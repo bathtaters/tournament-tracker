@@ -59,7 +59,7 @@ export default function useRoundButton(
 
   // Get fetching status
   const isFetching = isLoading && event.roundactive !== event.roundcount + 1;
-  const [isLocked, lock] = useLockScreen(isFetching, roundButtonLockCaption);
+  const [isLocked, lock] = useLockScreen(isFetching, roundButtonLockCaption[0]);
 
   // Get button status
   const disableButton = disabled || isLocked || disableRound(event);
@@ -92,18 +92,30 @@ export function useDeleteRound({
   anyreported,
   roundactive,
 }: Partial<EventData> = {}) {
-  const [prevRound] = useClearRoundMutation();
   const openAlert = useOpenAlert();
+  const [prevRound, { isLoading }] = useClearRoundMutation();
+
+  const lock = useLockScreen(isLoading, roundButtonLockCaption[1])[1];
 
   // Confirm id isn't missing
-  return () =>
-    !id
-      ? debugLogging && console.warn("Delete round is missing id.")
-      : // If no data saved yet, go back w/o asking
-        !anyreported
-        ? prevRound({ id, roundactive })
-        : // Otherwise confirm deleting round data
-          openAlert(deleteRoundAlert, 0).then(
-            (r) => r && prevRound({ id, roundactive }),
-          );
+  return () => {
+    // Missing ID guard
+    if (!id) {
+      if (debugLogging) console.warn("Delete round is missing id.");
+
+      // If no data saved yet, go back w/o asking
+    } else if (!anyreported) {
+      lock();
+      prevRound({ id, roundactive });
+
+      // Otherwise confirm deleting round data
+    } else {
+      openAlert(deleteRoundAlert, 0).then((r) => {
+        if (r) {
+          lock();
+          prevRound({ id, roundactive }).finally();
+        }
+      });
+    }
+  };
 }
