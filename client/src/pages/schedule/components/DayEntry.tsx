@@ -14,7 +14,7 @@ import {
 
 import { usePrefetchEvent } from "../schedule.fetch";
 import { isTempId } from "../services/date.utils";
-import { canDrop, dataType } from "../services/day.services";
+import { canDrop, dataType, type EventDrag } from "../services/day.services";
 import { useLinkId } from "../../../common/General/services/idUrl.services";
 import { usePlayerQuery } from "../../../common/General/common.fetch";
 
@@ -24,7 +24,7 @@ type DayEntryProps = {
   id?: string;
   data?: EventData;
   isEditing?: boolean;
-  dropHandler?: (item: any) => void;
+  dropHandler?: (a: EventDrag, b: EventDrag) => void;
   editEvent?: () => void;
   showPlayers?: boolean;
   expandAll?: boolean;

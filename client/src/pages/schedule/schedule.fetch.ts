@@ -1,11 +1,5 @@
-import {
-  commonApi,
-  useEventQuery,
-  useSettingsQuery,
-} from "../../common/General/common.fetch";
-import { usePrefetchEvent } from "../../common/General/common.hooks";
+import { commonApi } from "../../common/General/common.fetch";
 import { scheduleAdapter } from "./services/scheduleFetch.services";
-import { useSetEventMutation } from "../eventEditor/eventEditor.fetch";
 
 export const scheduleApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
@@ -18,10 +12,11 @@ export const scheduleApi = commonApi.injectEndpoints({
   overrideExisting: true,
 });
 
+export const { useScheduleQuery } = scheduleApi;
+
 export {
   useEventQuery,
   useSettingsQuery,
-  useSetEventMutation,
-  usePrefetchEvent,
-};
-export const { useScheduleQuery } = scheduleApi;
+} from "../../common/General/common.fetch";
+export { usePrefetchEvent } from "../../common/General/common.hooks";
+export { useSetEventMutation } from "../eventEditor/eventEditor.fetch";

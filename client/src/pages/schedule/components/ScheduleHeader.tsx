@@ -5,7 +5,13 @@ import {
 } from "../styles/ScheduleStyles";
 import { useAccessLevel } from "../../../common/General/common.fetch";
 
-function ScheduleHeader({ isEditing, setEdit, openModal }) {
+type ScheduleHeaderProps = {
+  isEditing: boolean;
+  setEdit: (isEditing: boolean) => void;
+  openModal: () => void;
+};
+
+export default function ScheduleHeader({ isEditing, setEdit, openModal }: ScheduleHeaderProps) {
   const { access } = useAccessLevel();
 
   return (
@@ -24,5 +30,3 @@ function ScheduleHeader({ isEditing, setEdit, openModal }) {
     </HeaderStyle>
   );
 }
-
-export default ScheduleHeader;

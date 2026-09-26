@@ -53,8 +53,13 @@ export type EventData = EventClock & {
   isteam?: boolean;
 };
 
-export type Schedule = {
+export type EventDay = {
   day: string;
+  eventslots: Record<EventData["id"], number>;
+};
+
+export type Schedule = {
+  day: EventDay["day"];
   events: EventData["id"][];
 };
 
@@ -91,6 +96,7 @@ export type MatchData = {
   maxwins: number;
   totalwins: number;
   isDraw?: boolean;
+  teamid?: string;
 };
 
 export type PlayerEventData = {

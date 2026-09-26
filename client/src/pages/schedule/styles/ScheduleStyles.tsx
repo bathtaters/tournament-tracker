@@ -1,16 +1,16 @@
-import React from "react";
+import type { ReactNode, MouseEventHandler } from "react";
 import { PageTitleStyle } from "../../../common/General/styles/CommonStyles";
 
-export function HeaderStyle({ children }) {
+export function HeaderStyle({ children }: { children?: ReactNode }) {
   return (
     <div className="flex justify-evenly items-center gap-4">{children}</div>
   );
 }
 
-export const TitleStyle = ({ children }) =>
+export const TitleStyle = ({ children }: { children?: ReactNode }) =>
   PageTitleStyle({ className: "inline-block", children });
 
-export function DaysContainerStyle({ children }) {
+export function DaysContainerStyle({ children }: { children?: ReactNode }) {
   return (
     <div className="flex flex-wrap justify-center min-h-[24rem] mt-4">
       {children}
@@ -18,7 +18,15 @@ export function DaysContainerStyle({ children }) {
   );
 }
 
-export function HeaderButton({ children, disabled, onClick }) {
+export function HeaderButton({
+  children,
+  disabled,
+  onClick,
+}: {
+  children?: ReactNode;
+  disabled?: boolean;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}) {
   return (
     <button
       className="btn btn-primary btn-sm sm:btn-md"

@@ -12,11 +12,11 @@ function Schedule() {
   const [isEditing, setEdit] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
   const openEventModal = useCallback(
-    (eventid) => {
+    (eventid?: string) => {
       setCurrentEvent(eventid);
       open();
     },
-    [open]
+    [open],
   );
 
   // Render

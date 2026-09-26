@@ -1,11 +1,14 @@
+import type { EventData } from "types/models";
 import { useCallback } from "react";
 import { useSetEventMutation } from "../schedule.fetch";
 import { noDate } from "./date.utils";
 import { dragType } from "../../../assets/constants";
 export const dataType = dragType.event;
 
+export type EventDrag = Partial<Pick<EventData, "id" | "day" | "slot">>;
+
 // Drag & Drop tester
-export const canDrop = (type, a, b) =>
+export const canDrop = (type: string, a: EventDrag, b: EventDrag) =>
   type === dataType && a.id !== b.id && !(b.day === noDate && a.day === noDate);
 
 // Drop handler
@@ -14,7 +17,7 @@ export function useUpdateSchedule() {
   const [updateEvent] = useSetEventMutation();
 
   return useCallback(
-    (a, b) => {
+    (a: EventDrag, b: EventDrag) => {
       // Skip rules
       if (a.id === b.id || (b.day === noDate && a.day === noDate)) return;
 
@@ -26,12 +29,12 @@ export function useUpdateSchedule() {
       updateEvent(a);
       if (b.id) updateEvent(b);
     },
-    [updateEvent]
+    [updateEvent],
   );
 }
 
 // Drop Helper
-const swapKeys = (a, b, key) => {
+const swapKeys = (a: EventDrag, b: EventDrag, key: keyof EventData) => {
   let tmp = a[key];
   if (a.id) {
     if (!b[key]) delete a[key];

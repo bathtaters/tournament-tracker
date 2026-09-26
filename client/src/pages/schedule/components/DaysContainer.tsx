@@ -9,12 +9,19 @@ import {
 } from "../schedule.fetch";
 import { useAccessLevel } from "../../../common/General/common.fetch";
 
-function DaysContainer({
+type DaysContainerProps = {
+  isEditing?: boolean;
+  openEventModal?: (eventId: string) => void;
+  isPlan?: boolean;
+  expandAll?: boolean;
+};
+
+export default function DaysContainer({
   isEditing,
   openEventModal,
   isPlan,
   expandAll = false,
-}) {
+}: DaysContainerProps) {
   // Global state
   const {
     data: settings,
@@ -58,7 +65,7 @@ function DaysContainer({
               eventData={eventData}
               isEditing={access > 1 && isEditing}
               isSlotted={Boolean(
-                isPlan ? settings.planslots : settings.dayslots
+                isPlan ? settings.planslots : settings.dayslots,
               )}
               setEventModal={openEventModal}
               showPlayers={isPlan}
@@ -73,5 +80,3 @@ function DaysContainer({
     </>
   );
 }
-
-export default DaysContainer;

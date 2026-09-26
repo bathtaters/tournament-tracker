@@ -1,24 +1,30 @@
+import type { Schedule, Settings } from "types/models";
+import type { GetScheduleBody } from "types/api";
 import { getDays, noDate, sortedEvents } from "./date.utils";
 import { debugLogging } from "../../../assets/config";
 
 // Convert Schedule output from server to array
-export function scheduleAdapter({ schedule, settings }, _, isPlan) {
+export function scheduleAdapter(
+  { schedule, settings }: GetScheduleBody,
+  _: any,
+  isPlan: boolean,
+) {
   // Skip if no data
-  if (!schedule || !settings)
-    return (
-      debugLogging && console.log("SCHEDULE MISSING", { schedule, settings })
-    );
+  if (!schedule || !settings) {
+    if (debugLogging) console.log("SCHEDULE MISSING", { schedule, settings });
+    return undefined;
+  }
 
   // Get base data
   const emptyDay = Array(
-    (isPlan ? settings.planslots : null) ?? settings.dayslots
+    (isPlan ? settings.planslots : null) ?? settings.dayslots,
   ).fill(undefined);
   const dateRange = getDays(
     (isPlan ? settings.plandates?.[0] : null) ?? settings.datestart,
-    (isPlan ? settings.plandates?.[1] : null) ?? settings.dateend
+    (isPlan ? settings.plandates?.[1] : null) ?? settings.dateend,
   );
 
-  let output = [];
+  let output: Schedule[] = [];
   dateRange.forEach((day) => {
     // Add entry for each day w/in range
     output.push({
@@ -41,7 +47,7 @@ export function scheduleAdapter({ schedule, settings }, _, isPlan) {
   Object.values(schedule).forEach(
     (day) =>
       day.eventslots &&
-      output[output.length - 1].events.push(...Object.keys(day.eventslots))
+      output[output.length - 1].events.push(...Object.keys(day.eventslots)),
   );
 
   debugLogging && console.log("SCHEDULE", output);
@@ -49,10 +55,14 @@ export function scheduleAdapter({ schedule, settings }, _, isPlan) {
 }
 
 // Change Date of Event - Helper for eventUpdate
-export function updateSchedule(schedule, id, update) {
+export function updateSchedule(
+  schedule?: Schedule[],
+  id?: string,
+  update?: { day?: string; slot?: number },
+) {
   if (!schedule) return;
-  const result = [],
-    noDateIdx = schedule.length - 1;
+  const result: Schedule[] = [];
+  const noDateIdx = schedule.length - 1;
 
   // Remove from Schedule
   for (let idx = 0; idx <= noDateIdx; idx++) {
@@ -70,9 +80,9 @@ export function updateSchedule(schedule, id, update) {
           : {
               ...schedule[idx],
               events: schedule[idx].events.map((eId) =>
-                eId === id ? undefined : eId
+                eId === id ? undefined : eId,
               ),
-            }
+            },
     );
   }
   if (!update) return result;

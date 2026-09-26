@@ -7,27 +7,27 @@ export { isTempId };
 export const noDate = "none";
 
 // Get Date string
-const zPad = (num) => (num < 10 ? "0" : "") + num;
-const toDate = (dt) =>
+const zPad = (num: number) => (num < 10 ? "0" : "") + num;
+const toDate = (dt: Date) =>
   `${dt.getFullYear()}-${zPad(dt.getMonth() + 1)}-${zPad(dt.getDate())}`;
 export const getToday = () => toDate(new Date());
 
 // Convert Date String to Object
-export const toDateObj = (dt) =>
+export const toDateObj = (dt: string) =>
   dt === noDate ? null : new Date(dt + "T00:00");
 
 // Build array of days from start/end dates
-export function getDays(start, end) {
+export function getDays(start: string, end: string) {
   let arr = [];
-  end = toDateObj(end);
-  for (let d = toDateObj(start); d <= end; d.setDate(d.getDate() + 1)) {
+  const endDt = toDateObj(end);
+  for (let d = toDateObj(start); d <= endDt; d.setDate(d.getDate() + 1)) {
     arr.push(toDate(d));
   }
   return arr;
 }
 
 // Component class styles
-export const dayClasses = (day, today) => {
+export const dayClasses = (day: string, today?: string) => {
   if (!today) today = getToday();
   return day === today
     ? dayClass.today
@@ -40,7 +40,10 @@ export const dayClasses = (day, today) => {
 
 // Sort events based on slot numbers
 //  eventSlots = { [eventId]: slotNumber, ... }
-export function sortedEvents(eventSlots, existing = []) {
+export function sortedEvents(
+  eventSlots: Record<string, number>,
+  existing: string[] = [],
+) {
   let sorted = [...existing]; // copy input array
   if (!eventSlots) return sorted; // skip if no data provided
 
@@ -57,7 +60,7 @@ export function sortedEvents(eventSlots, existing = []) {
 }
 
 // Serialize all dates within an object
-export function serializeDates(obj) {
+export function serializeDates(obj: any) {
   if (!obj || typeof obj !== "object") return obj;
   else if (typeof obj.toISOString === "function") return obj.toISOString();
   else if (Array.isArray(obj)) return obj.map((val) => serializeDates(val));

@@ -1,5 +1,10 @@
+import { MatchData } from "types/models";
+
 // Get W/L/D record & isDrop from match data
-export function getMatchData(matches, playerId) {
+export function getMatchData(
+  matches: Record<MatchData["eventid"], MatchData[]>,
+  playerId: string,
+) {
   if (!matches) return matches;
 
   let result = {};

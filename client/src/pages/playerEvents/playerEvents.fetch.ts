@@ -1,5 +1,4 @@
-import { commonApi, getTags, useEventQuery, usePlayerQuery, useTeamQuery } from "../../common/General/common.fetch";
-import { usePrefetchEvent } from "../../common/General/common.hooks";
+import { commonApi, getTags } from "../../common/General/common.fetch";
 import { getMatchData } from "./services/playerEventFetch.services";
 import { debugLogging } from "../../assets/config";
 
@@ -8,7 +7,10 @@ export const playerEventsApi = commonApi.injectEndpoints({
     playerEvents: build.query({
       query: (id) => `player/${id}/events`,
       transformResponse: debugLogging
-        ? (res) => console.log("PLAYER_EVENTS", res) || res
+        ? (res) => {
+            console.log("PLAYER_EVENTS", res);
+            return res;
+          }
         : undefined,
       providesTags: getTags({ PlayerEvent: null }),
     }),
@@ -17,13 +19,21 @@ export const playerEventsApi = commonApi.injectEndpoints({
       query: (id) => `player/${id}/matches`,
       transformResponse: !debugLogging
         ? (res, _, id) => getMatchData(res, id)
-        : (res, _, id) =>
-            console.log("PLAYER_MATCHES", res) || getMatchData(res, id),
+        : (res, _, id) => {
+            console.log("PLAYER_MATCHES", res);
+            return getMatchData(res, id);
+          },
       providesTags: getTags({ PlayerMatch: null }),
     }),
   }),
   overrideExisting: true,
 });
 
-export { useEventQuery, usePlayerQuery, useTeamQuery, usePrefetchEvent };
 export const { usePlayerEventsQuery, usePlayerMatchesQuery } = playerEventsApi;
+
+export {
+  useEventQuery,
+  usePlayerQuery,
+  useTeamQuery,
+} from "../../common/General/common.fetch";
+export { usePrefetchEvent } from "../../common/General/common.hooks";

@@ -1,10 +1,17 @@
+import type { ReactNode, MouseEventHandler } from "react";
 import { Link } from "react-router-dom";
 import { statusInfo } from "../../../assets/constants";
 import EditIcon from "../../../common/icons/EditIcon";
 
 // DAY.JS STYLES \\
 
-export function DayTitleStyle({ className, children }) {
+export function DayTitleStyle({
+  className,
+  children,
+}: {
+  className?: string;
+  children?: ReactNode;
+}) {
   return (
     <h4
       className={
@@ -16,7 +23,7 @@ export function DayTitleStyle({ className, children }) {
   );
 }
 
-export function DaySubtitleStyle({ children }) {
+export function DaySubtitleStyle({ children }: { children?: ReactNode }) {
   return (
     <h5 className="text-center italic text-sm font-thin mb-2 pointer-events-none">
       {children}
@@ -24,7 +31,7 @@ export function DaySubtitleStyle({ children }) {
   );
 }
 
-export function MissingDataStyle({ children }) {
+export function MissingDataStyle({ children }: { children?: ReactNode }) {
   return (
     <div className="text-center text-sm font-light text-base-content opacity-90 italic pointer-events-none">
       {children}
@@ -37,7 +44,13 @@ export function MissingDataStyle({ children }) {
 const baseEntryClass =
   "w-full text-sm font-normal text-center break-words line-clamp-2 leading-none";
 
-export function EntryTitleStyle({ status, children }) {
+export function EntryTitleStyle({
+  status,
+  children,
+}: {
+  status: number;
+  children?: ReactNode;
+}) {
   return (
     <div className={`${baseEntryClass} ${statusInfo[status].textClass}`}>
       {children}
@@ -45,7 +58,15 @@ export function EntryTitleStyle({ status, children }) {
   );
 }
 
-export function EntryLinkStyle({ to, status, children }) {
+export function EntryLinkStyle({
+  to,
+  status,
+  children,
+}: {
+  to?: string;
+  status: number;
+  children?: ReactNode;
+}) {
   if (!to) return <div className={baseEntryClass}>{children}</div>;
   return (
     <Link
@@ -63,6 +84,12 @@ export const CollapseContainer = ({
   className = "",
   open = false,
   children,
+}: {
+  content?: ReactNode;
+  enabled?: boolean;
+  className?: string;
+  open?: boolean;
+  children?: ReactNode;
 }) =>
   enabled ? (
     <details className="collapse" open={open}>
@@ -73,17 +100,25 @@ export const CollapseContainer = ({
     <div className={className}>{children}</div>
   );
 
-export const PlayerListStyle = ({ children }) => (
+export const PlayerListStyle = ({ children }: { children?: ReactNode }) => (
   <ul className="font-light text-center">{children}</ul>
 );
-export const PlayerNameStyle = ({ children }) => <li>{children}</li>;
+export const PlayerNameStyle = ({ children }: { children?: ReactNode }) => (
+  <li>{children}</li>
+);
 export const NoPlayerStyle = () => (
   <li className="italic opacity-60 font-thin">None</li>
 );
 
 // Other \\
 
-export function EditEventButton({ status, onClick }) {
+export function EditEventButton({
+  status,
+  onClick,
+}: {
+  status: number;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}) {
   return (
     <button
       onClick={onClick}
