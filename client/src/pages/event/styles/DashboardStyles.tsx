@@ -13,7 +13,9 @@ export function DashboardStyle({ children }: { children?: ReactNode }) {
 
 // Dashboard Styles
 export const HeaderStyle = ({ children }: { children?: ReactNode }) => (
-  <div className="stat bg-base-100 font-heading text-right">{children}</div>
+  <div className="stat w-auto m-auto bg-base-100 font-heading text-right">
+    {children}
+  </div>
 );
 export const ValueStyle = ({
   center,

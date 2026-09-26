@@ -4,15 +4,15 @@ import { ModalTitleStyle } from "../../../common/General/styles/CommonStyles";
 export { ModalTitleStyle };
 
 export const statsStyle = {
-  record: "col-span-2 text-xs font-light align-middle",
+  record: "text-xs font-light align-middle",
   missing:
-    "col-span-4 text-md font-thin align-middle text-center opacity-90 italic",
+    "col-span-2 text-md font-thin align-middle text-center opacity-90 italic",
 
   number: (isDrop = false) =>
     "font-light text-right " + (isDrop ? "text-error" : ""),
 
   name: (isRanked = false, disableLink = false, tooltip = false) =>
-    `${isRanked ? "col-span-2" : "col-span-4"} text-lg font-normal text-left ${
+    `${isRanked ? "" : "col-span-2"} text-lg font-normal text-left ${
       disableLink ? "cursor-default" : "link link-hover"
     }${tooltip ? " tooltip" : ""}`,
 };
@@ -51,7 +51,7 @@ export function ViewStatsStyle({
 
 export function StatsRowStyle({ children }: { children?: ReactNode }) {
   return (
-    <div className="grid grid-flow-row grid-cols-5 gap-x-2 gap-y-1 items-center">
+    <div className="grid grid-cols-[max-content_1fr_max-content] gap-x-2 gap-y-1 items-center">
       {children}
     </div>
   );
