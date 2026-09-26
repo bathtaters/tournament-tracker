@@ -24,7 +24,7 @@ function createUpdate(
   const updateSched = dispatch(
     commonApi.util.updateQueryData(
       "schedule" as any,
-      undefined,
+      false,
       (draft: Schedule[]) => updateSchedule(draft, id, body),
     ),
   );
@@ -61,7 +61,7 @@ function eventUpdate(
       ? dispatch(
           commonApi.util.updateQueryData(
             "schedule" as any,
-            undefined,
+            false,
             (draft: Schedule[]) => updateSchedule(draft, id, body),
           ),
         )
@@ -82,7 +82,7 @@ export function deleteUpdate(
   const updateSched = dispatch(
     commonApi.util.updateQueryData(
       "schedule" as any,
-      undefined,
+      false,
       (draft: Schedule[]) => updateSchedule(draft, id),
     ),
   );

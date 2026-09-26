@@ -1,4 +1,4 @@
-import type { Schedule, Settings } from "types/models";
+import type { Schedule } from "types/models";
 import type { GetScheduleBody } from "types/api";
 import { getDays, noDate, sortedEvents } from "./date.utils";
 import { debugLogging } from "../../../assets/config";
@@ -74,7 +74,7 @@ export function updateSchedule(
           idx === noDateIdx
           ? {
               ...schedule[idx],
-              events: schedule[idx].events.filter((eId) => eId === id),
+              events: schedule[idx].events.filter((eId) => eId !== id),
               // Scheduled event -- replace w/ empty value
             }
           : {
