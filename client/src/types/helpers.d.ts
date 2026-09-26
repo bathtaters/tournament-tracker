@@ -28,7 +28,7 @@ export interface OverloadQuery<
   Hook extends TypedUseQuery<any, any, any>,
 > {
   (
-    arg: null,
+    arg?: null,
     options?: Parameters<Hook>[1],
   ): VarQryRtn<Record<ParentKey, BaseObj>, null>;
   (

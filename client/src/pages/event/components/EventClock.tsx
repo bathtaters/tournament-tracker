@@ -1,4 +1,4 @@
-import React from "react";
+import type { Interval } from "types/base";
 import { hasEnded, useTimer } from "../services/clock.services";
 import { useClockActionMutation } from "../event.fetch";
 import { useAccessLevel } from "../../../common/General/common.fetch";
@@ -10,8 +10,19 @@ import {
   buttonIcons,
 } from "../styles/ClockStyles";
 
-export default function EventClock({ id, state, remaining, end }) {
-  // State cheat sheet = [0: stopped, 1: running, 2: paused]
+type EventClockProps = {
+  id: string;
+  state: number; // [0: stopped, 1: running, 2: paused]
+  remaining: Interval;
+  end: number;
+};
+
+export default function EventClock({
+  id,
+  state,
+  remaining,
+  end,
+}: EventClockProps) {
   const { access } = useAccessLevel();
   const [clockAction, { isLoading }] = useClockActionMutation();
   const timer = useTimer(end, remaining);

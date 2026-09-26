@@ -16,7 +16,7 @@ import { isFinished, useDeleteRound } from "./services/roundButton.services";
 import { useParamIds } from "../../common/General/services/idUrl.services";
 import { isZero } from "./services/clock.services";
 
-function Event() {
+export default function Event() {
   // Get data
   const { backend, open, close, lock } = useModal();
   const { id } = useParamIds("id");
@@ -24,7 +24,7 @@ function Event() {
   const { data: clock, error: clockErr } = useEventClock(
     id,
     data?.status,
-    data?.clocklimit
+    data?.clocklimit,
   );
   const { data: settings, isLoading: sLoad, error: sErr } = useSettingsQuery();
 
@@ -60,7 +60,7 @@ function Event() {
               round={roundNum - 1}
               deleteRound={!idx ? handleDelete : null}
             />
-          )
+          ),
         )}
       </DashboardStyle>
 
@@ -76,5 +76,3 @@ function Event() {
     </div>
   );
 }
-
-export default Event;

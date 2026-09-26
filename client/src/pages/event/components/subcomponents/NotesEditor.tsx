@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-
 import {
   NotesWrapperStyle,
   NotesStyle,
@@ -7,27 +6,28 @@ import {
   CharCountStyle,
   EditNotesButton,
 } from "../../styles/NoteEditorStyles";
-
 import useTextEditor from "../../services/notesEditor.services";
 import { useSetEventMutation } from "../../event.fetch";
 
 import { getLimit } from "../../../../core/services/validation.services";
 const charLimit = getLimit("event", "notes").max;
 
-function NotesEditor({ id, notes }) {
+type NotesEditorProps = {
+  id: string;
+  notes?: string;
+};
+
+export default function NotesEditor({ id, notes }: NotesEditorProps) {
   // Save to server
   const [updateEvent, { isLoading }] = useSetEventMutation();
   const saveText = useCallback(
     (text) => updateEvent({ id, notes: text }),
-    [id, updateEvent]
+    [id, updateEvent],
   );
 
   // Setup text editor logic
-  const { text, isEdit, ref, onClick, onChange } = useTextEditor(
-    notes,
-    saveText,
-    { charLimit }
-  );
+  const { text, isEdit, ref, onClick, onChange } =
+    useTextEditor<HTMLDivElement>(notes, saveText, { charLimit });
 
   return (
     <NotesWrapperStyle divRef={ref}>
@@ -49,5 +49,3 @@ function NotesEditor({ id, notes }) {
     </NotesWrapperStyle>
   );
 }
-
-export default NotesEditor;

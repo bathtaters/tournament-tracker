@@ -49,3 +49,11 @@ export type SwapDragData = {
   playerid: Player["id"];
   reported?: boolean;
 };
+
+export type Interval = {
+  hours?: number;
+  minutes?: number;
+  seconds?: number;
+  milliseconds?: number;
+  days?: number;
+};

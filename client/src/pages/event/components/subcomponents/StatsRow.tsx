@@ -1,11 +1,28 @@
-import React from "react";
+import type { PlayerRecord } from "types/models";
 import { Link } from "react-router-dom";
-
 import { statsStyle } from "../../styles/StatsStyles";
 import { formatRecord } from "../../../../assets/formatting";
 import { useLinkId } from "../../../../common/General/services/idUrl.services";
 
-function StatsRow({ rowNum, id, name, isDrop, record, disableLink, tooltip }) {
+type StatsRowProps = {
+  rowNum?: number;
+  id: string;
+  name?: string;
+  isDrop?: boolean;
+  record?: PlayerRecord;
+  disableLink?: boolean;
+  tooltip?: string;
+};
+
+function StatsRow({
+  rowNum,
+  id,
+  name,
+  isDrop,
+  record,
+  disableLink,
+  tooltip,
+}: StatsRowProps) {
   // Row Number
   const rowHead = (
     <span className={statsStyle.number(isDrop)}>
@@ -30,7 +47,7 @@ function StatsRow({ rowNum, id, name, isDrop, record, disableLink, tooltip }) {
       {rowHead}
 
       <Link
-        className={statsStyle.name(rowNum, disableLink, !!tooltip)}
+        className={statsStyle.name(!!rowNum, disableLink, !!tooltip)}
         data-tip={tooltip}
         to={disableLink ? null : playerUrl}
         role="link"

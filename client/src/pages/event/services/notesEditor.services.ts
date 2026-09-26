@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { useSyncState, useOnClickOutsideRef } from "../../../common/General/common.hooks";
+import {
+  useSyncState,
+  useOnClickOutsideRef,
+} from "../../../common/General/common.hooks";
 
-export default function useTextEditor(
-  serverText,
-  updateServer,
-  { charLimit = 1000 }
+export default function useTextEditor<T extends HTMLElement = HTMLBaseElement>(
+  serverText: string,
+  updateServer: (text: string) => void,
+  { charLimit = 1000 }: { charLimit?: number },
 ) {
   // Setup state (editMode + controlledText)
   const [isEdit, setEdit] = useState(false);
@@ -23,7 +26,7 @@ export default function useTextEditor(
     isEdit,
 
     // Saves on click outside of ref element when editing
-    ref: useOnClickOutsideRef(saveText, { skip: !isEdit }),
+    ref: useOnClickOutsideRef<T>(saveText, { skip: !isEdit }),
 
     // Flip between editMode and saving text
     onClick: isEdit ? saveText : () => setEdit(true),

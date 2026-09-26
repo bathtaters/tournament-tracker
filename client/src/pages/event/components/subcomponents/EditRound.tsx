@@ -1,6 +1,20 @@
-import React from "react";
+import type { MouseEventHandler } from "react";
 
-function EditRound({ roundNum, isEditing, showEdit, setEditing, deleteRound }) {
+type EditRoundProps = {
+  roundNum: number;
+  isEditing: boolean;
+  showEdit: boolean;
+  setEditing: (isEditing: boolean) => void;
+  deleteRound?: MouseEventHandler<HTMLSpanElement>;
+};
+
+export default function EditRound({
+  roundNum,
+  isEditing,
+  showEdit,
+  setEditing,
+  deleteRound,
+}: EditRoundProps) {
   // Editing Round
   if (isEditing)
     return (
@@ -40,5 +54,3 @@ function EditRound({ roundNum, isEditing, showEdit, setEditing, deleteRound }) {
   // Neither
   return null;
 }
-
-export default EditRound;

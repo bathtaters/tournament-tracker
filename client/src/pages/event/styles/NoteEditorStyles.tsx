@@ -1,8 +1,20 @@
+import type {
+  ReactNode,
+  Ref,
+  MouseEventHandler,
+  TextareaHTMLAttributes,
+} from "react";
 import LoadingSpinner from "../../../common/Loading/LoadingSpinner";
 import { useScaleToFitRef } from "../../../common/General/common.hooks";
 
 // Wrapper
-export function NotesWrapperStyle({ divRef, children }) {
+export function NotesWrapperStyle({
+  divRef,
+  children,
+}: {
+  divRef?: Ref<HTMLDivElement>;
+  children?: ReactNode;
+}) {
   return (
     <div className="my-2 mx-10">
       <div className="indicator w-full" ref={divRef}>
@@ -13,8 +25,10 @@ export function NotesWrapperStyle({ divRef, children }) {
 }
 
 // Main Component
-export function NotesStyle(props) {
-  const ref = useScaleToFitRef([props.value], { padding: 2 });
+export function NotesStyle(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const ref = useScaleToFitRef<HTMLTextAreaElement>([props.value], {
+    padding: 2,
+  });
   return (
     <textarea
       className="textarea font-light text-xs sm:text-sm px-2 py-1 resize-none w-full"
@@ -25,7 +39,15 @@ export function NotesStyle(props) {
 }
 
 // Wrapper Overlay
-export function NotesOverlayStyle({ visible, onClick, children }) {
+export function NotesOverlayStyle({
+  visible,
+  onClick,
+  children,
+}: {
+  visible?: boolean;
+  onClick?: MouseEventHandler<HTMLDivElement>;
+  children?: ReactNode;
+}) {
   if (!visible) return null;
   return (
     <div
@@ -40,7 +62,13 @@ export function NotesOverlayStyle({ visible, onClick, children }) {
 }
 
 // Character Counter
-export function CharCountStyle({ visible, children }) {
+export function CharCountStyle({
+  visible,
+  children,
+}: {
+  visible?: boolean;
+  children?: ReactNode;
+}) {
   if (!visible) return null;
   return (
     <div className="indicator-item indicator-bottom badge badge-sm badge-warning">
@@ -51,7 +79,15 @@ export function CharCountStyle({ visible, children }) {
 
 // Edit/Save Button
 const editNotesClass = "absolute top-0 right-0 z-20";
-export function EditNotesButton({ isEdit, onClick, isFetching }) {
+export function EditNotesButton({
+  isEdit,
+  onClick,
+  isFetching,
+}: {
+  isEdit?: boolean;
+  onClick?: MouseEventHandler<HTMLInputElement>;
+  isFetching?: boolean;
+}) {
   if (isFetching)
     return (
       <div className={editNotesClass + " py-1 px-2 sm:px-3 cursor-wait"}>

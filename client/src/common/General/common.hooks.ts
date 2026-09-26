@@ -158,11 +158,11 @@ export const useServerListValue = <T>(
   });
 
 /** Scales height based on internal content (padding = vertical padding, everything is in pixels) */
-export function useScaleToFitRef(
+export function useScaleToFitRef<T extends HTMLElement = HTMLBaseElement>(
   depends: any[] = [],
   { padding = 0, minHeight = 32 } = {},
 ) {
-  const ref = useRef<HTMLBaseElement>(null);
+  const ref = useRef<T>(null);
 
   useLayoutEffect(
     () => {
@@ -178,11 +178,11 @@ export function useScaleToFitRef(
 }
 
 /** Runs 'onClick' when you click outside of ref element (if skip == falsy) */
-export function useOnClickOutsideRef(
+export function useOnClickOutsideRef<T extends HTMLElement = HTMLBaseElement>(
   onClick: () => any,
   { depends = [], skip = false } = {},
 ) {
-  const ref = useRef<HTMLBaseElement>(null);
+  const ref = useRef<T>(null);
   const _skip = skip || !ref.current;
 
   useEffect(() => {

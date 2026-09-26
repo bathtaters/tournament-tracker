@@ -1,3 +1,5 @@
+import type { Interval } from "types/base";
+import type { EventClock } from "types/models";
 import { useEffect, useState } from "react";
 import { clockFrequency } from "../../../assets/config";
 
@@ -7,7 +9,7 @@ import { clockFrequency } from "../../../assets/config";
  * @param {int} [eventStatus] - [0: N/A, 1: Pre-Event, 2: Active, 3: Complete]
  * @returns {int} - Polling interval (Based on config.clockApiPollMs) in milliseconds.
  */
-export const clockPoll = (clockState, eventStatus = 2) =>
+export const clockPoll = (clockState: number, eventStatus = 2) =>
   eventStatus !== 2
     ? 0
     : clockState
@@ -19,7 +21,7 @@ export const clockPoll = (clockState, eventStatus = 2) =>
  * @param {{ clocklimit?: Interval, clockstart?: Date, clockmod?: Interval }} clock - Clock data
  * @returns {{ id: string, state: int, limit: Interval, remaining?: Interval, end?: Number }}
  */
-export function calcClock(clock) {
+export function calcClock(clock: EventClock) {
   if (clock.clockstart) clock.clockstart = new Date(clock.clockstart);
   const end = getEnd(clock); // Only if running
   const remaining = end ? null : getRemaining(clock); // Only if paused
@@ -38,7 +40,7 @@ export function calcClock(clock) {
  * @param {Interval} [remaining]
  * @returns {null | [string, string] | [string, string, string]} - Time array ([mm, ss] | [hh, mm, ss])
  */
-export function useTimer(endDate, remaining) {
+export function useTimer(endDate: number, remaining: Interval) {
   const [timer, setTimer] = useState(null);
 
   useEffect(() => {
@@ -58,7 +60,7 @@ export function useTimer(endDate, remaining) {
  * @param {Interval} [remaining]
  * @returns {null | [string, string] | [string, string, string]} - Time array ([mm, ss] | [hh, mm, ss])
  */
-export function formatClock(endDate, remaining) {
+export function formatClock(endDate: number, remaining: Interval) {
   const range = endDate != null ? getRange(endDate) : remaining;
   return range ? formatInterval(range) : null;
 }
@@ -68,7 +70,7 @@ export function formatClock(endDate, remaining) {
  * @param {Interval} interval
  * @returns {[string, string] | [string, string, string]} - Time array ([mm, ss] | [hh, mm, ss])
  */
-const formatInterval = ({ hours, minutes = 0, seconds = 0 } = {}) =>
+const formatInterval = ({ hours, minutes = 0, seconds = 0 }: Interval = {}) =>
   hours
     ? [
         hours.toString(),
@@ -86,7 +88,7 @@ const formatInterval = ({ hours, minutes = 0, seconds = 0 } = {}) =>
  * @param {Interval} [remaining]
  * @returns {Boolean} - True if the round has ended
  */
-export const hasEnded = (endDate, remaining) =>
+export const hasEnded = (endDate: number, remaining: Interval) =>
   endDate != null ? endDate < Date.now() : isZero(remaining);
 
 /**
@@ -94,7 +96,7 @@ export const hasEnded = (endDate, remaining) =>
  * @param {any} interval
  * @returns {Boolean} - True if sum of interval = zero
  */
-export const isZero = (interval) =>
+export const isZero = (interval: Interval) =>
   !interval || !Object.values(interval).some(Boolean);
 
 /// --- HELPERS --- ///
@@ -106,7 +108,11 @@ export const isZero = (interval) =>
  * @param {Interval} [remaining]
  * @returns {Number} - [0: stopped, 1: running, 2: paused, 3: ended]
  */
-const getState = ({ clockmod }, end = Number.POSITIVE_INFINITY, remaining) =>
+const getState = (
+  { clockmod }: Pick<EventClock, "clockmod">,
+  end = Number.POSITIVE_INFINITY,
+  remaining: Interval,
+) =>
   end !== null
     ? end < Date.now()
       ? 3
@@ -123,7 +129,10 @@ const getState = ({ clockmod }, end = Number.POSITIVE_INFINITY, remaining) =>
  * @param {{ clocklimit: Interval, clockmod?: Interval }} clockData
  * @returns {Interval | null} - Interval remaining on clock
  */
-const getRemaining = ({ clockmod, clocklimit }) =>
+const getRemaining = ({
+  clockmod,
+  clocklimit,
+}: Pick<EventClock, "clockmod" | "clocklimit">) =>
   !clockmod
     ? clocklimit
     : toInterval(Math.max(0, toMs(clocklimit) - toMs(clockmod)));
@@ -134,7 +143,10 @@ const getRemaining = ({ clockmod, clocklimit }) =>
  * @param {{ clockstart?: Date, clocklimit?: Interval }} clockData
  * @returns {Number | null} - Timestamp of when clock ends
  */
-const getEnd = ({ clockstart, clocklimit }) =>
+const getEnd = ({
+  clockstart,
+  clocklimit,
+}: Pick<EventClock, "clockstart" | "clocklimit">) =>
   clockstart && clockstart.getTime() + toMs(clocklimit);
 
 /**
@@ -143,7 +155,7 @@ const getEnd = ({ clockstart, clocklimit }) =>
  * @param {Number} [startDate] - Date that timer ends (As a .getTime() number)
  * @returns {{hours?: int, minutes?: int, seconds?: int}} - Time until timer ends
  */
-const getRange = (endDate, startDate = Date.now()) => {
+const getRange = (endDate: number, startDate = Date.now()) => {
   const time = (endDate - startDate) / 1000;
   if (time <= 0) return {};
   return {
@@ -158,7 +170,7 @@ const getRange = (endDate, startDate = Date.now()) => {
  * @param {Interval} interval
  * @returns {Number} - interval as milliseconds
  */
-const toMs = (interval) =>
+const toMs = (interval: Interval) =>
   !interval
     ? 0
     : ((((interval.days || 0) * 24 + (interval.hours || 0)) * 60 +
@@ -173,9 +185,9 @@ const toMs = (interval) =>
  * @param {Number} ms - Number of milliseconds
  * @returns {any} - milliseconds split into an interval
  */
-function toInterval(ms) {
+function toInterval(ms: number) {
   if (ms <= 0) return null;
-  const interval = {};
+  const interval: Interval = {};
   interval.milliseconds = ms % 1000;
   ms = Math.floor(ms / 1000);
   interval.seconds = ms % 60;
@@ -189,12 +201,3 @@ function toInterval(ms) {
     throw Error(`Clock is set too high: ${JSON.stringify(interval)}`);
   return interval;
 }
-
-/**
- * @typedef {object} Interval
- * @property {number} [hours] - The number of hours.
- * @property {number} [minutes] - The number of minutes.
- * @property {number} [seconds] - The number of seconds.
- * @property {number} [milliseconds] - The number of milliseconds.
- * @property {number} [days] - The number of days.
- */

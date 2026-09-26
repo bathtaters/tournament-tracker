@@ -1,5 +1,14 @@
-import React from "react";
+import type { ReactNode, MouseEventHandler } from "react";
 import { CopyRoundButton } from "./ButtonStyles";
+
+type RoundStyleProps = {
+  title?: ReactNode;
+  isMissing?: boolean;
+  className?: string;
+  handleCopy?: MouseEventHandler<HTMLButtonElement>;
+  handleCopySeats?: MouseEventHandler<HTMLButtonElement>;
+  children?: ReactNode;
+};
 
 export function RoundStyle({
   title,
@@ -8,7 +17,7 @@ export function RoundStyle({
   handleCopy,
   handleCopySeats,
   children,
-}) {
+}: RoundStyleProps) {
   return (
     <div className={"m-3 relative " + className}>
       {handleCopy && (
@@ -38,13 +47,13 @@ export function RoundStyle({
   );
 }
 
-export function EditRoundStyle({ children }) {
+export function EditRoundStyle({ children }: { children?: ReactNode }) {
   return (
     <div className="font-thin text-sm italic text-center mt-1">{children}</div>
   );
 }
 
-export function WarningTextStyle({ children }) {
+export function WarningTextStyle({ children }: { children?: ReactNode }) {
   return (
     <div className="w-full text-center font-extralight text-sm italic opacity-80 mb-4">
       {children}

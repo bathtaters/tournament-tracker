@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import type { EventData } from "types/models";
+import { useMemo } from "react";
 import EventStats from "./EventStats";
 import { statusInfo } from "../../../assets/constants";
 import { enums } from "../../../assets/validation";
@@ -12,7 +13,15 @@ import {
 
 import { useAccessLevel } from "../../../common/General/common.fetch";
 
-function EventDashboard({ data, openStats }) {
+type EventDashboardProps = {
+  data: EventData;
+  openStats: () => void;
+};
+
+export default function EventDashboard({
+  data,
+  openStats,
+}: EventDashboardProps) {
   const { access } = useAccessLevel();
 
   const headerValue =
@@ -61,5 +70,3 @@ function EventDashboard({ data, openStats }) {
     </ContainerStyle>
   );
 }
-
-export default EventDashboard;

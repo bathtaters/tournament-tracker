@@ -1,3 +1,4 @@
+import type { Interval } from "./base";
 import { enums } from "assets/validation";
 
 export type Settings = {
@@ -20,22 +21,34 @@ export type Settings = {
 export type EventFormat = keyof typeof enums.EventFormat;
 export type TeamType = keyof typeof enums.TeamType | null;
 
-export type EventData = {
+export type EventClock = {
   id: string;
+  clocklimit?: Interval;
+  clockstart?: Date;
+  clockmod?: Interval;
+};
+
+export type EventData = EventClock & {
   title: string;
   /** ISO Format */
   day: string;
+  slot: number;
   format: EventFormat;
   team: TeamType;
   status?: number;
   players: string[];
+  playercount: number;
+  teamsize: number;
   roundactive: number;
   roundcount?: number;
   wincount: number;
   playerspermatch: number;
-  teamsize: number;
+  notes: string;
+  link: string;
+  allreported?: boolean;
   anyreported?: boolean;
   matches?: string[][];
+  byes?: string[];
   drops?: string[];
   isteam?: boolean;
 };
@@ -93,7 +106,7 @@ export type MatchReport = Pick<MatchData, "id" | "eventid"> &
 export type PlayerRecord = [win: number, loss: number, draw: number];
 
 type StatsEntry = {
-  matchRecord: [number, number, number];
+  matchRecord: PlayerRecord;
   gameRate: number;
   oppMatch: number;
   oppGame: number;

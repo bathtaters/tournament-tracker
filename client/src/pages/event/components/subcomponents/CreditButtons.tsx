@@ -1,9 +1,8 @@
-import React from "react";
 import { useUpdateCreditsMutation } from "../../event.fetch";
 import { CreditButtonWrapper, CreditButton } from "../../styles/ButtonStyles";
 import { useAccessLevel } from "../../../../common/General/common.fetch";
 
-function CreditButtons({ id }) {
+export default function CreditButtons({ id }: { id: string }) {
   const { access } = useAccessLevel();
   const [updateCredits, { isLoading }] = useUpdateCreditsMutation();
 
@@ -27,5 +26,3 @@ function CreditButtons({ id }) {
     </CreditButtonWrapper>
   );
 }
-
-export default CreditButtons;

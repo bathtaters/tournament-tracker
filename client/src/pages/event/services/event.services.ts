@@ -1,3 +1,4 @@
+import type { EventData } from "types/models";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
@@ -13,8 +14,8 @@ import { apiPollMs } from "../../../assets/config";
 
 // Round Editor controller
 export function useRoundEditor(
-  { id, roundactive, matches = [], playerspermatch },
-  round,
+  { id, roundactive, matches = [], playerspermatch }: EventData,
+  round: number,
 ) {
   // Setup
   const dispatch = useDispatch();

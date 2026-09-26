@@ -1,9 +1,17 @@
-import React from "react";
+import type { ReactNode, ButtonHTMLAttributes, MouseEventHandler } from "react";
 import EditIcon from "../../../common/icons/EditIcon";
 import CopyIcon from "../../../common/icons/CopyIcon";
 import SeatIcon from "../../../common/icons/SeatIcon";
 
-export function RoundButton({ value, onClick }) {
+type ButtonClick<T = HTMLButtonElement> = MouseEventHandler<T>;
+
+export function RoundButton({
+  value,
+  onClick,
+}: {
+  value?: string;
+  onClick?: ButtonClick<HTMLInputElement>;
+}) {
   return (
     <div className="text-center my-4">
       <input
@@ -17,7 +25,7 @@ export function RoundButton({ value, onClick }) {
   );
 }
 
-export function EditEventButton({ onClick }) {
+export function EditEventButton({ onClick }: { onClick?: ButtonClick }) {
   return (
     <div className="stat-figure">
       <button
@@ -31,7 +39,13 @@ export function EditEventButton({ onClick }) {
   );
 }
 
-export function CopyRoundButton({ onClick, isSeat }) {
+export function CopyRoundButton({
+  onClick,
+  isSeat,
+}: {
+  onClick?: ButtonClick;
+  isSeat?: boolean;
+}) {
   return (
     <button
       type="button"
@@ -43,11 +57,13 @@ export function CopyRoundButton({ onClick, isSeat }) {
   );
 }
 
-export const CreditButtonWrapper = ({ children }) => (
+export const CreditButtonWrapper = ({ children }: { children: ReactNode }) => (
   <div className="flex justify-center items-center gap-4 p-8">{children}</div>
 );
 
-export const CreditButton = (props) => (
+export const CreditButton = (
+  props: ButtonHTMLAttributes<HTMLButtonElement>,
+) => (
   <button className="btn btn-primary btn-outline btn-square" {...props}>
     {!props.disabled ? (
       props.children

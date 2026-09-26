@@ -1,14 +1,4 @@
-import {
-  commonApi,
-  getTags,
-  useEventQuery,
-  usePlayerQuery,
-  useSettingsQuery,
-  useStatsQuery,
-  useTeamQuery,
-} from "../../common/General/common.fetch";
-import { useMatchQuery } from "../match/match.fetch";
-import { useSetEventMutation } from "../eventEditor/eventEditor.fetch";
+import { commonApi, getTags } from "../../common/General/common.fetch";
 import {
   clearRoundUpdate,
   clockUpdate,
@@ -16,6 +6,16 @@ import {
 } from "./services/eventFetch.services";
 import { calcClock } from "./services/clock.services";
 import { debugLogging } from "../../assets/config";
+
+export {
+  useEventQuery,
+  usePlayerQuery,
+  useSettingsQuery,
+  useStatsQuery,
+  useTeamQuery,
+} from "../../common/General/common.fetch";
+export { useMatchQuery } from "../match/match.fetch";
+export { useSetEventMutation } from "../eventEditor/eventEditor.fetch";
 
 export const eventApi = commonApi.injectEndpoints({
   endpoints: (build) => ({
@@ -32,11 +32,14 @@ export const eventApi = commonApi.injectEndpoints({
         method: "POST",
       }),
       transformResponse: debugLogging
-        ? (res) => console.log("ROUND+", res) || res
+        ? (res) => {
+            console.log("ROUND+", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(
         ["Event", "Match", "Stats", "PlayerMatch", "Clock"],
-        { all: 0, addAll: ["Stats", "Match"] },
+        { all: false, addAll: ["Stats", "Match"] },
       ),
       onQueryStarted: nextRoundUpdate,
     }),
@@ -47,11 +50,14 @@ export const eventApi = commonApi.injectEndpoints({
         method: "DELETE",
       }),
       transformResponse: debugLogging
-        ? (res) => console.log("ROUND-", res) || res
+        ? (res) => {
+            console.log("ROUND-", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(
         ["Event", "Match", "Stats", "PlayerMatch", "Clock"],
-        { all: 0, addAll: ["Stats"] },
+        { all: false, addAll: ["Stats"] },
       ),
       onQueryStarted: clearRoundUpdate,
     }),
@@ -62,7 +68,10 @@ export const eventApi = commonApi.injectEndpoints({
         method: undo ? "DELETE" : "POST",
       }),
       transformResponse: debugLogging
-        ? (res) => console.log("UPD_CREDITS", res) || res
+        ? (res) => {
+            console.log("UPD_CREDITS", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(["Player"], { addAll: ["Player"] }),
     }),
@@ -74,26 +83,20 @@ export const eventApi = commonApi.injectEndpoints({
         method: "POST",
       }),
       transformResponse: debugLogging
-        ? (res) => console.log("CLOCK_OP", res) || res
+        ? (res) => {
+            console.log("CLOCK_OP", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(["Clock"]),
     }),
   }),
   overrideExisting: true,
 });
-const refetchStats = (id) =>
-  commonApi.util.invalidateTags(getTags(["Stats"], { all: 0 })({ id }));
 
-export {
-  useEventQuery,
-  usePlayerQuery,
-  useTeamQuery,
-  useSettingsQuery,
-  useStatsQuery,
-  useSetEventMutation,
-  useMatchQuery,
-  refetchStats,
-};
+export const refetchStats = (id?: string) =>
+  commonApi.util.invalidateTags(getTags(["Stats"], { all: false })({ id }));
+
 export const {
   useNextRoundMutation,
   useClearRoundMutation,

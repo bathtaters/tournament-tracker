@@ -1,9 +1,14 @@
+import type { EventData } from "types/models";
+import type { MutateApi } from "types/helpers";
 import { commonApi } from "../../../common/General/common.fetch";
 import { fakeRound } from "./event.services";
 
-export function nextRoundUpdate(id, { dispatch, queryFulfilled }) {
+export function nextRoundUpdate(
+  id: string,
+  { dispatch, queryFulfilled }: MutateApi<EventData>,
+) {
   const update = dispatch(
-    commonApi.util.updateQueryData("event", id, (draft) => {
+    commonApi.util.updateQueryData("event", id, (draft: EventData) => {
       if (draft.roundactive > draft.roundcount) return; // Handle error
       if (!draft.matches) draft.matches = []; // Handle no matches
       if (draft.status < 2) draft.status = 2; // Handle initial round
@@ -18,9 +23,12 @@ export function nextRoundUpdate(id, { dispatch, queryFulfilled }) {
   queryFulfilled.catch(update.undo); // rollback
 }
 
-export function clearRoundUpdate(id, { dispatch, queryFulfilled }) {
+export function clearRoundUpdate(
+  id: string,
+  { dispatch, queryFulfilled }: MutateApi<EventData>,
+) {
   const update = dispatch(
-    commonApi.util.updateQueryData("event", id, (draft) => {
+    commonApi.util.updateQueryData("event", id, (draft: EventData) => {
       if (draft.roundactive < 1) return; // Handle error
 
       // Remove round
@@ -35,20 +43,27 @@ export function clearRoundUpdate(id, { dispatch, queryFulfilled }) {
   queryFulfilled.catch(update.undo); // rollback
 }
 
-export async function clockUpdate(id, { dispatch, queryFulfilled }) {
+export async function clockUpdate(
+  id: string,
+  { dispatch, queryFulfilled }: MutateApi<EventData>,
+) {
   try {
     const { data } = await queryFulfilled;
 
     if (data?.limit) {
       dispatch(
-        commonApi.util.updateQueryData("event", id, (draft) => {
+        commonApi.util.updateQueryData("event", id, (draft: EventData) => {
           draft.clocklimit = data.limit;
         }),
       );
       dispatch(
-        commonApi.util.updateQueryData("event", undefined, (draft) => {
-          draft[id].clocklimit = data.limit;
-        }),
+        commonApi.util.updateQueryData(
+          "event",
+          undefined,
+          (draft: Record<string, EventData>) => {
+            draft[id].clocklimit = data.limit;
+          },
+        ),
       );
     }
   } catch (error) {

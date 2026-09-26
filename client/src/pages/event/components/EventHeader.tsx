@@ -1,4 +1,4 @@
-import React from "react";
+import type { EventData } from "types/models";
 import NotesEditor from "./subcomponents/NotesEditor";
 import { RoundButton } from "../styles/ButtonStyles";
 import { EventLinkStyle } from "../styles/DashboardStyles";
@@ -8,10 +8,16 @@ import { useAccessLevel } from "../../../common/General/common.fetch";
 import useRoundButton from "../services/roundButton.services";
 import { WarningTextStyle } from "../styles/RoundStyles";
 
-function EventHeader({ data, disabled }) {
+export default function EventHeader({
+  data,
+  disabled,
+}: {
+  data: EventData;
+  disabled: boolean;
+}) {
   const { handleClick, buttonText, buttonWarning } = useRoundButton(
     data,
-    disabled
+    disabled,
   );
   const { access } = useAccessLevel();
 
@@ -37,5 +43,3 @@ function EventHeader({ data, disabled }) {
     </>
   );
 }
-
-export default EventHeader;

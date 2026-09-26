@@ -1,6 +1,9 @@
-import { useLockScreen, useOpenAlert } from "../../../common/General/common.hooks";
+import type { EventData } from "types/models";
+import {
+  useLockScreen,
+  useOpenAlert,
+} from "../../../common/General/common.hooks";
 import { useClearRoundMutation, useNextRoundMutation } from "../event.fetch";
-
 import { deleteRoundAlert } from "../../../assets/alerts";
 import {
   roundButtonLockCaption,
@@ -12,13 +15,11 @@ import { debugLogging } from "../../../assets/config";
 
 // Get Round Button label
 //  none|begin|end|back|next|wait|done
-const getRoundButton = (event, isLocked = false) => {
+const getRoundButton = (event: Partial<EventData>, isLocked = false) => {
   if (isLocked) return roundButtonText.wait;
   if (!event?.players?.length) return roundButtonText.none;
   if (event.roundactive === 0)
-    return event.roundcount === 0
-      ? roundButtonText.end
-      : roundButtonText.begin;
+    return event.roundcount === 0 ? roundButtonText.end : roundButtonText.begin;
   if (event.roundactive > event.roundcount) return roundButtonText.done;
   if (event.allreported === false)
     return event.anyreported === true
@@ -29,20 +30,29 @@ const getRoundButton = (event, isLocked = false) => {
 };
 
 // Check if event is over
-export const isFinished = (event) =>
+export const isFinished = (event: Partial<EventData>) =>
   Boolean(event && event.roundactive > event.roundcount);
 
 // Check if button should get Next round
-const isNext = ({ allreported, status }) => allreported || status === 1;
+const isNext = ({ allreported, status }: Partial<EventData>) =>
+  allreported || status === 1;
 
 // Check if RoundButton should be disabled
-const disableRound = ({ allreported, anyreported, status, players }) =>
+const disableRound = ({
+  allreported,
+  anyreported,
+  status,
+  players,
+}: Partial<EventData>) =>
   status > 2 ||
   !players?.length ||
   (allreported === false && anyreported === true);
 
 // Round Button controller
-export default function useRoundButton(event, disabled) {
+export default function useRoundButton(
+  event: Partial<EventData>,
+  disabled: boolean,
+) {
   // Setup hooks
   const deleteRound = useDeleteRound(event);
   const [nextRound, { isLoading }] = useNextRoundMutation();
@@ -77,7 +87,11 @@ export default function useRoundButton(event, disabled) {
 }
 
 // Delete Round controller
-export function useDeleteRound({ id, anyreported, roundactive } = {}) {
+export function useDeleteRound({
+  id,
+  anyreported,
+  roundactive,
+}: Partial<EventData> = {}) {
   const [prevRound] = useClearRoundMutation();
   const openAlert = useOpenAlert();
 
