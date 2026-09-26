@@ -1,9 +1,4 @@
-import {
-  commonApi,
-  getTags,
-  usePlayerQuery,
-  useSettingsQuery,
-} from "../../common/General/common.fetch";
+import { commonApi, getTags } from "../../common/General/common.fetch";
 import {
   createUpdate,
   deleteUpdate,
@@ -20,16 +15,22 @@ export const playerApi = commonApi.injectEndpoints({
         body,
       }),
       transformResponse: debugLogging
-        ? (res) => console.log("UPD_PLAYER", res) || res
+        ? (res) => {
+            console.log("UPD_PLAYER", res);
+            return res;
+          }
         : undefined,
-      invalidatesTags: getTags(["Player"], { all: 0 }),
+      invalidatesTags: getTags(["Player"], { all: false }),
       onQueryStarted: playerUpdate,
     }),
 
     createPlayer: build.mutation({
       query: (body) => ({ url: `player`, method: "POST", body }),
       transformResponse: debugLogging
-        ? (res) => console.log("ADD_PLAYER", res) || res
+        ? (res) => {
+            console.log("ADD_PLAYER", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(["Player"], { addBase: ["Setup"] }),
       onQueryStarted: createUpdate,
@@ -38,7 +39,10 @@ export const playerApi = commonApi.injectEndpoints({
     deletePlayer: build.mutation({
       query: (id) => ({ url: `player/${id}`, method: "DELETE" }),
       transformResponse: debugLogging
-        ? (res) => console.log("DEL_PLAYER", res) || res
+        ? (res) => {
+            console.log("DEL_PLAYER", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(["Player"], { addBase: ["Session"] }),
       onQueryStarted: deleteUpdate,
@@ -47,5 +51,9 @@ export const playerApi = commonApi.injectEndpoints({
   overrideExisting: true,
 });
 
-export { usePlayerQuery, useSettingsQuery };
 export const { useCreatePlayerMutation, useDeletePlayerMutation } = playerApi;
+
+export {
+  usePlayerQuery,
+  useSettingsQuery,
+} from "../../common/General/common.fetch";

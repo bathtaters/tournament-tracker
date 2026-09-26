@@ -14,7 +14,7 @@ import {
 } from "./styles/ButtonStyles";
 import usePlayersController from "./services/player.services";
 
-function Players() {
+export default function Players() {
   const {
     backend,
     open,
@@ -63,5 +63,3 @@ function Players() {
     </div>
   );
 }
-
-export default Players;

@@ -112,12 +112,19 @@ export type MatchReport = Pick<MatchData, "id" | "eventid"> &
 export type PlayerRecord = [win: number, loss: number, draw: number];
 
 type StatsEntry = {
+  eventids: EventData["id"][];
   matchRecord: PlayerRecord;
+  gameRecord: PlayerRecord;
+  matchScore: number;
+  gameScore: number;
+  matchRate: number;
   gameRate: number;
   oppMatch: number;
   oppGame: number;
 };
 
-export type Stats = Record<Player["id"], StatsEntry> & {
+export type Stats = {
+  [playerid: Player["id"]]: StatsEntry;
   ranking: Player["id"][];
+  noStats?: boolean;
 };

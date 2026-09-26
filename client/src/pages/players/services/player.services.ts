@@ -1,7 +1,15 @@
+import type { OpenAlertFunction } from "types/base";
+import type { PlayerClickCallback } from "../../stats/Stats";
 import { useCallback, useEffect, useState } from "react";
 import { useModal } from "../../../common/Modal/Modal";
-import { useLocalStorage, useOpenAlert } from "../../../common/General/common.hooks";
-import { useAccessLevel, useSettingsQuery } from "../../../common/General/common.fetch";
+import {
+  useLocalStorage,
+  useOpenAlert,
+} from "../../../common/General/common.hooks";
+import {
+  useAccessLevel,
+  useSettingsQuery,
+} from "../../../common/General/common.fetch";
 import { useDeletePlayerMutation } from "../player.fetch";
 import {
   cantDeletePlayerAlert,
@@ -9,8 +17,12 @@ import {
 } from "../../../assets/alerts";
 
 // Click on player name handler
-const usePlayerClickController = (deleteMode, deletePlayer, openAlert) =>
-  useCallback(
+const usePlayerClickController = (
+  deleteMode: boolean,
+  deletePlayer: (id: string) => Promise<any>,
+  openAlert: OpenAlertFunction,
+) =>
+  useCallback<PlayerClickCallback>(
     (playerid, e, { players, stats }) => {
       if (!deleteMode) return; // Pass click to default handler
       e.preventDefault();
@@ -23,7 +35,7 @@ const usePlayerClickController = (deleteMode, deletePlayer, openAlert) =>
       if (hasEvents) return openAlert(cantDeletePlayerAlert(name));
 
       // Delete player
-      openAlert(deletePlayerAlert(name), 0).then(
+      openAlert(deletePlayerAlert(name)).then(
         (r) => r && deletePlayer(playerid),
       );
     },
