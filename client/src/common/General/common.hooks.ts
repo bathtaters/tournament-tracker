@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from "react";
 import type { Settings } from "types/models";
 import {
   useCallback,
@@ -44,7 +45,7 @@ export function usePrefetchBase() {
 /** Preload event data */
 export function usePrefetchEvent() {
   const prefetchEvent = matchApi.usePrefetch("event");
-  const prefetchMatch = matchApi.usePrefetch("match" as any);
+  const prefetchMatch = matchApi.usePrefetch("match");
   const prefetchStats = matchApi.usePrefetch("stats");
   return (id: string) => {
     prefetchEvent(id);
@@ -53,15 +54,26 @@ export function usePrefetchEvent() {
   };
 }
 
-export function useLocalStorage<K extends keyof Settings>(
+export function useLocalStorage<K extends string, T>(
   key: K,
-  initial?: Settings[K],
-) {
+  initial?: T,
+): [T, (value: SetParam<T>) => void, Dispatch<SetStateAction<T>>];
+export function useLocalStorage<
+  K extends keyof Settings,
+  T extends Settings[K] = Settings[K],
+>(
+  key: K,
+  initial?: T,
+): [T, (value: SetParam<T>) => void, Dispatch<SetStateAction<T>>];
+export function useLocalStorage<
+  K extends string,
+  T extends string | number | boolean,
+>(key: K, initial?: T) {
   const dispatch = useDispatch();
-  const [state, setState] = useState(getLocalVar(key) ?? initial);
+  const [state, setState] = useState<T>(getLocalVar(key) ?? initial);
 
   const updateValue = useCallback(
-    (value: SetParam<Settings[K]>) => {
+    (value: SetParam<T>) => {
       if (typeof value === "function") {
         setState((val) => {
           val = value(val);
