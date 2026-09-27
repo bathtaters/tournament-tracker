@@ -286,5 +286,5 @@ export const indexedKeys = <T extends Record<string, any>>(
       sorted[idx - 1] = key;
     }
   }
-  return sorted.concat(unsorted);
+  return sorted.filter(Boolean).concat(unsorted);
 };

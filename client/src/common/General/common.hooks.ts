@@ -164,7 +164,7 @@ export const useServerListValue = <T>(
   updateServerCallback: (value: T[]) => void,
   options: ServerValueOptions<T> = {},
 ) =>
-  useServerValue(listValue ?? [], updateServerCallback, {
+  useServerValue<T[]>(listValue ?? [], updateServerCallback, {
     equalsTest: deepEquals,
     ...options,
   });
