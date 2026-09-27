@@ -18,7 +18,7 @@ export default function usePlanViewController() {
     setStatus,
     isLoading,
     error,
-    flashError,
+    planerror,
   } = usePlanSettings();
 
   const [generatePlan] = useGenPlanMutation();
@@ -44,7 +44,7 @@ export default function usePlanViewController() {
 
     isLoading,
     error,
-    flashError,
+    planerror,
     isVoter: access && (access > 2 || voter),
 
     title: planTitle[settings.planstatus],

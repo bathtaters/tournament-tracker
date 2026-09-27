@@ -22,7 +22,7 @@ function PlanVote() {
     settings,
     isLoading,
     error,
-    flashError,
+    planerror,
     title,
     access,
     isVoter,
@@ -61,8 +61,8 @@ function PlanVote() {
         }
       />
 
-      {flashError && (
-        <PlanErrorStyle>Planning error: {flashError}</PlanErrorStyle>
+      {planerror && (
+        <PlanErrorStyle>Planning error: {planerror}</PlanErrorStyle>
       )}
 
       {showTabs && <Tabs labels={planTabs} value={tab} onChange={selectTab} />}

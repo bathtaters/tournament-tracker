@@ -4,12 +4,14 @@ import {
   PlanWrapperStyle,
   PlanTitleStyle,
   PlanButton,
+  PlanErrorStyle,
 } from "./styles/PlanStyles";
 import { usePlanSettings } from "./services/plan.utils";
 import { planTitle } from "../../assets/constants";
 
 function PlanLoading() {
-  const { progress, access, settings, setStatus } = usePlanSettings(true);
+  const { progress, access, settings, setStatus, planerror } =
+    usePlanSettings(true);
 
   return (
     <PlanWrapperStyle>
@@ -24,9 +26,13 @@ function PlanLoading() {
         }
       />
 
-      <LoadingWrapper progress={progress}>
-        This make take a while. Or not, who knows.
-      </LoadingWrapper>
+      {planerror ? (
+        <PlanErrorStyle>Planning error: {planerror}</PlanErrorStyle>
+      ) : (
+        <LoadingWrapper progress={progress}>
+          This make take a while. Or not, who knows.
+        </LoadingWrapper>
+      )}
     </PlanWrapperStyle>
   );
 }

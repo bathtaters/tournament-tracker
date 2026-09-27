@@ -17,7 +17,7 @@ const {
   filterUnvoted,
   getVoterSlots,
   resetEvent,
-  planStatus,
+  planSettings,
   getEventScores,
   slotToEvent,
 } = require("../utils/plan.utils");
@@ -37,10 +37,18 @@ if (parentPort) {
       // Update DB with result
       if (planData != null) {
         await multiset(planData, req);
-        await setSetting(planStatus(4, 100), req);
+        await setSetting(
+          planSettings({ planstatus: 4, planprogress: 100 }),
+          req,
+        );
       }
     } catch (err) {
-      await setSetting(planStatus(2), req);
+      await setSetting(
+        planSettings({
+          planerror: err.message || "Plan generator failed.",
+        }),
+        req,
+      );
       logger.error("Plan generator failed in genPlanAsync:", err);
       throw err;
     }

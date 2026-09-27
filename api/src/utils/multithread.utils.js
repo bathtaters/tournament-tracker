@@ -10,8 +10,10 @@ const processes = {},
  * @param {string} threadPath - Path to a file that implements onMessage function
  *  - onMessage(data) should call parentPort.close()
  * @param {any} data - Argument to send to thread
+ * @param {(err?: Error) => void} [onError] - Called (once) if the thread errors,
+ *  fails to load, or exits early -- lets the caller react to a thread that never ran
  */
-function spawnAsync(id, threadPath, data) {
+function spawnAsync(id, threadPath, data, onError) {
   if (id in processes) throw new Error(`Process already active: ${id}`);
   cancelled.delete(id); // clear
 
@@ -21,19 +23,32 @@ function spawnAsync(id, threadPath, data) {
     (thread?.terminate ? thread.terminate() : Promise.resolve(0)).finally(
       () => {
         delete processes[id];
-      }
+      },
     );
   processes[id] = terminate;
 
   let hasExited = false;
+  let hasErrored = false;
+  const notifyError = (err) => {
+    if (hasErrored) return;
+    hasErrored = true;
+    onError?.(err);
+  };
+
   thread.on("message", (msg) => logger.log(`Message from thread ${id}:`, msg));
-  thread.on("error", (err) => logger.error(`Error from thread ${id}:`, err));
-  thread.on("messageerror", (err) =>
-    logger.error(`Error from thread ${id}:`, err)
-  );
+  thread.on("error", (err) => {
+    logger.error(`Error from thread ${id}:`, err);
+    notifyError(err);
+  });
+  thread.on("messageerror", (err) => {
+    logger.error(`Error from thread ${id}:`, err);
+    notifyError(err);
+  });
   thread.on("exit", (code) => {
-    if (!hasExited && code)
+    if (!hasExited && code) {
       logger.error(`Thread ${id} ended with exit code: ${code}`);
+      notifyError(new Error(`Thread exited with code: ${code}`));
+    }
     hasExited = true;
     return terminate();
   });

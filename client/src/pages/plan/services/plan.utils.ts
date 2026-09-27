@@ -1,5 +1,5 @@
 import type { EventData } from "types/models";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import {
   commonApi,
@@ -25,18 +25,6 @@ export function usePollStatus(currentStatus?: number, pollStatus?: boolean) {
     refetchOnReconnect: true,
   });
 
-  // Keep error around for preset time
-  const flashError = useRef<{ message?: string; timer?: NodeJS.Timeout }>({});
-  useEffect(() => {
-    if (data.error) {
-      if (flashError.current.timer) clearTimeout(flashError.current.timer);
-      flashError.current = {
-        message: data.error,
-        timer: setTimeout(() => (flashError.current = {}), config.errorClear),
-      };
-    }
-  }, [data.error]);
-
   // Force refetches when status changes
   useEffect(() => {
     if (
@@ -56,7 +44,7 @@ export function usePollStatus(currentStatus?: number, pollStatus?: boolean) {
     }
   }, [currentStatus, data.planstatus, dispatch, refetch]);
 
-  return { ...data, error: flashError.current.message, refetch };
+  return { ...data, refetch };
 }
 
 export function usePlanSettings(pollStatus = false) {
@@ -79,7 +67,7 @@ export function usePlanSettings(pollStatus = false) {
   const [updateSettings] = useUpdateSettingsMutation();
   const [updateVoter] = useUpdateVoterMutation();
 
-  const { planprogress, error: flashError } = usePollStatus(
+  const { planprogress, planerror } = usePollStatus(
     settings?.planstatus,
     pollStatus,
   );
@@ -115,7 +103,7 @@ export function usePlanSettings(pollStatus = false) {
     progress: planprogress,
     isLoading: sLoad || aLoad || vLoad || eLoad || tLoad,
     error: sErr || aErr || vErr || eErr || tErr,
-    flashError,
+    planerror,
   };
 }
 

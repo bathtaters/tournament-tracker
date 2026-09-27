@@ -13,6 +13,8 @@ export type Settings = FlattenDates<{
   planstatus: number;
   plandates: Date[];
   planslots: number;
+  planprogress?: number;
+  planerror?: string | null;
   planmenu: boolean;
   planschedule: boolean;
   showcredits: boolean;

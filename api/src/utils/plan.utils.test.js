@@ -2,7 +2,7 @@
 const {
   getVoterSlots,
   getEventScores,
-  planStatus,
+  planSettings,
   filterUnvoted,
   resetEvent,
   slotToEvent,
@@ -31,16 +31,16 @@ beforeEach(() => {
 });
 
 // Tests
-describe("planStatus", () => {
+describe("planSettings", () => {
   it("returns object array with planstatus only", () => {
-    const result = planStatus(1);
+    const result = planSettings({ planstatus: 1 });
 
     expect(toObjArray).toHaveBeenCalledWith({ planstatus: 1 });
     expect(result).toEqual([{ planstatus: 1 }]);
   });
 
   it("returns object array with planstatus and planprogress", () => {
-    const result = planStatus(1, 50);
+    const result = planSettings({ planstatus: 1, planprogress: 50 });
 
     expect(toObjArray).toHaveBeenCalledWith({
       planstatus: 1,

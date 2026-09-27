@@ -16,11 +16,9 @@ export type GetScheduleBody = {
   >;
 };
 
-export type PlanStatus = {
-  planstatus?: number;
-  planprogress?: number;
-  error?: string;
-};
+export type PlanStatus = Partial<
+  Pick<Settings, "planstatus" | "planprogress" | "planerror">
+>;
 
 export type UpdateMatchKey =
   | "wins"

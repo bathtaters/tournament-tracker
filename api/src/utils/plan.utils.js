@@ -6,11 +6,19 @@ const { toObjArray } = require("../services/settings.services");
 // How many unranked events will negate a top ranked event (To prevent players in events they don't rank)
 const unrankedEventFactor = 2;
 
-/** Convert status number into Settings object array */
-const planStatus = (planstatus, planprogress) =>
-  toObjArray(
-    planprogress == null ? { planstatus } : { planstatus, planprogress },
-  );
+/** Convert status number into Settings object array
+ * @param {{ planstatus?: number, planprogress?: number, planerror?: string | null }} settings
+ *  - Pass planstatus = undefined to leave it untouched
+ *  - Pass planprogress = number to set progress, 0 to clear it, omit to leave it untouched
+ *  - Pass planerror = null to clear it, omit to leave it untouched */
+const planSettings = (settings) => toObjArray(settings);
+
+const clearPlanSettings = (planstatus = 0) =>
+  planSettings({
+    planstatus,
+    planprogress: 0,
+    planerror: null,
+  });
 
 /** Remove events no one voted for, or that are too large */
 const filterUnvoted = (events, voters) => {
@@ -95,7 +103,8 @@ const getVoterSlots = (voters, slotsPerDay, startDate) => {
 };
 
 module.exports = {
-  planStatus,
+  planSettings,
+  clearPlanSettings,
   filterUnvoted,
   getEventScores,
   slotToEvent,
