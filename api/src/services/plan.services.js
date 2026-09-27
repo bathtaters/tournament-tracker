@@ -50,7 +50,6 @@ if (parentPort) {
         req,
       );
       logger.error("Plan generator failed in genPlanAsync:", err);
-      throw err;
     }
     parentPort.close();
   });
