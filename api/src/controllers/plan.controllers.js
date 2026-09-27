@@ -78,8 +78,8 @@ const genPlan = async (req, res) => {
 
 // Move all planned events to schedule, move all other events to unscheduled, & goto Plan Start
 const savePlan = async (req, res) => {
-  await plan.update({ day: null }, false, "plan", req);
-  const ids = await plan.update({ plan: false }, null, null, req);
+  await plan.update({ day: null }, 0, "plan", req);
+  const ids = await plan.update({ plan: 0 }, null, null, req);
 
   await setting.batchSet(clearPlanSettings(0), req);
   return res.sendAndLog(ids);
