@@ -37,7 +37,7 @@ const reset = (req) =>
               dbtable: TableName.EVENT,
               action: LogAction.UPDATE,
               tableid: "*",
-              data: { plan: false },
+              data: { plan: 0 },
               error,
             },
             [

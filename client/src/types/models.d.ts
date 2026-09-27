@@ -54,8 +54,8 @@ export type EventData = EventClock & {
   byes?: string[];
   drops?: string[];
   isteam?: boolean;
-  /** Position in the plan queue, or false once unplanned */
-  plan?: number | false;
+  /** Position in the plan queue, or 0 once unplanned */
+  plan?: number;
 };
 
 export type EventDay = {

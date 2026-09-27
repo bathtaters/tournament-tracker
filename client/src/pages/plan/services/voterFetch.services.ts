@@ -149,7 +149,7 @@ export function updatePlanSave(
     commonApi.util.updateQueryData("event", undefined, (draft: Events) => {
       Object.keys(draft).forEach((id) => {
         if (!draft[id].plan) draft[id].day = null;
-        else draft[id].plan = false;
+        else draft[id].plan = 0;
       });
     }),
   );
@@ -159,7 +159,7 @@ export function updatePlanSave(
       dispatch(
         commonApi.util.updateQueryData("event", event, (draft: EventData) => {
           if (!draft.plan) draft.day = null;
-          else draft.plan = false;
+          else draft.plan = 0;
         }),
       ),
   );
@@ -213,7 +213,7 @@ export function updatePlanReset(
   const updateEvents = dispatch(
     commonApi.util.updateQueryData("event", undefined, (draft: Events) => {
       Object.keys(draft).forEach((id) => {
-        draft[id].plan = false;
+        draft[id].plan = 0;
       });
     }),
   );
@@ -222,7 +222,7 @@ export function updatePlanReset(
     (event: EventData["id"]) =>
       dispatch(
         commonApi.util.updateQueryData("event", event, (draft: EventData) => {
-          draft.plan = false;
+          draft.plan = 0;
         }),
       ),
   );
