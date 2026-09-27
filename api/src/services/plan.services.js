@@ -11,7 +11,7 @@ const {
   batchSet: setSetting,
   get: getSetting,
 } = require("../db/models/settings");
-const { toObjArray, asType } = require("./settings.services");
+const { asType } = require("./settings.services");
 const { abort, isActive } = require("../utils/multithread.utils");
 const {
   filterUnvoted,
@@ -326,7 +326,7 @@ const cancelPlan = async () => {
 };
 
 async function updateProg(prog, total) {
-  await setSetting(toObjArray({ planprogress: (100 * prog) / total }), null);
+  await setSetting(planSettings({ planprogress: (100 * prog) / total }), null);
   const status = await getSetting(["planstatus"]).then((r) => asType(r[0]));
   if (status !== 3)
     return cancelPlan().then(() => {
