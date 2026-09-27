@@ -113,7 +113,7 @@ export function useDeleteRound({
       openAlert(deleteRoundAlert, 0).then((r) => {
         if (r) {
           lock();
-          prevRound({ id, roundactive }).finally();
+          prevRound({ id, roundactive });
         }
       });
     }
