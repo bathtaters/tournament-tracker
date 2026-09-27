@@ -7,7 +7,12 @@ import {
   useSettingsQuery,
   useTeamQuery,
 } from "../../common/General/common.fetch";
-import { deleteUpdate, eventSet } from "./services/eventEditorFetch.services";
+import {
+  deleteUpdate,
+  eventSet,
+  teamDelete,
+  teamSet,
+} from "./services/eventEditorFetch.services";
 import { useCreatePlayerMutation } from "../players/player.fetch";
 import { debugLogging } from "../../assets/config";
 
@@ -44,8 +49,8 @@ export const eventEditorApi = commonApi.injectEndpoints({
       onQueryStarted: deleteUpdate,
     }),
 
-    setTeam: build.mutation<any, Partial<Team>>({
-      query: ({ id, ...body }) =>
+    setTeam: build.mutation<any, Partial<Team> & { _tempId?: string }>({
+      query: ({ id, _tempId, ...body }) =>
         id
           ? { url: `team/${id}`, method: "PATCH", body }
           : { url: `team`, method: "POST", body },
@@ -56,7 +61,7 @@ export const eventEditorApi = commonApi.injectEndpoints({
           }
         : undefined,
       invalidatesTags: getTags(["Team"]),
-      // onQueryStarted: teamSet,
+      onQueryStarted: teamSet,
     }),
 
     deleteTeam: build.mutation<any, Team["id"]>({
@@ -68,7 +73,7 @@ export const eventEditorApi = commonApi.injectEndpoints({
           }
         : undefined,
       invalidatesTags: getTags(["Team"]),
-      // onQueryStarted: deleteTeam,
+      onQueryStarted: teamDelete,
     }),
   }),
   overrideExisting: true,

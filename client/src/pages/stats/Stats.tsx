@@ -1,3 +1,4 @@
+import { Stats as StatData, Player, Team } from "types/models";
 import DataTable from "common/DataTable/DataTable";
 import RawData from "common/RawData/RawData";
 import Loading from "common/Loading/Loading";
@@ -14,7 +15,7 @@ import { apiPollMs } from "assets/config";
 
 type StatsProps = {
   eventid?: string;
-  onPlayerClick?: (id: string) => void;
+  onPlayerClick?: PlayerClickCallback;
   className?: string;
   highlightClass?: string;
   hideStats?: boolean;
@@ -112,3 +113,14 @@ export default function Stats({
     </div>
   );
 }
+
+export type PlayerClickCallback = (
+  id: string,
+  ev: React.MouseEvent<any>,
+  data: {
+    stats: StatData;
+    players: Record<Player["id"], Player>;
+    teams: Record<Team["id"], Team>;
+  },
+  idx: number,
+) => void;

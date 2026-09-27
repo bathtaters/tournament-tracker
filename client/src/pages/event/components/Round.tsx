@@ -30,6 +30,7 @@ export default function Round({ data, round, deleteRound }: RoundProps) {
             matchId={matchId}
             eventid={data.id}
             wincount={data.wincount}
+            eventTeam={data.team}
             isEditing={isEditing}
             key={matchId}
           />

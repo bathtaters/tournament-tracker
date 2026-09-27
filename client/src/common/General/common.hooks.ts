@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from "react";
 import type { Settings } from "types/models";
 import {
   useCallback,
@@ -44,7 +45,7 @@ export function usePrefetchBase() {
 /** Preload event data */
 export function usePrefetchEvent() {
   const prefetchEvent = matchApi.usePrefetch("event");
-  const prefetchMatch = matchApi.usePrefetch("match" as any);
+  const prefetchMatch = matchApi.usePrefetch("match");
   const prefetchStats = matchApi.usePrefetch("stats");
   return (id: string) => {
     prefetchEvent(id);
@@ -53,15 +54,26 @@ export function usePrefetchEvent() {
   };
 }
 
-export function useLocalStorage<K extends keyof Settings>(
+export function useLocalStorage<K extends string, T>(
   key: K,
-  initial?: Settings[K],
-) {
+  initial?: T,
+): [T, (value: SetParam<T>) => void, Dispatch<SetStateAction<T>>];
+export function useLocalStorage<
+  K extends keyof Settings,
+  T extends Settings[K] = Settings[K],
+>(
+  key: K,
+  initial?: T,
+): [T, (value: SetParam<T>) => void, Dispatch<SetStateAction<T>>];
+export function useLocalStorage<
+  K extends string,
+  T extends string | number | boolean,
+>(key: K, initial?: T) {
   const dispatch = useDispatch();
-  const [state, setState] = useState(getLocalVar(key) ?? initial);
+  const [state, setState] = useState<T>(getLocalVar(key) ?? initial);
 
   const updateValue = useCallback(
-    (value: SetParam<Settings[K]>) => {
+    (value: SetParam<T>) => {
       if (typeof value === "function") {
         setState((val) => {
           val = value(val);
@@ -152,17 +164,17 @@ export const useServerListValue = <T>(
   updateServerCallback: (value: T[]) => void,
   options: ServerValueOptions<T> = {},
 ) =>
-  useServerValue(listValue ?? [], updateServerCallback, {
+  useServerValue<T[]>(listValue ?? [], updateServerCallback, {
     equalsTest: deepEquals,
     ...options,
   });
 
 /** Scales height based on internal content (padding = vertical padding, everything is in pixels) */
-export function useScaleToFitRef(
+export function useScaleToFitRef<T extends HTMLElement = HTMLBaseElement>(
   depends: any[] = [],
   { padding = 0, minHeight = 32 } = {},
 ) {
-  const ref = useRef<HTMLBaseElement>(null);
+  const ref = useRef<T>(null);
 
   useLayoutEffect(
     () => {
@@ -178,11 +190,11 @@ export function useScaleToFitRef(
 }
 
 /** Runs 'onClick' when you click outside of ref element (if skip == falsy) */
-export function useOnClickOutsideRef(
+export function useOnClickOutsideRef<T extends HTMLElement = HTMLBaseElement>(
   onClick: () => any,
   { depends = [], skip = false } = {},
 ) {
-  const ref = useRef<HTMLBaseElement>(null);
+  const ref = useRef<T>(null);
   const _skip = skip || !ref.current;
 
   useEffect(() => {

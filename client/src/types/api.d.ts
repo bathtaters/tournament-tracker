@@ -1,7 +1,24 @@
-import type { MatchData, Player } from "./models";
+import type { MatchData, Player, Settings, EventDay } from "./models";
 import type { SwapDragData } from "./base";
 
 // API Body types
+
+export type GetScheduleBody = {
+  schedule: Record<EventDay["day"], EventDay>;
+  settings: Pick<
+    Settings,
+    | "dayslots"
+    | "datestart"
+    | "dateend"
+    | "planslots"
+    | "plandates"
+    | "planschedule"
+  >;
+};
+
+export type PlanStatus = Partial<
+  Pick<Settings, "planstatus" | "planprogress" | "planerror">
+>;
 
 export type UpdateMatchKey =
   | "wins"

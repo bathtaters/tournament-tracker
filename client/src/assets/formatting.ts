@@ -60,7 +60,7 @@ export const formatPercent = (decimal: number) =>
 export const formatCopyRound = (
   matchList: MatchData["id"][],
   matches: Record<MatchData["id"], MatchData>,
-  players: MatchData["players"],
+  players: Record<Player["id"], Player>,
 ) =>
   matchList
     .map(
@@ -86,7 +86,7 @@ export const formatCopyRound = (
 export const formatCopySeats = (
   matchList: MatchData["id"][],
   matches: Record<MatchData["id"], MatchData>,
-  players: MatchData["players"],
+  players: Record<Player["id"], Player>,
   playerspermatch: EventData["playerspermatch"],
 ) => {
   const playerList = [];

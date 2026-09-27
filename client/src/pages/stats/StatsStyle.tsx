@@ -13,10 +13,13 @@ export const BasicPlayerNameStyle = ({ player, team }: NameProps) =>
   player?.name ? (
     <>
       {player.hide && (
-        <EyeIcon isOpen={false} className="w-8 absolute left-2 opacity-80" />
+        <EyeIcon
+          isOpen={false}
+          className="w-8 absolute left-2 opacity-80 pointer-events-none"
+        />
       )}
       <div>
-        <span className={player.hide ? "opacity-80" : ""}>
+        <span className={player.hide ? "opacity-80 pointer-events-none" : ""}>
           {player.name ?? formatTeamName(team)}
         </span>
       </div>

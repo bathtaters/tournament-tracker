@@ -29,6 +29,8 @@ export type Settings = {
   planstatus: number;
   plandates: Date[];
   planslots: number;
+  planprogress?: number;
+  planerror?: string | null;
   planmenu: boolean;
   planschedule: boolean;
   showcredits: boolean;

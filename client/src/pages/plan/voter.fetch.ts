@@ -1,0 +1,143 @@
+import type { OverloadQuery, VarQryRtn } from "types/helpers";
+import type { Voter } from "types/models";
+import type { PlanStatus } from "types/api";
+import { commonApi, getTags } from "../../common/General/common.fetch";
+import {
+  updateEvents,
+  updatePlanGen,
+  updatePlanReset,
+  updatePlanSave,
+  updateVoters,
+  voterUpdate,
+} from "./services/voterFetch.services";
+import { debugLogging } from "../../assets/config";
+
+export const voterApi = commonApi.injectEndpoints({
+  endpoints: (build) => ({
+    voter: build.query({
+      query: (id = null) => `voter/${id || "all"}`,
+      transformResponse: debugLogging
+        ? (res) => {
+            console.log("VOTE", res);
+            return res;
+          }
+        : undefined,
+      providesTags: getTags(["Voter"]),
+    }),
+
+    planStatus: build.query({ query: () => "plan/status" }),
+
+    updateVoter: build.mutation({
+      query: ({ id, ...body }) => ({
+        url: `voter/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      transformResponse: debugLogging
+        ? (res) => {
+            console.log("UPD_VOTE", res);
+            return res;
+          }
+        : undefined,
+      invalidatesTags: getTags(["Voter"]),
+      onQueryStarted: voterUpdate,
+    }),
+
+    setVoters: build.mutation({
+      query: (voters) => ({ url: `voter`, method: "POST", body: { voters } }),
+      transformResponse: debugLogging
+        ? (res) => {
+            console.log("SET_VOTERS", res);
+            return res;
+          }
+        : undefined,
+      invalidatesTags: getTags(["Voter"]),
+      onQueryStarted: updateVoters,
+    }),
+
+    setEvents: build.mutation({
+      query: (events) => ({
+        url: `event/plan`,
+        method: "POST",
+        body: { events },
+      }),
+      transformResponse: debugLogging
+        ? (res) => {
+            console.log("PLAN_EVENTS", res);
+            return res;
+          }
+        : undefined,
+      invalidatesTags: getTags(["Event"], { addBase: ["Schedule"] }),
+      onQueryStarted: updateEvents,
+    }),
+
+    genPlan: build.mutation({
+      query: () => ({ url: `plan/generate`, method: "POST" }),
+      transformResponse: debugLogging
+        ? (res) => {
+            console.log("GEN_PLAN", res);
+            return res;
+          }
+        : undefined,
+      // invalidatesTags: getTags(["Event"], { addBase: ["Schedule", "Settings"], addAll: [] }),
+      onQueryStarted: updatePlanGen,
+    }),
+
+    savePlan: build.mutation({
+      query: () => ({ url: `plan/save`, method: "POST" }),
+      transformResponse: debugLogging
+        ? (res) => {
+            console.log("SAVE_PLAN", res);
+            return res;
+          }
+        : undefined,
+      invalidatesTags: getTags(["Event"], {
+        addBase: ["Schedule", "Settings"],
+      }),
+      onQueryStarted: updatePlanSave,
+    }),
+
+    resetPlan: build.mutation({
+      query: () => ({ url: "plan", method: "DELETE" }),
+      transformResponse: debugLogging
+        ? (res) => {
+            console.log("RESET_VOTE", res);
+            return res;
+          }
+        : undefined,
+      invalidatesTags: getTags(["Voter"], {
+        addBase: ["Schedule", "Settings"],
+        addAll: ["Event"],
+      }),
+      onQueryStarted: updatePlanReset,
+    }),
+  }),
+  overrideExisting: true,
+});
+
+export const {
+  useUpdateVoterMutation,
+  useSetVotersMutation,
+  useSetEventsMutation,
+  useGenPlanMutation,
+  useSavePlanMutation,
+  useResetPlanMutation,
+} = voterApi;
+
+export const useVoterQuery: OverloadQuery<
+  Voter,
+  Voter["id"],
+  typeof voterApi.useVoterQuery
+> = voterApi.useVoterQuery;
+
+export const usePlanStatusQuery = voterApi.usePlanStatusQuery as (
+  arg?: null,
+  options?: Parameters<typeof voterApi.usePlanStatusQuery>[1],
+) => VarQryRtn<PlanStatus, null>;
+
+export {
+  useEventQuery,
+  usePlayerQuery,
+  useSettingsQuery,
+} from "../../common/General/common.fetch";
+export { useUpdateSettingsMutation } from "../settings/settings.fetch";

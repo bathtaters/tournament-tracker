@@ -45,6 +45,9 @@ function EditEvent({
     openTeamModal,
     teamModal,
     isTeam,
+    recommendedRounds,
+    autoGenerateTeams,
+    defaultTeamSize,
     isLoading,
     error,
     notLoaded,
@@ -72,7 +75,7 @@ function EditEvent({
       {Boolean(data?.status) && <StatusStyle status={data.status} />}
 
       <InputForm
-        rows={editorLayout(hidePlayers)}
+        rows={editorLayout(hidePlayers, recommendedRounds)}
         data={data}
         baseData={baseData}
         onSubmit={submitHandler}
@@ -87,6 +90,8 @@ function EditEvent({
             teams={teams}
             isStarted={data?.status && data?.status > 1}
             openEditor={openTeamModal}
+            onAutoGenerate={autoGenerateTeams}
+            defaultTeamSize={defaultTeamSize}
           />
         ) : (
           <PlayerEditor

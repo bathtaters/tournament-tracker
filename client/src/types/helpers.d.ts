@@ -9,6 +9,15 @@ export type MutateApi<ReqBody, Ret = any> = Parameters<
   TypedMutationOnQueryStarted<Ret, ReqBody, BaseQueryFn<ReqBody, Ret>>
 >[1];
 
+/** Convert all Date objects in an object to strings */
+export type FlattenDates<T extends Record<string, any>> = {
+  [K in keyof T]: T[K] extends Date
+    ? string
+    : T[K] extends Record<string, any>
+      ? FlattenDates<T[K]>
+      : T[K];
+};
+
 /**
  * Type for RTK queries that can return a single object or multiple objects.
  *
@@ -28,7 +37,7 @@ export interface OverloadQuery<
   Hook extends TypedUseQuery<any, any, any>,
 > {
   (
-    arg: null,
+    arg?: null,
     options?: Parameters<Hook>[1],
   ): VarQryRtn<Record<ParentKey, BaseObj>, null>;
   (

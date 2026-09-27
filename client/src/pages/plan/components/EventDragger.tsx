@@ -9,7 +9,11 @@ import {
   SideButton,
   SideButtonWrapper,
 } from "../styles/PlanTabVoteStyles";
-import { canDrop, dataType } from "../services/planVote.services";
+import {
+  canDrop,
+  dataType,
+  type DragItem,
+} from "../services/planVote.services";
 import { arrayPad } from "../services/plan.utils";
 
 type EventDraggerProps = {
@@ -17,7 +21,7 @@ type EventDraggerProps = {
   eventIds?: string[];
   slots?: number;
   events?: Record<string, EventData>;
-  onDrop: (item: any) => void;
+  onDrop: (from: DragItem, to: DragItem) => void;
   onClick: (
     event: MouseEvent,
     id: string,

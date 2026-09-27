@@ -1,3 +1,4 @@
+import type { TeamType } from "types/models";
 import { Modal } from "common/Modal/Modal";
 import Counter from "common/Counter/Counter";
 import RawData from "common/RawData/RawData";
@@ -16,6 +17,7 @@ type MatchProps = {
   matchId?: string;
   eventid?: string;
   wincount?: number;
+  eventTeam?: TeamType;
   isEditing: boolean;
 };
 
@@ -23,6 +25,7 @@ export default function Match({
   eventid,
   matchId,
   wincount,
+  eventTeam,
   isEditing,
 }: MatchProps) {
   // Get component data
@@ -63,7 +66,7 @@ export default function Match({
             index={index}
             record={rankings?.[playerid]?.matchRecord}
             isEditing={isEditing}
-            {...getPlayerOrTeam(playerid, players, teams)}
+            {...getPlayerOrTeam(playerid, players, teams, eventTeam)}
             {...swapProps}
           />
         ))}

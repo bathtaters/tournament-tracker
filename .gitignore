@@ -11,6 +11,7 @@ dbServer.test.json
 
 # IDE config
 .idea
+.vscode
 
 # dev-only testing files
 /*/coverage

@@ -9,13 +9,13 @@ import {
 } from "../services/plan.utils";
 
 type DateSelectProps = {
-  range?: [string, string];
+  range?: [string, string] | string[];
   value: string[];
   onChange?: (dates: string[]) => void;
 };
 
 function DateMultiSelect({ range, value, onChange }: DateSelectProps) {
-  const dateList = useDateRangeList(range);
+  const dateList = useDateRangeList(range || []);
 
   const onUpdate = (idx: number) =>
     onChange(addOrRemove(dateList[idx], value).sort());

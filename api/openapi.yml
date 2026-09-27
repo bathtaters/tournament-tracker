@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Tournament Tracker API
-  version: "3.0.0"
+  version: "3.1.0"
   description: API for tournament-tracker app.
 servers:
   - url: /api/v2
@@ -33,7 +33,7 @@ paths:
       summary: Get API Metadata
       description: Provides metadata about the API connection and version.
       responses:
-        '200':
+        "200":
           description: API metadata object.
           content:
             application/json:
@@ -53,7 +53,7 @@ paths:
       summary: Test Error Endpoint
       description: Returns a sample error for testing purposes.
       responses:
-        '418':
+        "418":
           description: Sample error response.
           content:
             application/json:
@@ -70,7 +70,7 @@ paths:
       summary: Get All Data
       description: Retrieves all primary objects from the database.
       responses:
-        '200':
+        "200":
           description: All data objects.
           content:
             application/json:
@@ -92,7 +92,7 @@ paths:
       summary: Get Event Schedule
       description: Retrieves events organized by date, based on settings.planschedule.
       responses:
-        '200':
+        "200":
           description: Schedule data.
           content:
             application/json:
@@ -105,7 +105,7 @@ paths:
       summary: Get Planned Events Schedule
       description: Retrieves planned events organized by date.
       responses:
-        '200':
+        "200":
           description: Planned schedule data.
           content:
             application/json:
@@ -118,7 +118,7 @@ paths:
       summary: Get All Settings
       description: Retrieves all stored settings.
       responses:
-        '200':
+        "200":
           description: All settings.
           content:
             application/json:
@@ -136,7 +136,7 @@ paths:
               type: object
               additionalProperties: true
       responses:
-        '200':
+        "200":
           description: Update confirmation.
           content:
             application/json:
@@ -156,7 +156,7 @@ paths:
       summary: Fetch Session Cookie
       description: Establishes a session.
       responses:
-        '200':
+        "200":
           description: Session cookie is set.
     post:
       tags:
@@ -174,7 +174,7 @@ paths:
                 password:
                   type: string
       responses:
-        '200':
+        "200":
           description: Login status.
           content:
             application/json:
@@ -189,7 +189,7 @@ paths:
       summary: Player Logout
       description: Removes the player link from the current session.
       responses:
-        '200':
+        "200":
           description: Logout status.
           content:
             application/json:
@@ -205,7 +205,7 @@ paths:
       summary: Get Player from Session
       description: Retrieves player data associated with the current session cookie.
       responses:
-        '200':
+        "200":
           description: Player data.
           content:
             application/json:
@@ -232,7 +232,7 @@ paths:
                 session:
                   type: string
       responses:
-        '200':
+        "200":
           description: Reset status.
           content:
             application/json:
@@ -250,7 +250,7 @@ paths:
       summary: Get All Voter Data
       description: Retrieves all vote data, organized by Player ID.
       responses:
-        '200':
+        "200":
           description: All voter data.
           content:
             application/json:
@@ -271,7 +271,7 @@ paths:
                 id:
                   type: string
       responses:
-        '200':
+        "200":
           description: Confirmation of voter addition.
           content:
             application/json:
@@ -293,7 +293,7 @@ paths:
       summary: Get Player's Vote Data
       description: Retrieves vote data for a specific player.
       responses:
-        '200':
+        "200":
           description: Player's vote data.
           content:
             application/json:
@@ -310,7 +310,7 @@ paths:
             schema:
               type: object
       responses:
-        '200':
+        "200":
           description: Confirmation of update.
           content:
             application/json:
@@ -323,7 +323,7 @@ paths:
       summary: Get Plan Status
       description: Retrieves the current status number of the plan.
       responses:
-        '200':
+        "200":
           description: Plan status.
           content:
             application/json:
@@ -339,7 +339,7 @@ paths:
       summary: Save Plan
       description: Adds the current plan to the schedule and de-schedules any existing events.
       responses:
-        '200':
+        "200":
           description: A list of events from the saved plan.
           content:
             application/json:
@@ -354,7 +354,7 @@ paths:
       summary: Generate Plan
       description: Automatically sets dates for the events in the current plan.
       responses:
-        '200':
+        "200":
           description: A list of events from the generated plan.
           content:
             application/json:
@@ -369,7 +369,7 @@ paths:
       summary: Clear Plan
       description: Removes all voters and events from the current plan.
       responses:
-        '200':
+        "200":
           description: Clear confirmation.
           content:
             application/json:
@@ -385,7 +385,7 @@ paths:
       summary: Get All Events
       description: Retrieves data for all events, indexed by ID.
       responses:
-        '200':
+        "200":
           description: All event data.
           content:
             application/json:
@@ -403,7 +403,7 @@ paths:
             schema:
               type: object
       responses:
-        '201':
+        "201":
           description: ID of the newly created event.
           content:
             application/json:
@@ -429,7 +429,7 @@ paths:
                   items:
                     type: string
       responses:
-        '200':
+        "200":
           description: List of event IDs in the plan.
           content:
             application/json:
@@ -453,7 +453,7 @@ paths:
       summary: Get Event Data
       description: Retrieves data for a specific event.
       responses:
-        '200':
+        "200":
           description: Event data.
           content:
             application/json:
@@ -470,7 +470,7 @@ paths:
             schema:
               type: object
       responses:
-        '200':
+        "200":
           description: Confirmation of update.
           content:
             application/json:
@@ -482,7 +482,7 @@ paths:
       summary: Delete Event
       description: Deletes an event from the database.
       responses:
-        '200':
+        "200":
           description: Confirmation of deletion.
           content:
             application/json:
@@ -498,7 +498,7 @@ paths:
       summary: Get All-Event Stats
       description: Retrieves player stats from all events.
       responses:
-        '200':
+        "200":
           description: All-event stats.
           content:
             application/json:
@@ -517,7 +517,7 @@ paths:
       summary: Get Event Stats
       description: Retrieves player stats from a specific event.
       responses:
-        '200':
+        "200":
           description: Event-specific stats.
           content:
             application/json:
@@ -536,7 +536,7 @@ paths:
       summary: Get Event Clock Data
       description: Retrieves clock data (limit, start time, etc.) for an event.
       responses:
-        '200':
+        "200":
           description: Event clock data.
           content:
             application/json:
@@ -561,7 +561,7 @@ paths:
       summary: Control Event Clock
       description: Executes a clock action (run, pause, reset) for an event.
       responses:
-        '200':
+        "200":
           description: Current event data after action.
           content:
             application/json:
@@ -585,7 +585,7 @@ paths:
       summary: Add Round to Event
       description: Adds a new round of matches to an event.
       responses:
-        '200':
+        "200":
           description: Confirmation of new round.
           content:
             application/json:
@@ -606,7 +606,7 @@ paths:
       summary: Delete Last Round
       description: Deletes the most recent round from an event.
       responses:
-        '200':
+        "200":
           description: Confirmation of round deletion.
           content:
             application/json:
@@ -624,7 +624,7 @@ paths:
       summary: Reset Player Credits from All Events
       description: Resets player credits based on their performance in all finished events.
       responses:
-        '200':
+        "200":
           description: Player credits after reset.
           content:
             application/json:
@@ -636,7 +636,7 @@ paths:
       summary: Reset All Player Credits to Zero
       description: Resets all player credits to zero.
       responses:
-        '200':
+        "200":
           description: Player credits after reset.
           content:
             application/json:
@@ -655,7 +655,7 @@ paths:
       summary: Add Event Credits to Players
       description: Adds credits from a specific event to the participating players.
       responses:
-        '200':
+        "200":
           description: Player credits after update.
           content:
             application/json:
@@ -667,7 +667,7 @@ paths:
       summary: Remove Event Credits from Players
       description: Removes credits from a specific event from the participating players.
       responses:
-        '200':
+        "200":
           description: Player credits after update.
           content:
             application/json:
@@ -680,7 +680,7 @@ paths:
       summary: Get All Matches
       description: Retrieves data for all matches, indexed by ID.
       responses:
-        '200':
+        "200":
           description: All match data.
           content:
             application/json:
@@ -705,7 +705,7 @@ paths:
                   playerid:
                     type: string
       responses:
-        '200':
+        "200":
           description: Event ID of the matches.
           content:
             application/json:
@@ -727,7 +727,7 @@ paths:
       summary: Get Match Data
       description: Retrieves data for a specific match.
       responses:
-        '200':
+        "200":
           description: Match data.
           content:
             application/json:
@@ -757,7 +757,7 @@ paths:
                   items:
                     type: string
       responses:
-        '200':
+        "200":
           description: Confirmation of report.
           content:
             application/json:
@@ -774,7 +774,7 @@ paths:
       summary: Clear Match Result
       description: Clears the result of a previously reported match.
       responses:
-        '200':
+        "200":
           description: Confirmation of clear.
           content:
             application/json:
@@ -796,7 +796,7 @@ paths:
             schema:
               type: object
       responses:
-        '200':
+        "200":
           description: Confirmation of update.
           content:
             application/json:
@@ -830,7 +830,7 @@ paths:
                 undrop:
                   type: boolean
       responses:
-        '200':
+        "200":
           description: Confirmation of drop/undrop action.
           content:
             application/json:
@@ -848,7 +848,7 @@ paths:
       summary: Get All Players
       description: Retrieves data for all players, indexed by ID.
       responses:
-        '200':
+        "200":
           description: All player data.
           content:
             application/json:
@@ -866,7 +866,7 @@ paths:
             schema:
               type: object
       responses:
-        '201':
+        "201":
           description: ID of the newly created player.
           content:
             application/json:
@@ -888,7 +888,7 @@ paths:
       summary: Get Player Data
       description: Retrieves data for a specific player.
       responses:
-        '200':
+        "200":
           description: Player data.
           content:
             application/json:
@@ -905,7 +905,7 @@ paths:
             schema:
               type: object
       responses:
-        '200':
+        "200":
           description: Confirmation of update.
           content:
             application/json:
@@ -920,7 +920,7 @@ paths:
       summary: Delete Player
       description: Deletes a player from the database.
       responses:
-        '200':
+        "200":
           description: Confirmation of deletion.
           content:
             application/json:
@@ -942,7 +942,7 @@ paths:
       summary: Get Player's Events
       description: Retrieves a list of event IDs the player is participating in.
       responses:
-        '200':
+        "200":
           description: List of event IDs.
           content:
             application/json:
@@ -963,7 +963,7 @@ paths:
       summary: Get Player's Matches
       description: Retrieves data for a player's matches, organized by event.
       responses:
-        '200':
+        "200":
           description: Player's match data.
           content:
             application/json:
@@ -982,7 +982,7 @@ paths:
       summary: Reset Player Password
       description: Erases a player's password and returns a reset session key.
       responses:
-        '200':
+        "200":
           description: Password reset session key.
           content:
             application/json:
@@ -998,7 +998,7 @@ paths:
       summary: Get All Teams
       description: Retrieves data for all teams, indexed by ID.
       responses:
-        '200':
+        "200":
           description: All team data.
           content:
             application/json:
@@ -1017,7 +1017,7 @@ paths:
       summary: Get Team Data
       description: Retrieves data for a specific team.
       responses:
-        '200':
+        "200":
           description: Team data.
           content:
             application/json:
@@ -1034,7 +1034,7 @@ paths:
             schema:
               type: object
       responses:
-        '200':
+        "200":
           description: Confirmation of update.
           content:
             application/json:
@@ -1049,7 +1049,7 @@ paths:
       summary: Delete Team
       description: Deletes a team from the database.
       responses:
-        '200':
+        "200":
           description: Confirmation of deletion.
           content:
             application/json:
@@ -1070,7 +1070,7 @@ paths:
             schema:
               type: object
       responses:
-        '201':
+        "201":
           description: ID of the newly created team.
           content:
             application/json:
@@ -1092,7 +1092,7 @@ paths:
       summary: Get Event Teams
       description: Retrieves all teams participating in a specific event.
       responses:
-        '200':
+        "200":
           description: List of teams in the event.
           content:
             application/json:

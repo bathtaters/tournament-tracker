@@ -11,13 +11,13 @@ const {
   batchSet: setSetting,
   get: getSetting,
 } = require("../db/models/settings");
-const { toObjArray, asType } = require("./settings.services");
+const { asType } = require("./settings.services");
 const { abort, isActive } = require("../utils/multithread.utils");
 const {
   filterUnvoted,
   getVoterSlots,
   resetEvent,
-  planStatus,
+  planSettings,
   getEventScores,
   slotToEvent,
 } = require("../utils/plan.utils");
@@ -37,12 +37,19 @@ if (parentPort) {
       // Update DB with result
       if (planData != null) {
         await multiset(planData, req);
-        await setSetting(planStatus(4, 100), req);
+        await setSetting(
+          planSettings({ planstatus: 4, planprogress: 100 }),
+          req,
+        );
       }
     } catch (err) {
-      await setSetting(planStatus(2), req);
+      await setSetting(
+        planSettings({
+          planerror: err.message || "Plan generator failed.",
+        }),
+        req,
+      );
       logger.error("Plan generator failed in genPlanAsync:", err);
-      throw err;
     }
     parentPort.close();
   });
@@ -319,7 +326,7 @@ const cancelPlan = async () => {
 };
 
 async function updateProg(prog, total) {
-  await setSetting(toObjArray({ planprogress: (100 * prog) / total }), null);
+  await setSetting(planSettings({ planprogress: (100 * prog) / total }), null);
   const status = await getSetting(["planstatus"]).then((r) => asType(r[0]));
   if (status !== 3)
     return cancelPlan().then(() => {

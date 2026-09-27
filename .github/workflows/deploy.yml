@@ -187,7 +187,7 @@ jobs:
           podman stop -i ${{ env.PROC_NAME }}-api
           podman rm -i ${{ env.PROC_NAME }}-api
           podman run --memory 512m -d --name ${{ env.PROC_NAME }}-api \
-            -p ${{ env.PROC_PORT }}:9090 \
+            -p 127.0.0.1:${{ env.PROC_PORT }}:9090 \
             -v ~/.postgresql:/home/appuser/.postgresql:Z,ro \
             ${{ env.PROC_NAME }}-api
           EOF
@@ -200,7 +200,7 @@ jobs:
             echo "New container failed to stay up — rolling back"
             podman rm -f ${{ env.PROC_NAME }}-api
             podman run --memory 512m -d --name ${{ env.PROC_NAME }}-api \
-              -p ${{ env.PROC_PORT }}:9090 \
+              -p 127.0.0.1:${{ env.PROC_PORT }}:9090 \
               -v ~/.postgresql:/home/appuser/.postgresql:Z,ro \
               ${{ env.PROC_NAME }}-api:previous
             exit 1

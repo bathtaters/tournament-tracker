@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { FormInput, HandleChange, Setter } from "../InputForm.d";
 import { ElementInput } from "./OtherElements";
 import { ElementStyle, LockStyle } from "../InputFormStyles";
@@ -8,6 +9,7 @@ type InputElementProps<T> = FormInput<T> & {
   handleChange?: HandleChange<T>;
   setter?: Setter<T>;
   isFragment?: boolean;
+  description?: ReactNode;
 };
 
 export default function InputElement<Data extends Record<string, any>>({
@@ -17,6 +19,7 @@ export default function InputElement<Data extends Record<string, any>>({
   labelClass,
   inputClass,
   inputWrapperClass,
+  description,
   ...props
 }: InputElementProps<Data>) {
   // Get element props
@@ -38,6 +41,11 @@ export default function InputElement<Data extends Record<string, any>>({
         wrapperClass={inputWrapperClass}
       />
       {inputProps.disabled && <LockStyle />}
+      {description != null && description !== false && (
+        <div className="text-xs text-accent font-light ml-2 self-center">
+          {description}
+        </div>
+      )}
     </ElementStyle>
   );
 }

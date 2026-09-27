@@ -30,7 +30,9 @@ function useDndController(
         !disable &&
         droppable &&
         dropCheck(monitor.getItemType(), dropped, item),
-      drop: (dropped, monitor) => monitor.didDrop() || onDrop(dropped, item),
+      drop: (dropped, monitor) => {
+        if (!monitor.didDrop()) onDrop(dropped, item);
+      },
       collect: (monitor) => ({
         isOver: monitor.isOver({ shallow: true }),
         canDrop: monitor.canDrop(),

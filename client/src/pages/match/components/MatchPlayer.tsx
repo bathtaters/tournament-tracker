@@ -60,9 +60,27 @@ function MatchPlayer({
         className={playerBoxStyle}
         disabled={!isEditing}
       >
-        <NameStyle linkTo={!isEditing && player ? playerUrl : null}>
-          {player?.name ?? formatTeamName(team) ?? "?"}
-        </NameStyle>
+        {!player && team ? (
+          <div
+            className="tooltip"
+            data-tip={team.members
+              .map((m) => m.name)
+              .filter(Boolean)
+              .join(", ")}
+          >
+            <NameStyle linkTo={null}>{formatTeamName(team) ?? "?"}</NameStyle>
+          </div>
+        ) : (
+          <NameStyle linkTo={!isEditing && player ? playerUrl : null}>
+            {player?.name ?? "?"}
+          </NameStyle>
+        )}
+
+        {player && team && (
+          <div className="text-xs font-thin text-neutral-content -mt-1 mb-1">
+            {formatTeamName(team)}
+          </div>
+        )}
 
         <PlayerInfoStyle isDrop={isDrop}>
           {isDrop ? "Dropped" : formatRecord(record)}

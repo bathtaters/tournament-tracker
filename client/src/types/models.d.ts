@@ -1,6 +1,8 @@
+import type { Interval } from "./base";
+import type { FlattenDates } from "./helpers";
 import { enums } from "assets/validation";
 
-export type Settings = {
+export type Settings = FlattenDates<{
   title: string;
   showrawjson: boolean;
   autofillsize: number;
@@ -11,37 +13,58 @@ export type Settings = {
   planstatus: number;
   plandates: Date[];
   planslots: number;
+  planprogress?: number;
+  planerror?: string | null;
   planmenu: boolean;
   planschedule: boolean;
   showcredits: boolean;
   showstandings: boolean;
-};
+}>;
 
 export type EventFormat = keyof typeof enums.EventFormat;
 export type TeamType = keyof typeof enums.TeamType | null;
 
-export type EventData = {
+export type EventClock = {
   id: string;
+  clocklimit?: Interval;
+  clockstart?: Date;
+  clockmod?: Interval;
+};
+
+export type EventData = EventClock & {
   title: string;
   /** ISO Format */
   day: string;
+  slot: number;
   format: EventFormat;
   team: TeamType;
   status?: number;
   players: string[];
+  playercount: number;
+  teamsize: number;
   roundactive: number;
   roundcount?: number;
   wincount: number;
   playerspermatch: number;
-  teamsize: number;
+  notes: string;
+  link: string;
+  allreported?: boolean;
   anyreported?: boolean;
   matches?: string[][];
+  byes?: string[];
   drops?: string[];
   isteam?: boolean;
+  /** Position in the plan queue, or 0 once unplanned */
+  plan?: number;
+};
+
+export type EventDay = {
+  day: string;
+  eventslots: Record<EventData["id"], number>;
 };
 
 export type Schedule = {
-  day: string;
+  day: EventDay["day"];
   events: EventData["id"][];
 };
 
@@ -78,6 +101,7 @@ export type MatchData = {
   maxwins: number;
   totalwins: number;
   isDraw?: boolean;
+  teamid?: string;
 };
 
 export type PlayerEventData = {
@@ -93,12 +117,32 @@ export type MatchReport = Pick<MatchData, "id" | "eventid"> &
 export type PlayerRecord = [win: number, loss: number, draw: number];
 
 type StatsEntry = {
-  matchRecord: [number, number, number];
+  eventids: EventData["id"][];
+  matchRecord: PlayerRecord;
+  gameRecord: PlayerRecord;
+  matchScore: number;
+  gameScore: number;
+  matchRate: number;
   gameRate: number;
   oppMatch: number;
   oppGame: number;
 };
 
-export type Stats = Record<Player["id"], StatsEntry> & {
+export type Stats = {
+  [playerid: Player["id"]]: StatsEntry;
   ranking: Player["id"][];
+  noStats?: boolean;
+};
+
+export type Voter = {
+  id: string;
+  idx: number;
+  /** ISO Format */
+  days: string[];
+  events: EventData["id"][];
+};
+
+export type Plan = {
+  voters: Voter["id"][];
+  events: EventData["id"][];
 };

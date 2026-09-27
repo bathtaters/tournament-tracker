@@ -23,7 +23,7 @@ export default function Counter({
     throttleDelay: counter.updateDelay,
   });
 
-  const displayValue = `${val ?? "-"}${typeof suffix === "function" ? suffix(val) : suffix || ""}`;
+  const displayValue = `${localVal ?? "-"}${typeof suffix === "function" ? suffix(localVal) : suffix || ""}`;
   const incrementHandler = () => setLocal((localVal + 1) % (maxVal + 1));
 
   if (!isEditing) return <span className={className}>{displayValue}</span>;

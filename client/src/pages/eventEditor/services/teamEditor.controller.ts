@@ -13,6 +13,7 @@ import {
   useSetTeamMutation,
 } from "../eventEditor.fetch";
 import { deleteTeamAlert } from "../../../assets/alerts";
+import { chunkArray, randomArray } from "./listEditor.utils";
 
 export default function useTeamEditorController(
   teamList: Team["players"],
@@ -35,32 +36,39 @@ export default function useTeamEditorController(
     [open],
   );
 
-  // Create/Update/Delete teams
-  const saveTeam = (team: Partial<Team>) => {
-    if (!selectedTeam.players.length) return close(true);
-
-    let tempId: string | undefined;
-    if (!team.id) {
-      // Optimistic update
-      tempId = nextTempId("team", teamList);
-      updateTeamList((teams) => teams.concat(tempId));
-    }
-
-    // API call
-    setTeam(selectedTeam)
+  // Create a team
+  const pushTeam = (team: Partial<Team>, tempId?: string) => {
+    if (tempId) updateTeamList((teams) => teams.concat(tempId));
+    setTeam(tempId ? { ...team, _tempId: tempId } : team)
       .then(({ data }) => {
-        // Replace tempID with response
         if (tempId && data?.id)
           updateTeamList((teams) =>
             teams.filter((id) => id !== tempId).concat(data.id),
           );
       })
       .catch(() => {
-        // Rollback
         if (tempId)
           updateTeamList((teams) => teams.filter((id) => id !== tempId));
       });
+  };
+
+  // Create/Update/Delete teams
+  const saveTeam = (team: Partial<Team>) => {
+    if (!selectedTeam.players.length) return close(true);
+    pushTeam(selectedTeam, team.id ? undefined : nextTempId("team", teamList));
     close(true);
+  };
+
+  // Shuffle the active player pool into teams of `size` and create each.
+  const autoGenerateTeams = (size: number, playerIds: Team["players"]) => {
+    if (!playerIds?.length) return;
+    const groups = chunkArray(randomArray(playerIds), size);
+    const accumulating = [...teamList];
+    groups.forEach((players) => {
+      const tempId = nextTempId("team", accumulating);
+      accumulating.push(tempId);
+      pushTeam({ players }, tempId);
+    });
   };
 
   const removeTeam = useCallback(
@@ -85,6 +93,7 @@ export default function useTeamEditorController(
     updateSelectedTeam,
     saveTeam,
     removeTeam,
+    autoGenerateTeams,
     teamUpdating,
     openTeamModal,
     teamModal: { lock, backend },

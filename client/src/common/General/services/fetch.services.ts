@@ -8,13 +8,11 @@ import { getBaseData } from "../../../core/services/validation.services";
 export const defaultSettings = getBaseData("settings").defaults;
 
 // Handle local data
-export const getLocalVar = <K extends keyof Settings>(key: K) =>
-  JSON.parse(
-    localStorage.getItem(`${settings.localPrefix}-${key}`),
-  ) as Settings[K];
-export const setLocalVar = <K extends keyof Settings>(
-  key: K,
-  value: Settings[K],
+export const getLocalVar = <T = any>(key: string) =>
+  JSON.parse(localStorage.getItem(`${settings.localPrefix}-${key}`)) as T;
+export const setLocalVar = (
+  key: string,
+  value: any,
   dispatch: Dispatch<any>,
 ) => {
   localStorage.setItem(`${settings.localPrefix}-${key}`, JSON.stringify(value));
