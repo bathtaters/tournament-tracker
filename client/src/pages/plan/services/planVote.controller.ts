@@ -8,7 +8,7 @@ import { useOpenAlert } from "../../../common/General/common.hooks";
 export const planTabs = ["Vote", "View"];
 export const finishTabs = ["Results", "Votes"];
 
-export default function usePlanViewController() {
+export default function usePlanViewController(isFinished = false) {
   const {
     voter,
     voters,
@@ -32,10 +32,12 @@ export default function usePlanViewController() {
     if (answer) savePlan(undefined);
   };
 
-  const [tab, selectTab] = useState(!isLoading && access > 2 && !voter ? 1 : 0);
+  const [tab, selectTab] = useState(
+    !isLoading && !isFinished && access > 2 && !voter ? 1 : 0,
+  );
   useEffect(() => {
-    if (!isLoading && access > 2 && !voter) selectTab(1);
-  }, [isLoading, access, voter]);
+    if (!isLoading && !isFinished && access > 2 && !voter) selectTab(1);
+  }, [isLoading, isFinished, access, voter]);
 
   return {
     data: tab === 1 ? voters : voter,
@@ -53,7 +55,7 @@ export default function usePlanViewController() {
     handleSave,
     setStatus,
 
-    showTabs: Boolean(access && voter && access > 2),
+    showTabs: Boolean(access && (voter || isFinished) && access > 2),
     tab: access > 2 ? tab : 0,
     selectTab,
   };

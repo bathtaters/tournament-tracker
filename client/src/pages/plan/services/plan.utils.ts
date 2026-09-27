@@ -73,7 +73,7 @@ export function usePlanSettings(pollStatus = false) {
   );
 
   const setStatus = useCallback(
-    (planstatus: number) => () => updateSettings({ planstatus }),
+    (planstatus: number) => () => updateSettings({ planstatus, planerror: "" }),
     [updateSettings],
   );
 

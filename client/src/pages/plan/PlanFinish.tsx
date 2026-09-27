@@ -27,7 +27,7 @@ function PlanFinish() {
     showTabs,
     tab,
     selectTab,
-  } = usePlanViewController();
+  } = usePlanViewController(true);
 
   return (
     <PlanWrapperStyle>
