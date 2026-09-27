@@ -1,22 +1,28 @@
-import React from "react";
+import type { ReactNode, ElementType } from "react";
 export { GeneralSectionStyle } from "./PlanTabVoteStyles";
 
 const emptyPlaceholder = "...";
 
-export const ViewWrapperStyle = ({ children }) => (
+export const ViewWrapperStyle = ({ children }: { children?: ReactNode }) => (
   <div className="flex flex-row flex-wrap justify-center items-stretch gap-4 m-4">
     {children}
   </div>
 );
 
-export const ViewCellStyle = ({ header, children }) => (
+export const ViewCellStyle = ({
+  header,
+  children,
+}: {
+  header?: ReactNode;
+  children?: ReactNode;
+}) => (
   <div className="w-56 border border-secondary/70 flex flex-col justify-start items-center py-2 px-4 rounded-md">
     <h4 className=" text-secondary">{header || emptyPlaceholder}</h4>
     {children}
   </div>
 );
 
-export const ViewErrors = ({ errors }) =>
+export const ViewErrors = ({ errors }: { errors?: ReactNode[] }) =>
   !errors?.length ? null : (
     <div className="flex flex-wrap justify-center items-center gap-2 mt-4">
       <h4 className="text-error">Issues:</h4>
@@ -32,8 +38,14 @@ export const ViewCellSectionStyle = ({
   open = true,
   emptyHeader,
   ListTag = "ul",
+}: {
+  header?: ReactNode;
+  children?: ReactNode;
+  open?: boolean;
+  emptyHeader?: ReactNode;
+  ListTag?: ElementType;
 }) => {
-  const isEmpty = !children?.length;
+  const isEmpty = Array.isArray(children) ? !children.length : !children;
   return (
     <details
       className={`collapse my-2 ${isEmpty ? "pointer-events-none opacity-80" : "collapse-arrow"}`}
@@ -51,11 +63,19 @@ export const ViewCellSectionStyle = ({
   );
 };
 
-export const ViewDateStyle = ({ dateRange }) => (
+export const ViewDateStyle = ({ dateRange }: { dateRange: string[] }) => (
   <li className="list-disc">{dateRange.join(" - ")}</li>
 );
 
-export const ViewEventStyle = ({ title, isRegistered, isUnvoted }) => (
+export const ViewEventStyle = ({
+  title,
+  isRegistered,
+  isUnvoted,
+}: {
+  title?: ReactNode;
+  isRegistered?: boolean;
+  isUnvoted?: boolean;
+}) => (
   <li
     className={
       isUnvoted ? "list-inside ml-4 opacity-80 italic" : "list-decimal"
@@ -72,7 +92,15 @@ export const ViewEventStyle = ({ title, isRegistered, isUnvoted }) => (
   </li>
 );
 
-export const ViewScoreStyle = ({ title, score, children }) => {
+export const ViewScoreStyle = ({
+  title,
+  score,
+  children,
+}: {
+  title?: string;
+  score: number;
+  children?: ReactNode;
+}) => {
   const rounded = Math.round(score * 100);
   return (
     <div className="w-full text-center font-light text-sm mt-2">
@@ -81,7 +109,7 @@ export const ViewScoreStyle = ({ title, score, children }) => {
         aria-valuenow={rounded}
         role="progressbar"
         className="radial-progress"
-        style={{ "--value": rounded, "--size": "4rem" }}
+        style={{ "--value": rounded, "--size": "4rem" } as any}
       >
         {score.toLocaleString(undefined, {
           style: "percent",

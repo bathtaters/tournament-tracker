@@ -1,7 +1,8 @@
 import type { Interval } from "./base";
+import type { FlattenDates } from "./helpers";
 import { enums } from "assets/validation";
 
-export type Settings = {
+export type Settings = FlattenDates<{
   title: string;
   showrawjson: boolean;
   autofillsize: number;
@@ -16,7 +17,7 @@ export type Settings = {
   planschedule: boolean;
   showcredits: boolean;
   showstandings: boolean;
-};
+}>;
 
 export type EventFormat = keyof typeof enums.EventFormat;
 export type TeamType = keyof typeof enums.TeamType | null;
@@ -51,6 +52,8 @@ export type EventData = EventClock & {
   byes?: string[];
   drops?: string[];
   isteam?: boolean;
+  /** Position in the plan queue, or false once unplanned */
+  plan?: number | false;
 };
 
 export type EventDay = {
@@ -127,4 +130,17 @@ export type Stats = {
   [playerid: Player["id"]]: StatsEntry;
   ranking: Player["id"][];
   noStats?: boolean;
+};
+
+export type Voter = {
+  id: string;
+  idx: number;
+  /** ISO Format */
+  days: string[];
+  events: EventData["id"][];
+};
+
+export type Plan = {
+  voters: Voter["id"][];
+  events: EventData["id"][];
 };

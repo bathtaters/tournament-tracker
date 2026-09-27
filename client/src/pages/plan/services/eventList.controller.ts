@@ -1,3 +1,4 @@
+import type { EventData } from "types/models";
 import { useState } from "react";
 import { useEventQuery } from "../voter.fetch";
 import { useSetEventMutation } from "../../eventEditor/eventEditor.fetch";
@@ -9,10 +10,13 @@ import {
 import { createLockCaption } from "../../../assets/constants";
 import { useModal } from "../../../common/Modal/Modal";
 
-export default function useEventList(value, onChange) {
+export default function useEventList(
+  value: EventData["id"][],
+  onChange: (ids: EventData["id"][]) => void,
+) {
   // Event Editor modal
   const { backend, open, close, lock } = useModal();
-  const [editId, setEditId] = useState(null);
+  const [editId, setEditId] = useState<EventData["id"] | null>(null);
 
   // Load DB
   const query = useEventQuery();
@@ -24,7 +28,7 @@ export default function useEventList(value, onChange) {
   useLockScreen(isAddingEvent, createLockCaption("Event"));
 
   // Add new event to DB
-  const createEvent = async (title) => {
+  const createEvent = async (title: string) => {
     // Check for errors
     if (!title.trim()) return false;
 
@@ -36,11 +40,11 @@ export default function useEventList(value, onChange) {
     const eventData = { title };
     const result = await createEventMutation(eventData);
     if (result?.error || !result?.data?.id)
-      throw itemCreateError("Event", result, eventData);
+      throw itemCreateError("Event", result, { name: title });
     return result.data;
   };
 
-  const filter = ({ status }) => status < 2;
+  const filter = ({ status }: EventData) => status < 2;
 
   return {
     editId,
@@ -55,7 +59,7 @@ export default function useEventList(value, onChange) {
       filter,
       displayValue: "title",
 
-      onClick: (id) => () => {
+      onClick: (id: EventData["id"]) => () => {
         setEditId(id);
         open();
       },

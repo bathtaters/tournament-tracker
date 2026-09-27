@@ -1,10 +1,7 @@
-import {
-  commonApi,
-  getTags,
-  useEventQuery,
-  usePlayerQuery,
-  useSettingsQuery,
-} from "../../common/General/common.fetch";
+import type { OverloadQuery, VarQryRtn } from "types/helpers";
+import type { Voter } from "types/models";
+import type { PlanStatus } from "types/api";
+import { commonApi, getTags } from "../../common/General/common.fetch";
 import {
   updateEvents,
   updatePlanGen,
@@ -13,7 +10,6 @@ import {
   updateVoters,
   voterUpdate,
 } from "./services/voterFetch.services";
-import { useUpdateSettingsMutation } from "../settings/settings.fetch";
 import { debugLogging } from "../../assets/config";
 
 export const voterApi = commonApi.injectEndpoints({
@@ -21,7 +17,10 @@ export const voterApi = commonApi.injectEndpoints({
     voter: build.query({
       query: (id = null) => `voter/${id || "all"}`,
       transformResponse: debugLogging
-        ? (res) => console.log("VOTE", res) || res
+        ? (res) => {
+            console.log("VOTE", res);
+            return res;
+          }
         : undefined,
       providesTags: getTags(["Voter"]),
     }),
@@ -35,7 +34,10 @@ export const voterApi = commonApi.injectEndpoints({
         body,
       }),
       transformResponse: debugLogging
-        ? (res) => console.log("UPD_VOTE", res) || res
+        ? (res) => {
+            console.log("UPD_VOTE", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(["Voter"]),
       onQueryStarted: voterUpdate,
@@ -44,7 +46,10 @@ export const voterApi = commonApi.injectEndpoints({
     setVoters: build.mutation({
       query: (voters) => ({ url: `voter`, method: "POST", body: { voters } }),
       transformResponse: debugLogging
-        ? (res) => console.log("SET_VOTERS", res) || res
+        ? (res) => {
+            console.log("SET_VOTERS", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(["Voter"]),
       onQueryStarted: updateVoters,
@@ -57,7 +62,10 @@ export const voterApi = commonApi.injectEndpoints({
         body: { events },
       }),
       transformResponse: debugLogging
-        ? (res) => console.log("PLAN_EVENTS", res) || res
+        ? (res) => {
+            console.log("PLAN_EVENTS", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(["Event"], { addBase: ["Schedule"] }),
       onQueryStarted: updateEvents,
@@ -66,7 +74,10 @@ export const voterApi = commonApi.injectEndpoints({
     genPlan: build.mutation({
       query: () => ({ url: `plan/generate`, method: "POST" }),
       transformResponse: debugLogging
-        ? (res) => console.log("GEN_PLAN", res) || res
+        ? (res) => {
+            console.log("GEN_PLAN", res);
+            return res;
+          }
         : undefined,
       // invalidatesTags: getTags(["Event"], { addBase: ["Schedule", "Settings"], addAll: [] }),
       onQueryStarted: updatePlanGen,
@@ -75,7 +86,10 @@ export const voterApi = commonApi.injectEndpoints({
     savePlan: build.mutation({
       query: () => ({ url: `plan/save`, method: "POST" }),
       transformResponse: debugLogging
-        ? (res) => console.log("SAVE_PLAN", res) || res
+        ? (res) => {
+            console.log("SAVE_PLAN", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(["Event"], {
         addBase: ["Schedule", "Settings"],
@@ -86,7 +100,10 @@ export const voterApi = commonApi.injectEndpoints({
     resetPlan: build.mutation({
       query: () => ({ url: "plan", method: "DELETE" }),
       transformResponse: debugLogging
-        ? (res) => console.log("RESET_VOTE", res) || res
+        ? (res) => {
+            console.log("RESET_VOTE", res);
+            return res;
+          }
         : undefined,
       invalidatesTags: getTags(["Voter"], {
         addBase: ["Schedule", "Settings"],
@@ -98,15 +115,7 @@ export const voterApi = commonApi.injectEndpoints({
   overrideExisting: true,
 });
 
-export {
-  useUpdateSettingsMutation,
-  usePlayerQuery,
-  useEventQuery,
-  useSettingsQuery,
-};
 export const {
-  useVoterQuery,
-  usePlanStatusQuery,
   useUpdateVoterMutation,
   useSetVotersMutation,
   useSetEventsMutation,
@@ -114,3 +123,21 @@ export const {
   useSavePlanMutation,
   useResetPlanMutation,
 } = voterApi;
+
+export const useVoterQuery: OverloadQuery<
+  Voter,
+  Voter["id"],
+  typeof voterApi.useVoterQuery
+> = voterApi.useVoterQuery;
+
+export const usePlanStatusQuery = voterApi.usePlanStatusQuery as (
+  arg?: null,
+  options?: Parameters<typeof voterApi.usePlanStatusQuery>[1],
+) => VarQryRtn<PlanStatus, null>;
+
+export {
+  useEventQuery,
+  usePlayerQuery,
+  useSettingsQuery,
+} from "../../common/General/common.fetch";
+export { useUpdateSettingsMutation } from "../settings/settings.fetch";

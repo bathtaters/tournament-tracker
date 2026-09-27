@@ -1,3 +1,4 @@
+import type { Voter } from "types/models";
 import { useState } from "react";
 import DaysContainer from "../schedule/components/DaysContainer";
 import PlanTabView from "./components/PlanTabView";
@@ -59,7 +60,7 @@ function PlanFinish() {
 
       {tab === 1 && (
         <PlanTabView
-          voters={data}
+          voters={data as Record<Voter["id"], Voter>}
           events={events}
           settings={settings}
           showScores={showTabs}

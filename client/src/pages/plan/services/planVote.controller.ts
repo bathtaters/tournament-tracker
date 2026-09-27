@@ -25,11 +25,11 @@ export default function usePlanViewController() {
   const [savePlan] = useSavePlanMutation();
   const openAlert = useOpenAlert();
 
-  const handleGenerate = () => generatePlan();
+  const handleGenerate = () => generatePlan(undefined);
 
   const handleSave = async () => {
     const answer = await openAlert(savePlanAlert, 0);
-    if (answer) savePlan();
+    if (answer) savePlan(undefined);
   };
 
   const [tab, selectTab] = useState(!isLoading && access > 2 && !voter ? 1 : 0);

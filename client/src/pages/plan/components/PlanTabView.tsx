@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { EventData, Settings, Voter } from "types/models";
 import {
   ViewWrapperStyle,
   GeneralSectionStyle,
@@ -19,12 +20,19 @@ import {
   indexedKeys,
 } from "../services/plan.utils";
 
+type PlanTabViewProps = {
+  voters?: Record<Voter["id"], Voter>;
+  events?: Record<EventData["id"], EventData>;
+  settings?: Partial<Settings>;
+  showScores?: boolean;
+};
+
 function PlanTabView({
   voters = {},
   events = {},
   settings = {},
   showScores = false,
-}) {
+}: PlanTabViewProps) {
   const { data: players = {} } = usePlayerQuery();
   const dateRange = settings.plandates || [];
 
@@ -34,7 +42,7 @@ function PlanTabView({
     events,
     players,
     settings,
-    !showScores
+    !showScores,
   );
 
   return (
@@ -92,7 +100,7 @@ function PlanTabView({
                         title={events[evId]?.title}
                         isUnvoted={true}
                       />
-                    )
+                    ),
                 )}
             </ViewCellSectionStyle>
 

@@ -1,3 +1,5 @@
+import type { ChangeEvent } from "react";
+import type { EventData } from "types/models";
 import { useCallback, useMemo } from "react";
 import {
   useResetPlanMutation,
@@ -22,7 +24,7 @@ import { resetPlanAlert } from "../../../assets/alerts";
 
 import { getLimit } from "../../../core/services/validation.services";
 
-const slotLimits = getLimit("settings", "planslots");
+const slotLimits = { ...getLimit("settings", "planslots") };
 if (!slotLimits.min) slotLimits.min = 1;
 
 const serverOptions = { throttleDelay: config.updateDelay };
@@ -34,7 +36,7 @@ export default function usePlanStartController() {
 
   // Date Controller
   const updateServerDates = useCallback(
-    (plandates) => updateSettings({ plandates }),
+    (plandates: string[]) => updateSettings({ plandates }),
     [updateSettings],
   );
   const [dates, setDates] = useServerListValue(
@@ -44,13 +46,14 @@ export default function usePlanStartController() {
   );
   const { datestart, dateend } = settings;
   const handleDateChange = useCallback(
-    (dates) => setDates(datePickerToArr({ datestart, dateend }, dates)),
+    (dates: { startDate?: Date; endDate?: Date }) =>
+      setDates(datePickerToArr({ datestart, dateend }, dates)),
     [datestart, dateend, setDates],
   );
 
   // Slot Controller
   const updateServerSlots = useCallback(
-    (planslots) => updateSettings({ planslots }),
+    (planslots: number) => updateSettings({ planslots }),
     [updateSettings],
   );
   const [slots, setSlots] = useServerValue(
@@ -59,7 +62,7 @@ export default function usePlanStartController() {
     serverOptions,
   );
   const handleSlotChange = useCallback(
-    (ev) => setSlots(+ev.target.value),
+    (ev: ChangeEvent<HTMLInputElement>) => setSlots(+ev.target.value),
     [setSlots],
   );
   const slotProps = {
@@ -78,7 +81,7 @@ export default function usePlanStartController() {
     serverOptions,
   );
   const handlePlayerChange = useCallback(
-    (players) => setPlayers(players),
+    (players: string[]) => setPlayers(players),
     [setPlayers],
   );
 
@@ -91,7 +94,7 @@ export default function usePlanStartController() {
     serverOptions,
   );
   const handleEventChange = useCallback(
-    (events) => setEvents(events),
+    (events: EventData["id"][]) => setEvents(events),
     [setEvents],
   );
 
@@ -99,7 +102,10 @@ export default function usePlanStartController() {
   const openAlert = useOpenAlert();
   const [resetPlan] = useResetPlanMutation();
   const handleReset = useCallback(
-    () => openAlert(resetPlanAlert, 0).then((answer) => answer && resetPlan()),
+    () =>
+      openAlert(resetPlanAlert, 0).then(
+        (answer) => answer && resetPlan(undefined),
+      ),
     [openAlert, resetPlan],
   );
 

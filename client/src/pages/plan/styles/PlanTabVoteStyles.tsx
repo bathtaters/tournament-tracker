@@ -1,14 +1,26 @@
-import React from "react";
+import type { ReactNode, ButtonHTMLAttributes } from "react";
 import { boxIDs } from "../../../assets/constants";
 
-export const GeneralSectionStyle = ({ header, children }) => (
+export const GeneralSectionStyle = ({
+  header,
+  children,
+}: {
+  header?: ReactNode;
+  children?: ReactNode;
+}) => (
   <div className="w-full text-center p-2">
     <h4 className="text-secondary">{header}</h4>
     <span className="font-thin ">{children}</span>
   </div>
 );
 
-export const DragBlockWrapper = ({ number, children }) => (
+export const DragBlockWrapper = ({
+  number,
+  children,
+}: {
+  number?: number;
+  children?: ReactNode;
+}) => (
   <div className="w-full flex flex-row items-center">
     {number && (
       <div className="shrink mr-1 text-xl font-medium opacity-60 ">
@@ -20,14 +32,20 @@ export const DragBlockWrapper = ({ number, children }) => (
   </div>
 );
 
-export const dragEventStyle = (boxId) =>
+export const dragEventStyle = (boxId: string) =>
   `h-12 sm:h-16 m-1 px-2 font-light text-lg ${
     boxId !== boxIDs.RANKED
       ? ""
       : "bg-[color-mix(in_oklab,oklch(var(--p)),black_7%)] text-primary-content hover:bg-primary/80 hover:text-primary-content/80 "
   }relative flex justify-center items-center grow rounded-xl overflow-hidden text-ellipsis `;
 
-export const SideButtonWrapper = ({ hide, children }) => (
+export const SideButtonWrapper = ({
+  hide,
+  children,
+}: {
+  hide?: boolean;
+  children?: ReactNode;
+}) => (
   <div
     className={`join join-horizontal md:hidden rounded-lg${hide ? " invisible" : ""}`}
   >
@@ -35,7 +53,7 @@ export const SideButtonWrapper = ({ hide, children }) => (
   </div>
 );
 
-export const SideButton = (props) => (
+export const SideButton = (props: ButtonHTMLAttributes<HTMLButtonElement>) => (
   <button
     type="button"
     className={`btn btn-primary btn-sm md:btn-xs join-item md:btn-ghost${props.onClick ? "" : " invisible"}`}
@@ -43,7 +61,9 @@ export const SideButton = (props) => (
   />
 );
 
-export const OverlayButton = (props) => (
+export const OverlayButton = (
+  props: ButtonHTMLAttributes<HTMLButtonElement>,
+) => (
   <div className="absolute top-0 bottom-0 left-0 right-0 z-10 opacity-0 hover:opacity-100 md:hidden flex justify-start items-center pl-1">
     <button
       type="button"

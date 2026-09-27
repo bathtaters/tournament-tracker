@@ -1,3 +1,4 @@
+import type { EventData } from "types/models";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
 import {
@@ -12,9 +13,10 @@ import {
   useUpdateVoterMutation,
   useVoterQuery,
 } from "../voter.fetch";
+import { toDateObj } from "../../schedule/services/date.utils";
 import { plan as config } from "../../../assets/config";
 
-export function usePollStatus(currentStatus, pollStatus) {
+export function usePollStatus(currentStatus?: number, pollStatus?: boolean) {
   const dispatch = useDispatch();
   const { data = {}, refetch } = usePlanStatusQuery(undefined, {
     skip: typeof currentStatus !== "number",
@@ -24,7 +26,7 @@ export function usePollStatus(currentStatus, pollStatus) {
   });
 
   // Keep error around for preset time
-  const flashError = useRef({});
+  const flashError = useRef<{ message?: string; timer?: NodeJS.Timeout }>({});
   useEffect(() => {
     if (data.error) {
       if (flashError.current.timer) clearTimeout(flashError.current.timer);
@@ -83,16 +85,16 @@ export function usePlanSettings(pollStatus = false) {
   );
 
   const setStatus = useCallback(
-    (planstatus) => () => updateSettings({ planstatus }),
+    (planstatus: number) => () => updateSettings({ planstatus }),
     [updateSettings],
   );
 
   const setDays = useCallback(
-    (days) => updateVoter({ id: voter?.id, days }),
+    (days: string[]) => updateVoter({ id: voter?.id, days }),
     [voter?.id, updateVoter],
   );
   const setEvents = useCallback(
-    (events) => updateVoter({ id: voter?.id, events }),
+    (events: EventData["id"][]) => updateVoter({ id: voter?.id, events }),
     [voter?.id, updateVoter],
   );
 
@@ -118,30 +120,30 @@ export function usePlanSettings(pollStatus = false) {
 }
 
 // Get plan events from all events
-export const getPlanned = (events) =>
-  indexedKeys(events, ({ plan }) => plan, "plan");
+export const getPlanned = (events: Record<EventData["id"], EventData>) =>
+  indexedKeys(events, ({ plan }: EventData) => Boolean(plan), "plan");
 
 // DATE UTILITIES \\
 
 export const datePickerToArr = (
-  { datestart, dateend } = {},
-  { startDate, endDate } = {},
+  { datestart, dateend }: { datestart?: string; dateend?: string } = {},
+  { startDate, endDate }: { startDate?: Date; endDate?: Date } = {},
 ) => [
   startDate?.toISOString().slice(0, 10) || datestart,
   endDate?.toISOString().slice(0, 10) || dateend,
 ];
 
-export const serverDatesToArr = ({ datestart, dateend } = {}, dateArr = []) => [
-  dateArr[0] || datestart,
-  dateArr[1] || dateend,
-];
+export const serverDatesToArr = (
+  { datestart, dateend }: { datestart?: string; dateend?: string } = {},
+  dateArr: string[] = [],
+) => [dateArr[0] || datestart, dateArr[1] || dateend];
 
-export const dateArrToPicker = (dates) => ({
-  startDate: dates[0],
-  endDate: dates[1],
+export const dateArrToPicker = (dates: string[]) => ({
+  startDate: dates[0] ? toDateObj(dates[0]) : null,
+  endDate: dates[1] ? toDateObj(dates[1]) : null,
 });
 
-export function dateRangeList(dateStart, dateEnd) {
+export function dateRangeList(dateStart: string, dateEnd: string) {
   if (!dateStart || !dateEnd) return [];
 
   let arr = [];
@@ -154,10 +156,10 @@ export function dateRangeList(dateStart, dateEnd) {
   }
   return arr;
 }
-export const useDateRangeList = ([dateStart, dateEnd]) =>
+export const useDateRangeList = ([dateStart, dateEnd]: string[]) =>
   useMemo(() => dateRangeList(dateStart, dateEnd), [dateStart, dateEnd]);
 
-export const formatDate = (date, incYear) =>
+export const formatDate = (date: string, incYear?: boolean) =>
   date &&
   new Date(date).toLocaleDateString(undefined, {
     timeZone: "UTC",
@@ -166,7 +168,7 @@ export const formatDate = (date, incYear) =>
     year: incYear ? "numeric" : undefined,
   });
 
-function isNextDay(dateA, dateB) {
+function isNextDay(dateA: string, dateB: string) {
   if (!dateA) return true;
 
   let aDate = new Date(dateA);
@@ -176,9 +178,9 @@ function isNextDay(dateA, dateB) {
   return aDate.getDate() === bDate;
 }
 
-export function dateListToRange(dates) {
-  let ranges = [],
-    currRange = [];
+export function dateListToRange(dates: string[]) {
+  let ranges: string[][] = [],
+    currRange: string[] = [];
 
   if (dates)
     dates.forEach((date) => {
@@ -196,16 +198,20 @@ export function dateListToRange(dates) {
 // ARRAY UTILITIES \\
 
 /** Add value to array if it's not there, or remove it if it is */
-export const addOrRemove = (value, array) =>
+export const addOrRemove = (value: string, array: string[]) =>
   array.includes(value) ? array.filter((v) => v !== value) : [...array, value];
 
 /** Pad out array to padLength using padVal */
-export const arrayPad = (array, padLength, padVal = null) =>
+export const arrayPad = (
+  array: string[],
+  padLength: number,
+  padVal: string = null,
+) =>
   padLength < array.length
     ? array
     : [...array, ...Array(padLength).fill(padVal).slice(array.length)];
 
-export const trimFalsy = (array, start = 0) => {
+export const trimFalsy = (array: string[], start = 0) => {
   let i = array.length;
   while (!array[--i]) {
     if (i <= start) return [];
@@ -213,14 +219,15 @@ export const trimFalsy = (array, start = 0) => {
   return array.slice(start, i + 1);
 };
 
-export const arrRemove = (array, idx) => trimFalsy(arrInsert(array, idx));
+export const arrRemove = (array: string[], idx: number) =>
+  trimFalsy(arrInsert(array, idx));
 
-export const arrInsert = (array, idx, value) =>
+export const arrInsert = (array: string[], idx: number, value?: string) =>
   idx <= array.length
     ? [...array.slice(0, idx), value, ...trimFalsy(array, idx + 1)]
     : [...arrayPad(array, idx), value];
 
-export const arrShift = (array, idx, backward = false) =>
+export const arrShift = (array: string[], idx: number, backward = false) =>
   backward
     ? trimFalsy([
         ...array.slice(0, idx - 1),
@@ -235,7 +242,7 @@ export const arrShift = (array, idx, backward = false) =>
         ...array.slice(idx + 2),
       ];
 
-export const arrSwap = (arr, idx) => {
+export const arrSwap = (arr: string[], idx: number[]) => {
   if (idx.length !== 2 || idx[0] === idx[1]) return arr;
 
   idx.sort((a, b) => a - b);
@@ -256,15 +263,16 @@ export const arrSwap = (arr, idx) => {
  *  - Assumes 1-indexing
  *  - Any duplicate indexes or indexes < 0 will be appended to the end in any order
  *  - Any non-numeric or 0 value indexes will be ignored
- * @param {{ [key: string]: { [valKey: string]: any } }} obj
- * @param {(value: { [valKey: string]: any }, key: string) => boolean} [filter]
- *  - Ignores rows where this returns FALSE
- * @param {string} [idxKey] - Key of the index value (i.e. 'valKey', default: 'idx')
- * @returns {string[]} - Array of sorted keys
+ * @param filter - Ignores rows where this returns FALSE
+ * @param idxKey - Key of the index value (i.e. 'valKey', default: 'idx')
  */
-export const indexedKeys = (obj, filter, idxKey = "idx") => {
-  const sorted = [],
-    unsorted = [];
+export const indexedKeys = <T extends Record<string, any>>(
+  obj: Record<string, T>,
+  filter?: (value: T, key: string) => boolean,
+  idxKey: string = "idx",
+): string[] => {
+  const sorted: string[] = [],
+    unsorted: string[] = [];
   if (!obj) return sorted;
 
   for (const key in obj) {

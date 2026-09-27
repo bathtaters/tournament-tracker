@@ -1,4 +1,4 @@
-import React from "react";
+import type { Voter } from "types/models";
 import Tabs from "../../common/General/styles/Tabs";
 import Loading from "../../common/Loading/Loading";
 import PlanTabVote from "./components/PlanTabVote";
@@ -68,11 +68,19 @@ function PlanVote() {
       {showTabs && <Tabs labels={planTabs} value={tab} onChange={selectTab} />}
 
       {tab === 0 && (
-        <PlanTabVote voter={data} events={events} settings={settings} />
+        <PlanTabVote
+          voter={data as Voter}
+          events={events}
+          settings={settings}
+        />
       )}
 
       {tab === 1 && (
-        <PlanTabView voters={data} events={events} settings={settings} />
+        <PlanTabView
+          voters={data as Record<Voter["id"], Voter>}
+          events={events}
+          settings={settings}
+        />
       )}
     </PlanWrapperStyle>
   );

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { EventData, Settings, Voter } from "types/models";
 import { useUpdateVoterMutation } from "../voter.fetch";
 import { PlanRowStyle } from "../styles/PlanStyles";
 import DateMultiSelect from "./DateMultiSelect";
@@ -9,7 +10,13 @@ import { getPlanned } from "../services/plan.utils";
 import { useServerListValue } from "../../../common/General/common.hooks";
 import { plan as config } from "../../../assets/config";
 
-function PlanTabVote({ voter, events, settings }) {
+type PlanTabVoteProps = {
+  voter?: Voter;
+  events: Record<EventData["id"], EventData>;
+  settings: Settings;
+};
+
+function PlanTabVote({ voter, events, settings }: PlanTabVoteProps) {
   const [updateVoter] = useUpdateVoterMutation();
   const sortedEvents = useMemo(() => getPlanned(events), [events]);
 
@@ -17,7 +24,7 @@ function PlanTabVote({ voter, events, settings }) {
   const [dates, setDates] = useServerListValue(
     voter?.days,
     (days) => updateVoter({ id: voter?.id, days }),
-    { throttleDelay: config.updateDelay }
+    { throttleDelay: config.updateDelay },
   );
 
   // Voter.Events
