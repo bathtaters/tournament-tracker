@@ -29,10 +29,14 @@ function spawnAsync(id, threadPath, data, onError) {
 
   let hasExited = false;
   let hasErrored = false;
-  const notifyError = (err) => {
+  const notifyError = async (err) => {
     if (hasErrored) return;
     hasErrored = true;
-    onError?.(err);
+    try {
+      await onError?.(err);
+    } catch (onErrorErr) {
+      logger.error(`Error while reporting failure of thread ${id}:`, onErrorErr);
+    }
   };
 
   thread.on("message", (msg) => logger.log(`Message from thread ${id}:`, msg));
