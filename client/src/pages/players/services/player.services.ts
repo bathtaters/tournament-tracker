@@ -35,7 +35,7 @@ const usePlayerClickController = (
       if (hasEvents) return openAlert(cantDeletePlayerAlert(name));
 
       // Delete player
-      openAlert(deletePlayerAlert(name)).then(
+      openAlert(deletePlayerAlert(name), 0).then(
         (r) => r && deletePlayer(playerid),
       );
     },
