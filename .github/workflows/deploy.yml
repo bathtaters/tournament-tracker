@@ -187,6 +187,7 @@ jobs:
           podman stop -i ${{ env.PROC_NAME }}-api
           podman rm -i ${{ env.PROC_NAME }}-api
           podman run --memory 512m -d --name ${{ env.PROC_NAME }}-api \
+            --restart unless-stopped \
             -p 127.0.0.1:${{ env.PROC_PORT }}:9090 \
             -v ~/.postgresql:/home/appuser/.postgresql:Z,ro \
             ${{ env.PROC_NAME }}-api
